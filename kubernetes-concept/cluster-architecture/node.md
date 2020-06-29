@@ -73,9 +73,13 @@ kubelet 플래그 `--register-node`는 참\(기본값\)일 경우, kubelet 은 A
 kubectl cordon $NODENAME
 ```
 
-> **참고:** [데몬셋\(DaemonSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/daemonset)에 포함되는 일부 파드는 스케줄 불가 노드에서 실행될 수 있다. 일반적으로 데몬셋은 워크로드 애플리케이션을 비우는 경우에도 노드에서 실행되어야 하는 노드 로컬 서비스를 제공한다.
+{% hint style="info" %}
+참고: [데몬셋\(DaemonSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/daemonset)에 포함되는 일부 파드는 스케줄 불가 노드에서 실행될 수 있다. 일반적으로 데몬셋은 워크로드 애플리케이션을 비우는 경우에도 노드에서 실행되어야 하는 노드 로컬 서비스를 제공한다.
+{% endhint %}
 
-### 노드 상태 <a id="&#xB178;&#xB4DC;-&#xC0C1;&#xD0DC;"></a>
+노드 오브젝트의 이름은 유효한 [DNS 서브도메인 이름](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/names/#dns-%EC%84%9C%EB%B8%8C%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%9D%B4%EB%A6%84%EB%93%A4)이어야 한다.
+
+## 노드 상태
 
 노드의 상태는 다음의 정보를 포함한다.
 
@@ -92,7 +96,7 @@ kubectl describe node <insert-node-name-here>
 
 출력되는 각 섹션은 아래에 설명되어있다.
 
-#### 주소 <a id="addresses"></a>
+### 주소
 
 이 필드의 용법은 클라우드 제공사업자 또는 베어메탈 구성에 따라 다양하다.
 
@@ -100,7 +104,7 @@ kubectl describe node <insert-node-name-here>
 * ExternalIP: 일반적으로 노드의 IP 주소는 외부로 라우트 가능 \(클러스터 외부에서 이용 가능\) 하다 .
 * InternalIP: 일반적으로 노드의 IP 주소는 클러스터 내에서만 라우트 가능하다.
 
-#### 컨디션 <a id="condition"></a>
+### 컨디션
 
 `conditions` 필드는 모든 `Running` 노드의 상태를 기술한다. 컨디션의 예로 다음을 포함한다.
 
@@ -112,7 +116,9 @@ kubectl describe node <insert-node-name-here>
 | `PIDPressure` | 프로세스 상에 압박이 있는 경우, 즉 노드 상에 많은 프로세스들이 존재하는 경우 `True`, 반대의 경우 `False` |
 | `NetworkUnavailable` | 노드에 대해 네트워크가 올바르게 구성되지 않은 경우 `True`, 반대의 경우 `False` |
 
-> **참고:** 커맨드 라인 도구를 사용해서 코드화된 노드의 세부 정보를 출력하는 경우 조건에는 `SchedulingDisabled` 이 포함된다. `SchedulingDisabled` 은 쿠버네티스 API의 조건이 아니며, 대신 코드화된 노드는 사양에 스케줄 불가로 표시된다.
+{% hint style="info" %}
+참고 : 커맨드 라인 도구를 사용해서 코드화된 노드의 세부 정보를 출력하는 경우 조건에는 `SchedulingDisabled` 이 포함된다. `SchedulingDisabled` 은 쿠버네티스 API의 조건이 아니며, 대신 코드화된 노드는 사양에 스케줄 불가로 표시된다.
+{% endhint %}
 
 노드 컨디션은 JSON 오브젝트로 표현된다. 예를 들어, 다음 응답은 상태 양호한 노드를 나타낸다.
 
@@ -137,7 +143,7 @@ ready 컨디션의 상태가 `pod-eviction-timeout` \([kube-controller-manager](
 
 자세한 내용은 [컨디션별 노드 테인트하기](https://kubernetes.io/ko/docs/concepts/scheduling-eviction/taint-and-toleration/#%EC%BB%A8%EB%94%94%EC%85%98%EB%B3%84-%EB%85%B8%EB%93%9C-%ED%85%8C%EC%9D%B8%ED%8A%B8%ED%95%98%EA%B8%B0)를 참조한다.
 
-#### 용량과 할당가능 <a id="capacity"></a>
+### 용량과 할당가능
 
 노드 상에 사용 가능한 리소스를 나타낸다. 리소스에는 CPU, 메모리 그리고 노드 상으로 스케줄 되어질 수 있는 최대 파드 수가 있다.
 
@@ -145,11 +151,11 @@ ready 컨디션의 상태가 `pod-eviction-timeout` \([kube-controller-manager](
 
 노드에서 [컴퓨팅 리소스 예약](https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#node-allocatable)하는 방법을 배우는 동안 용량 및 할당가능 리소스에 대해 자세히 읽어보자.
 
-#### 정보 <a id="&#xC815;&#xBCF4;"></a>
+### 정보
 
 커널 버전, 쿠버네티스 버전 \(kubelet과 kube-proxy 버전\), \(사용하는 경우\) Docker 버전, OS 이름과 같은노드에 대한 일반적인 정보를 보여준다. 이 정보는 Kubelet에 의해 노드로부터 수집된다.
 
-#### 노드 컨트롤러 <a id="&#xB178;&#xB4DC;-&#xCEE8;&#xD2B8;&#xB864;&#xB7EC;"></a>
+### 노드 컨트롤러
 
 노드 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)는 노드의 다양한 측면을 관리하는 쿠버네티스 컨트롤 플레인 컴포넌트이다.
 
@@ -159,7 +165,7 @@ ready 컨디션의 상태가 `pod-eviction-timeout` \([kube-controller-manager](
 
 세 번째는 노드의 동작 상태를 모니터링 하는 것이다. 노드 컨트롤러는 노드가 접근 불가할 경우 \(즉 노드 컨트롤러가 어떠한 사유로 하트비트 수신을 중지하는 경우, 예를 들어 노드 다운과 같은 경우이다.\) NodeStatus의 NodeReady 컨디션을 ConditionUnknown으로 업데이트 하는 책임을 지고, 노드가 계속 접근 불가할 경우 나중에 노드로부터 \(정상적인 종료를 이용하여\) 모든 파드를 축출시킨다. \(ConditionUnknown을 알리기 시작하는 기본 타임아웃 값은 40초 이고, 파드를 축출하기 시작하는 값은 5분이다.\) 노드 컨트롤러는 매 `--node-monitor-period` 초 마다 각 노드의 상태를 체크한다.
 
-**하트비트**
+### **하트비트**
 
 쿠버네티스 노드에서 보내는 하트비트는 노드의 가용성을 결정하는데 도움이 된다.
 
@@ -170,7 +176,7 @@ kubelet은 `NodeStatus` 와 리스 오브젝트를 생성하고 업데이트 할
 * kubelet은 상태가 변경되거나 구성된 상태에 대한 업데이트가 없는 경우, `NodeStatus` 를 업데이트 한다. `NodeStatus` 의 기본 업데이트 주기는 5분이다\(연결할 수 없는 노드의 시간 제한인 40초 보다 훨씬 길다\).
 * kubelet은 10초마다 리스 오브젝트를 생성하고 업데이트 한다\(기본 업데이트 주기\). 리스 업데이트는 `NodeStatus` 업데이트와는 독립적으로 발생한다. 리스 업데이트가 실패하면 kubelet에 의해 재시도하며 7초로 제한된 지수 백오프를 200 밀리초에서 부터 시작한다.
 
-**안정성**
+### **안정성**
 
 대부분의 경우, 노드 컨트롤러는 초당 `--node-eviction-rate`\(기본값 0.1\)로 축출 비율을 제한한다. 이 말은 10초당 1개의 노드를 초과하여 파드 축출을 하지 않는다는 의미가 된다.
 
@@ -180,17 +186,21 @@ kubelet은 `NodeStatus` 와 리스 오브젝트를 생성하고 업데이트 할
 
 또한, 노드 컨트롤러는 파드가 테인트를 허용하지 않을 때 `NoExecute` 테인트 상태의 노드에서 동작하는 파드에 대한 축출 책임을 가지고 있다. 추가로, 노드 컨틀로러는 연결할 수 없거나, 준비되지 않은 노드와 같은 노드 문제에 상응하는 [테인트](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)를 추가한다. 이는 스케줄러가 비정상적인 노드에 파드를 배치하지 않게 된다.
 
-> **주의:** `kubectl cordon` 은 노드를 'unschedulable'로 표기하는데, 이는 서비스 컨트롤러가 이전에 자격 있는 로드밸런서 노드 대상 목록에서 해당 노드를 제거하기에 사실상 cordon 된 노드에서 들어오는 로드 밸런서 트래픽을 제거하는 부작용을 갖는다.
+{% hint style="warning" %}
+주의 : `kubectl cordon` 은 노드를 'unschedulable'로 표기하는데, 이는 서비스 컨트롤러가 이전에 자격 있는 로드밸런서 노드 대상 목록에서 해당 노드를 제거하기에 사실상 cordon 된 노드에서 들어오는 로드 밸런서 트래픽을 제거하는 부작용을 갖는다.
+{% endhint %}
 
-#### 노드 용량 <a id="&#xB178;&#xB4DC;-&#xC6A9;&#xB7C9;"></a>
+### 노드 용량
 
 노드 오브젝트는 노드 리소스 용량에 대한 정보\(예: 사용 가능한 메모리의 양과 CPU의 수\)를 추적한다. 노드의 [자체 등록](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#%EB%85%B8%EB%93%9C%EC%97%90-%EB%8C%80%ED%95%9C-%EC%9E%90%EC%B2%B4-%EB%93%B1%EB%A1%9D)은 등록하는 중에 용량을 보고한다. [수동](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#%EC%88%98%EB%8F%99-%EB%85%B8%EB%93%9C-%EA%B4%80%EB%A6%AC)으로 노드를 추가하는 경우 추가할 때 노드의 용량 정보를 설정해야 한다.
 
 쿠버네티스 [스케줄러](https://kubernetes.io/docs/reference/generated/kube-scheduler/)는 노드 상에 모든 노드에 대해 충분한 리소스가 존재하도록 보장한다. 스케줄러는 노드 상에 컨테이너에 대한 요청의 합이 노드 용량보다 더 크지 않도록 체크한다. 요청의 합은 kubelet에서 관리하는 모든 컨테이너를 포함하지만, 컨테이너 런타임에 의해 직접적으로 시작된 컨 테이너는 제외되고 kubelet의 컨트롤 범위 밖에서 실행되는 모든 프로세스도 제외된다.
 
-> **참고:** 파드 형태가 아닌 프로세스에 대해 명시적으로 리소스를 확보하려면, [시스템 데몬에 사용할 리소스 예약하기](https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#system-reserved)을 본다.
+{% hint style="info" %}
+**참고:** 파드 형태가 아닌 프로세스에 대해 명시적으로 리소스를 확보하려면, [시스템 데몬에 사용할 리소스 예약하기](https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#system-reserved)을 본다.
+{% endhint %}
 
-### 노드 토폴로지 <a id="&#xB178;&#xB4DC;-&#xD1A0;&#xD3F4;&#xB85C;&#xC9C0;"></a>
+## 노드 토폴로지
 
 **FEATURE STATE:** `Kubernetes v1.16 [alpha]`
 
