@@ -4,6 +4,8 @@ description: '참조 원문 : https://kubernetes.io/'
 
 # Overview
 
+#### Update : 2020 June
+
 ### 개념
 
 개념 섹션을 통해 쿠버네티스 시스템을 구성하는 요소와 [클러스터](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-cluster)를 표현하는데 사용되는 추상 개념에 대해 배우고 쿠버네티스가 작동하는 방식에 대해 보다 깊이 이해할 수 있다.
