@@ -5,6 +5,7 @@
   * [Overview](kubernetes-concept/overview.md)
   * [Cluster Architecture](kubernetes-concept/cluster-architecture/README.md)
     * [Node](kubernetes-concept/cluster-architecture/node.md)
+    * [Control Plane-Node Communication](kubernetes-concept/cluster-architecture/control-plane-node-communication.md)
   * [Containers](kubernetes-concept/containers.md)
   * [Workloads](kubernetes-concept/workloads.md)
   * [Service-LB-Networking](kubernetes-concept/service-lb-networking.md)
