@@ -6,7 +6,7 @@
 
 컨테이너의 `image` 속성은 `docker` 커맨드에서 지원하는 문법과 같은 문법을 지원한다. 이는 프라이빗 레지스트리와 태그를 포함한다.
 
-### 이미지 업데이트 <a id="&#xC774;&#xBBF8;&#xC9C0;-&#xC5C5;&#xB370;&#xC774;&#xD2B8;"></a>
+## 이미지 업데이트
 
 기본 풀\(pull\) 정책은 `IfNotPresent`이며, 이것은 Kubelet이 이미 존재하는 이미지에 대한 풀을 생략하게 한다. 만약 항상 풀을 강제하고 싶다면, 다음 중 하나를 수행하면 된다.
 
@@ -17,7 +17,7 @@
 
 `:latest` 태그 사용은 피해야 한다는 것을 참고하고, 자세한 정보는 [구성을 위한 모범 사례](https://kubernetes.io/ko/docs/concepts/configuration/overview/#%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88-%EC%9D%B4%EB%AF%B8%EC%A7%80)를 참고한다.
 
-### 매니페스트로 멀티-아키텍처 이미지 빌드 <a id="&#xB9E4;&#xB2C8;&#xD398;&#xC2A4;&#xD2B8;&#xB85C;-&#xBA40;&#xD2F0;-&#xC544;&#xD0A4;&#xD14D;&#xCC98;-&#xC774;&#xBBF8;&#xC9C0;-&#xBE4C;&#xB4DC;"></a>
+## 매니페스트로 멀티-아키텍처 이미지 빌드
 
 Docker CLI는 현재 `docker manifest` 커맨드와 `create`, `annotate`, `push`와 같은 서브 커맨드를 함께 지원한다. 이 커맨드는 매니페스트를 빌드하고 푸시하는데 사용할 수 있다. 매니페스트를 보기 위해서는 `docker manifest inspect`를 사용하면 된다.
 
@@ -33,7 +33,7 @@ Docker CLI는 현재 `docker manifest` 커맨드와 `create`, `annotate`, `push`
 
 쿠버네티스의 경우, 일반적으로 접미사 `-$(ARCH)`가 있는 이미지를 사용해 왔다. 하위 호환성을 위해, 접미사가 있는 구형 이미지를 생성하길 바란다. 접미사에 대한 아이디어는 모든 아키텍처를 위한 매니페스트를 가졌다는 의미가 내포된 `pause` 이미지를 생성하고, 접미사가 붙은 이미지가 하드 코드되어 있을 오래된 구성 또는 YAML 파일에 대해 하위 호환된다는 의미가 내포되어 있는 `pause-amd64`를 생성하기 위한 것이다.
 
-### 프라이빗 레지스트리 사용 <a id="&#xD504;&#xB77C;&#xC774;&#xBE57;-&#xB808;&#xC9C0;&#xC2A4;&#xD2B8;&#xB9AC;-&#xC0AC;&#xC6A9;"></a>
+## 프라이빗 레지스트리 사용
 
 프라이빗 레지스트리는 해당 레지스트리에서 이미지를 읽을 수 있는 키를 요구할 것이다. 자격 증명\(credential\)은 여러 가지 방법으로 제공될 수 있다.
 
@@ -61,7 +61,7 @@ Docker CLI는 현재 `docker manifest` 커맨드와 `create`, `annotate`, `push`
 
 각 옵션은 아래에서 더 자세히 설명한다.
 
-#### Google 컨테이너 레지스트리 사용 <a id="google-&#xCEE8;&#xD14C;&#xC774;&#xB108;-&#xB808;&#xC9C0;&#xC2A4;&#xD2B8;&#xB9AC;-&#xC0AC;&#xC6A9;"></a>
+### Google 컨테이너 레지스트리 사용
 
 쿠버네티스는 Google 컴퓨트 엔진\(GCE\)에서 동작할 때, [Google 컨테이너 레지스트리\(GCR\)](https://cloud.google.com/tools/container-registry/)를 자연스럽게 지원한다. 사용자의 클러스터가 GCE 또는 Google 쿠버네티스 엔진에서 동작 중이라면, 간단히 이미지의 전체 이름\(예: gcr.io/my\_project/image:tag\)을 사용하면 된다.
 
@@ -69,7 +69,7 @@ Docker CLI는 현재 `docker manifest` 커맨드와 `create`, `annotate`, `push`
 
 Kubelet은 해당 인스턴스의 Google 서비스 계정을 이용하여 GCR을 인증할 것이다. 인스턴스의 서비스 계정은 `https://www.googleapis.com/auth/devstorage.read_only`라서, 프로젝트의 GCR로부터 풀은 할 수 있지만 푸시는 할 수 없다.
 
-#### Amazon Elastic Container Registry 사용 <a id="amazon-elastic-container-registry-&#xC0AC;&#xC6A9;"></a>
+### Amazon Elastic Container Registry 사용
 
 쿠버네티스는 노드가 AWS EC2 인스턴스일 때, [Amazon Elastic Container Registry](https://aws.amazon.com/ecr/)를 자연스럽게 지원한다.
 
@@ -102,7 +102,7 @@ kubelet은 ECR 자격 증명을 가져오고 주기적으로 갱신할 것이다
   * `aws_credentials.go:109] unable to get ECR credentials from cache, checking ECR API`
   * `aws_credentials.go:116] Got ECR credentials from ECR API for <AWS account ID for ECR>.dkr.ecr.<AWS region>.amazonaws.com`
 
-#### Azure 컨테이너 레지스트리\(ACR\) 사용 <a id="azure-&#xCEE8;&#xD14C;&#xC774;&#xB108;-&#xB808;&#xC9C0;&#xC2A4;&#xD2B8;&#xB9AC;-acr-&#xC0AC;&#xC6A9;"></a>
+### Azure 컨테이너 레지스트리\(ACR\) 사용
 
 쿠버네티스는 Azure 쿠버네티스 서비스\(AKS\)를 사용할 때 [Azure 컨테이너 레지스트리\(ACR\)](https://azure.microsoft.com/ko-kr/services/container-registry/)를 기본적으로 지원한다.
 
@@ -121,7 +121,7 @@ ACR 관리자 또는 서비스 주체를 사용해서 인증할 수도 있다. �
 
 해당 변수에 대한 값을 채우고 나면 [쿠버네티스 시크릿을 구성하고 그것을 파드 디플로이를 위해서 사용](https://kubernetes.io/ko/docs/concepts/containers/images/#%ED%8C%8C%EB%93%9C%EC%97%90-imagepullsecrets-%EB%AA%85%EC%8B%9C)할 수 있다.
 
-#### IBM 클라우드 컨테이너 레지스트리 사용 <a id="ibm-&#xD074;&#xB77C;&#xC6B0;&#xB4DC;-&#xCEE8;&#xD14C;&#xC774;&#xB108;-&#xB808;&#xC9C0;&#xC2A4;&#xD2B8;&#xB9AC;-&#xC0AC;&#xC6A9;"></a>
+### IBM 클라우드 컨테이너 레지스트리 사용
 
 IBM 클라우드 컨테이너 레지스트리는 멀티-테넌트 프라이빗 이미지 레지스트리를 제공하여 사용자가 이미지를 안전하게 저장하고 공유할 수 있도록 한다. 기본적으로, 프라이빗 레지스트리의 이미지는 통합된 취약점 조언기\(Vulnerability Advisor\)를 통해 조사되어 보안 이슈와 잠재적 취약성을 검출한다. IBM 클라우드 계정의 모든 사용자가 이미지에 접근할 수 있도록 하거나, IAM 역할과 정책으로 IBM 클라우드 컨테이너 레지스트리 네임스페이스의 접근 권한을 부여해서 사용할 수 있다.
 
@@ -129,15 +129,23 @@ IBM 클라우드 컨테이너 레지스트리 CLI 플러그인을 설치하고 �
 
 다른 추가적인 구성이 없는 IBM 클라우드 쿠버네티스 서비스 클러스터의 IBM 클라우드 컨테이너 레지스트리 내 기본 네임스페이스에 저장되어 있는 배포된 이미지를 동일 계정과 동일 지역에서 사용하려면 [이미지로부터 컨테이너 빌드하기](https://cloud.ibm.com/docs/containers?topic=containers-images)를 본다. 다른 구성 옵션에 대한 것은 [레지스트리부터 클러스터에 이미지를 가져오도록 권한을 부여하는 방법 이해하기](https://cloud.ibm.com/docs/containers?topic=containers-registry#cluster_registry_auth)를 본다.
 
-#### 프라이빗 레지스트리에 대한 인증을 위한 노드 구성 <a id="&#xD504;&#xB77C;&#xC774;&#xBE57;-&#xB808;&#xC9C0;&#xC2A4;&#xD2B8;&#xB9AC;&#xC5D0;-&#xB300;&#xD55C;-&#xC778;&#xC99D;&#xC744;-&#xC704;&#xD55C;-&#xB178;&#xB4DC;-&#xAD6C;&#xC131;"></a>
+### 프라이빗 레지스트리에 대한 인증을 위한 노드 구성
 
-> **참고:** Google 쿠버네티스 엔진에서 동작 중이라면, 이미 각 노드에 Google 컨테이너 레지스트리에 대한 자격 증명과 함께 `.dockercfg`가 있을 것이다. 그렇다면 이 방법은 쓸 수 없다.
+{% hint style="info" %}
+**참고:** Google 쿠버네티스 엔진에서 동작 중이라면, 이미 각 노드에 Google 컨테이너 레지스트리에 대한 자격 증명과 함께 `.dockercfg`가 있을 것이다. 그렇다면 이 방법은 쓸 수 없다.
+{% endhint %}
 
-> **참고:** AWS EC2에서 동작 중이고 EC2 컨테이너 레지스트리\(ECR\)을 사용 중이라면, 각 노드의 kubelet은 ECR 로그인 자격 증명을 관리하고 업데이트할 것이다. 그렇다면 이 방법은 쓸 수 없다.
+{% hint style="info" %}
+**참고:** AWS EC2에서 동작 중이고 EC2 컨테이너 레지스트리\(ECR\)을 사용 중이라면, 각 노드의 kubelet은 ECR 로그인 자격 증명을 관리하고 업데이트할 것이다. 그렇다면 이 방법은 쓸 수 없다.
+{% endhint %}
 
-> **참고:** 이 방법은 노드의 구성을 제어할 수 있는 경우에만 적합하다. 이 방법은 GCE 및 자동 노드 교체를 수행하는 다른 클라우드 제공자에 대해서는 신뢰성 있게 작동하지 않을 것이다.
+{% hint style="info" %}
+**참고:** 이 방법은 노드의 구성을 제어할 수 있는 경우에만 적합하다. 이 방법은 GCE 및 자동 노드 교체를 수행하는 다른 클라우드 제공자에 대해서는 신뢰성 있게 작동하지 않을 것이다.
+{% endhint %}
 
-> **참고:** 현재 쿠버네티스는 docker 설정의 `auths`와 `HttpHeaders` 섹션만 지원한다. 이는 자격증명 도우미\(`credHelpers` 또는 `credStore`\)가 지원되지 않는다는 뜻이다.
+{% hint style="info" %}
+**참고:** 현재 쿠버네티스는 docker 설정의 `auths`와 `HttpHeaders` 섹션만 지원한다. 이는 자격증명 도우미\(`credHelpers` 또는 `credStore`\)가 지원되지 않는다는 뜻이다.
+{% endhint %}
 
 Docker는 프라이빗 레지스트리를 위한 키를 `$HOME/.dockercfg` 또는 `$HOME/.docker/config.json` 파일에 저장한다. 만약 동일한 파일을 아래의 검색 경로 리스트에 넣으면, kubelete은 이미지를 풀 할 때 해당 파일을 자격 증명 공급자로 사용한다.
 
@@ -150,7 +158,9 @@ Docker는 프라이빗 레지스트리를 위한 키를 `$HOME/.dockercfg` 또�
 * `${HOME}/.dockercfg`
 * `/.dockercfg`
 
-> **참고:** 아마도 kubelet을 위한 사용자의 환경 파일에 `HOME=/root`을 명시적으로 설정해야 할 것이다.
+{% hint style="info" %}
+**고:** 아마도 kubelet을 위한 사용자의 환경 파일에 `HOME=/root`을 명시적으로 설정해야 할 것이다.
+{% endhint %}
 
 프라이빗 레지스트리를 사용도록 사용자의 노드를 구성하기 위해서 권장되는 단계는 다음과 같다. 이 예제의 경우, 사용자의 데스크탑/랩탑에서 아래 내용을 실행한다.
 
@@ -211,11 +221,15 @@ kubectl describe pods/private-image-test-1 | grep 'Failed'
 
 프라이빗 레지스트리 키가 `.docker/config.json`에 추가되고 나면 모든 파드는 프라이빗 레지스트리의 이미지에 읽기 접근 권한을 가지게 될 것이다.
 
-#### 미리 내려받은 이미지 <a id="&#xBBF8;&#xB9AC;-&#xB0B4;&#xB824;&#xBC1B;&#xC740;-&#xC774;&#xBBF8;&#xC9C0;"></a>
+### 미리 내려받은 이미지
 
-> **참고:** Google 쿠버네티스 엔진에서 동작 중이라면, 이미 각 노드에 Google 컨테이너 레지스트리에 대한 자격 증명과 함께 `.dockercfg`가 있을 것이다. 그렇다면 이 방법은 쓸 수 없다.
+{% hint style="info" %}
+**참고:** Google 쿠버네티스 엔진에서 동작 중이라면, 이미 각 노드에 Google 컨테이너 레지스트리에 대한 자격 증명과 함께 `.dockercfg`가 있을 것이다. 그렇다면 이 방법은 쓸 수 없다.
+{% endhint %}
 
-> **참고:** 이 방법은 노드의 구성을 제어할 수 있는 경우에만 적합하다. 이 방법은 GCE 및 자동 노드 교체를 수행하는 다른 클라우드 제공자에 대해서는 신뢰성 있게 작동하지 않을 것이다.
+{% hint style="info" %}
+**참고:** 이 방법은 노드의 구성을 제어할 수 있는 경우에만 적합하다. 이 방법은 GCE 및 자동 노드 교체를 수행하는 다른 클라우드 제공자에 대해서는 신뢰성 있게 작동하지 않을 것이다.
+{% endhint %}
 
 기본적으로, kubelet은 지정된 레지스트리에서 각 이미지를 풀 하려고 할 것이다. 그러나, 컨테이너의 `imagePullPolicy` 속성이 `IfNotPresent` 또는 `Never`으로 설정되어 있다면, 로컬 이미지가 사용된다\(우선적으로 또는 배타적으로\).
 
@@ -225,13 +239,13 @@ kubectl describe pods/private-image-test-1 | grep 'Failed'
 
 모든 파드는 미리 내려받은 이미지에 대해 읽기 접근 권한을 가질 것이다.
 
-#### 파드에 ImagePullSecrets 명시 <a id="&#xD30C;&#xB4DC;&#xC5D0;-imagepullsecrets-&#xBA85;&#xC2DC;"></a>
+### 파드에 ImagePullSecrets 명시
 
 > **참고:** 이 방법은 현재 Google 쿠버네티스 엔진, GCE 및 노드 생성이 자동화된 모든 클라우드 제공자에게 권장된다.
 
 쿠버네티스는 파드에 레지스트리 키를 명시하는 것을 지원한다.
 
-**Docker 구성으로 시크릿 생성**
+### **Docker 구성으로 시크릿 생성**
 
 대문자 값을 적절히 대체하여, 다음 커맨드를 실행한다.
 
@@ -243,7 +257,7 @@ kubectl create secret docker-registry <name> --docker-server=DOCKER_REGISTRY_SER
 
 > **참고:** 파드는 이미지 풀 시크릿을 자신의 네임스페이스에서만 참조할 수 있다. 따라서 이 과정은 네임스페이스 당 한 번만 수행될 필요가 있다.
 
-**파드의 imagePullSecrets 참조**
+### **파드의 imagePullSecrets 참조**
 
 이제, `imagePullSecrets` 섹션을 파드의 정의에 추가함으로써 해당 시크릿을 참조하는 파드를 생성할 수 있다.
 
@@ -274,9 +288,9 @@ EOF
 
 이것은 노드 당 `.docker/config.json`와 함께 사용할 수 있다. 자격 증명은 병합될 것이다. 이 방법은 Google 쿠버네티스 엔진에서 작동될 것이다.
 
-#### 유스케이스 <a id="&#xC720;&#xC2A4;&#xCF00;&#xC774;&#xC2A4;"></a>
+### Use Case
 
-프라이빗 레지스트리를 구성하기 위한 많은 솔루션이 있다. 다음은 여러 가지 일반적인 유스케이스와 제안된 솔루션이다.
+프라이빗 레지스트리를 구성하기 위한 많은 솔루션이 있다. 다음은 여러 가지 일반적인 Use Case와 제안된 솔루션이다.
 
 1. 비소유 이미지\(예를 들어, 오픈소스\)만 실행하는 클러스터의 경우. 이미지를 숨길 필요가 없다.
    * Docker hub의 퍼블릭 이미지를 사용한다.
