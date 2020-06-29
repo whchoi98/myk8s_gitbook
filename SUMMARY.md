@@ -7,6 +7,7 @@
     * [Node](kubernetes-concept/cluster-architecture/node.md)
     * [Control Plane-Node Communication](kubernetes-concept/cluster-architecture/control-plane-node-communication.md)
     * [Controller](kubernetes-concept/cluster-architecture/controller.md)
+    * [Cloud Controller Manager](kubernetes-concept/cluster-architecture/cloud-controller-manager.md)
   * [Containers](kubernetes-concept/containers.md)
   * [Workloads](kubernetes-concept/workloads.md)
   * [Service-LB-Networking](kubernetes-concept/service-lb-networking.md)
