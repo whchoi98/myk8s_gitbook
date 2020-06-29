@@ -10,13 +10,13 @@
 
 쿠버네티스에서 컨트롤러는 [클러스터](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-cluster) 의 상태를 관찰 한 다음, 필요한 경우에 생성 또는 변경을 요청하는 컨트롤 루프이다. 각 컨트롤러는 현재 클러스터 상태를 의도한 상태에 가깝게 이동한다.
 
-### 컨트롤러 패턴 <a id="&#xCEE8;&#xD2B8;&#xB864;&#xB7EC;-&#xD328;&#xD134;"></a>
+## 컨트롤러 패턴
 
 컨트롤러는 적어도 하나 이상의 쿠버네티스 리소스 유형을 추적한다. 이 [오브젝트](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/kubernetes-objects/#kubernetes-objects) 는 의도한 상태를 표현하는 사양 필드를 가지고 있다. 해당 리소스의 컨트롤러\(들\)은 현재 상태를 의도한 상태에 가깝게 만드는 역할을 한다.
 
 컨트롤러는 스스로 작업을 수행할 수 있다. 보다 일반적으로, 쿠버네티스에서는 컨트롤러가 [API 서버](https://kubernetes.io/docs/reference/generated/kube-apiserver/) 로 유용한 부수적인 효과가 있는 메시지를 발송한다. 그 예시는 아래에서 볼 수 있다.
 
-#### API 서버를 통한 제어 <a id="api-&#xC11C;&#xBC84;&#xB97C;-&#xD1B5;&#xD55C;-&#xC81C;&#xC5B4;"></a>
+### API 서버를 통한 제어
 
 [잡\(Job\)](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion) 컨트롤러는 쿠버네티스 내장 컨트롤러의 예시이다. 내장 컨트롤러는 클러스터 API 서버와 상호 작용하며 상태를 관리한다.
 
@@ -32,7 +32,7 @@
 
 \(이것은 지금 방 온도가 설정한 온도인 것을 표시하기 위해 실내 온도 조절기의 빛을 끄는 것과 약간 비슷하다\).
 
-#### 직접 제어 <a id="&#xC9C1;&#xC811;-&#xC81C;&#xC5B4;"></a>
+### 직접 제어
 
 잡과는 대조적으로, 일부 컨트롤러는 클러스터 외부의 것을 변경해야 할 필요가 있다.
 
@@ -42,7 +42,7 @@
 
 \(실제로 클러스터의 노드를 수평으로 확장하는 컨트롤러가 있다. [클러스터 오토스케일링](https://kubernetes.io/ko/docs/tasks/administer-cluster/cluster-management/#%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%EC%98%A4%ED%86%A0%EC%8A%A4%EC%BC%80%EC%9D%BC%EB%A7%81)을 본다.\)
 
-### 원하는 상태와 현재 상태 <a id="desired-vs-current"></a>
+## 원하는 상태와 현재 상태
 
 쿠버네티스는 클라우드-네이티브 관점에서 시스템을 관찰하며, 지속적인 변화에 대응할 수 있다.
 
@@ -50,26 +50,21 @@
 
 클러스터의 컨트롤러가 실행 중이고 유용한 변경을 수행할 수 있는 한, 전체 상태가 안정적인지 아닌지는 중요하지 않다.
 
-### 디자인 <a id="&#xB514;&#xC790;&#xC778;"></a>
+## 디자인
 
 디자인 원리에 따라, 쿠버네티스는 클러스터 상태의 각 특정 측면을 관리하는 많은 컨트롤러를 사용한다. 가장 일반적으로, 특정 컨트롤 루프 \(컨트롤러\)는 의도한 상태로서 한 종류의 리소스를 사용하고, 의도한 상태로 만들기 위해 다른 종류의 리소스를 관리한다. 예를 들어, 잡 컨트롤러는 잡 오브젝트\(새 작업을 발견하기 위해\)와 파드 오브젝트\(잡을 실행하고, 완료된 시기를 확인하기 위해\)를 추적한다. 이 경우 파드는 잡 컨트롤러가 생성하는 반면, 잡은 다른 컨트롤러가 생성한다.
 
 컨트롤 루프들로 연결 구성된 하나의 모놀리식\(monolithic\) 집합보다, 간단한 컨트롤러를 여러 개 사용하는 것이 유용하다. 컨트롤러는 실패할 수 있으므로, 쿠버네티스는 이를 허용하도록 디자인되었다.
 
-> **참고:** 동일한 종류의 오브젝트를 만들거나 업데이트하는 여러 컨트롤러가 있을 수 있다. 이면에, 쿠버네티스 컨트롤러는 컨트롤 하고 있는 리소스에 연결된 리소스에만 주의를 기울인다. 예를 들어, 디플로이먼트와 잡을 가지고 있다. 이 두 가지 모두 파드를 생성한다. 잡 컨트롤러는 디플로이먼트가 생성한 파드를 삭제하지 않는다. 이는 컨트롤러가 해당 파드를 구별하기 위해 사용할 수 있는 정보\([레이블](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/labels)\)가 있기 때문이다.
+{% hint style="info" %}
+**참고:** 동일한 종류의 오브젝트를 만들거나 업데이트하는 여러 컨트롤러가 있을 수 있다. 이면에, 쿠버네티스 컨트롤러는 컨트롤 하고 있는 리소스에 연결된 리소스에만 주의를 기울인다. 예를 들어, 디플로이먼트와 잡을 가지고 있다. 이 두 가지 모두 파드를 생성한다. 잡 컨트롤러는 디플로이먼트가 생성한 파드를 삭제하지 않는다. 이는 컨트롤러가 해당 파드를 구별하기 위해 사용할 수 있는 정보\([레이블](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/labels)\)가 있기 때문이다.
+{% endhint %}
 
-### 컨트롤러를 실행하는 방법 <a id="running-controllers"></a>
+## 컨트롤러를 실행하는 방법
 
 쿠버네티스에는 [kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) 내부에서 실행되는 내장된 컨트롤러 집합이 있다. 이 내장 컨트롤러는 중요한 핵심 동작을 제공한다.
 
 디플로이먼트 컨트롤러와 잡 컨트롤러는 쿠버네티스의 자체\("내장" 컨트롤러\)로 제공되는 컨트롤러 예시이다. 쿠버네티스를 사용하면 복원력이 뛰어난 컨트롤 플레인을 실행할 수 있으므로, 어떤 내장 컨트롤러가 실패하더라도 다른 컨트롤 플레인의 일부가 작업을 이어서 수행한다.
 
 컨트롤 플레인의 외부에서 실행하는 컨트롤러를 찾아서 쿠버네티스를 확장할 수 있다. 또는, 원하는 경우 새 컨트롤러를 직접 작성할 수 있다. 소유하고 있는 컨트롤러를 파드 집합으로서 실행하거나, 또는 쿠버네티스 외부에서 실행할 수 있다. 가장 적합한 것은 특정 컨트롤러의 기능에 따라 달라진다.
-
-### 다음 내용 <a id="&#xB2E4;&#xC74C;-&#xB0B4;&#xC6A9;"></a>
-
-* [쿠버네티스 컨트롤 플레인](https://kubernetes.io/ko/docs/concepts/#%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%EC%BB%A8%ED%8A%B8%EB%A1%A4-%ED%94%8C%EB%A0%88%EC%9D%B8)에 대해 읽기
-* [쿠버네티스 오브젝트](https://kubernetes.io/ko/docs/concepts/#%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%EC%98%A4%EB%B8%8C%EC%A0%9D%ED%8A%B8)의 몇 가지 기본 사항을 알아보자.
-* [쿠버네티스 API](https://kubernetes.io/ko/docs/concepts/overview/kubernetes-api/)에 대해 더 배워 보자.
-* 만약 자신만의 컨트롤러를 작성하기 원한다면, 쿠버네티스 확장하기의 [확장 패턴](https://kubernetes.io/ko/docs/concepts/extend-kubernetes/extend-cluster/#%EC%9D%B5%EC%8A%A4%ED%85%90%EC%85%98-%ED%8C%A8%ED%84%B4)을 본다.
 
