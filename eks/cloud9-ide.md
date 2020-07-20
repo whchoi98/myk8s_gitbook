@@ -18,13 +18,13 @@ Cloud9 의 이름과 Description을 설정합니다.
 
 인스턴스 타입과 운영체제, 그리고 절전모드 환경을 선택합니다. 절전모드 환경은 기본 30분입니다.
 
-![](../.gitbook/assets/image%20%2821%29.png)
+![](../.gitbook/assets/image%20%2825%29.png)
 
 ### 3. Cloud9 터미널 접속
 
 Cloud9 터미널에 접속하여, EKS Workshop 터미널  IDE 환경을 살펴봅니다.
 
-![](../.gitbook/assets/image%20%284%29.png)
+![](../.gitbook/assets/image%20%285%29.png)
 
 ## AWS CLI 설치
 

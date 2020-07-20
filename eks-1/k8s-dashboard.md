@@ -38,6 +38,19 @@ metrics-server   1/1     1            1           57s
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.3/aio/deploy/recommended.yaml
 ```
 
+배포된 서비스들을 확인합니다.
+
+```text
+kubectl -n kubernetes-dashboard get svc -o wide
+```
+
+```text
+whchoi98:~/environment $ kubectl -n kubernetes-dashboard get svc -o wide                                                    
+NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE   SELECTOR
+dashboard-metrics-scraper   ClusterIP   172.20.230.33    <none>        8000/TCP   28h   k8s-app=dashboard-metrics-scraper
+kubernetes-dashboard        ClusterIP   172.20.122.109   <none>        443/TCP    28h   k8s-app=kubernetes-dashboard
+```
+
 ### 3.권한 설정
 
 기본적으로 Kubernetes 대시보드 사용자의 권한은 제한되어 있습니다. eks-admin 서비스 계정 및 클러스터 역할 바인딩을 생성하고, 이를 사용하여 관리자 수준 권한으로 대시보드에 보안 연결할 수 있습니다. 
@@ -111,9 +124,29 @@ kubernetes dashboard는 ClusterIP 타입으로 서비스 배포됩니다. Cluste
 
 아래 그림은 Kubernetes 대쉬보드의 접속 방식에 대한 도식입니다.
 
-![](../.gitbook/assets/image%20%2812%29.png)
+![](../.gitbook/assets/image%20%2815%29.png)
 
+외부에서 접속되지 않으므로, Cloud9 IDE에서 Preview를 통해 Proxy로 접속합니다.
 
+Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
 
+![](../.gitbook/assets/image%20%289%29.png)
 
+생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
+
+![](../.gitbook/assets/image%20%281%29.png)
+
+생성된 윈도우에서 아래 Path를 복사해서 뒤에 붙여 넣습니다.
+
+```text
+/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+```
+
+앞서 생성한 eks-admin 토큰 값을 Kubernettes Dashboard에 입력합니다.
+
+![](../.gitbook/assets/image%20%2817%29.png)
+
+정상적으로 생성된 것을 확인합니다.
+
+![](../.gitbook/assets/image%20%2811%29.png)
 
