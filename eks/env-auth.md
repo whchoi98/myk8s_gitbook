@@ -74,5 +74,40 @@ rm -vf ${HOME}/.aws/credentials
 Cloud9 생성에서 Network 설정을 하지 않았다면, Default VPC - Public Subnet에 Cloud 9 인스턴스는 배치됩니다.
 {% endhint %}
 
+5. Cloud9 IDE 역할 점검
+
+Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다.
+
+```text
+aws sts get-caller-identity --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
+```
+
+6. Shell 환경변수 저장
+
+Account ID, Region 정보 등을 환경변수와 프로파일에 저장해 두고, EKSworkshop 에서 사용합니다.
+
+```text
+export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+test -n "$AWS_REGION" && echo AWS_REGION is "$AWS_REGION" || echo AWS_REGION is not set
+```
+
+bash\_profile에 저장합니다.
+
+```text
+echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
+echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
+aws configure set default.region ${AWS_REGION}
+aws configure get default.region
+```
+
+출력결과 예제는 아래와 같습니다.
+
+```text
+export ACCOUNT_ID=xxxxxxxx
+export AWS_REGION=ap-northeast-2
+ap-northeast-2
+```
+
 
 
