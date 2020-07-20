@@ -24,7 +24,7 @@
   * [Extending Kubernetes](kubernetes-concept/extending-kubernetes.md)
 * [EKS 환경 구성](eks/README.md)
   * [Cloud9 IDE 환경 구성](eks/cloud9-ide.md)
-* [VPC구성과 eksctl 기반 설치](vpc-eksctl.md)
+  * [VPC구성과 eksctl 기반 설치](eks/vpc-eksctl.md)
 * [EKS 기반 배포](eks-1.md)
 * [EKS 기반 관리](eks-2/README.md)
   * [Helm](eks-2/helm.md)
