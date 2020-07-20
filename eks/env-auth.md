@@ -109,5 +109,49 @@ export AWS_REGION=ap-northeast-2
 ap-northeast-2
 ```
 
+## SSH 키 생성
 
+eksworkshop에서 사용될 키를 생성합니다.
+
+1.SSH Key 생성
+
+Cloud9에서 ssh key를 생성합니다.
+
+```text
+ssh-keygen
+```
+
+아래는 예제입니다.key 이름을 eskworkshop으로 생성하였습니다.
+
+```text
+ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/ec2-user/.ssh/id_rsa): eksworkshop
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in eksworkshop.
+Your public key has been saved in eksworkshop.pub.
+The key fingerprint is:
+SHA256:zAcvK4NFMkIaB4Vh507xv6LsYX/GMhXdb50TBZQasYE ec2-user@ip-172-31-41-2
+The key's randomart image is:
++---[RSA 2048]----+
+|+*+o       .oooo |
+|o=o o     E .o. .|
+|. .oo.. o . .o  .|
+|  o. +.+ + ..  . |
+|   .  ..S o . . o|
+|     o ..+   o + |
+|   o..=..   .   .|
+|  o +o.*         |
+|  .+ .=          |
++----[SHA256]——+
+```
+
+2.ssh key 전송
+
+생성된 SSH key를  Key 페어로 전송합니다. 앞서 eksworkshop.pub 로 public key가 생성되었습니다.
+
+```text
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
+```
 
