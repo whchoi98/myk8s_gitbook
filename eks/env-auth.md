@@ -8,7 +8,7 @@
 
 IAM 서비스 대쉬보드 접속 및 역할\(Role\) 생성을 합니다. AWS 서비스에서 IAM을 선택하고, "역할 만들기"를 선택합니다.
 
-![](../.gitbook/assets/image%20%2824%29.png)
+![](../.gitbook/assets/image%20%2825%29.png)
 
 ### 2.역할\(Role\)을 만듭니다.
 
@@ -20,7 +20,7 @@ EC2 - 다음: 권한
 
 권한정책 연결에서 "AdministartorAccess"를 선택합니다.
 
-![](../.gitbook/assets/image%20%2820%29.png)
+![](../.gitbook/assets/image%20%2821%29.png)
 
 역할 이름 생성 및 정책 연결을 확인합니다.
 
@@ -30,13 +30,13 @@ EC2 - 다음: 권한
 eksworkshop-admin
 ```
 
-![](../.gitbook/assets/image%20%2823%29.png)
+![](../.gitbook/assets/image%20%2824%29.png)
 
 ### 3.Cloud9 권한 설정.
 
 Cloud9 상단 좌측 메뉴에서 EC2 대쉬보드로 접속을 선택하거나, AWS 서비스에서 EC2 대쉬보드로 접속합니다.
 
-![](../.gitbook/assets/image%20%2821%29.png)
+![](../.gitbook/assets/image%20%2822%29.png)
 
 EC2 대쉬보드의 인스턴스에는 이미 생성된 Cloud9 EC2 인스턴스가 보입니다.
 

@@ -4,7 +4,7 @@
 
 그외에 NodePort 타입으로도 구성이 가능합니다. 아래는 NodePort 타입으로 구성하는 아키텍쳐입니다. 
 
-![](../.gitbook/assets/image%20%285%29.png)
+
 
 
 
