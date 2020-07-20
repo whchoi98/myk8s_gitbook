@@ -94,7 +94,7 @@ kubectl version --short --client
 Client Version: v1.16.8-eks-e16311
 ```
 
-### 5.kubectl 자동완성 설
+### 5.kubectl 자동완성 설치 
 
 {% hint style="info" %}
 kubectl은 Bash 및 Zsh에 대한 자동 완성 지원을 제공하므로 입력을 위한 타이핑을 많이 절약할 수 있습니다.
