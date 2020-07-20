@@ -32,7 +32,7 @@ git clone https://github.com/whchoi98/myeks.git
 
 Cloud9 IDE 편집기에서 아래와 같이 수정합니다. 수정내용은 현재 생성된 VPC, Subnet ID , key 위치 입니다.
 
-![](../.gitbook/assets/image%20%283%29.png)
+![](../.gitbook/assets/image%20%284%29.png)
 
 수정할 블록의 예시입니다.
 
