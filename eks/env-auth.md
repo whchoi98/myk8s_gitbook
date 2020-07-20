@@ -8,7 +8,7 @@
 
 IAM 서비스 대쉬보드 접속 및 역할\(Role\) 생성을 합니다. AWS 서비스에서 IAM을 선택하고, "역할 만들기"를 선택합니다.
 
-![](../.gitbook/assets/image%20%2810%29.png)
+![](../.gitbook/assets/image%20%2811%29.png)
 
 ### 2.역할\(Role\)을 만듭니다.
 
@@ -20,7 +20,7 @@ EC2 - 다음: 권한
 
 권한정책 연결에서 "AdministartorAccess"를 선택합니다.
 
-![](../.gitbook/assets/image%20%287%29.png)
+![](../.gitbook/assets/image%20%288%29.png)
 
 역할 이름 생성 및 정책 연결을 확인합니다.
 
@@ -30,19 +30,19 @@ EC2 - 다음: 권한
 eksworkshop-admin
 ```
 
-![](../.gitbook/assets/image%20%289%29.png)
+![](../.gitbook/assets/image%20%2810%29.png)
 
 ### 3.Cloud9 권한 설정.
 
 Cloud9 상단 좌측 메뉴에서 EC2 대쉬보드로 접속을 선택하거나, AWS 서비스에서 EC2 대쉬보드로 접속합니다.
 
-![](../.gitbook/assets/image%20%288%29.png)
+![](../.gitbook/assets/image%20%289%29.png)
 
 EC2 대쉬보드의 인스턴스에는 이미 생성된 Cloud9 EC2 인스턴스가 보입니다.
 
 "작업"-"인스턴스 설정"-"IAM 역할 연결/바꾸기"를 선택합니다.
 
-![](../.gitbook/assets/image%20%285%29.png)
+![](../.gitbook/assets/image%20%286%29.png)
 
 앞서 생성한 IAM 역할 **"eksworkshop-admin"**을 선택합니다.
 
@@ -50,7 +50,7 @@ EC2 대쉬보드의 인스턴스에는 이미 생성된 Cloud9 EC2 인스턴스�
 
 정상적으로 Cloud9 IDE의 IAM 역할이 정상적으로 연결되었는지 확인합니다.
 
-![](../.gitbook/assets/image%20%286%29.png)
+![](../.gitbook/assets/image%20%287%29.png)
 
 ### 4. 기존자격 증명 파일 제거
 
@@ -113,7 +113,7 @@ ap-northeast-2
 
 eksworkshop에서 사용될 키를 생성합니다.
 
-1.SSH Key 생성
+### 1.SSH Key 생성
 
 Cloud9에서 ssh key를 생성합니다.
 
@@ -147,11 +147,15 @@ The key's randomart image is:
 +----[SHA256]——+
 ```
 
-2.ssh key 전송
+### 2.ssh key 전송
 
 생성된 SSH key를  Key 페어로 전송합니다. 앞서 eksworkshop.pub 로 public key가 생성되었습니다.
 
 ```text
 aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
 ```
+
+생성된 key를 "AWS 서비스" - "EC2 대시보드" 에서 확인합니다.
+
+![](../.gitbook/assets/image%20%285%29.png)
 
