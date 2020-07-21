@@ -235,7 +235,7 @@ Events:
   Normal  ScalingReplicaSet  21m   deployment-controller  Scaled up replica set eksworkshop-nginx-79bfdcd875 to 1
 ```
 
-5. Helm을 통한 nginx 삭제
+### 5. Helm을 통한 nginx 삭제
 
 아래 명령을 통해 생성된 Helm을 삭제합니다.
 
