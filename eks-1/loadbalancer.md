@@ -246,7 +246,7 @@ metadata:
 이하 생략
 ```
 
-2. LB 서비스 제거와 NLB 서비스 배포
+### 2. LB 서비스 제거와 NLB 서비스 배포
 
 ```text
 kubectl delete -f ./ecsdemo-frontend/kubernetes/service.yaml
