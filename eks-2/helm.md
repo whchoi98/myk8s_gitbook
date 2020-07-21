@@ -654,9 +654,49 @@ deployment.apps/ecsdemo-frontend   3/3     3            3           2m44s   ecsd
 deployment.apps/ecsdemo-nodejs     3/3     3            3           2m44s   ecsdemo-nodejs     brentley/ecsdemo-nodejs:latest     app=ecsdemo-nodejs
 ```
 
+### 4. 서비스 확인
 
+아래 명령을 통해 service loadbalancer\(ELB\) 의 DNS name을 확인합니다.
 
+```text
+kubectl -n helm-chart-demo get svc ecsdemo-frontend
+```
 
+출력 결과 예시
+
+```text
+whchoi98:~/environment $ kubectl -n helm-chart-demo get svc ecsdemo-frontend
+NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                                                                   PORT(S)        AGE
+ecsdemo-frontend   LoadBalancer   172.20.195.10   a6ad6b49efa9a426d86ce1779cee31f6-759353285.ap-northeast-2.elb.amazonaws.com   80:31738/TCP   6m3s
+```
+
+정상적으로 서비스에 접속되는 것을 확인 할 수 있습니다.
+
+![](../.gitbook/assets/image%20%2849%29.png)
+
+helm list에도 정상적으로 등록되어 있는지 확인합니다.
+
+```text
+helm list 
+```
+
+출력 결과 예
+
+```text
+whchoi98:~/environment $ helm list 
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+helmdemo        default         1               2020-07-21 17:27:53.828241377 +0000 UTC deployed        eksdemo-0.1.0   1          
+```
+
+### 5. Rolling Back 구성
+
+배포 중에 이슈가 발생하더라도, Helm을 사용하면 손쉽게 이전 배포 버전으로 Rolling back 할 수 있습니다. 앞서 출력결과에서 "Revision" 값이 "1"인 것을 확인했습니다. 이제 helm Chart를 변경하고 업데이트 한 이후 , 다시 Rollback 하는 과정을 수행하겠습니다.
+
+먼저 helm Chart의 Value를 변경합니다. values.yaml을 다시 열고, Cloud9 IDE 편집기에서 nodejs.image 값을 아래와 같이 수정합니다.
+
+```text
+brentley / ecsdemo-nodejs-non-existing
+```
 
   
   
