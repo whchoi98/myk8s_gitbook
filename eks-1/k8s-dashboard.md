@@ -124,7 +124,7 @@ kubernetes dashboard는 ClusterIP 타입으로 서비스 배포됩니다. Cluste
 
 아래 그림은 Kubernetes 대쉬보드의 접속 방식에 대한 도식입니다.
 
-![](../.gitbook/assets/image%20%2827%29.png)
+![](../.gitbook/assets/image%20%2828%29.png)
 
 외부에서 접속되지 않으므로, Cloud9 IDE에서 Preview를 통해 Proxy로 접속합니다.
 
@@ -144,7 +144,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 앞서 생성한 eks-admin 토큰 값을 Kubernettes Dashboard에 입력합니다.
 
-![](../.gitbook/assets/image%20%2826%29.png)
+![](../.gitbook/assets/image%20%2827%29.png)
 
 정상적으로 생성된 것을 확인합니다.
 

@@ -17,7 +17,7 @@
 7. **ALB Ingress 배포.**
 8. **ALB DNS로 접속 확인.**
 
-\*\*\*\*
+![&#xCC38;&#xC870; - https://aws.amazon.com/ko/blogs/opensource/kubernetes-ingress-aws-alb-ingress-controller/](../.gitbook/assets/image%20%2821%29.png)
 
 ### 1.IAM Policy 생성
 
@@ -339,11 +339,11 @@ NAME           HOSTS   ADDRESS                                                  
 
 ALB 생성된 것을 확인합니다.
 
-![](../.gitbook/assets/image%20%2839%29.png)
+![](../.gitbook/assets/image%20%2840%29.png)
 
 브라우저를 열고 2040 앱 실행을 확인합니다.
 
-![](../.gitbook/assets/image%20%2836%29.png)
+![](../.gitbook/assets/image%20%2837%29.png)
 
 k9s를 통해 App배포를 확인합니다.
 
@@ -351,7 +351,7 @@ k9s를 통해 App배포를 확인합니다.
 k9s -n 2048-game
 ```
 
-![](../.gitbook/assets/image%20%2833%29.png)
+![](../.gitbook/assets/image%20%2834%29.png)
 
 다음 kubectl 명령으로 구성된 정보를 모두 확인 할 수 있습니다.
 

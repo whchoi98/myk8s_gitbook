@@ -219,7 +219,7 @@ service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Defa
 
 웹브라우져를 통해서 CLB의 DNS 주소를 입력하면 실시간으로 로드밸런싱이 되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2834%29.png)
+![](../.gitbook/assets/image%20%2835%29.png)
 
 ## NLB기반 Loadbalancer 서비스 구성.
 
@@ -271,7 +271,7 @@ NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                  
 ecsdemo-frontend   LoadBalancer   172.20.107.192   ab5d562f4b56a4377a21c0ea77b2012b-ce7a720d51b7c7fa.elb.ap-northeast-2.amazonaws.com   80:30712/TCP   42s   app=ecsdemo-frontend
 ```
 
-![](../.gitbook/assets/image%20%2838%29.png)
+![](../.gitbook/assets/image%20%2839%29.png)
 
 
 

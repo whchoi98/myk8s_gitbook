@@ -20,23 +20,23 @@ AWS 서비스 - Cloudformation 을 선택합니다.
 
 "스택생성" - "새 리소스 사용"을 선택합니다.
 
-![](../.gitbook/assets/image%20%2840%29.png)
+![](../.gitbook/assets/image%20%2841%29.png)
 
 앞서 다운로드 받은 EKSVPC.yml 파일을 선택해서 업로드합니다.
 
-![](../.gitbook/assets/image%20%2821%29.png)
+![](../.gitbook/assets/image%20%2822%29.png)
 
 ### 3. Stack 상세 정보 구성
 
 Cloudformation Stack 상세 정보 구성을 합니다.
 
-![](../.gitbook/assets/image%20%2822%29.png)
+![](../.gitbook/assets/image%20%2823%29.png)
 
 ![](../.gitbook/assets/image%20%287%29.png)
 
 생성이 완료되었는지 확인합니다.
 
-![](../.gitbook/assets/image%20%2831%29.png)
+![](../.gitbook/assets/image%20%2832%29.png)
 
 4.Output 정보 확인
 
@@ -46,5 +46,5 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 이 값을 따로 저장해 둡니다.
 
-![](../.gitbook/assets/image%20%2837%29.png)
+![](../.gitbook/assets/image%20%2838%29.png)
 
