@@ -45,6 +45,7 @@ Stable한 저장소를 다운로드하여 아래와 같이 구성합니다.
 
 ```text
 helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo update
 ```
 
 설치 한 이후에는 설치 가능한 차트를 아래와 같은 명령으로 검색할 수 있습니다.
