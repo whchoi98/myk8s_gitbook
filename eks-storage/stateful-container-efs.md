@@ -1,2 +1,2 @@
-# Stateful Container - EFS
+# Stateful Container-EFS
 
