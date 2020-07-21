@@ -695,10 +695,137 @@ helmdemo        default         1               2020-07-21 17:27:53.828241377 +0
 먼저 helm Chart의 Value를 변경합니다. values.yaml을 다시 열고, Cloud9 IDE 편집기에서 nodejs.image 값을 아래와 같이 수정합니다.
 
 ```text
-brentley / ecsdemo-nodejs-non-existing
+brentley/ecsdemo-nodejs-non-existing
 ```
 
-  
-  
+변경 후 File 내용 확인 \(values.yaml\)
 
+```text
+replicas: 3
+version: latest
+nodejs:
+  image: brentley/ecsdemo-nodejs-non-existing
+crystal:
+  image: brentley/ecsdemo-crystal
+frontend:
+  image: brentley/ecsdemo-frontend
+```
+
+"values.yaml" 파일이 모두 수정되었으면, helm을 upgrade 합니다.
+
+```text
+helm upgrade helmdemo ~/environment/eksdemo
+```
+
+출력 결과 예시
+
+```text
+whchoi98:~/environment $ helm upgrade helmdemo ~/environment/eksdemo
+Release "helmdemo" has been upgraded. Happy Helming!
+NAME: helmdemo
+LAST DEPLOYED: Tue Jul 21 17:48:46 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+```
+
+{% hint style="warning" %}
+helm chart로 배포한 Revision이 "2"로 변경되었습니다.
+{% endhint %}
+
+정상적으로 배포되었는 지 확인합니다.
+
+```text
+kubectl -n helmdemo get pods
+```
+
+아래와 같이 이미지가 잘못 구성된 "nodejs" pod가 에러가 발생합니다.
+
+```text
+whchoi98:~/environment $ kubectl -n helm-chart-demo get pods                                                                                                                                   
+NAME                                READY   STATUS             RESTARTS   AGE
+ecsdemo-crystal-6d5f6f4b47-gpvjh    1/1     Running            0          2m2s
+ecsdemo-crystal-6d5f6f4b47-gtzwp    1/1     Running            0          2m2s
+ecsdemo-crystal-6d5f6f4b47-ls665    1/1     Running            0          2m2s
+ecsdemo-frontend-7f5fddd684-9lb46   1/1     Running            0          2m2s
+ecsdemo-frontend-7f5fddd684-lvrd6   1/1     Running            0          2m2s
+ecsdemo-frontend-7f5fddd684-sb22z   1/1     Running            0          2m2s
+ecsdemo-nodejs-78779f7956-45j7c     0/1     ErrImagePull       0          2m1s
+ecsdemo-nodejs-78779f7956-4smh5     0/1     ErrImagePull       0          2m2s
+ecsdemo-nodejs-78779f7956-gj8w5     0/1     ImagePullBackOff   0          2m2s
+```
+
+문제 해결을 위해 Rollback을 수행합니다.
+
+먼저 현재 helm Chart를 통해 배포된 상태를 확인합니다.
+
+```text
+helm status helmdemo
+```
+
+아래와 같은 결과를 확인 할 수 있습니다.최종 배포시간과 Revision 값을 확인합니다.
+
+```text
+whchoi98:~/environment $ helm status helmdemo 
+NAME: helmdemo
+LAST DEPLOYED: Tue Jul 21 17:48:46 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+```
+
+helm 배포 히스토리를 확인합니다.
+
+```text
+helm history helmdemo
+```
+
+아래와 같은 결과를 확인 할 수 있습니다. Revison을 확인하고, 정상적으로 수행되었던 Revision 값으로 Rollback 할 것입니다.
+
+```text
+whchoi98:~/environment $ helm history helmdemo                                                                                                                                                 
+REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION     
+1               Tue Jul 21 17:27:53 2020        superseded      eksdemo-0.1.0   1               Install complete
+2               Tue Jul 21 17:48:46 2020        deployed        eksdemo-0.1.0   1               Upgrade complete
+```
+
+Rollback 명령을 통해 정상 배포 버전으로 Rolling Back  합니다.
+
+```text
+helm rollback helmdemo 1
+```
+
+이제 배포에 실패했던 nodejs Pod가 정상적으로 배포되었는지 확인합니다.
+
+```text
+kubectl -n helm-chart-demo get pods
+```
+
+아래와 같이 정상적으로 Pod가 배포됩니다.
+
+```text
+whchoi98:~/environment $ kubectl -n helm-chart-demo get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+ecsdemo-crystal-6d5f6f4b47-gpvjh    1/1     Running   0          8m52s
+ecsdemo-crystal-6d5f6f4b47-gtzwp    1/1     Running   0          8m52s
+ecsdemo-crystal-6d5f6f4b47-ls665    1/1     Running   0          8m52s
+ecsdemo-frontend-7f5fddd684-9lb46   1/1     Running   0          8m52s
+ecsdemo-frontend-7f5fddd684-lvrd6   1/1     Running   0          8m52s
+ecsdemo-frontend-7f5fddd684-sb22z   1/1     Running   0          8m52s
+ecsdemo-nodejs-7dd8987798-c72zq     1/1     Running   0          15s
+ecsdemo-nodejs-7dd8987798-q2cp8     1/1     Running   0          11s
+ecsdemo-nodejs-7dd8987798-x5v8s     1/1     Running   0          7s
+```
+
+helm history를 통해 Revision을 확인해 봅니다.
+
+```text
+whchoi98:~/environment $ helm history helmdemo 
+REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION     
+1               Tue Jul 21 17:27:53 2020        superseded      eksdemo-0.1.0   1               Install complete
+2               Tue Jul 21 17:48:46 2020        superseded      eksdemo-0.1.0   1               Upgrade complete
+3               Tue Jul 21 17:57:23 2020        deployed        eksdemo-0.1.0   1               Rollback to 1   
+```
 
