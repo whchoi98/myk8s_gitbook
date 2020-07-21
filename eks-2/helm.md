@@ -14,6 +14,62 @@
 
 헬름은 쿠버네티스 내부에 \_charts\_를 설치하고, 각 설치에 대해 새로운 \_release\_를 생성하고, 새로운 차트를 찾기 위해 헬름 차트 \_repositories\_를 검색할 수 있습니다.
 
+## Helm 설치와 간단한 배포
+
+### 1.Helm 설치
+
+헬름은 헬름 최신 버전을 자동으로 가져와서 [로컬에 설치](https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)하는 인스톨러 스크립트를 제공합니다. 이 스크립트를 받아서 로컬에서 실행할 수 있습니다.
+
+```text
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+정상적으로 설치되었는지 확인합니다.
+
+```text
+helm version --short
+```
+
+ 출력 결과 예시
+
+```text
+whchoi98:~/environment $ helm version --short
+v3.2.4+g0ad800e
+```
+
+### 2. 차트 Repository 구성
+
+Stable한 저장소를 다운로드하여 아래와 같이 구성합니다.
+
+```text
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+```
+
+설치 한 이후에는 설치 가능한 차트를 아래와 같은 명령으로 검색할 수 있습니다.
+
+```text
+helm search repo stable
+```
+
+3. Helm 명령어 자동 완성 구성
+
+Helm 명령에 대한 Bash 자동완성을 구성합니다.
+
+```text
+helm completion bash >> ~/.bash_completion
+. /etc/profile.d/bash_completion.sh
+. ~/.bash_completion
+source <(helm completion bash)
+```
+
+
+
+
+
+## Helm을 이용한 Microservice 배포.
+
 
 
   
