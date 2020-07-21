@@ -14,7 +14,7 @@
 
 ![](../.gitbook/assets/image%20%285%29.png)
 
-## Loadbalancer 서비스 기반 구성
+## 기본 Loadbalancer 서비스 기반 구성
 
 ### 1.배포용 yaml 복제.
 
@@ -29,7 +29,7 @@ git clone https://github.com/brentley/ecsdemo-crystal.git
 
 정상적으로 복제 이후 Cloud9에서 아래와 같이 확인됩니다.
 
-![](../.gitbook/assets/image%20%2816%29.png)
+![](../.gitbook/assets/image%20%2817%29.png)
 
 아래와 같이 새로운 deployment, service를 복사합니다.
 
@@ -203,9 +203,17 @@ k9s
 LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위해서 Cloud9 에서 Terminal을 하나 더 열고 K9s를 실행 시켜 두는 것이 좋습니다.
 {% endhint %}
 
+![](../.gitbook/assets/image%20%2812%29.png)
 
+### 5. Loadbalancer 확인.
 
 이제 서비스 타입을 확인하기 위해서 EC2 대시보드에서 Loadbalancer를 확인합니다.
 
 ![](../.gitbook/assets/image.png)
+
+{% hint style="info" %}
+service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Default로 Classic LB가 구성됩니다.
+{% endhint %}
+
+
 
