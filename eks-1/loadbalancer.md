@@ -161,7 +161,7 @@ NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                   
 ecsdemo-frontend   LoadBalancer   172.20.222.76   a4082a6b75ef24b608a0a6705a2ca35a-1509938170.ap-northeast-2.elb.amazonaws.com   80:30547/TCP   3m39s   app=ecsdemo-frontend
 ```
 
-4. Replicas 구성
+### 4. Replicas 구성
 
 3개 이상의 Replica를 구성하여, Loadbalancer가 정상적으로 동작하는 지 확인합니다.
 
@@ -193,7 +193,15 @@ NAME               READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS         IMA
 ecsdemo-frontend   3/3     3            3           13m   ecsdemo-frontend   brentley/ecsdemo-frontend:latest   app=ecsdemo-frontend
 ```
 
+k9s 를 통해 Pod의 구성을 확인합니다.
 
+```text
+k9s
+```
+
+{% hint style="info" %}
+LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위해서 Cloud9 에서 Terminal을 하나 더 열고 K9s를 실행 시켜 두는 것이 좋습니다.
+{% endhint %}
 
 이제 서비스 타입을 확인하기 위해서 EC2 대시보드에서 Loadbalancer를 확인합니다.
 
