@@ -59,6 +59,7 @@
 * [EKS Storage](eks-storage/README.md)
   * [Stateful Container-EBS](eks-storage/stateful-container.md)
   * [Stateful Container-EFS](eks-storage/stateful-container-efs.md)
+  * [Velero를 통한 Backup](eks-storage/velero-backup.md)
 * [EKS Security](eks-security/README.md)
   * [인증 및 보안](eks-security/undefined.md)
   * [Kube-bench 기반 CIS EKS 벤치마크](eks-security/kube-bench-cis.md)
