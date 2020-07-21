@@ -8,7 +8,7 @@
 
 IAM 서비스 대쉬보드 접속 및 역할\(Role\) 생성을 합니다. AWS 서비스에서 IAM을 선택하고, "역할 만들기"를 선택합니다.
 
-![](../.gitbook/assets/image%20%2832%29.png)
+![](../.gitbook/assets/image%20%2833%29.png)
 
 ### 2.역할\(Role\)을 만듭니다.
 
@@ -16,11 +16,11 @@ EC2 - 다음: 권한
 
 역할 만들기 단계에서 EC2를 선택하고, "다음:권한"을 선택합니다.
 
-![](../.gitbook/assets/image%20%2813%29.png)
+![](../.gitbook/assets/image%20%2814%29.png)
 
 권한정책 연결에서 "AdministartorAccess"를 선택합니다.
 
-![](../.gitbook/assets/image%20%2827%29.png)
+![](../.gitbook/assets/image%20%2828%29.png)
 
 역할 이름 생성 및 정책 연결을 확인합니다.
 
@@ -30,27 +30,27 @@ EC2 - 다음: 권한
 eksworkshop-admin
 ```
 
-![](../.gitbook/assets/image%20%2830%29.png)
+![](../.gitbook/assets/image%20%2831%29.png)
 
 ### 3.Cloud9 권한 설정.
 
 Cloud9 상단 좌측 메뉴에서 EC2 대쉬보드로 접속을 선택하거나, AWS 서비스에서 EC2 대쉬보드로 접속합니다.
 
-![](../.gitbook/assets/image%20%2828%29.png)
+![](../.gitbook/assets/image%20%2829%29.png)
 
 EC2 대쉬보드의 인스턴스에는 이미 생성된 Cloud9 EC2 인스턴스가 보입니다.
 
 "작업"-"인스턴스 설정"-"IAM 역할 연결/바꾸기"를 선택합니다.
 
-![](../.gitbook/assets/image%20%2822%29.png)
+![](../.gitbook/assets/image%20%2823%29.png)
 
 앞서 생성한 IAM 역할 **"eksworkshop-admin"**을 선택합니다.
 
-![](../.gitbook/assets/image%20%2811%29.png)
+![](../.gitbook/assets/image%20%2812%29.png)
 
 정상적으로 Cloud9 IDE의 IAM 역할이 정상적으로 연결되었는지 확인합니다.
 
-![](../.gitbook/assets/image%20%2824%29.png)
+![](../.gitbook/assets/image%20%2825%29.png)
 
 ### 4. 기존자격 증명 파일 제거
 
@@ -62,7 +62,7 @@ Cloud9에서 설정 환경을 아래와 같이 선택합니다.
 
 Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니다.
 
-![](../.gitbook/assets/image%20%2814%29.png)
+![](../.gitbook/assets/image%20%2815%29.png)
 
 임시 자격증명이 설치되지 않도록 기존 자격 증명 파일을 제거합니다.
 
@@ -157,7 +157,7 @@ aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/
 
 생성된 key를 "AWS 서비스" - "EC2 대시보드" 에서 확인합니다.
 
-![](../.gitbook/assets/image%20%2818%29.png)
+![](../.gitbook/assets/image%20%2819%29.png)
 
 ## CMK  생성
 
