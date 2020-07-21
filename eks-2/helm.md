@@ -335,7 +335,65 @@ cp ~/environment/ecsdemo-nodejs/kubernetes/deployment.yaml ~/environment/eksdemo
 cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/eksdemo/templates/service/nodejs.yaml
 ```
 
+아래 파일들을 찾아서, "replicas:1" 값을 변경합니다.
 
+변경할 파일들
+
+```text
+~/environment/eksdemo/templates/deployment/frontend.yaml
+~/environment/eksdemo/templates/deployment/crystal.yaml
+~/environment/eksdemo/templates/deployment/nodejs.yaml
+```
+
+![](../.gitbook/assets/image%20%2848%29.png)
+
+Cloud9 IDE 편집기를 이용해서 3개 파일의 "replicas:1" 값을 변경하고, 저장합니다.
+
+```text
+replicas: {{ .Values.replicas }}
+```
+
+추가로 3개 파일의 "image: 'brentley/ecsdemo-xxx' 을 찾아서, 아래와 같이 변경합니다.
+
+~/environment/eksdemo/templates/deployment/frontend.yaml
+
+```text
+- image: {{ .Values.frontend.image }}:{{ .Values.version }}
+```
+
+~/environment/eksdemo/templates/deployment/crystal.yaml
+
+```text
+- image: {{ .Values.crystal.image }}:{{ .Values.version }}
+```
+
+~/environment/eksdemo/templates/deployment/nodejs.yaml
+
+```text
+- image: {{ .Values.nodejs.image }}:{{ .Values.version }}
+```
+
+이제 values.yaml을 생성하고, Values 들에 대한 값을 정의합니다.
+
+```text
+cat <<EoF > ~/environment/eksdemo/values.yaml
+# Default values for eksdemo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Release-wide Values
+replicas: 3
+version: 'latest'
+
+# Service Specific Values
+nodejs:
+  image: brentley/ecsdemo-nodejs
+crystal:
+  image: brentley/ecsdemo-crystal
+frontend:
+  image: brentley/ecsdemo-frontend
+EoF
+```
 
 
 
