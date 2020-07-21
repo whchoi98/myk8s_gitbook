@@ -256,6 +256,91 @@ ELB 삭제 시간으로 3분 정도 소요됩니다.
 
 ## Helm을 이용한 Microservice 배포.
 
+### 1.Chart 만들기
+
+helmdemo 라는 Chart를 생성합니다.
+
+```text
+cd ~/environment/
+helm create eksdemo
+```
+
+Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성합니다.
+
+```text
+whchoi98:~/environment/eksdemo $ tree 
+.
+├── charts
+├── Chart.yaml
+├── templates
+│   ├── deployment.yaml
+│   ├── _helpers.tpl
+│   ├── hpa.yaml
+│   ├── ingress.yaml
+│   ├── NOTES.txt
+│   ├── serviceaccount.yaml
+│   ├── service.yaml
+│   └── tests
+│       └── test-connection.yaml
+└── values.yaml
+```
+
+* `deployment.yaml`: Kubernetes 배포를 만들기위한 기본 목록
+* `_helpers.tpl`: 차트 전체에서 재사용 할 수있는 템플릿 도우미를 배치 할 수있는 장소
+* `ingress.yaml`: service를 위한 Kubernetes ingress object 생성을 위한 기본 목록
+* `NOTES.txt`: 차트의“도움말 텍스트”. 사용자가 Helm Install을 실행할 때 이 정보가 표시됩니다.
+* `serviceaccount.yaml`: 서비스 계정을 만들기위한 기본 목록입니다.
+* `service.yaml`: Depolyment 를 위한 서비스 엔드 포인트 작성을 기본 목록
+* `tests/`: 차트 테스트가 포함 된 폴더
+
+### 2. Chart 사용자 정의
+
+새로운 Chart구성을 위해 기본 생성된 파일들을 삭제합니다.
+
+```text
+rm -rf ~/environment/eksdemo/templates/
+rm ~/environment/eksdemo/Chart.yaml
+rm ~/environment/eksdemo/values.yaml
+```
+
+다음 코드 블록을 실행하여 새로운 chart.yaml 파일을 생성합니다.
+
+```text
+cat <<EoF > ~/environment/eksdemo/Chart.yaml
+apiVersion: v2
+name: eksdemo
+description: A Helm chart for EKS Workshop Microservices application
+version: 0.1.0
+appVersion: 1.0
+EoF
+```
+
+앞서 microservice 어플리케이션 매니페스트 파일들을 servicename.yaml로 템플릿 디렉토리에 복사합니다.
+
+```text
+# 각 템플릿 타입을 위한 서브 폴더 생성 
+mkdir -p ~/environment/eksdemo/templates/deployment
+mkdir -p ~/environment/eksdemo/templates/service
+
+# frontend manifests 복사 
+cp ~/environment/ecsdemo-frontend/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/frontend.yaml
+cp ~/environment/ecsdemo-frontend/kubernetes/service.yaml ~/environment/eksdemo/templates/service/frontend.yaml
+
+# crystal manifests 복사 
+cp ~/environment/ecsdemo-crystal/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/crystal.yaml
+cp ~/environment/ecsdemo-crystal/kubernetes/service.yaml ~/environment/eksdemo/templates/service/crystal.yaml
+
+# nodejs manifests 복사 
+cp ~/environment/ecsdemo-nodejs/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/nodejs.yaml
+cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/eksdemo/templates/service/nodejs.yaml
+```
+
+
+
+
+
+
+
 
 
 
