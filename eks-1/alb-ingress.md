@@ -6,13 +6,18 @@
 
 ## ALB Ingress 구성
 
-1. **ALB Ingress Controller 를 위한 IAM Policy 생성**
-2. **RABAC 역할 생성과 바인딩**
-3. **ALBIngress Controller IAM Policy 정책 부여**
+아래와 같은 구성 단계로 ALB Ingress를 구성합니다.
+
+1. **ALB Ingress Controller 를 위한 IAM Policy 생성.**
+2. **RABAC 역할 생성과 바인딩.**
+3. **ALBIngress Controller IAM Policy 정책 부여.**
 4. **ALB Ingress 컨트롤러 포드에 권한 부여.**
-5. **ALB Ingress Controller 포드 배포**
-6. **샘플 App/namespace/Pod/Service 배포**
-7. \*\*\*\*
+5. **ALB Ingress Controller 포드 배포.**
+6. **샘플 App/namespace/Pod/Service 배포.**
+7. **ALB Ingress 배포.**
+8. **ALB DNS로 접속 확인.**
+
+\*\*\*\*
 
 ### 1.IAM Policy 생성
 
@@ -330,5 +335,50 @@ NAME           HOSTS   ADDRESS                                                  
 2048-ingress   *       546056ac-2048game-2048ingr-6fa0-1286541160.ap-northeast-2.elb.amazonaws.com   80      12m
 ```
 
+### 8.서비스 확인
 
+ALB 생성된 것을 확인합니다.
+
+![](../.gitbook/assets/image%20%2839%29.png)
+
+브라우저를 열고 2040 앱 실행을 확인합니다.
+
+![](../.gitbook/assets/image%20%2836%29.png)
+
+k9s를 통해 App배포를 확인합니다.
+
+```text
+k9s -n 2048-game
+```
+
+![](../.gitbook/assets/image%20%2833%29.png)
+
+다음 kubectl 명령으로 구성된 정보를 모두 확인 할 수 있습니다.
+
+```text
+kubectl -n kube-system get pods | grep 'ingress'
+kubectl get ingresses.extensions -n 2048-game
+kubectl get svc -o wide -n 2048-game
+kubectl get pod -o wide -n 2048-game 
+```
+
+출력 결과 예제
+
+```text
+whchoi98:~/environment $ kubectl -n kube-system get pods | grep 'ingress'
+alb-ingress-controller-5bb796df77-kmtwc   1/1     Running   0          23h
+whchoi98:~/environment $ kubectl get ingresses.extensions -n 2048-game
+NAME           HOSTS   ADDRESS                                                                       PORTS   AGE
+2048-ingress   *       546056ac-2048game-2048ingr-6fa0-1286541160.ap-northeast-2.elb.amazonaws.com   80      23h
+whchoi98:~/environment $ kubectl get svc -o wide -n 2048-game
+NAME           TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+service-2048   NodePort   172.20.174.86   <none>        80:31366/TCP   23h   app=2048
+whchoi98:~/environment $ kubectl get pod -o wide -n 2048-game 
+NAME                              READY   STATUS    RESTARTS   AGE   IP              NODE                                               NOMINATED NODE   READINESS GATES
+2048-deployment-dd74cc68d-65shq   1/1     Running   0          23h   10.11.35.89     ip-10-11-53-186.ap-northeast-2.compute.internal    <none>           <none>
+2048-deployment-dd74cc68d-j28zx   1/1     Running   0          23h   10.11.116.136   ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
+2048-deployment-dd74cc68d-lmn2c   1/1     Running   0          23h   10.11.25.106    ip-10-11-31-153.ap-northeast-2.compute.internal    <none>           <none>
+2048-deployment-dd74cc68d-rppqk   1/1     Running   0          23h   10.11.140.124   ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
+2048-deployment-dd74cc68d-trncw   1/1     Running   0          23h   10.11.165.220   ip-10-11-189-67.ap-northeast-2.compute.internal    <none>           <none>
+```
 
