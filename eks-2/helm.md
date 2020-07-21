@@ -153,6 +153,78 @@ EC2 대시보드에서 ELB가 정상적으로 생성된 것을 확인 할 수 �
 
 ![](../.gitbook/assets/image%20%2845%29.png)
 
+설치된 helm list를 확인합니다.
+
+```text
+helm list 
+```
+
+출력 예시
+
+```text
+whchoi98:~/environment $ helm list 
+NAME                    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+eksworkshop-nginx       default         1               2020-07-21 15:01:26.441053601 +0000 UTC deployed        nginx-6.0.2     1.19.1     
+```
+
+아래 명령을 통해 배포된 내용을 확인합니다.
+
+```text
+kubectl describe deployments.apps eksworkshop-nginx
+```
+
+출력 결과 예시
+
+```text
+whchoi98:~/environment $ kubectl describe deployments.apps eksworkshop-nginx 
+Name:                   eksworkshop-nginx
+Namespace:              default
+CreationTimestamp:      Tue, 21 Jul 2020 15:01:26 +0000
+Labels:                 app.kubernetes.io/instance=eksworkshop-nginx
+                        app.kubernetes.io/managed-by=Helm
+                        app.kubernetes.io/name=nginx
+                        helm.sh/chart=nginx-6.0.2
+Annotations:            deployment.kubernetes.io/revision: 1
+                        meta.helm.sh/release-name: eksworkshop-nginx
+                        meta.helm.sh/release-namespace: default
+Selector:               app.kubernetes.io/instance=eksworkshop-nginx,app.kubernetes.io/name=nginx
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app.kubernetes.io/instance=eksworkshop-nginx
+           app.kubernetes.io/managed-by=Helm
+           app.kubernetes.io/name=nginx
+           helm.sh/chart=nginx-6.0.2
+  Containers:
+   nginx:
+    Image:        docker.io/bitnami/nginx:1.19.1-debian-10-r0
+    Port:         8080/TCP
+    Host Port:    0/TCP
+    Liveness:     tcp-socket :http delay=30s timeout=5s period=10s #success=1 #failure=6
+    Readiness:    tcp-socket :http delay=5s timeout=3s period=5s #success=1 #failure=3
+    Environment:  <none>
+    Mounts:
+      /opt/bitnami/nginx/conf/server_blocks from nginx-server-block-paths (rw)
+  Volumes:
+   nginx-server-block-paths:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      eksworkshop-nginx-server-block
+    Optional:  false
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   eksworkshop-nginx-79bfdcd875 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  21m   deployment-controller  Scaled up replica set eksworkshop-nginx-79bfdcd875 to 1
+```
+
 ## Helm을 이용한 Microservice 배포.
 
 

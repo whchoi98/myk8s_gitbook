@@ -56,6 +56,7 @@
   * [Istio](eks-service-mesh/istio.md)
   * [App Mesh](eks-service-mesh/app-mesh.md)
 * [Tip](tip/README.md)
+  * [aws cli](tip/aws-cli.md)
   * [eksctl command](tip/eksctl-command.md)
   * [kubectl Command](tip/kubectl-command.md)
   * [helm command](tip/helm-command.md)
