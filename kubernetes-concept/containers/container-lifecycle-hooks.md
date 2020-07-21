@@ -1,2 +1,2 @@
-# Container Lifecycle Hooks
+# 컨테이너 라이프사이클 훅
 

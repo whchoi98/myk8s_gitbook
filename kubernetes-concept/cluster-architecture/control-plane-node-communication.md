@@ -1,4 +1,4 @@
-# Control Plane-Node Communication
+# 컨트롤플레인과 노드간 통신
 
 ## 컨트롤 플레인-노드 간 통신
 
