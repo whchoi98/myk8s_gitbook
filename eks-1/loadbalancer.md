@@ -1,6 +1,6 @@
 # Loadbalancer 기반 배포
 
-## Loadbalancer 서비스 타입 소
+## Loadbalancer 서비스 타입 소개.
 
 앞서 Service 배포의 ClusterIP 타입을 Kubernetes Dashboard 배포를 통해 확인했습니다.
 
@@ -17,6 +17,19 @@
 ## Loadbalancer 서비스 기반 구성
 
 1.배포용 yaml 복제
+
+LAB에서 사용할 App을 복제합니다.
+
+```text
+cd ~/environment
+git clone https://github.com/brentley/ecsdemo-frontend.git
+git clone https://github.com/brentley/ecsdemo-nodejs.git
+git clone https://github.com/brentley/ecsdemo-crystal.git
+```
+
+정상적으로 복제 이후 Cloud9에서 아래와 같이 확인됩니다.
+
+![](../.gitbook/assets/image%20%2814%29.png)
 
 2. 
 
