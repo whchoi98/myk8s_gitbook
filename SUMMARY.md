@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Kubernetest](README.md)
+* [Kubernetes](README.md)
 * [Kubernetes 개념](kubernetes-concept/README.md)
   * [Overview](kubernetes-concept/overview.md)
   * [Cluster Architecture](kubernetes-concept/cluster-architecture/README.md)
