@@ -223,6 +223,29 @@ service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Defa
 
 ## NLB기반 Loadbalancer 서비스 구성.
 
+### 1.NLB Service Type 기반 service yaml 구성.
+
+아래와 같이 NLB-service.yaml 과 ALB-service.yaml 2개를 각 App별로 생성하여 구성합니다.
+
+```text
+  cd ~/environment/
+  cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/NLB-service.yaml
+  cp ./ecsdemo-crystal/kubernetes/service.yaml ./ecsdemo-crystal/kubernetes/NLB-service.yaml
+  cp ./ecsdemo-nodejs/kubernetes/service.yaml ./ecsdemo-nodejs/kubernetes/NLB-service.yaml
+```
+
+각 APP에 생성된 NLB-service.yaml, ALB-service.yaml을 아래와 같이 annotaions:를 추가하여 수정합니다.
+
+```text
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsdemo-frontend
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+이하 생략
+```
+
 
 
 
