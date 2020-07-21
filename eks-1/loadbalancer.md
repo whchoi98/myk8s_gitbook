@@ -203,6 +203,8 @@ k9s
 LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위해서 Cloud9 에서 Terminal을 하나 더 열고 K9s를 실행 시켜 두는 것이 좋습니다.
 {% endhint %}
 
+
+
 이제 서비스 타입을 확인하기 위해서 EC2 대시보드에서 Loadbalancer를 확인합니다.
 
 ![](../.gitbook/assets/image.png)
