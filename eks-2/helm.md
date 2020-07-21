@@ -16,6 +16,13 @@
 
 ## Helm 설치와 간단한 배포
 
+아래와 같은 순서대로 구성합니다.
+
+1. **Helm3 최신 버전 설치**
+2. **Chart Repo 구성**
+3. **Helm 명령어 자동완성 구성**
+4. **Helm 을 통한 nginx 배포 및 확인.**
+
 ### 1.Helm 설치
 
 헬름은 헬름 최신 버전을 자동으로 가져와서 [로컬에 설치](https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)하는 인스톨러 스크립트를 제공합니다. 이 스크립트를 받아서 로컬에서 실행할 수 있습니다.
@@ -65,7 +72,7 @@ helm completion bash >> ~/.bash_completion
 source <(helm completion bash)
 ```
 
-### 4. Helm Chart를 통한 간단한 웹 배포
+### 4. **Helm 을 통한 nginx 배포 및 확인.**
 
 Helm Chart를 통한 간단한 nginx 배포를 위해 repo에서 nginx를 검색합니다.
 
