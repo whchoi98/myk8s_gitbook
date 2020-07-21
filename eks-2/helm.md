@@ -54,7 +54,7 @@ helm repo update
 helm search repo stable
 ```
 
-3. Helm 명령어 자동 완성 구성
+### 3. Helm 명령어 자동 완성 구성
 
 Helm 명령에 대한 Bash 자동완성을 구성합니다.
 
@@ -65,9 +65,93 @@ helm completion bash >> ~/.bash_completion
 source <(helm completion bash)
 ```
 
+### 4. Helm Chart를 통한 간단한 웹 배포
 
+Helm Chart를 통한 간단한 nginx 배포를 위해 repo에서 nginx를 검색합니다.
 
+```text
+helm search repo nginx
+```
 
+출력 결과 예시
+
+```text
+whchoi98:~/environment $ helm search repo nginx
+NAME                            CHART VERSION   APP VERSION     DESCRIPTION                                       
+stable/nginx-ingress            1.41.1          v0.34.1         An nginx Ingress controller that uses ConfigMap...
+stable/nginx-ldapauth-proxy     0.1.4           1.13.5          nginx proxy with ldapauth                         
+stable/nginx-lego               0.3.1                           Chart for nginx-ingress-controller and kube-lego  
+stable/gcloud-endpoints         0.1.2           1               DEPRECATED Develop, deploy, protect and monitor...
+```
+
+간단한 웹서비스 배포를 위해 nginx를 추가해서 구동해 봅니다. 배포도구로 인기 있는 bitnami repo를 추가해서 nginx를 설치해 봅니다.
+
+```text
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+다시 nginx를 검색해 봅니다.
+
+```text
+helm search repo bitnami/nginx
+```
+
+출력결과 예시
+
+```text
+whchoi98:~/environment $ helm search repo bitnami/nginx NAME CHART VERSION APP VERSION DESCRIPTION
+bitnami/nginx 6.0.2 1.19.1 Chart for the nginx server
+bitnami/nginx-ingress-controller 5.3.25 0.33.0 Chart for the nginx Ingress controller
+```
+
+helm install 명령을 통해 nginx를 설치해 봅니다.
+
+```text
+helm install eksworkshop-nginx bitnami/nginix
+```
+
+아래와 같은 결과를 얻을 수 있습니다.
+
+```text
+whchoi98:~/environment $ helm install eksworkshop-nginx bitnami/nginx
+NAME: eksworkshop-nginx
+LAST DEPLOYED: Tue Jul 21 15:01:26 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Get the NGINX URL:
+
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        Watch the status with: 'kubectl get svc --namespace default -w eksworkshop-nginx'
+
+  export SERVICE_IP=$(kubectl get svc --namespace default eksworkshop-nginx --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+  echo "NGINX URL: http://$SERVICE_IP/"
+```
+
+Pod와 서비스 배포를 확인합니다.
+
+```text
+whchoi98:~/environment $ kubectl get svc eksworkshop-nginx
+NAME                TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)                      AGE
+eksworkshop-nginx   LoadBalancer   172.20.225.235   a580840c2d2f24533a7fe36836e99a93-149103174.ap-northeast-2.elb.amazonaws.com   80:31437/TCP,443:32083/TCP   79s
+```
+
+ELB 주소를 확인합니다.
+
+```text
+export SERVICE_IP=$(kubectl get svc --namespace default eksworkshop-nginx --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+echo "NGINX URL: http://$SERVICE_IP/"
+```
+
+해당 주소로 접속해 봅니다.
+
+![](../.gitbook/assets/image%20%2846%29.png)
+
+EC2 대시보드에서 ELB가 정상적으로 생성된 것을 확인 할 수 있습니다.
+
+![](../.gitbook/assets/image%20%2845%29.png)
 
 ## Helm을 이용한 Microservice 배포.
 
