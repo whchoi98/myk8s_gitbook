@@ -16,7 +16,7 @@ Kubernetes의 공식 블로그에 포스팅 된 문서를 기준으로 내용을
 
 ### [EKS Networking](eks-networking/)
 
-### [EKS Storage](eks-storage.md)
+### [EKS Storage](eks-storage/)
 
 ### [EKS CI/CD](eks-ci-cd.md)
 
