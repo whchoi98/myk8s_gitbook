@@ -1,2 +1,2 @@
-# AutoScaling
+# AutoScaling 구성
 

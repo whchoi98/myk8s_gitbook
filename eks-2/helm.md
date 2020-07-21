@@ -1,4 +1,4 @@
-# Helm
+# Helm 구성
 
 ## Helm 소개
 
@@ -24,6 +24,7 @@
 2. **Chart Repo 구성**
 3. **Helm 명령어 자동완성 구성**
 4. **Helm 을 통한 nginx 배포 및 확인.**
+5. **Helm 을 통한 nginx 삭제.**
 
 ### 1.Helm 설치
 
@@ -233,6 +234,25 @@ Events:
   ----    ------             ----  ----                   -------
   Normal  ScalingReplicaSet  21m   deployment-controller  Scaled up replica set eksworkshop-nginx-79bfdcd875 to 1
 ```
+
+5. Helm을 통한 nginx 삭제
+
+아래 명령을 통해 생성된 Helm을 삭제합니다.
+
+```text
+helm uninstall eksworkshop-nginx
+```
+
+정상적으로 삭제되었는지 확인합니다.
+
+```text
+helm list
+kubectl get service eksworkshop-nginx
+```
+
+{% hint style="info" %}
+ELB 삭제 시간으로 3분 정도 소요됩니다.
+{% endhint %}
 
 ## Helm을 이용한 Microservice 배포.
 
