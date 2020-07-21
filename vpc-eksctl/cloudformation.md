@@ -20,7 +20,7 @@ AWS 서비스 - Cloudformation 을 선택합니다.
 
 "스택생성" - "새 리소스 사용"을 선택합니다.
 
-![](../.gitbook/assets/image%20%2833%29.png)
+![](../.gitbook/assets/image%20%2834%29.png)
 
 앞서 다운로드 받은 EKSVPC.yml 파일을 선택해서 업로드합니다.
 
@@ -46,5 +46,5 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 이 값을 따로 저장해 둡니다.
 
-![](../.gitbook/assets/image%20%2832%29.png)
+![](../.gitbook/assets/image%20%2833%29.png)
 

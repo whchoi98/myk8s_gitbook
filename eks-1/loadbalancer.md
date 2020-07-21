@@ -209,11 +209,21 @@ LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위�
 
 이제 서비스 타입을 확인하기 위해서 EC2 대시보드에서 Loadbalancer를 확인합니다.
 
+CLB의 DNS Name을 복사해서 Web Browser에서 입력합니다.
+
 ![](../.gitbook/assets/image.png)
 
 {% hint style="info" %}
 service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Default로 Classic LB가 구성됩니다.
 {% endhint %}
+
+웹브라우져를 통해서 CLB의 DNS 주소를 입력하면 실시간으로 로드밸런싱이 되는 것을 확인 할 수 있습니다.
+
+![](../.gitbook/assets/image%20%2831%29.png)
+
+## NLB기반 Loadbalancer 서비스 구성.
+
+
 
 
 
