@@ -19,7 +19,7 @@
       * [Pod 개요](kubernetes-concept/workloads/pod/pod-overview.md)
       * [Pod](kubernetes-concept/workloads/pod/pod-overview-1.md)
       * [Pod LifeCycle](kubernetes-concept/workloads/pod/pod-lifecycle.md)
-      * [Untitled](kubernetes-concept/workloads/pod/untitled-4.md)
+      * [컨테이너 초기화](kubernetes-concept/workloads/pod/init-containers.md)
       * [Untitled](kubernetes-concept/workloads/pod/untitled-3.md)
       * [Untitled](kubernetes-concept/workloads/pod/untitled-2.md)
       * [Untitled](kubernetes-concept/workloads/pod/untitled-1.md)
