@@ -1,2 +1,35 @@
 # 컨테이너 환경변수
 
+## 컨테이너 환경 변수
+
+이 페이지는 컨테이너 환경에서 컨테이너에 가용한 리소스에 대해 설명한다.
+
+### 컨테이너 환경 <a id="&#xCEE8;&#xD14C;&#xC774;&#xB108;-&#xD658;&#xACBD;"></a>
+
+쿠버네티스 컨테이너 환경은 컨테이너에 몇 가지 중요한 리소스를 제공한다.
+
+* 하나의 [이미지](https://kubernetes.io/ko/docs/concepts/containers/images/)와 하나 이상의 [볼륨](https://kubernetes.io/ko/docs/concepts/storage/volumes/)이 결합된 파일 시스템.
+* 컨테이너 자신에 대한 정보.
+* 클러스터 내의 다른 오브젝트에 대한 정보.
+
+#### 컨테이너 정보 <a id="&#xCEE8;&#xD14C;&#xC774;&#xB108;-&#xC815;&#xBCF4;"></a>
+
+컨테이너의 _호스트네임_ 은 컨테이너가 동작 중인 파드의 이름과 같다. 그것은 `hostname` 커맨드 또는 libc의 [`gethostname`](http://man7.org/linux/man-pages/man2/gethostname.2.html) 함수 호출을 통해서 구할 수 있다.
+
+파드 이름과 네임스페이스는 [다운워드\(Downward\) API](https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/)를 통해 환경 변수로 구할 수 있다.
+
+Docker 이미지에 정적으로 명시된 환경 변수와 마찬가지로, 파드 정의에서의 사용자 정의 환경 변수도 컨테이너가 사용할 수 있다.
+
+#### 클러스터 정보 <a id="&#xD074;&#xB7EC;&#xC2A4;&#xD130;-&#xC815;&#xBCF4;"></a>
+
+컨테이너가 생성될 때 실행 중이던 모든 서비스의 목록은 환경 변수로 해당 컨테이너에서 사용할 수 있다. 이러한 환경 변수는 Docker 링크 구문과 일치한다.
+
+_bar_ 라는 이름의 컨테이너에 매핑되는 _foo_ 라는 이름의 서비스에 대해서는, 다음의 형태로 변수가 정의된다.
+
+```text
+FOO_SERVICE_HOST=<서비스가 동작 중인 호스트>
+FOO_SERVICE_PORT=<서비스가 동작 중인 포트>
+```
+
+서비스에 지정된 IP 주소가 있고 [DNS 애드온](http://releases.k8s.io/master/cluster/addons/dns/)이 활성화된 경우, DNS를 통해서 컨테이너가 서비스를 사용할 수 있다.
+
