@@ -10,7 +10,9 @@
 2. **RABAC 역할 생성과 바인딩**
 3. **ALBIngress Controller IAM Policy 정책 부여**
 4. **ALB Ingress 컨트롤러 포드에 권한 부여.**
-5. \*\*\*\*
+5. **ALB Ingress Controller 포드 배포**
+6. **샘플 App/namespace/Pod/Service 배포**
+7. \*\*\*\*
 
 ### 1.IAM Policy 생성
 
@@ -198,6 +200,26 @@ spec:
       serviceAccountName: alb-ingress-controller
 ```
 
+배포가 완료되고 컨트롤러가 정상적으로 시작되었는지 확인합니다.
+
+```text
+kubectl logs -n kube-system $(kubectl get po -n kube-system | egrep -o alb-ingress[a-zA-Z0-9-]+)
+```
+
+아래와 같은 출력결과물을 얻었다면 성공적으로 배포된 것입니다.
+
+```text
+whchoi98:~/environment $ kubectl logs -n kube-system $(kubectl get po -n kube-system | egrep -o alb-ingress[a-zA-Z0-9-]+)
+-------------------------------------------------------------------------------
+AWS ALB Ingress controller
+  Release:    v1.1.8
+  Build:      git-ec387ad1
+  Repository: https://github.com/kubernetes-sigs/aws-alb-ingress-controller.git
+-------------------------------------------------------------------------------
+```
+
+
+
 ### 6.namespace/App/Pod/Service 배포.
 
 샘플 어플리케이션을 배포해 보겠습니다. 2048 게임 App을 Kubernetes Cluster에 넣고 Ingress 리소스를 사용하여 트래픽을 노출해 봅니다.
@@ -208,7 +230,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingre
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/2048/2048-service.yaml
 ```
 
-2048-namespace.yaml 소스 참
+2048-namespace.yaml 소스 참조.
 
 ```text
 apiVersion: v1
@@ -217,7 +239,7 @@ metadata:
   name: "2048-game"
 ```
 
-2048-deployment.yaml 소스 참
+2048-deployment.yaml 소스 참조.
 
 ```text
 apiVersion: apps/v1
@@ -243,7 +265,7 @@ spec:
         - containerPort: 80
 ```
 
-2048-service.yaml 소스 참
+2048-service.yaml 소스 참조.
 
 ```text
 apiVersion: v1
@@ -263,7 +285,50 @@ spec:
 
 
 
-6. ALB Ingress 배포
+### 7. ALB Ingress 배포
+
+2048게임 App을 위한 ingress 리소스를 배포합니다.
+
+```text
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/2048/2048-ingress.yaml
+```
+
+2048-ingress.yaml 소스 참조.
+
+```text
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: "2048-ingress"
+  namespace: "2048-game"
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+  labels:
+    app: 2048-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: "service-2048"
+              servicePort: 80
+```
+
+생성된 리소스를 확인합니다.
+
+```text
+kubectl get ingress/2048-ingress -n 2048-game
+```
+
+출력 결과 예시
+
+```text
+whchoi98:~/environment $ kubectl get ingress/2048-ingress -n 2048-game
+NAME           HOSTS   ADDRESS                                                                       PORTS   AGE
+2048-ingress   *       546056ac-2048game-2048ingr-6fa0-1286541160.ap-northeast-2.elb.amazonaws.com   80      12m
+```
 
 
 
