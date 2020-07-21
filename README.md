@@ -22,3 +22,7 @@ Kubernetes의 공식 블로그에 포스팅 된 문서를 기준으로 내용을
 
 ### [EKS Service Mesh](eks-service-mesh/)
 
+
+
+블로그 관련 문의 내용은 CHOI, WOO HYUNG \([whchoi98@gmail.com](mailto:whchoi98@gmail.com)\) 으로 문의하십시요.
+
