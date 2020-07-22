@@ -154,7 +154,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ![](../.gitbook/assets/image%20%2820%29.png)
 
-5.Kubernetes 대쉬보드 삭제
+### 5.Kubernetes 대쉬보드 삭제
 
 Proxy를 먼저 삭제합니다.jobs의 결과에서 Proxy 번호를 확인하고 kill을 통해서 삭제합니다.
 
