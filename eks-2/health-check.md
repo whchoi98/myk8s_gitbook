@@ -31,9 +31,57 @@ kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지
 
 Liveness Probe 구성
 
+1.Liveness Probe를 위한 매니페스트 구성
 
 
-Readiness Probe 구
+
+```text
+mkdir -p ~/environment/healthchecks
+```
+
+kubelet은 periodSeconds 필드를 사용하여 컨테이너를 상태를 확인합니다. 이 경우 kubelet은 5 초마다 liveness probe를 통해 확인합니다. initialDelaySeconds 필드는 첫 번째 Probe를 수행하기 전에 5 초 동안 기다려야한다는 것을 kubelet에 알리는 데 사용됩니다. 프로브를 수행하기 위해 kubelet은 이 포드를 호스팅 하는 서버에 HTTP GET 요청을 전송하고 서버 / health의 핸들러가 성공 코드를 반환하면 컨테이너가 정상으로 간주됩니다. 핸들러가 실패 코드를 반환하면 kubelet은 컨테이너를 종료하고 다시 시작합니다. 
+
+```text
+cat <<EoF > ~/environment/healthchecks/liveness-app.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-app
+  namespace: healthchecks
+spec:
+  containers:
+  - name: liveness
+    image: brentley/ecsdemo-nodejs
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 3000
+      initialDelaySeconds: 5
+      periodSeconds: 5
+EoF
+```
+
+생성된 매니페스트를 사용하여 포드를 생성합니다.
+
+```text
+kubectl create namespace healthchecks
+kubectl apply -f ~/environment/healthchecks/liveness-app.yaml
+kubectl -n healthchecks get pod liveness-app
+```
+
+출력 결과 예제
+
+```text
+whchoi98:~ $ kubectl -n healthchecks get pod liveness-app
+NAME           READY   STATUS    RESTARTS   AGE
+liveness-app   1/1     Running   0          14s
+```
+
+
+
+Readiness Probe 구성
+
+
 
 
 
