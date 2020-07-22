@@ -127,6 +127,8 @@ kubectl get nodes -l disktype=ssd
 
 ### 4. 특정 라벨의 노드에 Pod 배포.
 
+새로운 디렉토리와 namespace를 만들고 nginx 배포를 위한 매니페스트 파일을 간단하게 작성합니다. 해당 Pod는 생성될때 앞서 label에서 정의된 disktype=ssd 가  추가된 worker node로 배포됩니다.
+
 ```text
 mkdir ~/environment/nodeselector
 kubectl create namespace nodeselector 
@@ -149,20 +151,20 @@ EoF
 
 ```
 
-
+생성한 매니페스트 파일을 통해 nginx app을 배포합니다.
 
 ```text
 kubectl -n nodeselector apply -f ~/environment/nodeselector/pod-nginx.yaml
 ```
 
-
+정상적으로 배포되었는지 확인합니다. 앞서 지정한 worker node로 배포되어야 합니다.
 
 ```text
 kubectl get nodes --show-labels | grep disktype
 kubectl -n nodeselector get pods -o wide
 ```
 
-
+아래는 출력 결과 예시입니다.
 
 ```text
 whchoi98:~ $ kubectl get nodes --show-labels | grep disktype
