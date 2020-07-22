@@ -331,19 +331,19 @@ NAME                READY   UP-TO-DATE   AVAILABLE   AGE
 nginx-to-scaleout   1/1     1            1           11s
 ```
 
-아래 명령을 통해 Replicaset을 10개로 변경합니다.
+아래 명령을 통해 Replicaset을 20개로 변경합니다.
 
 ```text
 kubectl scale --replicas=20 deployment/nginx-to-scaleout
 ```
 
-
+포드가 증가하는 것을 아래 명령을 통해 확인합니다. 또는 k9s 명령이 실행되고 있는 터미널에서 확인합니다.
 
 ```text
 kubectl get pods -o wide --watch
 ```
 
-
+Pod가 Replicaset이 발생하면서, Pod 상태가 Pending 이 발생하면 EC2 worker node가 추가되고 있는 것입니다.
 
 ```text
 nginx-to-scaleout-77cc8cc66f-kdwk5   1/1     Running             0          8s      10.11.43.235   ip-10-11-53-186.ap-northeast-2.compute.internal    <none>           <none>
@@ -357,9 +357,11 @@ nginx-to-scaleout-77cc8cc66f-fwwf4   1/1     Running             0          11s 
 nginx-to-scaleout-77cc8cc66f-vvmnv   1/1     Running             0          12s     10.11.165.178   ip-10-11-189-67.ap-northeast-2.compute.internal    <none>           <none>
 ```
 
+아래와 같이 EC2 대시보드에서 인스턴스들이 추가 됩니다.
+
 ![](../.gitbook/assets/image%20%2860%29.png)
 
-아래와 같이 생성되었던 자원을 삭제합니다.
+이제 아래와 같이 생성되었던 자원을 삭제합니다.
 
 ```text
 aws iam delete-role-policy --role-name eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS --policy-name ASG-Policy-For-Worker
