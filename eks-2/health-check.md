@@ -205,6 +205,8 @@ whchoi98:~ $ kubectl -n healthchecks logs liveness-app --tail 10
 
 ### 1.Readiness Probe 구성을 포함하는 App 배포.
 
+kubelet은 periodSeconds 필드를 사용하여 컨테이너를 상태를 확인합니다. 이 경우 kubelet은 3 초마다 readiness probe를 통해 확인합니다. initialDelaySeconds 필드는 첫 번째 Probe를 수행하기 전에 5 초 동안 기다려야한다는 것을 kubelet에 알리는 데 사용됩니다. 프로브를 수행하기 위해 kubelet은 /tmp/health 디렉토리가 존재하는 지를 확인합니다. 만약 없다면 해당 Pod에는 App을 배포하지 않습니다.
+
 ```text
 cat <<EoF > ~/environment/healthchecks/readiness-deployment.yaml
 apiVersion: apps/v1
@@ -236,19 +238,17 @@ spec:
 EoF
 ```
 
-
+생성된 매니페스트를 사용하여 포드를 생성합니다.
 
 ```text
 kubectl -n healthchecks apply -f ~/environment/healthchecks/readiness-deployment.yaml
 ```
 
-
+아래 명령을 통해 App배포와 Replica 상태를 확인해 봅니다.
 
 ```text
 kubectl -n healthchecks get pods -l app=readiness-deployment
 ```
-
-
 
 ```text
 kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
@@ -274,13 +274,11 @@ Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavai
 kubectl -n healthchecks exec -it readiness-deployment-589b548d5-xnmcm -- rm /tmp/healthy
 ```
 
-
+아래 명령을 통해 App배포와 Replica 상태를 확인해 봅니다.
 
 ```text
 kubectl -n healthchecks get pods -l app=readiness-deployment
 ```
-
-
 
 ```text
 kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
@@ -301,9 +299,34 @@ whchoi98:~/environment/healthchecks $ kubectl -n healthchecks describe deploymen
 Replicas:               3 desired | 3 updated | 3 total | 2 available | 1 unavailable
 ```
 
+{% hint style="info" %}
+1개의 Pod에서 컨테이너가 /tmp/healthy 디렉토리가 발견되지 않습니다. 따라서 더이상 Replica에 가용한 Pod가 아닙니다.
+{% endhint %}
+
 ### 3. App 복구를 통한 Readiness Probe 확인.
 
 
+
+```text
+kubectl -n healthchecks exec -it readiness-deployment-589b548d5-xnmcm -- touch /tmp/healthy
+```
+
+```text
+kubectl -n healthchecks get pods -l app=readiness-deployment
+kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
+```
+
+아래와 같은 결과를 얻을 수 있습니다.
+
+```text
+whchoi98:~/environment/healthchecks $ kubectl -n healthchecks get pods -l app=readiness-deployment
+NAME                                   READY   STATUS    RESTARTS   AGE
+readiness-deployment-589b548d5-qhw6k   1/1     Running   0          21m
+readiness-deployment-589b548d5-xbj47   1/1     Running   0          21m
+readiness-deployment-589b548d5-xnmcm   1/1     Running   0          21m
+whchoi98:~/environment/healthchecks $ kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
+Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
+```
 
 
 
