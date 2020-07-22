@@ -18,14 +18,13 @@
 
 kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지 종류의 프로브를 수행하고 그에 반응할 수 있습니.
 
-* `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니다. 만약 활성 프로브\(liveness probe\)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니다. 컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`입니다.
+* `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니다. 만약 활성 프로브\(liveness probe\)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니다.  컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`입니다.
 * `readinessProbe`: 컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타냅니다.   
   `readinessProbe`실패한다면, 엔드포인트 컨트롤러는 파드에 연관된 모든 서비스들의 엔드포인트에서 파드의 IP주소를 제거합니다. 
 
-  `readinessProbe`의 초기 지연 이전의 기본 상태는 `Failure`입니다.   
-  컨테이너가 `readinessProbe`를 지원하지 않는다면, 기본 상태는 `Success`입니다.
+  `readinessProbe`의 초기 지연 이전의 기본 상태는 `Failure`입니다. 컨테이너가 `readinessProbe`를 지원하지 않는다면, 기본 상태는 `Success`입니다.
 
-* `startupProbe`: 컨테이너 내의 애플리케이션이 시작되었는지를 나타냅니다. `startupProbe`가 주어진 경우, 성공할 때 까지 다른 나머지 프로브는 활성화 되지 않습니.  `startupProbe`실패하면, kubelet이 컨테이너를 죽이고, 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)에 따라 처리됩니. 컨테이너에 스타트업 프로브가 없는 경우, 기본 상태는 `Success`입니다.
+* `startupProbe`: 컨테이너 내의 애플리케이션이 시작되었는지를 나타냅니다. `startupProbe`가 주어진 경우, 성공할 때 까지 다른 나머지 프로브는 활성화 되지 않습니다.  `startupProbe`실패하면, kubelet이 컨테이너를 죽이고, 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)에 따라 처리됩니. 컨테이너에 스타트업 프로브가 없는 경우, 기본 상태는 `Success`입니다.
 
 ## Liveness Probe 구성
 
@@ -150,11 +149,94 @@ Events:
 kubectl -n healthchecks exec -it liveness-app -- /bin/kill -s SIGUSR1 1
 ```
 
+아래 명령을 통해서 liveness-app의 이벤트의 변화를 확인해 봅니다.
 
+```text
+kubectl -n healthchecks describe pods liveness-app
+```
+
+출력 결과 예시
+
+```text
+생략
+Events:
+  Type     Reason     Age                    From                                                      Message
+  ----     ------     ----                   ----                                                      -------
+  Normal   Scheduled  29m                    default-scheduler                                         Successfully assigned healthchecks/liveness-app to ip-10-11-189-67.ap-northeast-2.compute.internal
+  Warning  Unhealthy  7m38s (x3 over 7m48s)  kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Liveness probe failed: Get http://10.11.162.172:3000/health: net/http: request canceled (Client.Timeout exceeded while awaiting headers)
+  Normal   Killing    7m38s                  kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Container liveness failed liveness probe, will be restarted
+  Normal   Pulling    7m8s (x2 over 29m)     kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Pulling image "brentley/ecsdemo-nodejs"
+  Normal   Pulled     7m5s (x2 over 29m)     kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Successfully pulled image "brentley/ecsdemo-nodejs"
+  Normal   Created    7m5s (x2 over 29m)     kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Created container liveness
+  Normal   Started    7m5s (x2 over 29m)     kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Started container liveness
+```
+
+5초 간격으로 지속적으로 Probe를 체크하고 있기 때문에, 로그에서도 확인 할 수 있습니다.
+
+```text
+kubectl -n healthchecks logs liveness-app --tail 10
+```
+
+출력 결과 예시 
+
+{% hint style="info" %}
+5초 마다 Probe를 시도하는 것을 로그에서 확인할 수 있습니다.
+{% endhint %}
+
+```text
+whchoi98:~ $ kubectl -n healthchecks logs liveness-app --tail 10
+::ffff:10.11.189.67 - - [22/Jul/2020:03:17:41 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:17:46 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:17:51 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:17:56 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:18:01 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:18:06 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:18:11 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:18:16 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:18:21 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+::ffff:10.11.189.67 - - [22/Jul/2020:03:18:26 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
+```
 
 Readiness Probe 구성
 
 
+
+```text
+cat <<EoF > ~/environment/healthchecks/readiness-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readiness-deployment
+  namespace: healthchecks
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: readiness-deployment
+  template:
+    metadata:
+      labels:
+        app: readiness-deployment
+    spec:
+      containers:
+      - name: readiness-deployment
+        image: alpine
+        command: ["sh", "-c", "touch /tmp/healthy && sleep 86400"]
+        readinessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/healthy
+          initialDelaySeconds: 5
+          periodSeconds: 3
+EoF
+```
+
+
+
+```text
+kubectl -n healthchecks apply -f ~/environment/healthchecks/readiness-deployment.yaml
+```
 
 
 
