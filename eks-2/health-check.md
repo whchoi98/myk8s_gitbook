@@ -10,7 +10,7 @@
 * [TCPSocketAction](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#tcpsocketaction-v1-core) 은 지정된 포트에서 컨테이너의 IP주소에 대해 TCP 검사를 수행합니. 포트가 활성화되어 있다면 진단이 성공한 것으로 간주합니다.
 * [HTTPGetAction](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#httpgetaction-v1-core) 은 지정한 포트 및 경로에서 컨테이너의 IP주소에 대한 HTTP Get 요청을 수행합니. 응답의 상태 코드가 200보다 크고 400보다 작으면 진단이 성공한 것으로 간주합니다.
 
-각 probe는 다음 세 가지 결과 중 하나를 가집니.
+각 probe는 다음 세 가지 결과 중 하나를 가집니다. 
 
 * Success: 컨테이너가 진단을 통과함.
 * Failure: 컨테이너가 진단에 실패함.
