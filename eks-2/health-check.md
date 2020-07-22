@@ -28,7 +28,11 @@ kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지
 
 ## Liveness Probe 구성
 
-### 1.Liveness Probe 구성을 포함한 App 배
+아래 그림에서 1번의 구성을 이번 LAB에서 구성할 것입니다.
+
+![&#xCC38;&#xC870; - https://kubernetes.io/blog/2018/10/01/health-checking-grpc-servers-on-kubernetes/](../.gitbook/assets/image%20%2854%29.png)
+
+### 1.Liveness Probe 구성을 포함한 App 배포
 
 Liveness Probe와 Readiness Probe 구성을 위한 디렉토리를 생성합니다.
 
