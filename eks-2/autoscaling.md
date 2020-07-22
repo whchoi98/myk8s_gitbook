@@ -2,7 +2,7 @@
 
 
 
-![](../.gitbook/assets/image%20%2854%29.png)
+![](../.gitbook/assets/image%20%2855%29.png)
 
 ## HPA 구성
 
@@ -68,6 +68,47 @@ kubectl -n metrics run -i --tty load-generator --image=busybox /bin/sh
 ```text
 while true; do wget -q -O - http://php-apache; done
 ```
+
+이제 자동확장이 되는지 확인합니다.
+
+```text
+kubectl -n metrics get hpa -w
+```
+
+아래와 같은 출력 결과를 확인 할 수 있습니다.
+
+```text
+whchoi98:~/environment $ kubectl -n metrics get hpa -w
+NAME         REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   248%/50%   1         10        8          6m1s
+php-apache   Deployment/php-apache   248%/50%   1         10        10         6m16s
+php-apache   Deployment/php-apache   56%/50%    1         10        10         6m32s
+php-apache   Deployment/php-apache   54%/50%    1         10        10         7m32s
+php-apache   Deployment/php-apache   47%/50%    1         10        10         8m33s
+```
+
+Cloud9 IDE 에서 터미널을 한개 더 열고 K9s 를 실행하면 더 상세하게 볼 수 있습니다.
+
+```text
+k9s -n metrics
+```
+
+![](../.gitbook/assets/image%20%2854%29.png)
+
+앞서 Shell을 실행했던 Cloud9 IDE 창에서 Shell을 종료합니다. 그리고 다시 Replica가 줄어드는지를 확인합니다.
+
+```text
+whchoi98:~/environment $ kubectl -n metrics get hpa -w
+NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   46%/50%   1         10        10         10m
+php-apache   Deployment/php-apache   0%/50%    1         10        10         11m
+php-apache   Deployment/php-apache   0%/50%    1         10        10         16m
+php-apache   Deployment/php-apache   0%/50%    1         10        1          16m
+```
+
+![](../.gitbook/assets/image%20%2856%29.png)
+
+
 
 
 
