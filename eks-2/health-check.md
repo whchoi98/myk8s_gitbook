@@ -305,11 +305,13 @@ Replicas:               3 desired | 3 updated | 3 total | 2 available | 1 unavai
 
 ### 3. App 복구를 통한 Readiness Probe 확인.
 
-
+앞서 Pod에서 삭제한 디렉토리를 다시 생성합니다.
 
 ```text
 kubectl -n healthchecks exec -it readiness-deployment-589b548d5-xnmcm -- touch /tmp/healthy
 ```
+
+디렉토리를 생성한 후 Pod의 상태와 Replica 가용 숫자를 확인해 봅니다.
 
 ```text
 kubectl -n healthchecks get pods -l app=readiness-deployment
