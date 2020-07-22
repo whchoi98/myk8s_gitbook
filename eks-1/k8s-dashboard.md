@@ -154,3 +154,29 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ![](../.gitbook/assets/image%20%2820%29.png)
 
+5.Kubernetes 대쉬보드 삭제
+
+Proxy를 먼저 삭제합니다.jobs의 결과에서 Proxy 번호를 확인하고 kill을 통해서 삭제합니다.
+
+```text
+jobs
+```
+
+1번에 background process가 동작 중이라면 , 다음과 같이 삭제합니다.
+
+```text
+kill %1
+```
+
+설치된 Dashboard를 삭제합니다.
+
+```text
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/${DASHBOARD_VERSION}/aio/deploy/recommended.yaml
+```
+
+저장된 변수를 삭제합니다.
+
+```text
+unset DASHBOARD_VERSION
+```
+
