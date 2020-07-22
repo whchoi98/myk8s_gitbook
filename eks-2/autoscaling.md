@@ -6,9 +6,9 @@
 
 ## HPA 구성
 
-Horizontal Pod Autoscaler는 CPU 사용량 \(또는 [사용자 정의 메트릭](https://git.k8s.io/community/contributors/design-proposals/instrumentation/custom-metrics-api.md), 아니면 다른 애플리케이션 지원 메트릭\)을 모니터하여 ReplicationController, Deployment, ReplicaSet 또는 StatefulSet의 파드 개수를 자동으로 스케일합니. Horizontal Pod Autoscaler는 크기를 조정할 수 없는 오브젝트\(예: 데몬셋\(DaemonSet\)\)에는 적용되지 않습니다.
+Horizontal Pod Autoscaler는 CPU 사용량 \(또는 [사용자 정의 메트릭](https://git.k8s.io/community/contributors/design-proposals/instrumentation/custom-metrics-api.md), 아니면 다른 애플리케이션 지원 메트릭\)을 모니터하여 ReplicationController, Deployment, ReplicaSet 또는 StatefulSet의 파드 개수를 자동으로 스케일합니다 . Horizontal Pod Autoscaler는 크기를 조정할 수 없는 오브젝트\(예: 데몬셋\(DaemonSet\)\)에는 적용되지 않습니다.
 
-Horizontal Pod Autoscaler는 쿠버네티스 API 리소스 및 컨트롤러로 구현됩니. 리소스는 컨트롤러의 동작을 결정합니다. 컨트롤러는 모니터링 평균 CPU 사용률이 사용자가 지정한 대상과 일치하도록 레ReplicationController, Deployment, ReplicaSet 개수를 주기적으로 조정합니.
+Horizontal Pod Autoscaler는 쿠버네티스 API 리소스 및 컨트롤러로 구현됩니. 리소스는 컨트롤러의 동작을 결정합니다. 컨트롤러는 모니터링 평균 CPU 사용률이 사용자가 지정한 대상과 일치하도록 레ReplicationController, Deployment, ReplicaSet 개수를 주기적으로 조정합니다 .
 
 ### 1.Metric Server 설치
 
