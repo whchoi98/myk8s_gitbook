@@ -149,8 +149,10 @@ Events:
 이제 Docker 런타임에서 nodejs 애플리케이션 프로그램에 대한 kill 신호를 보내서 장애를 발생시킵니다.
 
 ```text
-kubectl exec -it liveness-app -- /bin/kill -s SIGUSR1 1
+kubectl -n healthchecks exec -it liveness-app -- /bin/kill -s SIGUSR1 1
 ```
+
+
 
 Readiness Probe 구성
 
