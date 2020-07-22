@@ -846,7 +846,7 @@ frontend:
 
 ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, Alibaba Cloud OSS Storage, Openstack Object Storage, Oracle Cloud Infrastructure Object를 포함한 클라우드 스토리지 백엔드를 지원하는 Go \(Golang\)로 작성된 오픈 소스 Helm Chart Repository 서버입니다.
 
-### 1.ChartMuseum 설치
+### 1.ChartMuseum 설치.
 
 먼저 ChartMuseum을 설치합니다.
 
@@ -867,6 +867,12 @@ whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
 ./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2"
 ```
 
+helm repo list에 정상적으로 등록되었는지 확인합니다.
+
+```text
+helm repo list
+```
+
 Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트를 오픈해 줍니다.
 
 * TCP 8888
@@ -879,7 +885,7 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 
 ![](../.gitbook/assets/image%20%2848%29.png)
 
-### 2. Chart 패키징 및 업로
+### 2. Chart 패키징 및 업로드.
 
 Helm Client \(Cloud9 IDE\)에 저장소를 추가해 봅니다.
 
@@ -913,7 +919,62 @@ whchoi98:~/environment/eksdemo $ helm package ./
 Successfully packaged chart and saved it to: /home/ec2-user/environment/eksdemo/eksdemo-0.1.0.tgz
 ```
 
-### 3. Chartmuseum 으로 부터 배
+eksdemo heml chart가 정상적으로 패키징 되었는지 확인합니다.
+
+```text
+whchoi98:~/environment/eksdemo $ tree
+.
+├── charts
+├── Chart.yaml
+├── eksdemo-0.1.0.tgz
+├── templates
+│   ├── deployment
+│   │   ├── crystal.yaml
+│   │   ├── frontend.yaml
+│   │   └── nodejs.yaml
+│   └── service
+│       ├── crystal.yaml
+│       ├── frontend.yaml
+│       └── nodejs.yaml
+└── values.yaml
+```
+
+
+
+### 3. Chartmuseum 으로 부터 배포
+
+Chartmuseum에 패키징을 업로드 합니다.
+
+```text
+curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts
+```
+
+출력결과 예제
+
+```text
+whchoi98:~/environment/eksdemo $ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts                                                                                      
+2020-07-22T00:44:50.260Z        DEBUG   [10] Incoming request: /api/charts      {"reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
+2020-07-22T00:44:50.316Z        DEBUG   [10] Adding package to storage  {"package": "eksdemo-0.1.0.tgz", "reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
+2020-07-22T00:44:50.341Z        INFO    [10] Request served     {"path": "/api/charts", "comment": "", "clientIP": "127.0.0.1", "method": "POST", "statusCode": 201, "latency": "80.44638ms", "reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
+{"saved":true}
+```
+
+S3에 정상적으로 Chartmuseum이 배포되었는지 확인합니다.
+
+```text
+aws s3 ls s3://whchoi-chartmuseum
+```
+
+출력 결과 예제
+
+```text
+whchoi98:~/environment/eksdemo $ aws s3 ls s3://whchoi-chartmuseum
+2020-07-22 00:44:51       1251 eksdemo-0.1.0.tgz
+```
+
+
+
+
 
 
 
