@@ -1,3 +1,7 @@
+---
+description: 'update : 2020-07-21'
+---
+
 # Loadbalancer 기반 배포
 
 ## Loadbalancer 서비스 타입 소개.
