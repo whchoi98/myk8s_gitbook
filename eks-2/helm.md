@@ -345,7 +345,7 @@ cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/eksdemo/te
 ~/environment/eksdemo/templates/deployment/nodejs.yaml
 ```
 
-![](../.gitbook/assets/image%20%2848%29.png)
+![](../.gitbook/assets/image%20%2849%29.png)
 
 Cloud9 IDE 편집기를 이용해서 3개 파일의 "replicas:1" 값을 변경하고, 저장합니다.
 
@@ -672,7 +672,7 @@ ecsdemo-frontend   LoadBalancer   172.20.195.10   a6ad6b49efa9a426d86ce1779cee31
 
 정상적으로 서비스에 접속되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2849%29.png)
+![](../.gitbook/assets/image%20%2851%29.png)
 
 helm list에도 정상적으로 등록되어 있는지 확인합니다.
 
@@ -828,4 +828,94 @@ REVISION        UPDATED                         STATUS          CHART           
 2               Tue Jul 21 17:48:46 2020        superseded      eksdemo-0.1.0   1               Upgrade complete
 3               Tue Jul 21 17:57:23 2020        deployed        eksdemo-0.1.0   1               Rollback to 1   
 ```
+
+ChartMuseum에서 App 패키징을 수행하기 위해 value.yaml 파일 내을 다시 정상적으로 수정합니다.
+
+```text
+replicas: 3
+version: latest
+nodejs:
+  image: brentley/ecsdemo-nodejs
+crystal:
+  image: brentley/ecsdemo-crystal
+frontend:
+  image: brentley/ecsdemo-frontend
+```
+
+## ChartMuseum 구성하기
+
+ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, Alibaba Cloud OSS Storage, Openstack Object Storage, Oracle Cloud Infrastructure Object를 포함한 클라우드 스토리지 백엔드를 지원하는 Go \(Golang\)로 작성된 오픈 소스 Helm Chart Repository 서버입니다.
+
+### 1.ChartMuseum 설치
+
+먼저 ChartMuseum을 설치합니다.
+
+```text
+curl -LO https://s3.amazonaws.com/chartmuseum/release/latest/bin/linux/amd64/chartmuseum
+chmod +x ./chartmuseum
+```
+
+Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장소는 S3를 사용합니다.  
+사전에 s3 bucket을 생성합니다.
+
+```text
+whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
+2020-07-21 18:29:34 whchoi-chartmuseum
+```
+
+```text
+./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2"
+```
+
+Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트를 오픈해 줍니다.
+
+* TCP 8888
+
+![](../.gitbook/assets/image%20%2850%29.png)
+
+![](../.gitbook/assets/image%20%2852%29.png)
+
+이제 외부에서 정상적으로 서비스가 접속되는 지 확인해 봅니다.
+
+![](../.gitbook/assets/image%20%2848%29.png)
+
+### 2. Chart 패키징 및 업로
+
+Helm Client \(Cloud9 IDE\)에 저장소를 추가해 봅니다.
+
+```text
+helm repo add chartmuseum http://localhost:8888
+```
+
+출력 결과 예시
+
+```text
+whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
+2020-07-22T00:21:48.451Z        DEBUG   [5] Incoming request: /index.yaml       {"reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
+2020-07-22T00:21:48.451Z        DEBUG   [5] Entry found in cache store  {"repo": "", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
+2020-07-22T00:21:48.452Z        DEBUG   [5] Fetching chart list from storage    {"repo": "", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
+2020-07-22T00:21:48.520Z        DEBUG   [5] No change detected between cache and storage        {"repo": "", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
+2020-07-22T00:21:48.520Z        INFO    [5] Request served      {"path": "/index.yaml", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "68.746464ms", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
+"chartmuseum" has been added to your repositories
+```
+
+이제 앞서 생성한 eksdemo helm chart 패키징합니다. 
+
+```text
+cd ~/environment/eksdemo/
+helm package ./ 
+```
+
+출력 결과 예시
+
+```text
+whchoi98:~/environment/eksdemo $ helm package ./
+Successfully packaged chart and saved it to: /home/ec2-user/environment/eksdemo/eksdemo-0.1.0.tgz
+```
+
+### 3. Chartmuseum 으로 부터 배
+
+
+
+
 
