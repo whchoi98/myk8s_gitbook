@@ -35,35 +35,41 @@ status:
     type: Available
 ```
 
-### 2. HPA기반의 APP 확장
+### 2. APP 설치 및 HPA 리소스 생성.
 
-이제 
-
-PHP Web App 배포를 합니다.
+이제 HPA 기반의 Scaling을 확인하기 위해 테스트용 PHP Web App 배포를 합니다.
 
 ```text
-kubectl run php-apache --image=us.gcr.io/k8s-artifacts-prod/hpa-example --requests=cpu=200m --expose --port=80
+kubectl -n metrics run php-apache --image=us.gcr.io/k8s-artifacts-prod/hpa-example --requests=cpu=200m --expose --port=80생성된 컨테이너가 CPU 50% 초과하면 확장되도록 설정합니다.
 ```
 
-HPA Resource 생성
-
-컨테이너가 CPU 50% 초과하면 확장되도록 설정합니다.
-
 ```text
-kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+kubectl -n metrics autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
 ```
 
 아래와 같은 출력 결과 예제를 확인할 수 있습니다.
 
 ```text
-whchoi98:~/environment $ kubectl get hpa
+whchoi98:~/environment $ kubectl -n metrics get hpa
 NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
 php-apache   Deployment/php-apache   0%/50%    1         10        1          86s
 ```
 
-이제 load generator를 생성해서 Trigger Event를 발생해 봅니다.
+이제 load generator를 생성해서 Trigger Event를 발생해 봅니다. busybox를 배포하고 Shell로 접속합니다.
+
+Cloud9 IDE에서 Terminal을 한개 더 오픈합하고, 아래 명령을 실행합니다.
 
 ```text
-kubectl run -i --tty load-generator --image=busybox /bin/sh
+kubectl -n metrics run -i --tty load-generator --image=busybox /bin/sh
 ```
+
+앞서 생성한 PHP Web 컨테이너로 무한 접속하도록 합니다.
+
+```text
+while true; do wget -q -O - http://php-apache; done
+```
+
+
+
+
 
