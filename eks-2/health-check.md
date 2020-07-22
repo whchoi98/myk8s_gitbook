@@ -28,7 +28,7 @@ kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지
 
 ## Liveness Probe 구성
 
-아래 그림에서 1번의 구성을 이번 LAB에서 구성할 것입니다.
+아래 그림에서 1번의 구성과 같은 컨셉으로을 이번 LAB에서 구성할 것입니다.
 
 ![&#xCC38;&#xC870; - https://kubernetes.io/blog/2018/10/01/health-checking-grpc-servers-on-kubernetes/](../.gitbook/assets/image%20%2854%29.png)
 
@@ -145,7 +145,7 @@ Events:
   Normal  Started    14m   kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Started container liveness
 ```
 
-### 2. App 장애 발
+### 2. App 장애 발생.
 
 이제 Docker 런타임에서 nodejs 애플리케이션 프로그램에 대한 kill 신호를 보내서 장애를 발생시킵니다.
 
@@ -201,9 +201,9 @@ whchoi98:~ $ kubectl -n healthchecks logs liveness-app --tail 10
 ::ffff:10.11.189.67 - - [22/Jul/2020:03:18:26 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
 ```
 
-Readiness Probe 구성
+## Readiness Probe 구성
 
-
+### 1.Readiness Probe 구성을 포함하는 App 배포.
 
 ```text
 cat <<EoF > ~/environment/healthchecks/readiness-deployment.yaml
@@ -241,6 +241,34 @@ EoF
 ```text
 kubectl -n healthchecks apply -f ~/environment/healthchecks/readiness-deployment.yaml
 ```
+
+
+
+```text
+kubectl -n healthchecks get pods -l app=readiness-deployment
+```
+
+
+
+```text
+kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
+```
+
+아래와 같이 모두 정상적으로 수행되는 것을 확인할 수 있습니다.
+
+```text
+whchoi98:~/environment/healthchecks $ kubectl -n healthchecks get pods -l app=readiness-deployment
+NAME                                   READY   STATUS    RESTARTS   AGE
+readiness-deployment-589b548d5-qhw6k   1/1     Running   0          103s
+readiness-deployment-589b548d5-xbj47   1/1     Running   0          103s
+readiness-deployment-589b548d5-xnmcm   1/1     Running   0          103s
+whchoi98:~/environment/healthchecks $ kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
+Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
+```
+
+앞서 매니페스트 파일 내부에 포함된 Readiness Probe에는 반드시 `tmp/healthy` 디렉토리가 존재해야 Readiness Probe가 구동되도록 되어 있습니다. 
+
+
 
 
 
