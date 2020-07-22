@@ -18,9 +18,16 @@
 
 kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지 종류의 프로브를 수행하고 그에 반응할 수 있습니.
 
-* `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니. 만약 활성 프로브\(liveness probe\)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니. 만약 컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`이니다입니다.
-* `readinessProbe`: 컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타낸다. 만약 준비성 프로브\(readiness probe\)가 실패한다면, 엔드포인트 컨트롤러는 파드에 연관된 모든 서비스들의 엔드포인트에서 파드의 IP주소를 제거한다. 준비성 프로브의 초기 지연 이전의 기본 상태는 `Failure`이다. 만약 컨테이너가 준비성 프로브를 지원하지 않는다면, 기본 상태는 `Success`이다.
-* `startupProbe`: 컨테이너 내의 애플리케이션이 시작되었는지를 나타낸다. 스타트업 프로브\(startup probe\)가 주어진 경우, 성공할 때 까지 다른 나머지 프로브는 활성화 되지 않는다. 만약 스타트업 프로브가 실패하면, kubelet이 컨테이너를 죽이고, 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)에 따라 처리된다. 컨테이너에 스타트업 프로브가 없는 경우, 기본 상태는 `Success`이다.
+* `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니. 만약 활성 프로브\(liveness probe\)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니. 만약 컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`입니다.
+* `readinessProbe`: 컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타냅니. 만약 `readinessProbe`
+
+   실패한다면, 엔드포인트 컨트롤러는 파드에 연관된 모든 서비스들의 엔드포인트에서 파드의 IP주소를 제거합니다. 
+
+  `readinessProbe`의 초기 지연 이전의 기본 상태는 `Failure`입니다. 만약 컨테이너가 `readinessProbe`
+
+  를 지원하지 않는다면, 기본 상태는 `Success`입니다.
+
+* `startupProbe`: 컨테이너 내의 애플리케이션이 시작되었는지를 나타냅니다. `startupProbe`가 주어진 경우, 성공할 때 까지 다른 나머지 프로브는 활성화 되지 않습니. 만약 `startupProbe`실패하면, kubelet이 컨테이너를 죽이고, 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)에 따라 처리됩니. 컨테이너에 스타트업 프로브가 없는 경우, 기본 상태는 `Success`이니다.
 
   
 
