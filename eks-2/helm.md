@@ -672,7 +672,7 @@ ecsdemo-frontend   LoadBalancer   172.20.195.10   a6ad6b49efa9a426d86ce1779cee31
 
 정상적으로 서비스에 접속되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2851%29.png)
+![](../.gitbook/assets/image%20%2852%29.png)
 
 helm list에도 정상적으로 등록되어 있는지 확인합니다.
 
@@ -842,6 +842,12 @@ frontend:
   image: brentley/ecsdemo-frontend
 ```
 
+생성했던 helmdemo를 삭제합니다.
+
+```text
+helm uninstall helmdemo
+```
+
 ## ChartMuseum 구성과 배
 
 ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, Alibaba Cloud OSS Storage, Openstack Object Storage, Oracle Cloud Infrastructure Object를 포함한 클라우드 스토리지 백엔드를 지원하는 Go \(Golang\)로 작성된 오픈 소스 Helm Chart Repository 서버입니다. 
@@ -881,7 +887,7 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 
 ![](../.gitbook/assets/image%20%2850%29.png)
 
-![](../.gitbook/assets/image%20%2852%29.png)
+![](../.gitbook/assets/image%20%2853%29.png)
 
 이제 외부에서 정상적으로 서비스가 접속되는 지 확인해 봅니다.
 
@@ -974,9 +980,61 @@ whchoi98:~/environment/eksdemo $ aws s3 ls s3://whchoi-chartmuseum
 2020-07-22 00:44:51       1251 eksdemo-0.1.0.tgz
 ```
 
+이제 등록된 Repo를 업데이트하고, Chartmuseum 로컬 레포지토리를 검색해 봅니다.
 
+```text
+helm repo update
+helm search repo chartmuseum
+```
 
+출력결과 예제
 
+```text
+whchoi98:~/environment/eksdemo $ helm search repo chartmuseum
+NAME                    CHART VERSION   APP VERSION     DESCRIPTION                                       
+stable/chartmuseum      2.13.0          0.12.0          Host your own Helm Chart Repository               
+chartmuseum/eksdemo     0.1.0           1               A Helm chart for EKS Workshop Microservices app...
+```
+
+등록된 Chartmuseum 로컬 레포지토리에서 패키지를 배포합니다.
+
+```text
+helm install chartmuseum/eksdemo --generate-name 
+```
+
+출력 결과 예시
+
+```text
+whchoi98:~/environment/eksdemo $ helm install chartmuseum/eksdemo --generate-name 
+2020-07-22T01:31:31.175Z        DEBUG   [17] Incoming request: /charts/eksdemo-0.1.0.tgz        {"reqID": "c40236a3-898b-4e4e-8499-4c6ef3fdac05"}
+2020-07-22T01:31:31.214Z        INFO    [17] Request served     {"path": "/charts/eksdemo-0.1.0.tgz", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "38.964464ms", "reqID": "c40236a3-898b-4e4e-8499-4c6ef3fdac05"}
+NAME: eksdemo-1595381491
+LAST DEPLOYED: Wed Jul 22 01:31:31 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
+정상적으로 배포되었는지 확인합니다.
+
+```text
+kubectl -n helm-chart-demo get svc
+```
+
+출력 결과 예시
+
+```text
+whchoi98:~/environment/eksdemo $ kubectl -n helm-chart-demo get svc
+NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)        AGE
+ecsdemo-crystal    ClusterIP      172.20.192.8     <none>                                                                        80/TCP         102s
+ecsdemo-frontend   LoadBalancer   172.20.103.30    ab1e1d50b04bf43e2af0c925f8196b01-411132414.ap-northeast-2.elb.amazonaws.com   80:30447/TCP   102s
+ecsdemo-nodejs     ClusterIP      172.20.207.172   <none>                                                                        80/TCP         102s
+```
+
+ELB DNS 레코드로 접속해 봅니다.
+
+![](../.gitbook/assets/image%20%2851%29.png)
 
 
 
