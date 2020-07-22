@@ -23,6 +23,7 @@ cat ~/environment/myeks/whchoi-cluster.yaml
 whchoi-cluster.yaml의 내용을 살펴 봅니다.생
 
 ```text
+#생략
 
 nodeGroups:
   - name: ng1-public
@@ -33,6 +34,9 @@ nodeGroups:
     volumeSize: 30
     volumeType: gp2 
     amiFamily: AmazonLinux2
+#
+#Public-worker-node에 대한 label을 정의
+#
     labels:
       nodegroup-type: "frontend-workloads"
     ssh: 
@@ -56,6 +60,9 @@ nodeGroups:
     volumeSize: 30
     volumeType: gp2 
     amiFamily: AmazonLinux2
+#
+#Private-worker-node에 대한 label을 정의
+#
     labels:
       nodegroup-type: "backend-workloads"
     ssh: 
@@ -69,12 +76,17 @@ nodeGroups:
         fsx: true
         efs: true
 
-
-cloudWatch:
-    clusterLogging:
-        enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-
+#이하 생략
 ```
+
+현재 설정되어 있는 Node, Pods의 label은 아래 명령을 통해 확인이 가능합니다.
+
+```text
+kubectl get node --show-labels -o wide
+kubectl get pods --show-labels -o wide
+```
+
+
 
 ## Affinity 와 Anti-Affinity
 
