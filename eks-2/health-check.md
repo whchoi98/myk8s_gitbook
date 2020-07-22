@@ -266,7 +266,48 @@ whchoi98:~/environment/healthchecks $ kubectl -n healthchecks describe deploymen
 Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
 ```
 
-앞서 매니페스트 파일 내부에 포함된 Readiness Probe에는 반드시 `tmp/healthy` 디렉토리가 존재해야 Readiness Probe가 구동되도록 되어 있습니다. 
+### 2. App 장애 발생.
+
+앞서 매니페스트 파일 내부에 포함된 Readiness Probe에는 반드시 `tmp/healthy` 디렉토리가 존재해야 Readiness Probe가 구동되도록 되어 있습니다. 해당 디렉토리를 삭제 시켜서 Readiness Fail을 발생시킵니다.
+
+```text
+kubectl -n healthchecks exec -it readiness-deployment-589b548d5-xnmcm -- rm /tmp/healthy
+```
+
+
+
+```text
+kubectl -n healthchecks get pods -l app=readiness-deployment
+```
+
+
+
+```text
+kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
+```
+
+아래와 같이 출력 결과를 확인 할 수 있습니다.
+
+```text
+# pod readiness-deployment-589b548d5-xnmcm가 정상작동하지 않습니다.
+whchoi98:~/environment/healthchecks $ kubectl -n healthchecks get pods -l app=readiness-deployment
+NAME                                   READY   STATUS    RESTARTS   AGE
+readiness-deployment-589b548d5-qhw6k   1/1     Running   0          9m52s
+readiness-deployment-589b548d5-xbj47   1/1     Running   0          9m52s
+readiness-deployment-589b548d5-xnmcm   0/1     Running   0          9m52s
+
+#Replicas에서 1개의 Pod가 가용하지 않음을 확인 할 수 있습니다.
+whchoi98:~/environment/healthchecks $ kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
+Replicas:               3 desired | 3 updated | 3 total | 2 available | 1 unavailable
+```
+
+### 3. App 복구를 통한 Readiness Probe 확인.
+
+
+
+
+
+
 
 
 
