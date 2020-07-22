@@ -163,7 +163,7 @@ CA\(Cluster Autoscaler\)가 제어할 ASG\(AutoScaling Group\)의 이름을 구�
 eksctl-eksworkshop-nodegroup-ng1-public-NodeGroup-1OKGC9A5SPGB1
 ```
 
-ASG Group의 최소, 최대 사이즈를 변경합니다. \(min = 2, max =8\)
+ASG Group의 최소, 최대 사이즈를 변경합니다. \(min = 3, max =8\)
 
 ![](../.gitbook/assets/image%20%2856%29.png)
 
