@@ -29,11 +29,11 @@ kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지
 
 * `startupProbe`: 컨테이너 내의 애플리케이션이 시작되었는지를 나타냅니다. `startupProbe`가 주어진 경우, 성공할 때 까지 다른 나머지 프로브는 활성화 되지 않습니. 만약 `startupProbe`실패하면, kubelet이 컨테이너를 죽이고, 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)에 따라 처리됩니. 컨테이너에 스타트업 프로브가 없는 경우, 기본 상태는 `Success`입니다.
 
-Liveness Probe 구성
+## Liveness Probe 구성
 
-1.Liveness Probe를 위한 매니페스트 구성
+### 1.Liveness Probe 구성을 포함한 App 배
 
-
+Liveness Probe와 Readiness Probe 구성을 위한 디렉토리를 생성합니다.
 
 ```text
 mkdir -p ~/environment/healthchecks
@@ -77,7 +77,80 @@ NAME           READY   STATUS    RESTARTS   AGE
 liveness-app   1/1     Running   0          14s
 ```
 
+아래 명령을 통해서 liveness-app의 이벤트를 확인 할 수 있습니다.
 
+```text
+kubectl -n healthchecks describe pods liveness-app
+```
+
+출력 결과 예제 
+
+{% hint style="info" %}
+Event 출력항목을 확인해 봅니다.
+{% endhint %}
+
+```text
+whchoi98:~ $ kubectl -n healthchecks describe pods liveness-app
+Name:         liveness-app
+Namespace:    healthchecks
+Priority:     0
+Node:         ip-10-11-189-67.ap-northeast-2.compute.internal/10.11.189.67
+Start Time:   Wed, 22 Jul 2020 02:47:44 +0000
+Labels:       <none>
+Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+                {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"liveness-app","namespace":"healthchecks"},"spec":{"containers":[{"ima...
+              kubernetes.io/psp: eks.privileged
+Status:       Running
+IP:           10.11.162.172
+IPs:
+  IP:  10.11.162.172
+Containers:
+  liveness:
+    Container ID:   docker://650f39a9c57c38661e97c1bdddd0338751d6df9d78e6baea9b2767c7a888d58a
+    Image:          brentley/ecsdemo-nodejs
+    Image ID:       docker-pullable://brentley/ecsdemo-nodejs@sha256:81b3ef18eb896bf0737593f49cf813e46b03bda5eaff975dd95105b2b7b12ded
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Wed, 22 Jul 2020 02:47:47 +0000
+    Ready:          True
+    Restart Count:  0
+    Liveness:       http-get http://:3000/health delay=5s timeout=1s period=5s #success=1 #failure=3
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-v76s5 (ro)
+Conditions:
+  Type              Status
+  Initialized       True 
+  Ready             True 
+  ContainersReady   True 
+  PodScheduled      True 
+Volumes:
+  default-token-v76s5:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-v76s5
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type    Reason     Age   From                                                      Message
+  ----    ------     ----  ----                                                      -------
+  Normal  Scheduled  14m   default-scheduler                                         Successfully assigned healthchecks/liveness-app to ip-10-11-189-67.ap-northeast-2.compute.internal
+  Normal  Pulling    14m   kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Pulling image "brentley/ecsdemo-nodejs"
+  Normal  Pulled     14m   kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Successfully pulled image "brentley/ecsdemo-nodejs"
+  Normal  Created    14m   kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Created container liveness
+  Normal  Started    14m   kubelet, ip-10-11-189-67.ap-northeast-2.compute.internal  Started container liveness
+```
+
+### 2. App 장애 발
+
+이제 Docker 런타임에서 nodejs 애플리케이션 프로그램에 대한 kill 신호를 보내서 장애를 발생시킵니다.
+
+```text
+kubectl exec -it liveness-app -- /bin/kill -s SIGUSR1 1
+```
 
 Readiness Probe 구성
 
