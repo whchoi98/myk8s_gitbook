@@ -59,6 +59,8 @@ NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AG
 php-apache   Deployment/php-apache   0%/50%    1         10        1          86s
 ```
 
+### 3. 부하생성과 HPA기반의 AutoScale
+
 이제 load generator를 생성해서 Trigger Event를 발생해 봅니다. busybox를 배포하고 Shell로 접속합니다.
 
 Cloud9 IDE에서 Terminal을 한개 더 오픈합하고, 아래 명령을 실행합니다.
