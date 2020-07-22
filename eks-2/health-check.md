@@ -18,7 +18,7 @@
 
 kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지 종류의 프로브를 수행하고 그에 반응할 수 있습니.
 
-* `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니다. 만약 활성 프로브\(liveness probe\)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니. 만약 컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`입니다.
+* `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니다. 만약 활성 프로브\(liveness probe\)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니다. 약 컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`입니다.
 * `readinessProbe`: 컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타냅니. 만약 `readinessProbe`
 
    실패한다면, 엔드포인트 컨트롤러는 파드에 연관된 모든 서비스들의 엔드포인트에서 파드의 IP주소를 제거합니다. 
