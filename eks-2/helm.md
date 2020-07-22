@@ -842,7 +842,7 @@ frontend:
   image: brentley/ecsdemo-frontend
 ```
 
-## ChartMuseum 구성하기
+## ChartMuseum 구성과 배
 
 ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, Alibaba Cloud OSS Storage, Openstack Object Storage, Oracle Cloud Infrastructure Object를 포함한 클라우드 스토리지 백엔드를 지원하는 Go \(Golang\)로 작성된 오픈 소스 Helm Chart Repository 서버입니다. 
 
