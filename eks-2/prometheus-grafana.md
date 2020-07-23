@@ -144,6 +144,32 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 Grafana를 사용하게 되면 시계열 메트릭 데이터를 질의, 시각화, Alert을 이해하는 데 사용할 수 있습니다.
 
+#### Grafana Demo 공식 사이트 - [https://play.grafana.org/](https://play.grafana.org/)
+
+
+
+```text
+mkdir ~/environment/
+kubectl create namespace nodeselector 
+cat <<EoF > ~/environment/nodeselector/pod-nginx.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    env: test
+  namespace: nodeselector
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    disktype: ssd
+EoF
+
+```
+
 
 
 ## 4. DashBoard 구성
