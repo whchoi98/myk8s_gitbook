@@ -34,7 +34,7 @@
 helm search repo stable/prometheus
 ```
 
-
+아래와 같이 prometheus namespace를 만들고, helm을 통해 설치합니다. 앞서 랩에서 이미 Worker node의 스토리지 타입은 gp2 타입으로 배포되었습니다.
 
 ```text
 kubectl create namespace prometheus
@@ -43,8 +43,6 @@ helm install prometheus stable/prometheus \
     --set alertmanager.persistentVolume.storageClass="gp2" \
     --set server.persistentVolume.storageClass="gp2"
 ```
-
-
 
 아래와 같은 결과를 얻을 수 있습니다.
 
@@ -70,13 +68,13 @@ Get the Prometheus server URL by running these commands in the same shell:
 
 ```
 
-Prometheus가 정상적으로 배포되었는지 확인합니다.
+이제 Prometheus가 정상적으로 배포되었는지 확인합니다.
 
 ```text
 kubectl -n prometheus get all 
 ```
 
-앞서 소개한 주요 컴포넌트들이 Pod형태로 배포된 것을 확인 할 수 있습니다.
+앞서 소개한 주요 컴포넌트들이 Pod형태로 배포된 것을 확인 할 수 있습니다. 앞서 아키텍쳐 도식도와 비교해서 확인해 봅니다.
 
 ```text
 whchoi98:~ $ kubectl -n prometheus get all 
@@ -144,7 +142,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ## 3. Grafana 구성
 
-Grafana
+Grafana를 사용하게 되면 시계열 메트릭 데이터를 질의, 시각화, Alert을 이해하는 데 사용할 수 있습니다.
 
 
 
