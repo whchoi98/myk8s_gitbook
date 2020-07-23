@@ -241,6 +241,12 @@ EoF
 해당 Affinity의 NodeAffinity는 node의 label의 Key=azname, value=ap-northeast-2a,ap-northeast-2b가 있는 곳에만 배치하겠다는 의미입니다. 또한 해당 기준을 충족하는 노드 중에서 Key=another-node-label-key value=another-node-label-value를 선호합니다.
 {% endhint %}
 
+예제에서 operator:In 연산자를 사용하였습니다.  In, NotIn, Exists, DoesNotExist, Gt, Lt 등 다양한 연산자를 사용할 수 있습니다. nodeAffinity에 대한 아래 몇가지 내용을 알아 둘 필요가 있습니다.
+
+* 2개 이상의 matchExpressions가 선언되어 있는 경우에는 , 모든 조건이 만족해야 Pod가 배포됩니다. 또한 matchExpressions 내부의 선언된 조건이 여러개 있는 경우에도 모든 조건을 만족해야 Pod가 배포됩니다.
+* key는 고유의 값 한개를 선언하지만, value는 예제 처럼 여러개를 선언할 수 있습니다. \(value는 하나의 조건만 만족해도 됩니다.\)
+* preferred와 required는 create,apply 시점에만 반영됩니다. 
+
 이제 아래와 같이 새로운 namespace를 만들고 , 적용해 봅니다.
 
 ```text
@@ -272,8 +278,12 @@ kubectl label nodes ip-10-11-16-31.ap-northeast-2.compute.internal azname=ap-nor
 이제 정상적으로 pod가 생성되는 지 확인합니다.
 
 ```text
-
+whchoi98:~ $ kubectl -n affinity get pods -o wide
+NAME                 READY   STATUS    RESTARTS   AGE     IP            NODE                                             NOMINATED NODE   READINESS GATES
+with-node-affinity   1/1     Running   0          2m10s   10.11.24.52   ip-10-11-16-31.ap-northeast-2.compute.internal   <none>           <none>
 ```
+
+
 
 
 
