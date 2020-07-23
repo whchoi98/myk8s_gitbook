@@ -1,2 +1,2 @@
-# 7.EKS Storage
+# EKS Storage
 

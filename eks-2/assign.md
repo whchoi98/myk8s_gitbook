@@ -200,9 +200,60 @@ Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종
 
 따라서 `requiredDuringSchedulingIgnoredDuringExecution` 의 예로는 "인텔 CPU가 있는 노드에서만 파드 실행"이 될 수 있고, `preferredDuringSchedulingIgnoredDuringExecution` 의 예로는 "장애 조치 영역 XYZ에 파드 집합을 실행하려고 하지만, 불가능하다면 다른 곳에서 일부를 실행하도록 허용"이 있을 것이다.
 
-노드 어피니티는 PodSpec의 `affinity` 필드의 `nodeAffinity` 필드에서 지정된다.
+### 2.Node Affinity
 
+노드 어피니티는 PodSpec의 `affinity` 필드의 `nodeAffinity` 필드에서 지정됩니다. 
 
+```text
+kubectl label nodes ip-10-11-16-31.ap-northeast-2.compute.internal azname=ap-northeast-2a
+```
+
+아래와 같이 pod 배포를 위한 새로운 매니페스트 파일을 작성합니다.
+
+```text
+mkdir ~/environment/affinity
+cat <<EoF > ~/environment/affinity/pod-with-node-affinity.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: azname
+            operator: In
+            values:
+            - ap-northeast-2a
+            - ap-northeast-2b
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: another-node-label-key
+            operator: In
+            values:
+            - another-node-label-value
+  containers:
+  - name: with-node-affinity
+    image: us.gcr.io/k8s-artifacts-prod/pause:2.0
+EoF
+
+```
+
+{% hint style="info" %}
+해당 Affinity의 NodeAffinity는 node의 label의 Key=azname, value=ap-northeast-2a,ap-northeast-2b가 있는 곳에만 배치하겠다는 의미입니다. 또한 해당 기준을 충족하는 노드 중에서 Key=another-node-label-key value=another-node-label-value를 선호합니다.
+{% endhint %}
+
+이제 아래와 같이 새로운 namespace를 만들고 , 적용해 봅니다.
+
+```text
+kubectl create namespace affinity
+kubectl -n affinity apply -f ~/environment/affinity/pod-with-node-affinity.yaml
+
+```
 
 
 

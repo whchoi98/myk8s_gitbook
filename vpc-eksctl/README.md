@@ -1,4 +1,4 @@
-# 3.VPC구성과 eksctl 기반 설치
+# VPC구성과 eksctl 기반 설치
 
 
 

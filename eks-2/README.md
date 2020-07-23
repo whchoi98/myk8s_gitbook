@@ -1,4 +1,4 @@
-# 5.EKS 기반 관리
+# EKS 기반 관리
 
 관리형 Kubernetes 모델인 AWS EKS를 사용하면서, Kubernetes 생태계에서 지원하는 다양한 OpenSource 관리 도구들과 AWS 서비스들을 연계해서 EKS를 관리하는 기술들을 실습해 봅니다.
 
