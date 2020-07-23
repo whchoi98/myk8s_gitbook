@@ -1,4 +1,4 @@
-# Prometheus-Grapana
+# Prometheus-Grafana
 
 ## 1.Prometheus 소개
 
@@ -24,7 +24,7 @@
 * [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공. 
 * 기타 다양한 지원 도구들.
 
-![&#xCC38;&#xC870; - https://prometheus.io/docs/introduction/overview/](../.gitbook/assets/image%20%2866%29.png)
+![&#xCC38;&#xC870; - https://prometheus.io/docs/introduction/overview/](../.gitbook/assets/image%20%2867%29.png)
 
 ## 2. Prometheus 구성
 
@@ -122,9 +122,29 @@ kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090 &
 
 ```
 
+외부에서 접속되지 않으므로, Cloud9 IDE에서 Preview를 통해 Proxy로 접속합니다. \([K8s Dashboard ](../eks-1/k8s-dashboard.md)접속 형태와 유사합니다.\)
 
+Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
+
+![](../.gitbook/assets/image%20%2816%29.png)
+
+생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
+
+![](../.gitbook/assets/image%20%282%29.png)
+
+전체 화면 창에서 아래와 같이 마지막에 URL을 추가합니다.
+
+```text
+/targets
+```
+
+아래와 같은 결과를 브라우져에서 확인할 수 있습니다.Status 메뉴에서 다양한 결과를 확인 할 수 있습니다.
+
+![](../.gitbook/assets/image%20%2866%29.png)
 
 ## 3. Grafana 구성
+
+Grafana
 
 
 

@@ -48,7 +48,7 @@
   * [Health Check 구성](eks-2/health-check.md)
   * [AutoScaling 구성](eks-2/autoscaling.md)
   * [Assign](eks-2/assign.md)
-  * [Prometheus-Grapana](eks-2/prometheus-grapana.md)
+  * [Prometheus-Grafana](eks-2/prometheus-grafana.md)
   * [EFK기반 로깅](eks-2/efk-logging.md)
   * [Container Insights](eks-2/container-insights.md)
   * [X-Ray기반 추적](eks-2/xray.md)
