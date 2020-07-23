@@ -175,11 +175,11 @@ aws es create-elasticsearch-domain \
 
 AWS ES를 배포하게 되면 아래와 같이 "로드 중"으로 도메인 상태가 표기 됩니다.
 
-![](../.gitbook/assets/image%20%2883%29.png)
+![](../.gitbook/assets/image%20%2884%29.png)
 
 정상적으로 도메인 상태가 표기되기 까지는 15분 이상 소요됩니다.
 
-![](../.gitbook/assets/image%20%2875%29.png)
+![](../.gitbook/assets/image%20%2876%29.png)
 
 {% hint style="danger" %}
 ElasticSearch 도메인 상태가 정상일 때까지 , 다음 단계를 수행하지 마십시요.
@@ -191,16 +191,17 @@ ElasticSearch 도메인 상태가 정상일 때까지 , 다음 단계를 수행�
 
 Endpoint URL은 아래에서 확인이 가능합니다.
 
-![](../.gitbook/assets/image%20%2880%29.png)
+![](../.gitbook/assets/image%20%2881%29.png)
 
 ```text
-# We need to retrieve the Fluent Bit Role ARN
+# Need to retrieve the Fluent Bit Role ARN, ES_Endpoint
 export FLUENTBIT_ROLE=$(eksctl get iamserviceaccount --cluster eksworkshop --namespace logging -o json | jq '.iam.serviceAccounts[].status.roleARN' -r)
+export ES_ENDPOINT=$(aws es describe-elasticsearch-domain --domain-name ${ES_DOMAIN_NAME} --output text --query "DomainStatus.Endpoint")
 
 # Update the Elasticsearch internal database
 curl -sS -u "${ES_DOMAIN_USER}:${ES_DOMAIN_PASSWORD}" \
     -X PATCH \
-    https://search-eksworkshop-logging-4oxm4bgneyb3yqo3fabgr3jbae.ap-northeast-2.es.amazonaws.com/_opendistro/_security/api/rolesmapping/all_access?pretty \
+    https://${ES_ENDPOINT}/_opendistro/_security/api/rolesmapping/all_access?pretty \
     -H 'Content-Type: application/json' \
     -d'
 [
@@ -221,5 +222,67 @@ curl -sS -u "${ES_DOMAIN_USER}:${ES_DOMAIN_PASSWORD}" \
 }
 ```
 
-Kibana 구
+4.Fluent Bit 구성.
+
+fluent Bit 매니페스트 파일을 다운받고, 일부 파일을 수정합니다.
+
+```text
+cd ~/environment/logging
+
+# get the Elasticsearch Endpoint
+export ES_ENDPOINT=$(aws es describe-elasticsearch-domain --domain-name ${ES_DOMAIN_NAME} --output text --query "DomainStatus.Endpoint")
+
+curl -Ss https://www.eksworkshop.com/intermediate/230_logging/deploy.files/fluentbit.yaml \
+    | envsubst > ~/environment/logging/fluentbit.yaml
+
+```
+
+fluent Bit 파일을 배포합니다.
+
+```text
+kubectl apply -f ~/environment/logging/fluentbit.yaml
+```
+
+정상적으로 모든 Worker Node에 설치되었는지 확인해 봅니다.
+
+```text
+kubectl -n logging get pods -o wide
+
+```
+
+정상적으로 설치되었다면, 아래와 같이 모든 노드에 설치되어 있습니다.
+
+```text
+whchoi98:~/environment/logging $ kubectl -n logging get pods -o wide
+NAME               READY   STATUS    RESTARTS   AGE   IP              NODE                                               NOMINATED NODE   READINESS GATES
+fluent-bit-8m2m4   1/1     Running   0          64s   10.11.22.53     ip-10-11-16-31.ap-northeast-2.compute.internal     <none>           <none>
+fluent-bit-94kp7   1/1     Running   0          63s   10.11.138.76    ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
+fluent-bit-9x5r4   1/1     Running   0          63s   10.11.107.197   ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
+fluent-bit-gxvml   1/1     Running   0          63s   10.11.61.131    ip-10-11-55-30.ap-northeast-2.compute.internal     <none>           <none>
+fluent-bit-vxt62   1/1     Running   0          63s   10.11.170.168   ip-10-11-189-67.ap-northeast-2.compute.internal    <none>           <none>
+fluent-bit-zn7rs   1/1     Running   0          63s   10.11.79.179    ip-10-11-90-240.ap-northeast-2.compute.internal    <none>           <none>
+```
+
+## Kibana 접속.
+
+1.kibana 접속. 
+
+이제 Kibana에 접속해 봅니다.
+
+```text
+echo "Kibana URL: https://${ES_ENDPOINT}/_plugin/kibana/
+Kibana user: ${ES_DOMAIN_USER}
+Kibana password: ${ES_DOMAIN_PASSWORD}"
+
+```
+
+앞서 변수에 저장한 값을 통해 URL, user id, Pwd를 확인하고 , 브라우져에서 접속합니다.
+
+![](../.gitbook/assets/image%20%2868%29.png)
+
+
+
+
+
+
 
