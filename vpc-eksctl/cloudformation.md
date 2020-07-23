@@ -42,7 +42,7 @@ Cloudformation Stack 상세 정보 구성을 합니다.
 
 ![](../.gitbook/assets/image%20%2832%29.png)
 
-### 4.Output 정보 확인
+4.Output 정보 확인
 
 Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 사용해서 EKS Cluster를 사용할 것입니다.
 

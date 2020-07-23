@@ -202,12 +202,6 @@ Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종
 
 ### 2.Node Affinity
 
-노드 어피니티는 PodSpec의 `affinity` 필드의 `nodeAffinity` 필드에서 지정됩니다. 
-
-```text
-kubectl label nodes ip-10-11-16-31.ap-northeast-2.compute.internal azname=ap-northeast-2a
-```
-
 아래와 같이 pod 배포를 위한 새로운 매니페스트 파일을 작성합니다.
 
 ```text
@@ -255,7 +249,31 @@ kubectl -n affinity apply -f ~/environment/affinity/pod-with-node-affinity.yaml
 
 ```
 
+아래 명령을 통해 Pod의 배포 상태를 확인합니다.
 
+```text
+kubectl -n affinity get pods -o wide
+```
+
+Node의 Label 이 azname=ap-northeast-2a, 2b를 가지고 있는 것이 아직 없기 때문에 pending 상태입니다.
+
+```text
+whchoi98:~ $ kubectl -n affinity get pods -o wide
+NAME                 READY   STATUS              RESTARTS   AGE    IP       NODE                                             NOMINATED NODE   READINESS GATES
+with-node-affinity   0/1     pendingng               0     2m4s   <none>   ip-10-11-16-31.ap-northeast-2.compute.internal   <none>           <none>
+```
+
+이제 node에 nodAffinity를 위한 label을 지정합니다. 노드 어피니티는 PodSpec의 `affinity` 필드의 `nodeAffinity` 필드에서 지정됩니다. 
+
+```text
+kubectl label nodes ip-10-11-16-31.ap-northeast-2.compute.internal azname=ap-northeast-2a
+```
+
+이제 정상적으로 pod가 생성되는 지 확인합니다.
+
+```text
+
+```
 
 
 
