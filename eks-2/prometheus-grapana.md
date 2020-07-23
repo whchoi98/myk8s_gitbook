@@ -28,7 +28,7 @@
 
 ## 2. Prometheus 구성
 
-
+앞서 [Helm Chart](helm.md#1-helm)를 설치하였습니다. Helm Chart를 활용해서 설치합니다.
 
 ```text
 helm search repo stable/prometheus
@@ -37,8 +37,92 @@ helm search repo stable/prometheus
 
 
 ```text
+kubectl create namespace prometheus
+helm install prometheus stable/prometheus \
+    --namespace prometheus \
+    --set alertmanager.persistentVolume.storageClass="gp2" \
+    --set server.persistentVolume.storageClass="gp2"
+```
+
+
+
+아래와 같은 결과를 얻을 수 있습니다.
+
+```text
+whchoi98:~ $ helm install prometheus stable/prometheus \
+>     --namespace prometheus \
+>     --set alertmanager.persistentVolume.storageClass="gp2" \
+>     --set server.persistentVolume.storageClass="gp2"
+NAME: prometheus
+LAST DEPLOYED: Thu Jul 23 08:19:32 2020
+NAMESPACE: prometheus
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+The Prometheus server can be accessed via port 80 on the following DNS name from within your cluster:
+prometheus-server.prometheus.svc.cluster.local
+
+
+Get the Prometheus server URL by running these commands in the same shell:
+  export POD_NAME=$(kubectl get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace prometheus port-forward $POD_NAME 9090
 
 ```
+
+Prometheus가 정상적으로 배포되었는지 확인합니다.
+
+```text
+kubectl -n prometheus get all 
+```
+
+앞서 소개한 주요 컴포넌트들이 Pod형태로 배포된 것을 확인 할 수 있습니다.
+
+```text
+whchoi98:~ $ kubectl -n prometheus get all 
+NAME                                                 READY   STATUS    RESTARTS   AGE
+pod/prometheus-alertmanager-6d6469d9bb-mqlk9         2/2     Running   0          6m45s
+pod/prometheus-kube-state-metrics-6df5d44568-66rm8   1/1     Running   0          6m45s
+pod/prometheus-node-exporter-287wp                   1/1     Running   0          6m45s
+pod/prometheus-node-exporter-7t82k                   1/1     Running   0          6m45s
+pod/prometheus-node-exporter-n5gcw                   1/1     Running   0          6m45s
+pod/prometheus-node-exporter-spc56                   1/1     Running   0          6m45s
+pod/prometheus-node-exporter-w5l5d                   1/1     Running   0          6m45s
+pod/prometheus-node-exporter-xcxgj                   1/1     Running   0          6m45s
+pod/prometheus-pushgateway-6d65c95d5-xwvhh           1/1     Running   0          6m45s
+pod/prometheus-server-869d4b999b-6cbtk               2/2     Running   0          6m45s
+
+NAME                                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/prometheus-alertmanager         ClusterIP   172.20.182.229   <none>        80/TCP     6m45s
+service/prometheus-kube-state-metrics   ClusterIP   172.20.121.112   <none>        8080/TCP   6m45s
+service/prometheus-node-exporter        ClusterIP   None             <none>        9100/TCP   6m45s
+service/prometheus-pushgateway          ClusterIP   172.20.197.145   <none>        9091/TCP   6m45s
+service/prometheus-server               ClusterIP   172.20.98.8      <none>        80/TCP     6m45s
+
+NAME                                      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+daemonset.apps/prometheus-node-exporter   6         6         6       6            6           <none>          6m45s
+
+NAME                                            READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/prometheus-alertmanager         1/1     1            1           6m45s
+deployment.apps/prometheus-kube-state-metrics   1/1     1            1           6m45s
+deployment.apps/prometheus-pushgateway          1/1     1            1           6m45s
+deployment.apps/prometheus-server               1/1     1            1           6m45s
+
+NAME                                                       DESIRED   CURRENT   READY   AGE
+replicaset.apps/prometheus-alertmanager-6d6469d9bb         1         1         1       6m45s
+replicaset.apps/prometheus-kube-state-metrics-6df5d44568   1         1         1       6m45s
+replicaset.apps/prometheus-pushgateway-6d65c95d5           1         1         1       6m45s
+replicaset.apps/prometheus-server-869d4b999b               1         1         1       6m45s
+```
+
+Cloud9 터미널에서 백그라운드로 실행시킵니다.
+
+```text
+kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090 &
+
+```
+
+
 
 ## 3. Grafana 구성
 
