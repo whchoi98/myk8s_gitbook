@@ -1,2 +1,2 @@
-# 9.EKS CI/CD
+# EKS CI/CD
 

@@ -1,2 +1,2 @@
-# 10.EKS Service Mesh
+# EKS Service Mesh
 

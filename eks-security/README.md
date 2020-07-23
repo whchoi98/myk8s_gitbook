@@ -1,2 +1,2 @@
-# 8.EKS Security
+# EKS Security
 

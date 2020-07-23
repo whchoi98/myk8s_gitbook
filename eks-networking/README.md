@@ -1,2 +1,2 @@
-# 6.EKS Networking
+# EKS Networking
 
