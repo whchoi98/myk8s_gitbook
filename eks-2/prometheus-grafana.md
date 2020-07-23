@@ -142,7 +142,9 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ![](../.gitbook/assets/image%20%2866%29.png)
 
-## 3. Grafana 구성
+## Grafana 구성
+
+### 1.Grafana 설치 
 
 Grafana를 사용하게 되면 시계열 메트릭 데이터를 질의, 시각화, Alert을 이해하는 데 사용할 수 있습니다.
 
@@ -257,6 +259,8 @@ service를 확인합니다.
 kubectl get svc -n grafana grafana
 ```
 
+### 2.Grafana 접속 확인. 
+
 출력 결과에서 제공되는 Loadbalancer 주소를 브라우져에서 입력합니다.
 
 ```text
@@ -271,19 +275,67 @@ grafana   LoadBalancer   172.20.23.245   a555fefad0ed8493fb4a9ec240318103-201438
 --set adminPassword='1234Qwer'
 ```
 
+![](../.gitbook/assets/image%20%2873%29.png)
+
+## DashBoard 구성
+
+### 1.Cluster Monitoring
+
+이제 생성된 Grafana 에서 배포된 Cluster들에 대해서 모니터링을 합니다.
+
+좌측 상단 메뉴의 "+" 를 선택하고 Import를 선택합니다.
+
 ![](../.gitbook/assets/image%20%2870%29.png)
 
+Import 값을 "3119"를 선택하고, Load를 선택합니다.
 
+![](../.gitbook/assets/image%20%2876%29.png)
 
-## 4. DashBoard 구성
-
-이제 생성된 Grafana 
-
-![](../.gitbook/assets/image%20%2868%29.png)
+DataSource를 Prometheus를 선택합니다.
 
 ![](../.gitbook/assets/image%20%2871%29.png)
 
+아래와 같이 다양한 Cluster 내부의 정보를 확인 할 수 있습니다.
+
+![](../.gitbook/assets/image%20%2875%29.png)
+
+### 2.Pod Monitoring 구성
+
+이제 생성된 Grafana 에서 배포된 Pod들에 대해서 모니터링을 합니다.
+
+좌측 상단 메뉴의 "+" 를 선택하고 Import를 선택합니다.
+
+![](../.gitbook/assets/image%20%2870%29.png)
+
+Import 값을 "6417"를 선택하고, Load를 선택합니다.
+
+![](../.gitbook/assets/image%20%2874%29.png)
+
+Name : Kubernetes Pods Monitoring , Change uid, 데이터 소스 : Prometheus 를 선택하고, Import를 선택합니다.
+
+![](../.gitbook/assets/image%20%2872%29.png)
+
+Pod들 중심으로 모니터링을 할 수 있습니다.
+
 ![](../.gitbook/assets/image%20%2869%29.png)
+
+### 3. Grafana Labs Dashboard 활용하기
+
+위에서 활용한 것 처럼, 이미 템플릿으로 생성한 ID를 가져와서 구성해 봅니다.
+
+[Grafana Labs Dashboard](https://grafana.com/grafana/dashboards)에 접속합니다. \([https://grafana.com/grafana/dashboards](https://grafana.com/grafana/dashboards)\)
+
+아래와 같이 Filter를 통해서 유용한 Dashboard를 가져옵니다.
+
+![](../.gitbook/assets/image%20%2868%29.png)
+
+* Kubernetes Deployment Statefulset Daemonset metrics
+
+```text
+8588
+```
+
+
 
 
 
