@@ -1,2 +1,225 @@
 # EFK기반 로깅
 
+## EFK 소개
+
+
+
+Fluent Bit는 다양한 소스에서 데이터 / 로그를 수집하고 통합하여 여러 대상으로 보낼 수 있는 오픈 소스 및 다중 플랫폼 **로그 프로세서 및 Forwarder** 입니다. Docker 및 Kubernetes 환경 과 완벽하게 호환 됩니다.Fluent Bit는 **C** 로 작성되었으며 약 30 개의 확장을 지원하는 플러그 가능 아키텍처가 있습니다. 빠르고 가벼우 며 TLS를 통한 네트워크 운영에 필요한 보안을 제공합니다. \(참조 - [https://fluentbit.io](https://fluentbit.io/)\)
+
+## Fluent Bit 설치환경 구성 .
+
+### 1.권한 설정
+
+Amazon EKS 클러스터의 서비스 계정에 대한 IAM 역할을 사용하면, IAM 역할을 Kubernetes 서비스 계정과 연결할 수 있습니다. 그런 다음이 서비스 계정은 해당 서비스 계정을 사용하는 모든 포드의 컨테이너에 AWS 권한을 제공 할 수 있습니다. 이 기능을 사용하면 해당 노드의 포드가 AWS API를 호출 할 수 있도록 더 이상 노드 IAM 역할에 대한 확장 권한을 제공 할 필요가 없습니다.
+
+#### Cluster에서 서비스 계정에 대한 IAM 역할을 활성화 합니다. \(이전 LAB에서 이미 수행했을 수도 있습니다.\)
+
+```text
+eksctl utils associate-iam-oidc-provider \
+    --cluster eksworkshop \
+    --approve
+```
+
+### 2.서비스 계정에 대한 IAM 역할 및 정책 생성. 
+
+서비스 계정에 대한 IAM 역할 및 정책을 생성합니다.
+
+#### 생성에 앞서 주요 환경변수를 저장하고, 정상적으로 저장되었는 지 확인합니다. \(이전 LAB에서 이미 수행했을 수도 있습니다.\)
+
+```text
+export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+export ES_DOMAIN_NAME="eksworkshop-logging"
+echo $AWS_REGION
+echo $ACCOUNT_ID
+echo $ES_DOMAIN_NAME
+```
+
+#### Fluent Bit 컨테이너가 ElasticSearch 클러스터에 연결하는 데 필요한 권한을 제한하는 IAM 정책을 아래와 같이 생성합니다. 또한 Kubernetes 서비스 계정을 연결하기 위한 IAM역할을 만듭니다.
+
+```text
+mkdir ~/environment/logging/
+
+cat <<EoF > ~/environment/logging/fluent-bit-policy.json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "es:ESHttp*"
+            ],
+            "Resource": "arn:aws:es:${AWS_REGION}:${ACCOUNT_ID}:domain/${ES_DOMAIN_NAME}"
+        }
+    ]
+}
+EoF
+
+aws iam create-policy   \
+  --policy-name fluent-bit-policy \
+  --policy-document file://~/environment/logging/fluent-bit-policy.json
+
+```
+
+다음과 같이 정상적으로 수행됩니다.
+
+```text
+{
+    "Policy": {
+        "PolicyName": "fluent-bit-policy",
+        "PolicyId": "ANPA5HK66GVYKKBQWPTNV",
+        "Arn": "arn:aws:iam::ACCOUNT_ID:policy/fluent-bit-policy",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 0,
+        "PermissionsBoundaryUsageCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2020-07-23T16:33:49Z",
+        "UpdateDate": "2020-07-23T16:33:49Z"
+    }
+}
+```
+
+### 3.IAM 역할 생성.
+
+새로운 namespace를 생성하고, Fluent Bit 서비스 계정에 대한 IAM 역할을 생성합니다.
+
+```text
+kubectl create namespace logging
+
+eksctl create iamserviceaccount \
+    --name fluent-bit \
+    --namespace logging \
+    --cluster eksworkshop \
+    --attach-policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/fluent-bit-policy" \
+    --approve \
+    --override-existing-serviceaccounts
+
+```
+
+아래와 같은 결과를 확인 할 수 있습니다.
+
+```text
+[ℹ]  eksctl version 0.23.0
+[ℹ]  using region ap-northeast-2
+[ℹ]  1 existing iamserviceaccount(s) (kube-system/alb-ingress-controller) will be excluded
+[ℹ]  1 iamserviceaccount (logging/fluent-bit) was included (based on the include/exclude rules)
+[ℹ]  combined exclude rules: kube-system/alb-ingress-controller
+[ℹ]  no iamserviceaccounts present in the current set were excluded by the filter
+[!]  metadata of serviceaccounts that exist in Kubernetes will be updated, as --override-existing-serviceaccounts was set
+[ℹ]  1 task: { 2 sequential sub-tasks: { create IAM role for serviceaccount "logging/fluent-bit", create serviceaccount "logging/fluent-bit" } }
+[ℹ]  building iamserviceaccount stack "eksctl-eksworkshop-addon-iamserviceaccount-logging-fluent-bit"
+[ℹ]  deploying stack "eksctl-eksworkshop-addon-iamserviceaccount-logging-fluent-bit"
+[ℹ]  created serviceaccount "logging/fluent-bit"
+```
+
+정상적으로 service 계정이 생성되었는지 확인합니다.
+
+```text
+kubectl -n logging describe serviceaccounts fluent-bit
+```
+
+아래와 같은 결과를 확인 할 수 있습니다.
+
+```text
+whchoi98:~/environment/grafana $ kubectl -n logging describe serviceaccounts fluent-bit 
+Name:                fluent-bit
+Namespace:           logging
+Labels:              <none>
+Annotations:         eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/eksctl-eksworkshop-addon-iamserviceaccount-l-Role1-7E9K33CXVT3S
+Image pull secrets:  <none>
+Mountable secrets:   fluent-bit-token-ntqfr
+Tokens:              fluent-bit-token-ntqfr
+Events:              <none>
+```
+
+
+
+## ElasticSearch Cluster 구성
+
+### 1.사전 환경 구성
+
+빠른 설치를 위해서 ES관련 키워드 몇가지를 변수에 저장해 둡니다.
+
+```text
+# name of our elasticsearch cluster
+export ES_DOMAIN_NAME="eksworkshop-logging"
+
+# Elasticsearch version
+export ES_VERSION="7.4"
+
+# kibana admin user
+export ES_DOMAIN_USER="eksworkshop"
+
+# kibana admin password
+export ES_DOMAIN_PASSWORD="$(openssl rand -base64 12)_Ek1$"
+
+```
+
+{% hint style="info" %}
+ES의 패스워드는 one uppercase letter, one lowercase letter, one number,  one special character 를 포함하도록 되어 있습니다. openssl random으로 패스워드를 생성합니다.
+{% endhint %}
+
+### 2. ElasticSearch 설치.
+
+```text
+# Download and update the template using the variables created previously
+curl -sS https://www.eksworkshop.com/intermediate/230_logging/deploy.files/es_domain.json \
+  | envsubst > ~/environment/logging/es_domain.json
+
+# Create the cluster
+aws es create-elasticsearch-domain \
+  --cli-input-json  file://~/environment/logging/es_domain.json
+
+```
+
+AWS ES를 배포하게 되면 아래와 같이 "로드 중"으로 도메인 상태가 표기 됩니다.
+
+![](../.gitbook/assets/image%20%2883%29.png)
+
+정상적으로 도메인 상태가 표기되기 까지는 15분 이상 소요됩니다.
+
+![](../.gitbook/assets/image%20%2875%29.png)
+
+{% hint style="danger" %}
+ElasticSearch 도메인 상태가 정상일 때까지 , 다음 단계를 수행하지 마십시요.
+{% endhint %}
+
+### 3. ElasticSearch Access 구성
+
+앞서 생성한 Fluent Bit ARN이 ElasticSearch의 API를 통해 Backend 역할을 받아 접근 할 수 있도록 아래와 같이 설정합니다.
+
+Endpoint URL은 아래에서 확인이 가능합니다.
+
+![](../.gitbook/assets/image%20%2880%29.png)
+
+```text
+# We need to retrieve the Fluent Bit Role ARN
+export FLUENTBIT_ROLE=$(eksctl get iamserviceaccount --cluster eksworkshop --namespace logging -o json | jq '.iam.serviceAccounts[].status.roleARN' -r)
+
+# Update the Elasticsearch internal database
+curl -sS -u "${ES_DOMAIN_USER}:${ES_DOMAIN_PASSWORD}" \
+    -X PATCH \
+    https://search-eksworkshop-logging-4oxm4bgneyb3yqo3fabgr3jbae.ap-northeast-2.es.amazonaws.com/_opendistro/_security/api/rolesmapping/all_access?pretty \
+    -H 'Content-Type: application/json' \
+    -d'
+[
+  {
+    "op": "add", "path": "/backend_roles", "value": ["'${FLUENTBIT_ROLE}'"]
+  }
+]
+'
+
+```
+
+정상적으로 구성되면 아래와 같이 결과가 출력됩니다.
+
+```text
+{
+  "status" : "OK",
+  "message" : "'all_access' updated."
+}
+```
+
+Kibana 구
+
