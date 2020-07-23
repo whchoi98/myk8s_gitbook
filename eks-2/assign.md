@@ -194,9 +194,9 @@ Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종
 
  `requiredDuringSchedulingIgnoredDuringExecution`  파드가 노드에 스케줄 되도록 반드시 규칙을 만해야 하는 것\(`nodeSelector` 와 같으나 보다 상세 구문을 사용해서\)을 지정하고, `preferredDuringSchedulingIgnoredDuringExecution` 는 스케줄러가 시도하려고는 하지만, _preferences_ 를 지정한다는 점에서 이를 각각 "엄격함\(hard\)" 과 "유연함\(soft\)" 으로 생각할 수 있습니다. 
 
-이름의 "IgnoredDuringExecution" 부분은 `nodeSelector` 작동 방식과 유사하게 노드의 레이블이 런타임 중에 변경되어 파드의 Affinity 규칙이 더 이상 충족되지 않아도  파드가 여전히 그 노드에서 동작한다는 의미입니. 
+이름의 "IgnoredDuringExecution" 부분은 `nodeSelector` 작동 방식과 유사하게 노드의 레이블이 런타임 중에 변경되어 파드의 Affinity 규칙이 더 이상 충족되지 않아도  파드가 여전히 그 노드에서 동작한다는 의미입니다 . 
 
-향후에는 `referredDuringSchedulingIgnoredDuringExecution` 와 같은 `requiredDuringSchedulingIgnoredDuringExecution` 를 제공할 계획입니.
+향후에는 `referredDuringSchedulingIgnoredDuringExecution` 와 같은 `requiredDuringSchedulingIgnoredDuringExecution` 를 제공할 계획입니다 .
 
 따라서 `requiredDuringSchedulingIgnoredDuringExecution` 의 예로는 "인텔 CPU가 있는 노드에서만 파드 실행"이 될 수 있고, `preferredDuringSchedulingIgnoredDuringExecution` 의 예로는 "장애 조치 영역 XYZ에 파드 집합을 실행하려고 하지만, 불가능하다면 다른 곳에서 일부를 실행하도록 허용"이 있을 것이다.
 
