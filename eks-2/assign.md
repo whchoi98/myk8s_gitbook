@@ -190,6 +190,14 @@ Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종
 
 앞서 소개한 [nodeSelector](assign.md#nodeselector) 와 유사합니다. 노드 label을 기반으로 다양한 조건들을 명시할 수 있다는 점에서 차이가 있습니다.
 
+현재 `requiredDuringSchedulingIgnoredDuringExecution` 와 `preferredDuringSchedulingIgnoredDuringExecution` 로 부르는 두 가지 종류의 노드 어피니티가 있습니다 .
+
+ `requiredDuringSchedulingIgnoredDuringExecution`  파드가 노드에 스케줄 되도록 _반_족해야 하는 것\(`nodeSelector` 와 같으나 보다 표현적인 구문을 사용해서\)을 지정하고, 후자는 스케줄러가 시도하려고는 하지만, 보증하지 않는 _선호\(preferences\)_ 를 지정한다는 점에서 이를 각각 "엄격함\(hard\)" 과 "유연함\(soft\)" 으로 생각할 수 있다. 이름의 "IgnoredDuringExecution" 부분은 `nodeSelector` 작동 방식과 유사하게 노드의 레이블이 런타임 중에 변경되어 파드의 어피니티 규칙이 더 이상 충족되지 않으면 파드가 여전히 그 노드에서 동작한다는 의미이다. 향후에는 파드의 노드 어피니티 요구 사항을 충족하지 않는 노드에서 파드를 제거한다는 점을 제외하고는 `preferredDuringSchedulingIgnoredDuringExecution` 와 같은 `requiredDuringSchedulingIgnoredDuringExecution` 를 제공할 계획이다.
+
+따라서 `requiredDuringSchedulingIgnoredDuringExecution` 의 예로는 "인텔 CPU가 있는 노드에서만 파드 실행"이 될 수 있고, `preferredDuringSchedulingIgnoredDuringExecution` 의 예로는 "장애 조치 영역 XYZ에 파드 집합을 실행하려고 하지만, 불가능하다면 다른 곳에서 일부를 실행하도록 허용"이 있을 것이다.
+
+노드 어피니티는 PodSpec의 `affinity` 필드의 `nodeAffinity` 필드에서 지정된다.
+
 
 
 
