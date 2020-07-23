@@ -1,10 +1,10 @@
 # Prometheus-Grafana
 
-## 1.Prometheus 소개
+## Prometheus 소개
 
 [Prometheus](https://github.com/prometheus) 는 원래 [SoundCloud에](https://soundcloud.com/) 구축 된 오픈 소스 시스템 모니터링 및 alerting tool kit 입니다. 2012 년에 시작된 이래로 많은 회사와 조직에서 Prometheus를 채택했으며이 프로젝트에는 매우 활발한 개발자 및 사용자 [커뮤니티가](https://prometheus.io/community) 있습니다.  프로젝트의 거버넌스 구조를 명확하게하기 위해 Prometheus는 2016 년 [Kubernetes](https://kubernetes.io/) 에 이어 두 번째 호스팅 프로젝트로 [Cloud Native Computing Foundation](https://cncf.io/) 에 합류했습니다 .
 
-주요 특징
+### 1.주요 특징
 
 * 메트릭 이름 및 key -value pair로 식별 된 시계열 데이터가 포함 된 다차원 [데이터 모델](https://prometheus.io/docs/concepts/data_model/)
 * 다차원 데이터 모델 활용 하는 [유연한 쿼리 언어 ](https://prometheus.io/docs/prometheus/latest/querying/basics/)PromQL 사
@@ -15,7 +15,7 @@
 * 다양한 모드의 그래프 및 대시 보드 지원
 * 대부분의 주요언어가 Go로 작성.
 
-주요 구성 요소 및 아키텍쳐
+### 2.주요 구성 요소 및 아키텍쳐
 
 * [Prometheus ](https://github.com/prometheus/prometheus): 시계열 데이터를 스크랩하고 저장 하는 주요 [서버](https://github.com/prometheus/prometheus)
 * [클라이언트 라이브러리](https://prometheus.io/docs/instrumenting/clientlibs/) : 계측용 프로그램 코드
@@ -24,9 +24,9 @@
 * [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공. 
 * 기타 다양한 지원 도구들.
 
-![&#xCC38;&#xC870; - https://prometheus.io/docs/introduction/overview/](../.gitbook/assets/image%20%2867%29.png)
+## Prometheus 구성
 
-## 2. Prometheus 구성
+### 1.Prometheus 설치. 
 
 앞서 [Helm Chart](helm.md#1-helm)를 설치하였습니다. Helm Chart를 활용해서 설치합니다.
 
@@ -112,6 +112,8 @@ replicaset.apps/prometheus-kube-state-metrics-6df5d44568   1         1         1
 replicaset.apps/prometheus-pushgateway-6d65c95d5           1         1         1       6m45s
 replicaset.apps/prometheus-server-869d4b999b               1         1         1       6m45s
 ```
+
+### 2.Prometheus 실행 및 접속. 
 
 Cloud9 터미널에서 백그라운드로 실행시킵니다.
 
@@ -249,11 +251,39 @@ NAME                                 DESIRED   CURRENT   READY   AGE
 replicaset.apps/grafana-6744db7855   1         1         1       6m44s
 ```
 
+service를 확인합니다.
+
+```text
+kubectl get svc -n grafana grafana
+```
+
+출력 결과에서 제공되는 Loadbalancer 주소를 브라우져에서 입력합니다.
+
+```text
+whchoi98:~/environment/grafana $ kubectl -n grafana get svc
+NAME      TYPE           CLUSTER-IP      EXTERNAL-IP                                                                    PORT(S)        AGE
+grafana   LoadBalancer   172.20.23.245   a555fefad0ed8493fb4a9ec240318103-2014381236.ap-northeast-2.elb.amazonaws.com   80:31156/TCP   3h12m
+```
+
+앞서 grafana.yaml에서 입력한 admin의 패스워드를 입력합니다.
+
+```text
+--set adminPassword='1234Qwer'
+```
+
+![](../.gitbook/assets/image%20%2870%29.png)
+
 
 
 ## 4. DashBoard 구성
 
+이제 생성된 Grafana 
 
+![](../.gitbook/assets/image%20%2868%29.png)
+
+![](../.gitbook/assets/image%20%2871%29.png)
+
+![](../.gitbook/assets/image%20%2869%29.png)
 
 
 
