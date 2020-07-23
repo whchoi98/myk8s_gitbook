@@ -204,6 +204,13 @@ Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종
 
 아래와 같이 pod 배포를 위한 새로운 매니페스트 파일을 작성합니다.
 
+Node Affinity는 다음과 같은 구문의 의미를 가지고 있습니다.
+
+* required - 반드시 포함되어야 함.
+* preferred - 우선하지만 필수는 아님.
+* Ingnored - Runtime 중에 Node Label 변경시 무시
+* DuringScheduling 뒤에 오는 required - Runtime 중에 NodeLabel 변경시 즉시 재기동.
+
 ```text
 mkdir ~/environment/affinity
 cat <<EoF > ~/environment/affinity/pod-with-node-affinity.yaml
@@ -285,9 +292,153 @@ with-node-affinity   1/1     Running   0          2m10s   10.11.24.52   ip-10-11
 
 
 
+### 3.Affinity 활용 사례
 
+AntiAffinity를 활용하면 ReplicaSets, StatefulSets, Deployments 등과 함께 좀 더 상세하고 유용하게 사용할 수 있습니다. 예를 들면 동일 노드에 목적에 따라 함께 사용될 Pod들을 함께 배치 할 수 있습니다.
 
-## 다양한 사례.
+이번 랩에서는 아래에서 처럼 Pod를 배포하려고 합니다.
+
+{% hint style="success" %}
+worker node 1 - Webserver1 - RedisCache1
+
+worker node2 - Webserver2 - RedisCache2
+
+worker node3 - Webserver3 - RedisCache3
+{% endhint %}
+
+앞서 생성한 namespace에 아래와 같은 RedisCache 매니페스트 파일을 생성합니다.
+
+```text
+cat <<EoF > ~/environment/affinity/redis-with-node-affinity.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cache
+  namespace: affinity
+spec:
+  selector:
+    matchLabels:
+      app: store
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: store
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - store
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: redis-server
+        image: redis:3.2-alpine
+EoF
+
+```
+
+매니페스트 파일에는 다음과 같은 정보들을 담고 있습니다.
+
+* App : redis-cache
+* replica : 3개
+* label : app=store
+* podAntiAffinity : app=store
+
+{% hint style="info" %}
+Redis-Cache를 배포할 때 label이 app입니다. 그런데 podAntiAffinity가 app이므로, Redis-cache가 없는 노드에 배포될 것입니다. 3개의 WorkerNode에 분산해서 설치하겠다는 의미입니다.
+{% endhint %}
+
+앞서 생성한 namespace에 아래와 같은 nginx WebServer 매니페스트 파일을 생성합니다.
+
+```text
+cat <<EoF > ~/environment/affinity/web-with-node-affinity.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-server
+  namespace: affinity
+spec:
+  selector:
+    matchLabels:
+      app: web-store
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: web-store
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - web-store
+            topologyKey: "kubernetes.io/hostname"
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - store
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: web-app
+        image: nginx:1.12-alpine
+EoF
+
+```
+
+ 매니페스트 파일에는 다음과 같은 정보들을 담고 있습니다.
+
+* App : web-server \(alpine nginx 1.12\)
+* replica : 3개
+* label : app=web-store
+* podAntiAffinity : app=web-store
+* podAffinity: app=store
+
+{% hint style="info" %}
+Web-Server를 배포할 때 label이 web-store입니다. 그런데 podAntiAffinity가 web-store이므로, web-server가 없는 노드에 배포될 것입니다. 하지만 만약 Node가 많다면, Redis-Cache에 없는 노드에 설치될 수도 있기 때문에, podAffinity가 app이므로 Redis-Cache에 있는 노드에만 설치됩니다.
+{% endhint %}
+
+이와 같은 배포전략은 여러개의 앱을 요구 조건에 따라 특정 노드에 묶어서 배포할 때, 매우 효과적이며 강력한 배포전략 기술입니다.
+
+이제 만들어진 매니페스트 파일을 배포합니다.
+
+```text
+kubectl apply -f ~/environment/affinity/redis-with-node-affinity.yaml
+kubectl apply -f ~/environment/affinity/web-with-node-affinity.yaml
+
+```
+
+정상적으로 배포되었는지 확인해 봅니다.
+
+```text
+kubectl -n affinity get pods -o wide
+```
+
+정상적으로 배포되었다면 아래와 같은 결과를 볼 수 있습니다. Web-Server와 Redis-Cache 서버는 모두 분산되어 배포되었습니다.
+
+```text
+whchoi98:~ $ kubectl -n affinity get pods -o wide
+NAME                           READY   STATUS    RESTARTS   AGE    IP              NODE                                               NOMINATED NODE   READINESS GATES
+redis-cache-6bc7d5b59d-c2cmr   1/1     Running   0          18s    10.11.94.33     ip-10-11-90-240.ap-northeast-2.compute.internal    <none>           <none>
+redis-cache-6bc7d5b59d-d729w   1/1     Running   0          18s    10.11.120.83    ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
+redis-cache-6bc7d5b59d-pt9vc   1/1     Running   0          18s    10.11.150.121   ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
+web-server-655bf8bdf4-7pvsr    1/1     Running   0          18s    10.11.73.255    ip-10-11-90-240.ap-northeast-2.compute.internal    <none>           <none>
+web-server-655bf8bdf4-ghgm8    1/1     Running   0          18s    10.11.111.44    ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
+web-server-655bf8bdf4-rmzkk    1/1     Running   0          18s    10.11.153.163   ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
+with-node-affinity             1/1     Running   0          173m   10.11.24.52     ip-10-11-16-31.ap-northeast-2.compute.internal     <none>           <none>
+```
 
 
 
