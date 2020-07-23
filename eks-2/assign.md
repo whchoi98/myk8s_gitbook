@@ -21,7 +21,7 @@ NodeSelector는 가장 간단한 노드 선택 방법입니다. NodeSelector는 
 }
 ```
 
-### 2.Node 의 라벨 확인.
+### 2.Node 의 Label 확인.
 
 이미 yaml로 정의된 EKS LAB을 eksctl로 배포시에, 각 Worker Node들에 Lable이 정의 되어 있었습니다.
 
@@ -111,7 +111,7 @@ ip-10-11-55-30.ap-northeast-2.compute.internal    Ready    <none>   88m   v1.16.
 ip-10-11-90-240.ap-northeast-2.compute.internal   Ready    <none>   85m   v1.16.12-eks-904af05
 ```
 
-### 3.새로운 라벨 정의.
+### 3.새로운 Label 정의 .
 
 한 개의 Node Name을 선택하고, label을 지정합니다. \(예. assigntest=01\)
 
@@ -125,7 +125,7 @@ kubectl label nodes ip-10-11-16-31.ap-northeast-2.compute.internal disktype=ssd
 kubectl get nodes -l disktype=ssd
 ```
 
-### 4. 특정 라벨의 노드에 Pod 배포.
+### 4. 특정 레이블의 노드에 Pod 배포.
 
 새로운 디렉토리와 namespace를 만들고 nginx 배포를 위한 매니페스트 파일을 간단하게 작성합니다. 해당 Pod는 생성될때 앞서 label에서 정의된 disktype=ssd 가  추가된 worker node로 배포됩니다.
 
@@ -178,17 +178,17 @@ nginx   1/1     Running   0          4m18s   10.11.28.19   ip-10-11-16-31.ap-nor
 
 ### 1.소개.
 
-`nodeSelector` 는 파드를 특정 레이블이 있는 노드로 배하는 매우 간단한 방법을 제공합니. 하지만 Affinity/Anti-Affinity 기능은 조금 더 유연하게 파드를 노드에 배치하는 방법을 제공합니다. 주요 개선 사항은 다음과 같습니.
+`nodeSelector` 는 파드를 특정 label이 있는 노드로 배하는 매우 간단한 방법을 제공합니. 하지만 Affinity/Anti-Affinity 기능은 조금 더 유연하게 파드를 노드에 배치하는 방법을 제공합니다. 주요 개선 사항은 다음과 같습니.
 
 1. Affinity/Anti-Affinity 언어가 더 다양하게 표현할 수 있습니다 . 언어는 논리 연산자인 AND 연산으로 작성된 정확한 매칭 항목 이외에 더 많은 매칭 규칙을 제공합니다 .
 2. 규칙이 엄격한 요구 사항이 아니라 "soft"/"preference" 규칙을 나타낼 수 있기에 스케줄러가 규칙을 만족할 수 없더라도, 파드가 계속 스케줄 되도록 합니다.
-3. 노드 자체에 레이블을 붙이기보다는 노드\(또는 다른 토폴로지 도메인\)에서 실행 중인 다른 파드의 레이블을 제한할 수 있습니다. 이를 통해 어떤 파드가 함께 위치할 수 있는지와 없는지에 대한 규칙을 적용할 수 있습니다 .
+3. 노드 자체에 label을 붙이기보다는 노드\(또는 다른 토폴로지 도메인\)에서 실행 중인 다른 파드의 label을 제한할 수 있습니다. 이를 통해 어떤 파드가 함께 위치할 수 있는지와 없는지에 대한 규칙을 적용할 수 있습니다 .
 
-Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종류의 Affinity로 구성됩니다. "노드 Affinity" 는 기존 `nodeSelector` 와 비슷하지만\(그러나 위에서 나열된 첫째와 두 번째 이점이 있다.\), "파드 Affinity/Anti-Affinity"  위에서 나열된 세번째 항목에 설명된 대로 노드 레이블이 아닌 파드 레이블에 대해 제한되고 위에서 나열된 첫 번째와 두 번째 속성을 가집니다 . 
+Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종류의 Affinity로 구성됩니다. "노드 Affinity" 는 기존 `nodeSelector` 와 비슷하지만\(그러나 위에서 나열된 첫째와 두 번째 이점이 있다.\), "파드 Affinity/Anti-Affinity"  위에서 나열된 세번째 항목에 설명된 대로 노드 label이 아닌 파드 label에 대해 제한되고 위에서 나열된 첫 번째와 두 번째 속성을 가집니다 . 
 
 2.Node Affinity
 
-nodeSelector 와 유사합니다.
+앞서 소개한 [nodeSelector](assign.md#nodeselector) 와 유사합니다. 노드 label을 기반으로 
 
 
 
