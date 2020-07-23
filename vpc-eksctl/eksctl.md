@@ -153,3 +153,86 @@ echo "export ROLE_NAME=${ROLE_NAME}" | tee -a ~/.bash_profile
 
 EKS와 eksctl을 통해 생생된 Cloudformation도 확인해 봅니다.
 
+참조
+
+eksctl 배포를 위한 Cluster Code
+
+```text
+# A simple example of ClusterConfig object:
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eksworkshop
+  region: ap-northeast-2
+  
+vpc: 
+  id: vpc-086186d07739fc568	
+  subnets:
+    public:
+      ap-northeast-2a: { id: subnet-0d4864467efbf04a4}
+      ap-northeast-2b: { id: subnet-0662f5c059aac8576}
+      ap-northeast-2c: { id: subnet-0253297add231a70d}
+    private:
+      ap-northeast-2a: { id: subnet-051b3655d99b2cf0b}
+      ap-northeast-2b: { id: subnet-0e3c5d12ade472f91}
+      ap-northeast-2c: { id: subnet-0dd1d98a956bf8227}
+
+secretsEncryption:
+  keyARN: arn:aws:kms:ap-northeast-2:909121566064:key/9a0c5a6c-be81-4463-90e4-e3b1252d96fc
+
+nodeGroups:
+  - name: ng1-public
+    instanceType: m5.xlarge
+    desiredCapacity: 3
+    minSize: 3
+    maxSize: 9
+    volumeSize: 30
+    volumeType: gp2 
+    amiFamily: AmazonLinux2
+    labels:
+      nodegroup-type: "frontend-workloads"
+    ssh: 
+        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
+        allow: true
+    iam:
+      attachPolicyARNs:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+        fsx: true
+        efs: true
+
+  - name: ng2-private
+    instanceType: m5.xlarge
+    desiredCapacity: 3
+    privateNetworking: true
+    minSize: 3
+    maxSize: 9
+    volumeSize: 30
+    volumeType: gp2 
+    amiFamily: AmazonLinux2
+    labels:
+      nodegroup-type: "backend-workloads"
+    ssh: 
+        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
+        allow: true
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+        fsx: true
+        efs: true
+
+
+cloudWatch:
+    clusterLogging:
+        enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+
+
+```
+
