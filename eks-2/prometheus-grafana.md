@@ -146,28 +146,107 @@ Grafana를 사용하게 되면 시계열 메트릭 데이터를 질의, 시각�
 
 #### Grafana Demo 공식 사이트 - [https://play.grafana.org/](https://play.grafana.org/)
 
-
+먼저 Grafana설치를 위해서 몇가지 변수를 정의하고, 설치를 위한 매니페스트 파일을 작성합니다.
 
 ```text
-mkdir ~/environment/
-kubectl create namespace nodeselector 
-cat <<EoF > ~/environment/nodeselector/pod-nginx.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-  labels:
-    env: test
-  namespace: nodeselector
-spec:
-  containers:
-  - name: nginx
-    image: nginx
-    imagePullPolicy: IfNotPresent
-  nodeSelector:
-    disktype: ssd
+mkdir ~/environment/grafana
+kubectl create namespace grafana
+cat <<EoF > ~/environment/grafana/grafana.yaml
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.prometheus.svc.cluster.local
+      access: proxy
+      isDefault: true
 EoF
+```
 
+helm chart를 통해 설치를 위해, repo 검색을 합니다.
+
+```text
+helm search repo grafana
+```
+
+아래와 같은 결과를 얻을 수 있습니다.
+
+```text
+whchoi98:~/environment/grafana $ helm search repo grafana
+NAME            CHART VERSION   APP VERSION     DESCRIPTION                                       
+bitnami/grafana 3.1.2           7.1.0           Grafana is an open source, feature rich metrics...
+stable/grafana  5.4.1           7.0.5           The leading tool for querying and visualizing t...
+```
+
+이제 helm 을 통해 grafana를 설치합니다. 설치시에 옵션을 통해 prometheus 설치와 동일하게 storage type을 설정하고, 생성한 매니페스트를 불러옵니다.  또한 외부에서 접속을 위해서 Loadbalacer type을 지정합니다.
+
+```text
+cd ~/environment/grafana/
+helm install grafana stable/grafana \
+    --namespace grafana \
+    --set persistence.storageClassName="gp2" \
+    --set persistence.enabled=true \
+    --set adminPassword='1234Qwer' \
+    --values grafana.yaml \
+    --set service.type=LoadBalancer
+
+```
+
+아래와 같이 helm을 통해 설치된 결과를 확인 할 수 있습니다. 
+
+```text
+whchoi98:~/environment/grafana $ helm install grafana stable/grafana \
+>     --namespace grafana \
+>     --set persistence.storageClassName="gp2" \
+>     --set persistence.enabled=true \
+>     --set adminPassword='1234Qwer' \
+>     --values grafana.yaml \
+>     --set service.type=LoadBalancer
+NAME: grafana
+LAST DEPLOYED: Thu Jul 23 10:39:13 2020
+NAMESPACE: grafana
+STATUS: deployed
+REVISION: 1
+NOTES:
+1. Get your 'admin' user password by running:
+
+   kubectl get secret --namespace grafana grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+2. The Grafana server can be accessed via port 80 on the following DNS name from within your cluster:
+
+   grafana.grafana.svc.cluster.local
+
+   Get the Grafana URL to visit by running these commands in the same shell:
+NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+        You can watch the status of by running 'kubectl get svc --namespace grafana -w grafana'
+     export SERVICE_IP=$(kubectl get svc --namespace grafana grafana -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+     http://$SERVICE_IP:80
+
+3. Login with the password from step 1 and the username: admin
+```
+
+ 다음 명령을 통해 , grafana 설치를 확인합니다.
+
+```text
+kubectl -n grafana get all
+```
+
+출력결과 예시는 다음과 같습니다.
+
+```text
+whchoi98:~/environment/grafana $ kubectl -n grafana get all
+NAME                           READY   STATUS    RESTARTS   AGE
+pod/grafana-6744db7855-nr5b5   1/1     Running   0          6m44s
+
+NAME              TYPE           CLUSTER-IP      EXTERNAL-IP                                                                    PORT(S)        AGE
+service/grafana   LoadBalancer   172.20.23.245   a555fefad0ed8493fb4a9ec240318103-2014381236.ap-northeast-2.elb.amazonaws.com   80:31156/TCP   6m44s
+
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/grafana   1/1     1            1           6m44s
+
+NAME                                 DESIRED   CURRENT   READY   AGE
+replicaset.apps/grafana-6744db7855   1         1         1       6m44s
 ```
 
 
