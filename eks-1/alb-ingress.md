@@ -308,8 +308,6 @@ spec:
     app: "2048"
 ```
 
-
-
 ### 7. ALB Ingress 배포
 
 2048게임 App을 위한 ingress 리소스를 배포합니다.
