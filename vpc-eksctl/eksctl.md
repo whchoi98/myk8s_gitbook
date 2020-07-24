@@ -10,7 +10,17 @@ description: 'update : 2020-07-19'
 
 ## eksctl을 통한 EKS 구성
 
-### 1.VPC/Subnet 정보 확인
+### 1.eksctl 설치
+
+아래와 같이 eksctl을 설치합니다.
+
+```text
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+```
+
+### 2.VPC/Subnet 정보 확인
 
 앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC id, Subnet id를 확인합니다.
 
@@ -26,7 +36,7 @@ Private subnet 03 - subnet-0a7fb1ebc6b148035
 VPC ID - vpc-099a900fe8dde7319
 ```
 
-### 2. eksctl 배포 yaml 다운로드
+### 3. eksctl 배포 yaml 다운로드
 
 Cloud9에서 eksctl 배포용 yaml파일을 다운로드 받습니다.
 
@@ -57,7 +67,7 @@ ap-northeast-2c: { id: subnet-0a7fb1ebc6b148035}
 publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
 ```
 
-### 3. cluster 생성
+### 4. cluster 생성
 
 eksctl을 통해 EKS Cluster를 생성합니다.
 
@@ -118,7 +128,7 @@ whchoi98:~/environment $ eksctl create cluster --config-file=/home/ec2-user/envi
 [✔]  EKS cluster "eksworkshop" in "ap-northeast-2" region is ready
 ```
 
-### 4. Cluster 생성 확인
+### 5. Cluster 생성 확인
 
 정상적으로 Cluster가 생성되었는지 확인합니다.
 
