@@ -231,7 +231,7 @@ service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Defa
 
 ### 1.NLB Service Type 기반 service yaml 구성.
 
-아래와 같이 NLB-service.yaml 과 ALB-service.yaml 2개를 각 App별로 생성하여 구성합니다.
+아래와 같이 NLB-service.yaml 를 각 App별로 생성하여 구성합니다.
 
 ```text
   cd ~/environment/
