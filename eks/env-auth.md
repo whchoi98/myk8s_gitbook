@@ -93,7 +93,8 @@ Account ID, Region 정보 등을 환경변수와 프로파일에 저장해 두�
 ```text
 export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
 export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
-test -n "$AWS_REGION" && echo AWS_REGION is "$AWS_REGION" || echo AWS_REGION is not set
+echo $ACCOUNT_ID
+echo $AWS_REGION
 ```
 
 bash\_profile에 저장합니다.
