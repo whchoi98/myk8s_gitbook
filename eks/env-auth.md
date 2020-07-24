@@ -103,15 +103,19 @@ bash\_profile에 저장합니다.
 echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
 echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
 aws configure set default.region ${AWS_REGION}
-aws configure get default.region
+aws configure --profile default list
 ```
 
 출력결과 예제는 아래와 같습니다.
 
 ```text
-export ACCOUNT_ID=xxxxxxxx
-export AWS_REGION=ap-northeast-2
-ap-northeast-2
+whchoi98:~ $ aws configure --profile default list
+      Name                    Value             Type    Location
+      ----                    -----             ----    --------
+   profile                  default           manual    --profile
+access_key     ****************AHEW         iam-role    
+secret_key     ****************8czE         iam-role    
+    region           ap-northeast-2      config-file    ~/.aws/config
 ```
 
 ## SSH 키 생성

@@ -48,6 +48,15 @@ unzip awscliv2.zip
 sudo ./aws/install
 ```
 
+aws cli 자동완성을 설치 합니다.
+
+```text
+which aws_completer
+export PATH=/usr/local/bin:$PATH
+source ~/.bash_profile
+complete -C '/usr/local/bin/aws_completer' aws
+```
+
 ## Kubectl 설치
 
 ### Kubectl 소개
