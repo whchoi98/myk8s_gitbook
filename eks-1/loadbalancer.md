@@ -41,7 +41,7 @@ git clone https://github.com/brentley/ecsdemo-crystal.git
   cd ~/environment/
   cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/1deployment.yaml
   cp ./ecsdemo-crystal/kubernetes/deployment.yaml ./ecsdemo-crystal/kubernetes/1deployment.yaml
-  cp ./ecsdemo-nodejs/kubernetes/deployment.yaml ./ecsdemo-nodejs/1deployment.yaml
+  cp ./ecsdemo-nodejs/kubernetes/deployment.yaml ./ecsdemo-nodejs/kubernetes/1deployment.yaml
 ```
 
 ### 2. 배포용 Node 선택.
