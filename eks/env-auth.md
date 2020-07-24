@@ -130,7 +130,7 @@ Cloud9에서 ssh key를 생성합니다.
 ssh-keygen
 ```
 
-아래는 예제입니다.key 이름을 eskworkshop으로 생성하였습니다.
+아래는 예제입니다.key 이름을 eksworkshop으로 생성하였습니다.
 
 ```text
 ssh-keygen
