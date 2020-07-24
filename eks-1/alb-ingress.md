@@ -56,6 +56,13 @@ whchoi98:~/environment $ echo $ALB_INGRESS_VERSION
 v1.1.8
 ```
 
+만약 변수 저장이 출력되지 않는 다면 아래와 같이 입력합니다.
+
+```text
+echo 'export ALB_INGRESS_VERSION="v1.1.8"' >>  ~/.bash_profile
+source ~/.bash_profile
+```
+
 ### 2. RBAC 역할 생성과 바인딩
 
 ALB Ingress 컨트롤러에 필요한 관련 RBAC 역할을 생성하고 바인딩합니다.
@@ -81,6 +88,15 @@ serviceaccount/alb-ingress-controller created
 aws iam create-policy \
    --policy-name ALBIngressControllerIAMPolicy \
    --policy-document https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/iam-policy.json
+```
+
+{% hint style="danger" %}
+iam-policy.json이 정상적으로 만들어지지 않으면, 로컬로 파일을 다운로드 받아서 실행합니다.
+{% endhint %}
+
+```text
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.8/docs/examples/iam-policy.json
+aws iam create-policy   --policy-name ALBIngressControllerIAMPolicy   --policy-document file://iam-policy.json
 ```
 
 PolicyARN 변수에 생성된 PolicyARN 값을 저장합니다.
