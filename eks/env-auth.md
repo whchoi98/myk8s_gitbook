@@ -164,6 +164,18 @@ The key's randomart image is:
 aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
 ```
 
+오류가 발생할 경우에는 다음과 같은 방법으로 key 페어를 등록합니다.아래 명령의 Public key값을 복사합니다.
+
+```text
+cat ~/environment/eksworkshop.pub 
+```
+
+아래 ec2 대쉬보드에서 키를 등록합니다.
+
+![](../.gitbook/assets/image%20%2891%29.png)
+
+![](../.gitbook/assets/image%20%2892%29.png)
+
 생성된 key를 "AWS 서비스" - "EC2 대시보드" 에서 확인합니다.
 
 ![](../.gitbook/assets/image%20%2819%29.png)

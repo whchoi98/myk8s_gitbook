@@ -36,6 +36,15 @@ Private subnet 03 - subnet-0a7fb1ebc6b148035
 VPC ID - vpc-099a900fe8dde7319
 ```
 
+저장해둔 Region 정보와 master\_arn을 확인합니다.
+
+```text
+echo $AWS_REGION
+echo $MASTER_ARN
+```
+
+VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포하는 데 사용합니다.
+
 ### 3. eksctl 배포 yaml 다운로드
 
 Cloud9에서 eksctl 배포용 yaml파일을 다운로드 받습니다.
@@ -51,20 +60,24 @@ Cloud9 IDE 편집기에서 아래와 같이 수정합니다. 수정내용은 현
 수정할 블록의 예시입니다.
 
 ```text
-vpc:
-  id: vpc-099a900fe8dde7319
+metadata:
+  name: eksworkshop
+  region: ap-northeast-2
 
-public
-ap-northeast-2a: { id: subnet-0e85e68a85894cf50}
-ap-northeast-2b: { id: subnet-0b8a862c807869d6b}
-ap-northeast-2c: { id: subnet-019d103bacc5dcb21}
+vpc: 
+  id: vpc-0928469124a2c6d88
+  subnets:
+    public:
+      ap-northeast-2a: { id: subnet-0df111a4f39d322b4}
+      ap-northeast-2b: { id: subnet-0f67cf423d8478715}
+      ap-northeast-2c: { id: subnet-0ad86676bb6ffc1e7}
+    private:
+      ap-northeast-2a: { id: subnet-015d8f5faa0881bba}
+      ap-northeast-2b: { id: subnet-0b8a4d9193391cd18}
+      ap-northeast-2c: { id: subnet-0d33baddfa2a54a6d}
 
-private
-ap-northeast-2a: { id: subnet-0eb13d8b433c106a2}
-ap-northeast-2b: { id: subnet-0b188593b2d1755ce}
-ap-northeast-2c: { id: subnet-0a7fb1ebc6b148035}
-
-publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
+secretsEncryption:
+  keyARN: arn:aws:kms:ap-northeast-2:xxxxxxxx:key/xxxxxxxx
 ```
 
 ### 4. cluster 생성
