@@ -141,6 +141,7 @@ kubectl apply -f ./ecsdemo-crystal/kubernetes/1deployment.yaml
 kubectl apply -f ./ecsdemo-crystal/kubernetes/service.yaml 
 kubectl apply -f ./ecsdemo-frontend/kubernetes/1deployment.yaml
 kubectl apply -f ./ecsdemo-frontend/kubernetes/service.yaml
+
 ```
 
 정상적으로 Pod가 배포되었는지 아래 명령을 통해서 확인해 봅니다.
@@ -149,6 +150,7 @@ kubectl apply -f ./ecsdemo-frontend/kubernetes/service.yaml
 kubectl get deployment ecsdemo-crystal  -o wide
 kubectl get deployment ecsdemo-nodejs  -o wide
 kubectl get service ecsdemo-frontend -o wide
+
 ```
 
 출력결과 예시
