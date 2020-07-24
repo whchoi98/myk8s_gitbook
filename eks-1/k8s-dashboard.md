@@ -62,6 +62,7 @@ kubernetes-dashboard        ClusterIP   172.20.122.109   <none>        443/TCP  
 아래 텍스트가 포함된 **"eks-admin-service-account.yaml"** 이라는 파일을 생성합니다. 이 매니페스트는 eks-admin이라는 서비스 계정 및 클러스터 역할 바인딩을 정의합니다.
 
 ```text
+cat <<EoF > ~/environment/eks-admin-service-account.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -80,6 +81,7 @@ subjects:
 - kind: ServiceAccount
   name: eks-admin
   namespace: kube-system
+EoF
 ```
 
 서비스 계정 및 클러스터 역할 바인딩을 클러스터에 적용합니다.
@@ -171,7 +173,7 @@ kill %1
 설치된 Dashboard를 삭제합니다.
 
 ```text
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/${DASHBOARD_VERSION}/aio/deploy/recommended.yaml
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.3/aio/deploy/recommended.yaml
 ```
 
 저장된 변수를 삭제합니다.
