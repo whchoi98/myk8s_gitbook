@@ -275,7 +275,7 @@ grafana   LoadBalancer   172.20.23.245   a555fefad0ed8493fb4a9ec240318103-201438
 --set adminPassword='1234Qwer'
 ```
 
-![](../.gitbook/assets/image%20%2878%29.png)
+![](../.gitbook/assets/image%20%2882%29.png)
 
 ## DashBoard 구성
 
@@ -285,19 +285,19 @@ grafana   LoadBalancer   172.20.23.245   a555fefad0ed8493fb4a9ec240318103-201438
 
 좌측 상단 메뉴의 "+" 를 선택하고 Import를 선택합니다.
 
-![](../.gitbook/assets/image%20%2872%29.png)
+![](../.gitbook/assets/image%20%2873%29.png)
 
 Import 값을 "3119"를 선택하고, Load를 선택합니다.
 
-![](../.gitbook/assets/image%20%2882%29.png)
+![](../.gitbook/assets/image%20%2886%29.png)
 
 DataSource를 Prometheus를 선택합니다.
 
-![](../.gitbook/assets/image%20%2874%29.png)
+![](../.gitbook/assets/image%20%2875%29.png)
 
 아래와 같이 다양한 Cluster 내부의 정보를 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2880%29.png)
+![](../.gitbook/assets/image%20%2884%29.png)
 
 ### 2.Pod Monitoring 구성
 
@@ -305,15 +305,15 @@ DataSource를 Prometheus를 선택합니다.
 
 좌측 상단 메뉴의 "+" 를 선택하고 Import를 선택합니다.
 
-![](../.gitbook/assets/image%20%2872%29.png)
+![](../.gitbook/assets/image%20%2873%29.png)
 
 Import 값을 "6417"를 선택하고, Load를 선택합니다.
 
-![](../.gitbook/assets/image%20%2879%29.png)
+![](../.gitbook/assets/image%20%2883%29.png)
 
 Name : Kubernetes Pods Monitoring , Change uid, 데이터 소스 : Prometheus 를 선택하고, Import를 선택합니다.
 
-![](../.gitbook/assets/image%20%2875%29.png)
+![](../.gitbook/assets/image%20%2876%29.png)
 
 Pod들 중심으로 모니터링을 할 수 있습니다.
 
@@ -335,7 +335,7 @@ Pod들 중심으로 모니터링을 할 수 있습니다.
 8588
 ```
 
-![](../.gitbook/assets/image%20%2871%29.png)
+![](../.gitbook/assets/image%20%2872%29.png)
 
 * Kubernetes Cluster
 
@@ -343,7 +343,7 @@ Pod들 중심으로 모니터링을 할 수 있습니다.
 7249
 ```
 
-![](../.gitbook/assets/image%20%2883%29.png)
+![](../.gitbook/assets/image%20%2888%29.png)
 
 * 1 Kubernetes cluster overview
 
@@ -351,7 +351,7 @@ Pod들 중심으로 모니터링을 할 수 있습니다.
 11802
 ```
 
-![](../.gitbook/assets/image%20%2877%29.png)
+![](../.gitbook/assets/image%20%2881%29.png)
 
 Kubernetes / Networking / Pod
 
@@ -359,5 +359,5 @@ Kubernetes / Networking / Pod
 12661
 ```
 
-![](../.gitbook/assets/image%20%2873%29.png)
+![](../.gitbook/assets/image%20%2874%29.png)
 
