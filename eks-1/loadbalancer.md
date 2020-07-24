@@ -63,7 +63,7 @@ nodeGroups:
     desiredCapacity: 3
     minSize: 3
     maxSize: 9
-    volumeSize: 30
+    volumeSize: 100
     volumeType: gp2 
     amiFamily: AmazonLinux2
     labels:
@@ -75,7 +75,7 @@ nodeGroups:
     privateNetworking: true
     minSize: 3
     maxSize: 9
-    volumeSize: 30
+    volumeSize: 100
     volumeType: gp2 
     amiFamily: AmazonLinux2
     labels:
