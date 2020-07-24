@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-07-21'
+description: 'update : 2020-07-25'
 ---
 
 # ALB Ingress 배포
@@ -28,6 +28,10 @@ description: 'update : 2020-07-21'
 eksctl을 사용하여 ALB Ingress Controller를 위한 IAM Policy를 생성합니다.
 
 > 참조 URL - [https://eksctl.io/usage/iamserviceaccounts/](https://eksctl.io/usage/iamserviceaccounts/)
+>
+> Amazon EKS는 클러스터 운영자가 AWS IAM 역할을 Kubernetes 서비스 계정에 매핑 할 수 있도록하는 [ISA \(IAM Roles for Service Accounts\)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) 를 지원합니다 .
+>
+> 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 \(RDS, MQ, STS, DynamoDB\) 또는 AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
 
 ```text
 eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
