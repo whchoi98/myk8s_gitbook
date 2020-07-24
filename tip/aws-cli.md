@@ -34,7 +34,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ### 2. Mac OS
 
-aws cli 설
+aws cli 설치. 
 
 ```text
 curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
