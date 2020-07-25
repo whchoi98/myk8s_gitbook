@@ -290,7 +290,14 @@ spec:
     role: client 
 ```
 
-2.
+### 2. management-ui에 접속
+
+
+
+```text
+export ELB_SERVICE_URL=$(kubectl get svc -n management-ui management-ui --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+echo "ELB SERVICE URL = $ELB_SERVICE_URL"
+```
 
 
 
