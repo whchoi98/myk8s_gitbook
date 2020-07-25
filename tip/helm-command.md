@@ -1,6 +1,8 @@
 # helm command
 
- Helm 설치
+## Install , 환경 구성 . 
+
+### Helm 설치
 
 ```text
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
@@ -8,7 +10,7 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 ```
 
-Helm 명령어 자동 완성
+### Helm 명령어 자동 완성
 
 ```text
 helm completion bash >> ~/.bash_completion
@@ -17,13 +19,13 @@ helm completion bash >> ~/.bash_completion
 source <(helm completion bash)
 ```
 
-Helm version check
+### Helm version check
 
 ```text
 helm version --short
 ```
 
-Helm reop 구성
+### Helm reop 구성
 
 ```text
 helm repo add stable https://kubernetes-charts.storage.googleapis.com/
