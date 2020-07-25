@@ -12,7 +12,7 @@ Horizontal Pod Autoscaler는 쿠버네티스 API 리소스 및 컨트롤러로 �
 
 ### 1.Metric Server 설치
 
-Namespace 생성, helm Chart를 통해 metric-server 설치를 진행합니다. bitnami를 통해서 metric-server를 설치하
+Namespace 생성, helm Chart를 통해 metric-server 설치를 진행합니다. bitnami를 통해서 metric-server를 설치합니다. 
 
 ```text
 kubectl create namespace metrics

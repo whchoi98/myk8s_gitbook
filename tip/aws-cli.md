@@ -36,7 +36,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 인증 및 계정 관
 
-account id 출
+account id 출력 
 
 ```text
 aws sts get-caller-identity --output text --query Account
@@ -67,5 +67,11 @@ Key 전송
 aws ec2 import-key-pair --key-name "public key name" --public-key-material file://"key path"
 ```
 
+IAM 정책 생성
 
+```text
+aws iam create-policy \
+   --policy-name ALBIngressControllerIAMPolicy \
+   --policy-document https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/iam-policy.json
+```
 
