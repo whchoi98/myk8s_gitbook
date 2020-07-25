@@ -44,8 +44,10 @@ status:
 이제 HPA 기반의 Scaling을 확인하기 위해 테스트용 PHP Web App 배포를 합니다.
 
 ```text
-kubectl -n metrics run php-apache --image=us.gcr.io/k8s-artifacts-prod/hpa-example --requests=cpu=200m --expose --port=80생성된 컨테이너가 CPU 50% 초과하면 확장되도록 설정합니다.
+kubectl -n metrics run php-apache --image=us.gcr.io/k8s-artifacts-prod/hpa-example --requests=cpu=200m --expose --port=80
 ```
+
+생성된 컨테이너가 CPU 50% 초과하면 확장되도록 설정합니다
 
 ```text
 kubectl -n metrics autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
