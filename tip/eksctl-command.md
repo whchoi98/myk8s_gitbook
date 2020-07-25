@@ -1,6 +1,6 @@
 # eksctl command
 
-cluster 생
+cluster 생성 . 
 
 ```text
 eksctl create cluster --config-file=/home/ec2-user/environment/myeks/whchoi-cluster.yaml 
