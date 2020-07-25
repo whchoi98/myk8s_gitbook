@@ -34,7 +34,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ### 
 
-인증 및 계정 관련 . 
+## 인증 및 계정 관련 aws cli . 
 
 account id 출력 
 
