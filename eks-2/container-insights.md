@@ -307,5 +307,11 @@ Fluentd 는 JSON 파일을 디버깅을 위해 손쉽게 파싱을 하거나, �
 
 ## 5.CloudWatch 알람 구성.
 
+CloudWatch의 뛰어난 기능 중 하나는 사전에 정의한 metric 값을 위반하게 되면 다양한 방법으로 알림을 생성할 수 있다는 것입니다. 
+
+CloudWatch Container Insight를 통해서, CPU 사용률에 대한 알림을 설정하는 것을 시험해 봅니다.
+
+
+
 
 
