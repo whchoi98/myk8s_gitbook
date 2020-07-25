@@ -32,19 +32,40 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ```
 
-### 2. Mac OS
+### 
 
-aws cli 설치. 
+인증 및 계정 관
+
+account id 출
 
 ```text
-curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
-sudo installer -pkg AWSCLIV2.pkg -target /
-
+aws sts get-caller-identity --output text --query Account
+curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.accountId'
 ```
 
+Arn 출력
 
+```text
+aws sts get-caller-identity --output text --query Arn
+```
 
+Instance Region 정보
 
+```text
+curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region'
+```
+
+Instance AZ 정보
+
+```text
+curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.availabilityZone'
+```
+
+Key 전송
+
+```text
+aws ec2 import-key-pair --key-name "public key name" --public-key-material file://"key path"
+```
 
 
 
