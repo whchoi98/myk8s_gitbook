@@ -38,5 +38,12 @@ cat <<EoF > ~/environment/eks-admin-service-account.yaml
 EoF
 ```
 
+kubectl에서 ELB 주소 추출
+
+```text
+export ELB_SERVICE_URL=$(kubectl get svc -n "namespace name" "pod name" --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+echo "ELB SERVICE URL = $ELB_SERVICE_URL"
+```
+
 
 

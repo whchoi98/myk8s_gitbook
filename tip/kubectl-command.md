@@ -43,7 +43,7 @@ kubectl -n "namespaces" scale deployment "pod_name" --replicas=3
 ### ELB 주소 확인
 
 ```text
-kubectl get svc --n "namespace name" "pod name" --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"
+kubectl get svc -n "namespace name" "pod name" --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"
 ```
 
 ### 배포 상태 확인
