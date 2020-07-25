@@ -36,38 +36,38 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ## 인증 및 계정 관련 aws cli . 
 
-account id 출력 
+### account id 출력 
 
 ```text
 aws sts get-caller-identity --output text --query Account
 curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.accountId'
 ```
 
-Arn 출력
+### Arn 출력
 
 ```text
 aws sts get-caller-identity --output text --query Arn
 ```
 
-Instance Region 정보
+### Instance Region 정보
 
 ```text
 curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region'
 ```
 
-Instance AZ 정보
+### Instance AZ 정보
 
 ```text
 curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.availabilityZone'
 ```
 
-Key 전송
+### Key 전송
 
 ```text
 aws ec2 import-key-pair --key-name "public key name" --public-key-material file://"key path"
 ```
 
-IAM 정책 생성
+### IAM 정책 생성
 
 ```text
 aws iam create-policy \
