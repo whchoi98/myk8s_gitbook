@@ -48,7 +48,7 @@ helm -n wordpress install my-wordpress bitnami/wordpress
 
 ```
 
-dkfo아래와 같이 배포 상태를 확인해 봅니다.
+아래와 같이 배포 상태를 확인해 봅니다.
 
 ```text
 kubectl -n wordpress rollout status deployment my-wordpress 
