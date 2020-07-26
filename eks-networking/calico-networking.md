@@ -381,7 +381,7 @@ spec:
               role: management-ui 
 ```
 
-{% page-ref page="calico-networking.md" %}
+{% embed url="https://asciinema.org/a/349717" %}
 
 
 
