@@ -43,6 +43,22 @@ aws sts get-caller-identity --output text --query Account
 curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.accountId'
 ```
 
+### Key 전송
+
+```text
+aws ec2 import-key-pair --key-name "public key name" --public-key-material file://"key path"
+```
+
+### IAM 정책 생성
+
+```text
+aws iam create-policy \
+   --policy-name ALBIngressControllerIAMPolicy \
+   --policy-document https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/iam-policy.json
+```
+
+## 기본 정보 출력.
+
 ### Arn 출력
 
 ```text
@@ -61,17 +77,16 @@ curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.regi
 curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.availabilityZone'
 ```
 
-### Key 전송
+### VPC ID  출력
 
 ```text
-aws ec2 import-key-pair --key-name "public key name" --public-key-material file://"key path"
+aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId'
+
 ```
 
-### IAM 정책 생성
+### Subnet 출력
 
 ```text
-aws iam create-policy \
-   --policy-name ALBIngressControllerIAMPolicy \
-   --policy-document https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/iam-policy.json
+aws ec2 describe-subnets  --filters "Name=cidr-block,Values=10.11.*" --query 'Subnets[*].[CidrBlock,SubnetId,AvailabilityZone]' --output table
 ```
 

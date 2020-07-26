@@ -24,6 +24,13 @@ eksctl version
 
 앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC id, Subnet id를 확인합니다.
 
+다음 명령을 통해서 확인 할 수 있습니다.
+
+```text
+aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId'
+aws ec2 describe-subnets  --filters "Name=cidr-block,Values=10.11.*" --query 'Subnets[*].[CidrBlock,SubnetId,AvailabilityZone]' --output table
+```
+
 아래는 예제입니다.
 
 ```text

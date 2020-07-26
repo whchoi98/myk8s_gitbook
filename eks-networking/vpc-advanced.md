@@ -277,6 +277,22 @@ whchoi98:~/environment/myeks (master) $ kubectl describe daemonset aws-node -n k
 
 ### 6.CRD 생성. 
 
+[CRD](../eks-2/crd.md#undefined)는 앞서 소개한 Chapter를 확인합니다. 
+
+ENIConfig CRD에 대한 Customer Resource를 생성합니다. 이때 반드시 ENIConfig CRD가 준비되어 있어야 합니다.
+
+```text
+kubectl get crd | grep "eni"
+
+```
+
+아래와 같은 출력 결과를 얻을 수 있습니다.
+
+```text
+whchoi98:~/environment/myeks (master) $ kubectl get crd | grep "eni"
+eniconfigs.crd.k8s.amazonaws.com              2020-07-17T07:03:34Z
+```
+
 
 
 
