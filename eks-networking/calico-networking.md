@@ -383,6 +383,19 @@ spec:
 
 {% embed url="https://asciinema.org/a/349717" %}
 
+```text
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/asciinema-player.css" />
+</head>
+<body>
+  <asciinema-player src="/349717.cast" cols="157" rows="43"></asciinema-player>
+  ...
+  <script src="/asciinema-player.js"></script>
+</body>
+</html>
+```
+
 
 
 
