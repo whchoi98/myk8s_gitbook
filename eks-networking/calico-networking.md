@@ -399,13 +399,13 @@ spec:
               role: management-ui 
 ```
 
-
+이제 Client에서 Front end로 유입되는 트래픽을 허용합니다.
 
 ```text
 kubectl apply -f frontend-policy.yaml
 ```
 
-
+아래에서 매니페스트 파일을 통해 상세 내용을 확인 할 수 있습니다.
 
 ```text
 kind: NetworkPolicy
@@ -427,15 +427,17 @@ spec:
           port: 80
 ```
 
-
+다시 management-ui 로 접속해 보면 트래픽 허용되는 것을 확인 할 수 있습니다.
 
 ![](../.gitbook/assets/image%20%28105%29.png)
 
-
+이제 frontend에서 backend로 유입되는 트래픽을 허용합니다.
 
 ```text
 kubectl apply -f backend-policy.yaml
 ```
+
+아래에서 매니페스트 파일을 통해 상세 내용을 확인 할 수 있습니다.
 
 ```text
 kind: NetworkPolicy
@@ -456,6 +458,8 @@ spec:
         - protocol: TCP
           port: 6379
 ```
+
+다시 management-ui 로 접속해 보면 트래픽 허용되는 것을 확인 할 수 있습니다.
 
 ![](../.gitbook/assets/image%20%28121%29.png)
 
