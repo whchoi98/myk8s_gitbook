@@ -2,7 +2,7 @@
 
 ## Calico 네트워킹 소개
 
-![](../.gitbook/assets/image%20%28113%29.png)
+![](../.gitbook/assets/image%20%28114%29.png)
 
 Calico는 컨테이너, 가상 머신 및 기본 호스트 기반 워크로드를 위한 오픈 소스 네트워킹 및 네트워크 보안 솔루션입니다. Calico는 Kubernetes, OpenShift, Docker EE, OpenStack 및 베어 메탈 서비스를 포함한 광범위한 플랫폼을 지원합니다.
 
@@ -314,7 +314,7 @@ ELB SERVICE URL = a927c1a56c9a144aba431cdb58b9c5a7-1577995596.ap-northeast-2.elb
 
 ![](../.gitbook/assets/image%20%28102%29.png)
 
-3.네트워크 정책 적용
+### 3.네트워크 정책 적용
 
 Network Policy를 적용해서 Pod간의 제어를 확인해 봅니다.
 
@@ -363,7 +363,7 @@ kubectl apply -f allow-ui-client.yaml
 
 아래 매니페스트 파일을 확인해 봅니다.
 
-namespace : stars 의 frontend, backend pod는 
+namespace : stars 의 frontend, backend pod는 management-ui에 연결이 가능하도록 합니다.
 
 ```text
 kind: NetworkPolicy
@@ -381,20 +381,85 @@ spec:
               role: management-ui 
 ```
 
-{% embed url="https://asciinema.org/a/349717" %}
+namespace : client 의 client pod는 management-ui에 연결이 가능하도록 합니다.
 
 ```text
-<html>
-<head>
-  <link rel="stylesheet" type="text/css" href="/asciinema-player.css" />
-</head>
-<body>
-  <asciinema-player src="/349717.cast" cols="157" rows="43"></asciinema-player>
-  ...
-  <script src="/asciinema-player.js"></script>
-</body>
-</html>
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: client 
+  name: allow-ui 
+spec:
+  podSelector:
+    matchLabels: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              role: management-ui 
 ```
+
+
+
+```text
+kubectl apply -f frontend-policy.yaml
+```
+
+
+
+```text
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: stars
+  name: frontend-policy
+spec:
+  podSelector:
+    matchLabels:
+      role: frontend
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              role: client
+      ports:
+        - protocol: TCP
+          port: 80
+```
+
+
+
+![](../.gitbook/assets/image%20%28105%29.png)
+
+
+
+```text
+kubectl apply -f backend-policy.yaml
+```
+
+```text
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: stars
+  name: backend-policy
+spec:
+  podSelector:
+    matchLabels:
+      role: backend
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: frontend
+      ports:
+        - protocol: TCP
+          port: 6379
+```
+
+![](../.gitbook/assets/image%20%28121%29.png)
+
+
 
 
 
