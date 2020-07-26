@@ -2,7 +2,7 @@
 
 ## Calico 네트워킹 소개
 
-![](../.gitbook/assets/image%20%28114%29.png)
+![](../.gitbook/assets/image%20%28115%29.png)
 
 Calico는 컨테이너, 가상 머신 및 기본 호스트 기반 워크로드를 위한 오픈 소스 네트워킹 및 네트워크 보안 솔루션입니다. Calico는 Kubernetes, OpenShift, Docker EE, OpenStack 및 베어 메탈 서비스를 포함한 광범위한 플랫폼을 지원합니다.
 
@@ -461,7 +461,7 @@ spec:
 
 다시 management-ui 로 접속해 보면 트래픽 허용되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28121%29.png)
+![](../.gitbook/assets/image%20%28122%29.png)
 
 
 

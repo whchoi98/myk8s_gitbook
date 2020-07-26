@@ -56,6 +56,7 @@
 * [6.EKS Networking](eks-networking/README.md)
   * [Calico 네트워킹](eks-networking/calico-networking.md)
   * [VPC Advanced](eks-networking/vpc-advanced.md)
+  * [External SNAT](eks-networking/external-snat.md)
 * [7.EKS Storage](eks-storage/README.md)
   * [Stateful Container-EBS](eks-storage/stateful-container.md)
   * [Stateful Container-EFS](eks-storage/stateful-container-efs.md)
