@@ -33,7 +33,7 @@ AWS EKS VPC CNI 구성은 ENI에 할당된 Secondary IP 를 Pod가 동일하게 
 
 아래 주요 명령을 통해서, ENI Secondary IP가 Pod에 매핑된 현황을 볼 수 있습니다.
 
-kubectl을 통한 Pod와 Node간의 연결과 IP 할당 확
+kubectl을 통한 Pod와 Node간의 연결과 IP 할당을 확인합니다. 
 
 ```text
 kubectl get pods --all-namespaces -o wide
