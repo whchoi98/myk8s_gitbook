@@ -350,10 +350,9 @@ VPC/EC2 대시보드를 통해서도 확인이 가능합니다.
 
 출력된 서브넷과 Security를 Custom Resource로 생성합니다.
 
-eksworkshop-Secondary-PublicSubnet01
+eksworkshop-Secondary-PublicSubnet01 를 위한 yaml - group1-pod-netconfig.yaml
 
 ```text
-cat <<EoF > ~/environment/myeks/group1-pod-netconfig.yaml
 apiVersion: crd.k8s.amazonaws.com/v1alpha1
 kind: ENIConfig
 metadata:
@@ -363,14 +362,12 @@ spec:
  securityGroups:
  - sg-0db3cb147dca2658b
  - sg-0df26a1d81042cc02
- EoF
-
+ 
 ```
 
-eksworkshop-Secondary-PublicSubnet02
+eksworkshop-Secondary-PublicSubnet02 를 위한 yaml - group2-pod-netconfig.yaml
 
 ```text
-cat <<EoF > ~/environment/myeks/group2-pod-netconfig.yaml
 apiVersion: crd.k8s.amazonaws.com/v1alpha1
 kind: ENIConfig
 metadata:
@@ -380,14 +377,12 @@ spec:
  securityGroups:
  - sg-0db3cb147dca2658b
  - sg-0df26a1d81042cc02
- EoF
 
 ```
 
-eksworkshop-Secondary-PublicSubnet03
+eksworkshop-Secondary-PublicSubnet03 를 위한 yaml - group3-pod-netconfig.yaml
 
 ```text
-cat <<EoF > ~/environment/myeks/group3-pod-netconfig.yaml
 apiVersion: crd.k8s.amazonaws.com/v1alpha1
 kind: ENIConfig
 metadata:
@@ -397,8 +392,24 @@ spec:
  securityGroups:
  - sg-0db3cb147dca2658b
  - sg-0df26a1d81042cc02
- EoF
 
+```
+
+CRD를 적용합니다.
+
+```text
+kubectl apply -f group1-pod-netconfig.yaml
+kubectl apply -f group2-pod-netconfig.yaml
+kubectl apply -f group3-pod-netconfig.yaml
+
+```
+
+Custom network config에 Annotate를 적용합니다.
+
+```text
+kubectl annotate nodes ip-10-11-16-31.ap-northeast-2.compute.internal k8s.amazonaws.com/eniConfig=group1-pod-netconfig
+kubectl annotate nodes ip-10-11-55-30.ap-northeast-2.compute.internal k8s.amazonaws.com/eniConfig=group2-pod-netconfig
+kubectl annotate nodes ip-10-11-90-240.ap-northeast-2.compute.internal k8s.amazonaws.com/eniConfig=group3-pod-netconfig
 ```
 
 
