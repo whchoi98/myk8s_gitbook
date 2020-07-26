@@ -83,7 +83,7 @@ my-wordpress-mariadb   ClusterIP      172.20.3.221   <none>
 
 External IP \(ELB 주소\)로 접속합니다.
 
-![](../.gitbook/assets/image%20%28124%29.png)
+![](../.gitbook/assets/image%20%28125%29.png)
 
 아래와 같이 URL에 대해 변수에 저장합니다.
 
@@ -106,7 +106,7 @@ Admin URL에 접속하고 출력된 결과를 입력합니다.
 
 ![](../.gitbook/assets/image%20%28100%29.png)
 
-![](../.gitbook/assets/image%20%28128%29.png)
+![](../.gitbook/assets/image%20%28129%29.png)
 
 ## Container Insight 설치.
 
@@ -200,7 +200,7 @@ Container Insight - Resource
 
 Container Insight - container map
 
-![](../.gitbook/assets/image%20%28127%29.png)
+![](../.gitbook/assets/image%20%28128%29.png)
 
 ![](../.gitbook/assets/image%20%28101%29.png)
 
@@ -269,13 +269,13 @@ siege -c 200 -i http://$my_wordpress_url --time=30M -q
 
 CloudWatch - Container Insights 에서 다양한 지표를 확인해 봅니다.
 
-![](../.gitbook/assets/image%20%28130%29.png)
+![](../.gitbook/assets/image%20%28131%29.png)
 
 ![](../.gitbook/assets/image%20%2896%29.png)
 
 my-wordpress pod의 성능 지표를 5분 단위로 확인해 봅니다.
 
-![](../.gitbook/assets/image%20%28126%29.png)
+![](../.gitbook/assets/image%20%28127%29.png)
 
 my-wordpress service의 성능 지표를 5분 단위로 확인해 봅니다.
 

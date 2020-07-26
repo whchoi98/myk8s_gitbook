@@ -115,17 +115,21 @@ curl http://localhost:61679/v1/enis | python -m json.tool
 
 ### 1.VPC ID를 변수 저장.
 
+**VPC\_ID** 변수에 VPC를 연결하기 위 다음 명령을 실행합니다.
+
 ```text
 echo "export VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')" | tee -a ~/.bash_profile
 ```
 
+### 2.CIDR 블록을 연결
 
+VPC에 대해 **100.64.0.0/16** 범위의 CIDR 블록을 연결하려면 다음 명령을 실행합니다.
 
 ```text
 aws ec2 associate-vpc-cidr-block --vpc-id $VPC_ID --cidr-block 100.64.0.0/16
 ```
 
-
+다음과 같은 출력 결과를 확인 할 수 있습니다.
 
 ```text
 whchoi98:~/environment $ aws ec2 associate-vpc-cidr-block --vpc-id $VPC_ID --cidr-block 100.64.0.0/16
@@ -143,11 +147,15 @@ whchoi98:~/environment $ aws ec2 associate-vpc-cidr-block --vpc-id $VPC_ID --cid
 
 ![](../.gitbook/assets/image%20%28107%29.png)
 
+### 3.서브넷 생성. 
 
+AWS 리전의 모든 가용 영역을 나열하려면 다음 명령을 실행합니다.
 
 ```text
 aws ec2 describe-availability-zones --region ap-northeast-2 --query 'AvailabilityZones[*].ZoneName'
 ```
+
+서브넷을 추가할 가용 영역을 선택한 다음 해당 가용 영역을 변수에 할당합니다.
 
 ```text
 echo "export AZ1=ap-northeast-2a" | tee -a ~/.bash_profile
@@ -155,7 +163,7 @@ echo "export AZ2=ap-northeast-2b" | tee -a ~/.bash_profile
 echo "export AZ3=ap-northeast-2c" | tee -a ~/.bash_profile
 ```
 
-
+VPC에서 새 CIDR 범위를 사용하여 새 서브넷을 생성하려면 다음 명령을 실행합니다.
 
 ```text
 CUST_SNET1=$(aws ec2 create-subnet --cidr-block 100.64.0.0/19 --vpc-id $VPC_ID --availability-zone $AZ1 | jq -r .Subnet.SubnetId)
@@ -163,13 +171,13 @@ CUST_SNET2=$(aws ec2 create-subnet --cidr-block 100.64.32.0/19 --vpc-id $VPC_ID 
 CUST_SNET3=$(aws ec2 create-subnet --cidr-block 100.64.64.0/19 --vpc-id $VPC_ID --availability-zone $AZ3 | jq -r .Subnet.SubnetId)
 ```
 
-
+Amazon EKS가 서브넷을 검색할 수 있도록 모든 서브넷에 태그를 지정해야 합니다. 기존에 생성되어 있는 예제를 살펴봅니다.
 
 ```text
 aws ec2 describe-subnets --filters Name=cidr-block,Values=10.11.0.0/19 --output text
 ```
 
-
+출력 결과는 아래 같습니다.
 
 ```text
 whchoi98:~/environment $ aws ec2 describe-subnets --filters Name=cidr-block,Values=10.11.0.0/19 --output text                                                
@@ -182,7 +190,7 @@ TAGS    aws:cloudformation:stack-name   eksworkshop
 TAGS    kubernetes.io/role/elb  1
 ```
 
-
+키–값 페어를 설정하여 서브넷에 이름 태그를 추가합니다. 또한 Amazon EKS에서 검색할 서브넷에 태그를 지정합니다.
 
 ```text
 aws ec2 create-tags --resources $CUST_SNET1 --tags Key=Name,Value=eksworkshop-Secondary-PublicSubnet01
@@ -197,17 +205,85 @@ aws ec2 create-tags --resources $CUST_SNET3 --tags Key=kubernetes.io/role/elb,Va
 
 ```
 
-
+아래와 같은 결과를 VPC 대쉬보드에서 확인 할 수 있습니다. 3개의 새로운 서브넷이 생성되고, 태그가 추가되었습니다.
 
 ![](../.gitbook/assets/image%20%2895%29.png)
 
+### 4. 서브넷에 라우팅 테이블 연결.
 
+VPC에서 퍼블릭 라우팅 테이블을 찾아서, 해당 라우팅 테이블의 키를 기준으로 Public Routing에 신규 생성된 서브넷을 연결합니다.
 
 ```text
 SNET1=$(aws ec2 describe-subnets --filters Name=cidr-block,Values=10.11.0.0/19 | jq -r '.Subnets[].SubnetId')
 RTASSOC_ID=$(aws ec2 describe-route-tables --filters Name=association.subnet-id,Values=$SNET1 | jq -r '.RouteTables[].RouteTableId')
+aws ec2 associate-route-table --route-table-id $RTASSOC_ID --subnet-id $CUST_SNET1
+aws ec2 associate-route-table --route-table-id $RTASSOC_ID --subnet-id $CUST_SNET2
+aws ec2 associate-route-table --route-table-id $RTASSOC_ID --subnet-id $CUST_SNET3
 
 ```
+
+정상적으로 Public Routing Table에 추가 되었는지 확인합니다.
+
+![](../.gitbook/assets/image%20%28124%29.png)
+
+### 5.CNI Plugin 구성.
+
+최신 버전의 CNI 플러그인이 있는지 확인하려면 다음 명령을 실행합니다.
+
+```text
+kubectl describe daemonset aws-node --namespace kube-system | grep Image | cut -d "/" -f 2
+
+```
+
+CNI 플러그인 버전을 다운로드 받습니다. \(예제에서는 v1.6을 다운 받습니다.\)
+
+```text
+wget https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/v1.6/aws-k8s-cni.yaml
+
+```
+
+CNI 플러그인에 대한 사용자 지정 네트워크 구성을 활성화하려면 다음 명령을 실행합니다.
+
+```text
+cd ~/environment/myeks
+kubectl apply -f aws-k8s-cni.yaml
+```
+
+worker node를 식별하기 위한 **ENIConfig** 라을 추가하려면 다음 명령을 실행합니다.
+
+```text
+kubectl set env ds aws-node -n kube-system AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG=true
+
+```
+
+정상적으로 라벨이 추가 되었는지 확인합니다. 
+
+```text
+ kubectl describe daemonset aws-node -n kube-system | grep -A5 Environment
+ 
+```
+
+아래와 같은 출력 결과물을 얻을 수 있습니다.
+
+```text
+whchoi98:~/environment/myeks (master) $ kubectl describe daemonset aws-node -n kube-system | grep -A5 Environment
+    Environment:
+      AWS_VPC_K8S_CNI_LOGLEVEL:            DEBUG
+      AWS_VPC_K8S_CNI_VETHPREFIX:          eni
+      AWS_VPC_ENI_MTU:                     9001
+      MY_NODE_NAME:                         (v1:spec.nodeName)
+      AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG:  true
+```
+
+### 6.CRD 생성. 
+
+
+
+
+
+
+
+
 
 
 
