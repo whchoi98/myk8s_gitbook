@@ -2,7 +2,7 @@
 
 ## Calico 네트워킹 소개
 
-![](../.gitbook/assets/image%20%28109%29.png)
+![](../.gitbook/assets/image%20%28113%29.png)
 
 Calico는 컨테이너, 가상 머신 및 기본 호스트 기반 워크로드를 위한 오픈 소스 네트워킹 및 네트워크 보안 솔루션입니다. Calico는 Kubernetes, OpenShift, Docker EE, OpenStack 및 베어 메탈 서비스를 포함한 광범위한 플랫폼을 지원합니다.
 
@@ -10,7 +10,11 @@ Calico는 유연한 네트워킹 기능과 보안 기능을 결합하여 네이�
 
 {% hint style="danger" %}
 주의 !!! Amazon EKS와 함께 Fargate를 사용하는 경우 Calico가 지원되지 않습니다.
+
+이 랩에서는 Calico CNI를 사용하지 않습니다. Calico의 Network Policy만 구성해서 사용합니다.
 {% endhint %}
+
+해당 LAB은 Project Calico 를 참조합니다. [https://docs.projectcalico.org/security/kubernetes-policy](https://docs.projectcalico.org/security/kubernetes-policy)
 
 ## EKS에 Calico 설치하기
 
@@ -292,14 +296,98 @@ spec:
 
 ### 2. management-ui에 접속
 
-
+management UI Pod는 External IP로 LB Service를 제공하고 있습니다. 아래와 같은 명령을 통해서 External IP를 확인합니다.
 
 ```text
 export ELB_SERVICE_URL=$(kubectl get svc -n management-ui management-ui --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
 echo "ELB SERVICE URL = $ELB_SERVICE_URL"
 ```
 
+출력 결과는 아래와 같습니다.
 
+```text
+whchoi98:~/environment/calico_resources $ echo "ELB SERVICE URL = $ELB_SERVICE_URL"
+ELB SERVICE URL = a927c1a56c9a144aba431cdb58b9c5a7-1577995596.ap-northeast-2.elb.amazonaws.com
+```
+
+해당 웹 사이트는 Client App , Front end App, Back end App 간의 트래픽 허용 상태를 제공해 줍니다.
+
+![](../.gitbook/assets/image%20%28102%29.png)
+
+3.네트워크 정책 적용
+
+Network Policy를 적용해서 Pod간의 제어를 확인해 봅니다.
+
+먼저 stars, client namespace 에 deny 정책을 업데이트 합니다.
+
+```text
+cd ~/environment/myeks/calico_demo/
+kubectl apply -n stars -f default-deny.yaml
+kubectl apply -n client -f default-deny.yaml
+```
+
+default-deny.yaml을 확인해 봅니다.
+
+```text
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: default-deny
+spec:
+  podSelector:
+    matchLabels: {}
+```
+
+다시 아래 management-ui 로 접속해 봅니다.
+
+```text
+whchoi98:~/environment/calico_resources $ echo "ELB SERVICE URL = $ELB_SERVICE_URL"
+ELB SERVICE URL = a927c1a56c9a144aba431cdb58b9c5a7-1577995596.ap-northeast-2.elb.amazonaws.com
+```
+
+ELB 주소로 접속하면, All deny로 출력되는 결과가 없습니다.
+
+![](../.gitbook/assets/image%20%2896%29.png)
+
+다시 정책을 허용합니다.
+
+```text
+kubectl apply -f allow-ui.yaml
+kubectl apply -f allow-ui-client.yaml
+
+```
+
+아래에서 처럼 이제 management-ui로는 접속이 가능합니다. 하지만 Frontend, Backend, Client Pod간에는 통신되지 않습니다.
+
+![](../.gitbook/assets/image%20%28104%29.png)
+
+아래 매니페스트 파일을 확인해 봅니다.
+
+namespace : stars 의 frontend, backend pod는 
+
+```text
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: stars
+  name: allow-ui 
+spec:
+  podSelector:
+    matchLabels: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              role: management-ui 
+```
+
+
+
+
+
+
+
+ 
 
  
 
