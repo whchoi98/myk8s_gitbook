@@ -12,7 +12,7 @@ Amazon EKS는 공식적으로 [Amazon VPC CNI 플러그인](https://docs.aws.ama
 | Isovalent | [Cilium](https://cilium.io/contact-us-eks/) | [설치 지침](https://docs.cilium.io/en/v1.7/gettingstarted/k8s-install-eks/) |
 | Weaveworks | [Weave Net](https://www.weave.works/contact/) | [설치 지침](https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-installing-on-eks) |
 
-![](../.gitbook/assets/image%20%28108%29.png)
+![](../.gitbook/assets/image%20%28110%29.png)
 
 CNI 플러그인은 Kubernetes 노드에 VPC IP 주소를 할당하고 각 노드의 포드에 대한 필수 네트워킹을 구성하는 역할을 합니다. ​플러그인에는 두 가지 기본 구성 요소가 있습니다.
 
@@ -116,8 +116,7 @@ curl http://localhost:61679/v1/enis | python -m json.tool
 ### 1.VPC ID를 변수 저장.
 
 ```text
-export VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
-echo "export AZ3=ap-northeast-2d" | tee -a ~/.bash_profile
+echo "export VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')" | tee -a ~/.bash_profile
 ```
 
 
@@ -142,7 +141,7 @@ whchoi98:~/environment $ aws ec2 associate-vpc-cidr-block --vpc-id $VPC_ID --cid
 }
 ```
 
-![](../.gitbook/assets/image%20%28105%29.png)
+![](../.gitbook/assets/image%20%28107%29.png)
 
 
 
@@ -151,15 +150,62 @@ aws ec2 describe-availability-zones --region ap-northeast-2 --query 'Availabilit
 ```
 
 ```text
-export AZ1=ap-northeast-2a
-export AZ2=ap-northeast-2b
-export AZ3=ap-northeast-2c
-export AZ3=ap-northeast-2d
-echo "export AZ3=ap-northeast-2a" | tee -a ~/.bash_profile
-echo "export AZ3=ap-northeast-2b" | tee -a ~/.bash_profile
+echo "export AZ1=ap-northeast-2a" | tee -a ~/.bash_profile
+echo "export AZ2=ap-northeast-2b" | tee -a ~/.bash_profile
 echo "export AZ3=ap-northeast-2c" | tee -a ~/.bash_profile
-echo "export AZ3=ap-northeast-2d" | tee -a ~/.bash_profile
 ```
 
 
+
+```text
+CUST_SNET1=$(aws ec2 create-subnet --cidr-block 100.64.0.0/19 --vpc-id $VPC_ID --availability-zone $AZ1 | jq -r .Subnet.SubnetId)
+CUST_SNET2=$(aws ec2 create-subnet --cidr-block 100.64.32.0/19 --vpc-id $VPC_ID --availability-zone $AZ2 | jq -r .Subnet.SubnetId)
+CUST_SNET3=$(aws ec2 create-subnet --cidr-block 100.64.64.0/19 --vpc-id $VPC_ID --availability-zone $AZ3 | jq -r .Subnet.SubnetId)
+```
+
+
+
+```text
+aws ec2 describe-subnets --filters Name=cidr-block,Values=10.11.0.0/19 --output text
+```
+
+
+
+```text
+whchoi98:~/environment $ aws ec2 describe-subnets --filters Name=cidr-block,Values=10.11.0.0/19 --output text                                                
+SUBNETS False   ap-northeast-2a apne2-az1       8149    10.11.0.0/19    False   True    909121566064    available       arn:aws:ec2:ap-northeast-2:909121566064:subnet/subnet-0d4864467efbf04a4      subnet-0d4864467efbf04a4        vpc-086186d07739fc568
+TAGS    aws:cloudformation:stack-id     arn:aws:cloudformation:ap-northeast-2:909121566064:stack/eksworkshop/3c1848b0-c7f9-11ea-afac-0689b5dc6f6c
+TAGS    aws:cloudformation:logical-id   PublicSubnet01
+TAGS    Name    eksworkshop-PublicSubnet01
+TAGS    kubernetes.io/cluster/eksworkshop       shared
+TAGS    aws:cloudformation:stack-name   eksworkshop
+TAGS    kubernetes.io/role/elb  1
+```
+
+
+
+```text
+aws ec2 create-tags --resources $CUST_SNET1 --tags Key=Name,Value=eksworkshop-Secondary-PublicSubnet01
+aws ec2 create-tags --resources $CUST_SNET1 --tags Key=kubernetes.io/cluster/eksworkshop,Value=shared
+aws ec2 create-tags --resources $CUST_SNET1 --tags Key=kubernetes.io/role/elb,Value=1
+aws ec2 create-tags --resources $CUST_SNET2 --tags Key=Name,Value=eksworkshop-Secondary-PublicSubnet02
+aws ec2 create-tags --resources $CUST_SNET2 --tags Key=kubernetes.io/cluster/eksworkshop,Value=shared
+aws ec2 create-tags --resources $CUST_SNET2 --tags Key=kubernetes.io/role/elb,Value=1
+aws ec2 create-tags --resources $CUST_SNET3 --tags Key=Name,Value=eksworkshop-Secondary-PublicSubnet03
+aws ec2 create-tags --resources $CUST_SNET3 --tags Key=kubernetes.io/cluster/eksworkshop,Value=shared
+aws ec2 create-tags --resources $CUST_SNET3 --tags Key=kubernetes.io/role/elb,Value=1
+
+```
+
+
+
+![](../.gitbook/assets/image%20%2895%29.png)
+
+
+
+```text
+SNET1=$(aws ec2 describe-subnets --filters Name=cidr-block,Values=10.11.0.0/19 | jq -r '.Subnets[].SubnetId')
+RTASSOC_ID=$(aws ec2 describe-route-tables --filters Name=association.subnet-id,Values=$SNET1 | jq -r '.RouteTables[].RouteTableId')
+
+```
 

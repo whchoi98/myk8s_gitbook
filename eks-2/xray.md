@@ -242,25 +242,25 @@ X-RAY 서비스 대시보드에서 "서비스 맵"을 선택합니다.
 
 아래와 같이 Client-FrontEnd App- BackEnd App의 연결구성과 어플리케이션 간 응답시간, 분당 트랜잭션 수를 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28129%29.png)
+![](../.gitbook/assets/image%20%28131%29.png)
 
 
 
-![](../.gitbook/assets/image%20%28114%29.png)
+![](../.gitbook/assets/image%20%28116%29.png)
 
 Analyze trace를 선택하게 되면 , 상세 분석을 할 수 있습니다. 테이블 구성 옵션을 필터하면 HTTP Code 및 Client IP 등을 상세하게 분석할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2898%29.png)
-
-![](../.gitbook/assets/image%20%28117%29.png)
-
-트레이스를 선택하면, 각 트랜잭션 당 더욱 상세한 내용을 살펴 볼 수 있습니다. 트레이스 목록에서 1개를 선택해서 클릭합니다.
+![](../.gitbook/assets/image%20%2899%29.png)
 
 ![](../.gitbook/assets/image%20%28119%29.png)
 
+트레이스를 선택하면, 각 트랜잭션 당 더욱 상세한 내용을 살펴 볼 수 있습니다. 트레이스 목록에서 1개를 선택해서 클릭합니다.
+
+![](../.gitbook/assets/image%20%28121%29.png)
+
 Time line 및 소스 데이터를 상세하게 분석 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28109%29.png)
+![](../.gitbook/assets/image%20%28111%29.png)
 
 
 
