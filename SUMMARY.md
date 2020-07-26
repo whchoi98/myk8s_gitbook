@@ -54,7 +54,7 @@
   * [X-Ray기반 추적](eks-2/xray.md)
   * [CRD](eks-2/crd.md)
 * [6.EKS Networking](eks-networking/README.md)
-  * [Calico 네트워킹](eks-networking/calico-networking.md)
+  * [Calico 네트워크 정책](eks-networking/calico-networking.md)
   * [VPC Advanced](eks-networking/vpc-advanced.md)
   * [External SNAT](eks-networking/external-snat.md)
 * [7.EKS Storage](eks-storage/README.md)

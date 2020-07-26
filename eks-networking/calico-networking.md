@@ -1,4 +1,4 @@
-# Calico 네트워킹
+# Calico 네트워크 정책
 
 ## Calico 네트워킹 소개
 
