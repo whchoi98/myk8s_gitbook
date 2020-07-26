@@ -9,7 +9,7 @@ git clone https://github.com/brentley/ecsdemo-nodejs.git
 git clone https://github.com/brentley/ecsdemo-crystal.git
 ```
 
-source /sample file
+source /sample file \(아래 소스 파일 대부분은  [https://github.com/whchoi98/myeks.git](https://github.com/whchoi98/myeks.git) 에 포함되어 있습니다.\)
 
 ```text
 https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/rbac-role.yaml
