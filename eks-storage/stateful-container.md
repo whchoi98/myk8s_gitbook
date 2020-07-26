@@ -46,7 +46,7 @@ eksctl create iamserviceaccount --cluster eksworkshop \
 
 아래와 같이 IAM 대시보드에서 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28110%29.png)
+![](../.gitbook/assets/image%20%28112%29.png)
 
 ### 3. EBS CSI 드라이버 구성
 
@@ -71,6 +71,8 @@ kubectl apply -k ~/environment/ebs_csi_driver
 ##  스토리지 클래스 생성. 
 
 클러스터가 사용할 스토리지 클래스를 정의해야 하고, PV 클레임에 대한 기본 스토리지 클래스를 정의해야 합니다.
+
+![](../.gitbook/assets/image%20%2893%29.png)
 
 새로운 디렉토리를 만들고 파일을 복제합니다.
 
@@ -285,6 +287,12 @@ data-mysql-0   Bound    pvc-c08c7ae2-e3da-46a8-8910-54ac87e0ee20   10Gi       RW
 data-mysql-1   Bound    pvc-f68bfe62-2ce3-4371-b89a-def75716a106   10Gi       RWO            mysql-gp2      4m11s
 data-mysql-2   Bound    pvc-8057ab7e-ffd8-41af-a6cd-72eb178d3e4e   10Gi       RWO            mysql-gp2      3m16s
 ```
+
+EC2 대시보드의 볼륨에서도 동일한 결과를 확인 할 수 있습니다.
+
+![](../.gitbook/assets/image%20%2899%29.png)
+
+SQL Test 
 
 
 

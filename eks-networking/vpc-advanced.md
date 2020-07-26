@@ -12,7 +12,7 @@ Amazon EKS는 공식적으로 [Amazon VPC CNI 플러그인](https://docs.aws.ama
 | Isovalent | [Cilium](https://cilium.io/contact-us-eks/) | [설치 지침](https://docs.cilium.io/en/v1.7/gettingstarted/k8s-install-eks/) |
 | Weaveworks | [Weave Net](https://www.weave.works/contact/) | [설치 지침](https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-installing-on-eks) |
 
-![](../.gitbook/assets/image%20%28113%29.png)
+![](../.gitbook/assets/image%20%28115%29.png)
 
 CNI 플러그인은 Kubernetes 노드에 VPC IP 주소를 할당하고 각 노드의 포드에 대한 필수 네트워킹을 구성하는 역할을 합니다. ​플러그인에는 두 가지 기본 구성 요소가 있습니다.
 
@@ -145,7 +145,7 @@ whchoi98:~/environment $ aws ec2 associate-vpc-cidr-block --vpc-id $VPC_ID --cid
 }
 ```
 
-![](../.gitbook/assets/image%20%28109%29.png)
+![](../.gitbook/assets/image%20%28111%29.png)
 
 ### 3.서브넷 생성. 
 
@@ -207,7 +207,7 @@ aws ec2 create-tags --resources $CUST_SNET3 --tags Key=kubernetes.io/role/elb,Va
 
 아래와 같은 결과를 VPC 대쉬보드에서 확인 할 수 있습니다. 3개의 새로운 서브넷이 생성되고, 태그가 추가되었습니다.
 
-![](../.gitbook/assets/image%20%2896%29.png)
+![](../.gitbook/assets/image%20%2897%29.png)
 
 ### 4. 서브넷에 라우팅 테이블 연결.
 
@@ -224,7 +224,7 @@ aws ec2 associate-route-table --route-table-id $RTASSOC_ID --subnet-id $CUST_SNE
 
 정상적으로 Public Routing Table에 추가 되었는지 확인합니다.
 
-![](../.gitbook/assets/image%20%28128%29.png)
+![](../.gitbook/assets/image%20%28130%29.png)
 
 ### 5.CNI Plugin 구성.
 
@@ -340,13 +340,13 @@ sg-0db3cb147dca2658b
 
 VPC/EC2 대시보드를 통해서도 확인이 가능합니다.
 
-![](../.gitbook/assets/image%20%2893%29.png)
+![](../.gitbook/assets/image%20%2894%29.png)
 
 
 
-![](../.gitbook/assets/image%20%28105%29.png)
+![](../.gitbook/assets/image%20%28107%29.png)
 
-![](../.gitbook/assets/image%20%28127%29.png)
+![](../.gitbook/assets/image%20%28129%29.png)
 
 출력된 서브넷과 Security를 Custom Resource로 생성합니다.
 
