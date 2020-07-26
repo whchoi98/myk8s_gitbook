@@ -12,7 +12,7 @@ Amazon EKS는 공식적으로 [Amazon VPC CNI 플러그인](https://docs.aws.ama
 | Isovalent | [Cilium](https://cilium.io/contact-us-eks/) | [설치 지침](https://docs.cilium.io/en/v1.7/gettingstarted/k8s-install-eks/) |
 | Weaveworks | [Weave Net](https://www.weave.works/contact/) | [설치 지침](https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-installing-on-eks) |
 
-![](../.gitbook/assets/image%20%28110%29.png)
+![](../.gitbook/assets/image%20%28112%29.png)
 
 CNI 플러그인은 Kubernetes 노드에 VPC IP 주소를 할당하고 각 노드의 포드에 대한 필수 네트워킹을 구성하는 역할을 합니다. ​플러그인에는 두 가지 기본 구성 요소가 있습니다.
 
@@ -145,7 +145,7 @@ whchoi98:~/environment $ aws ec2 associate-vpc-cidr-block --vpc-id $VPC_ID --cid
 }
 ```
 
-![](../.gitbook/assets/image%20%28107%29.png)
+![](../.gitbook/assets/image%20%28109%29.png)
 
 ### 3.서브넷 생성. 
 
@@ -207,7 +207,7 @@ aws ec2 create-tags --resources $CUST_SNET3 --tags Key=kubernetes.io/role/elb,Va
 
 아래와 같은 결과를 VPC 대쉬보드에서 확인 할 수 있습니다. 3개의 새로운 서브넷이 생성되고, 태그가 추가되었습니다.
 
-![](../.gitbook/assets/image%20%2895%29.png)
+![](../.gitbook/assets/image%20%2896%29.png)
 
 ### 4. 서브넷에 라우팅 테이블 연결.
 
@@ -224,7 +224,7 @@ aws ec2 associate-route-table --route-table-id $RTASSOC_ID --subnet-id $CUST_SNE
 
 정상적으로 Public Routing Table에 추가 되었는지 확인합니다.
 
-![](../.gitbook/assets/image%20%28124%29.png)
+![](../.gitbook/assets/image%20%28127%29.png)
 
 ### 5.CNI Plugin 구성.
 
@@ -292,6 +292,118 @@ kubectl get crd | grep "eni"
 whchoi98:~/environment/myeks (master) $ kubectl get crd | grep "eni"
 eniconfigs.crd.k8s.amazonaws.com              2020-07-17T07:03:34Z
 ```
+
+새로 구성할 Subnet들을 출력합니다.
+
+```text
+aws ec2 describe-subnets  --filters "Name=cidr-block,Values=100.64.*" --query 'Subnets[*].[CidrBlock,SubnetId,AvailabilityZone]' --output table
+
+```
+
+아래와 같이 출력됩니다.
+
+```text
+whchoi98:~/environment/myeks (master) $ aws ec2 describe-subnets  --filters "Name=cidr-block,Values=100.64.*" --query 'Subnets[*].[CidrBlock,SubnetId,AvailabilityZone]' --output table
+-------------------------------------------------------------------
+|                         DescribeSubnets                         |
++----------------+----------------------------+-------------------+
+|  100.64.32.0/19|  subnet-0aebaccb17574b415  |  ap-northeast-2b  |
+|  100.64.0.0/19 |  subnet-0ef2de2d3c6504a3f  |  ap-northeast-2a  |
+|  100.64.64.0/19|  subnet-006a77bdca2ec4085  |  ap-northeast-2c  |
++----------------+----------------------------+-------------------+
+```
+
+Instance ID와 Mapping되어 있는 Security ID를 출력합니다
+
+```text
+INSTANCE_IDS=(`aws ec2 describe-instances --query 'Reservations[*].Instances[*].InstanceId' --filters "Name=tag-key,Values=alpha.eksctl.io/nodegroup-name" "Name=tag-value,Values=ng1-public" --output text`)
+for i in "${INSTANCE_IDS[@]}"
+do
+  echo "SecurityGroup for EC2 instance $i ..."
+  aws ec2 describe-instances --instance-ids $i | jq -r '.Reservations[].Instances[].SecurityGroups[].GroupId'
+done  
+
+```
+
+출력되는 결과는 아래와 같습니다.
+
+```text
+SecurityGroup for EC2 instance i-0ca4ddf4adea01038 ...
+sg-0db3cb147dca2658b
+sg-0df26a1d81042cc02
+SecurityGroup for EC2 instance i-0c54ecd3e71935c55 ...
+sg-0db3cb147dca2658b
+sg-0df26a1d81042cc02
+SecurityGroup for EC2 instance i-012b9094504eb1038 ...
+sg-0db3cb147dca2658b
+```
+
+VPC/EC2 대시보드를 통해서도 확인이 가능합니다.
+
+![](../.gitbook/assets/image%20%2893%29.png)
+
+
+
+![](../.gitbook/assets/image%20%28105%29.png)
+
+![](../.gitbook/assets/image%20%28126%29.png)
+
+출력된 서브넷과 Security를 Custom Resource로 생성합니다.
+
+eksworkshop-Secondary-PublicSubnet01
+
+```text
+cat <<EoF > ~/environment/myeks/group1-pod-netconfig.yaml
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+ name: group1-pod-netconfig
+spec:
+ subnet: subnet-0ef2de2d3c6504a3f
+ securityGroups:
+ - sg-0db3cb147dca2658b
+ - sg-0df26a1d81042cc02
+ EoF
+
+```
+
+eksworkshop-Secondary-PublicSubnet02
+
+```text
+cat <<EoF > ~/environment/myeks/group2-pod-netconfig.yaml
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+ name: group1-pod-netconfig
+spec:
+ subnet: subnet-0aebaccb17574b415
+ securityGroups:
+ - sg-0db3cb147dca2658b
+ - sg-0df26a1d81042cc02
+ EoF
+
+```
+
+eksworkshop-Secondary-PublicSubnet03
+
+```text
+cat <<EoF > ~/environment/myeks/group3-pod-netconfig.yaml
+apiVersion: crd.k8s.amazonaws.com/v1alpha1
+kind: ENIConfig
+metadata:
+ name: group1-pod-netconfig
+spec:
+ subnet: subnet-006a77bdca2ec4085
+ securityGroups:
+ - sg-0db3cb147dca2658b
+ - sg-0df26a1d81042cc02
+ EoF
+
+```
+
+
+
+
 
 
 
