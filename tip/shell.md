@@ -10,6 +10,7 @@ export MASTER_ARN="MASTER_ARN"
 export PUB_ROLE_NAME="PUB_ROLE_NAME"
 export PRI_ROLE_NAME="PRI_ROLE_NAME"
 export ALB_INGRESS_VERSION="v1.1.8"
+export EBS_CNI_POLICY_NAME="Amazon_EBS_CSI_Driver"
 export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
 export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
@@ -26,6 +27,7 @@ echo "export PUB_ROLE_NAME=$PUB_ROLE_NAME" | tee -a ~/.bash_profile
 echo "export PRI_ROLE_NAME=$PRI_ROLE_NAME" | tee -a ~/.bash_profile
 echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
 echo 'export ALB_INGRESS_VERSION="v1.1.8"' | tee -a ~/.bash_profile
+echo 'export EBS_CNI_POLICY_NAME="Amazon_EBS_CSI_Driver"' | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
