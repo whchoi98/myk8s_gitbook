@@ -872,7 +872,13 @@ Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장�
 
 AWS 서비스 - S3 
 
+![](../.gitbook/assets/image%20%28104%29.png)
 
+버킷이름은 고유해야 합니다.
+
+![](../.gitbook/assets/image%20%28111%29.png)
+
+정상적으로 생성되었는지 확인합니다.
 
 ```text
 whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'

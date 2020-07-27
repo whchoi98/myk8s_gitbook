@@ -2,7 +2,7 @@
 
 ## Calico 네트워킹 소개
 
-![](../.gitbook/assets/image%20%28123%29.png)
+![](../.gitbook/assets/image%20%28125%29.png)
 
 Calico는 컨테이너, 가상 머신 및 기본 호스트 기반 워크로드를 위한 오픈 소스 네트워킹 및 네트워크 보안 솔루션입니다. Calico는 Kubernetes, OpenShift, Docker EE, OpenStack 및 베어 메탈 서비스를 포함한 광범위한 플랫폼을 지원합니다.
 
@@ -312,7 +312,7 @@ ELB SERVICE URL = a927c1a56c9a144aba431cdb58b9c5a7-1577995596.ap-northeast-2.elb
 
 해당 웹 사이트는 Client App , Front end App, Back end App 간의 트래픽 허용 상태를 제공해 줍니다.
 
-![](../.gitbook/assets/image%20%28106%29.png)
+![](../.gitbook/assets/image%20%28107%29.png)
 
 ### 3.네트워크 정책 적용
 
@@ -359,7 +359,7 @@ kubectl apply -f allow-ui-client.yaml
 
 아래에서 처럼 이제 management-ui로는 접속이 가능합니다. 하지만 Frontend, Backend, Client Pod간에는 통신되지 않습니다.
 
-![](../.gitbook/assets/image%20%28110%29.png)
+![](../.gitbook/assets/image%20%28112%29.png)
 
 아래 매니페스트 파일을 확인해 봅니다.
 
@@ -429,7 +429,7 @@ spec:
 
 다시 management-ui 로 접속해 보면 트래픽 허용되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28113%29.png)
+![](../.gitbook/assets/image%20%28115%29.png)
 
 이제 frontend에서 backend로 유입되는 트래픽을 허용합니다.
 
@@ -461,7 +461,7 @@ spec:
 
 다시 management-ui 로 접속해 보면 트래픽 허용되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28132%29.png)
+![](../.gitbook/assets/image%20%28134%29.png)
 
 
 
