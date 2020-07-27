@@ -121,7 +121,7 @@ bitnami/nginx-ingress-controller 5.3.25 0.33.0 Chart for the nginx Ingress contr
 helm install 명령을 통해 nginx를 설치해 봅니다.
 
 ```text
-helm install eksworkshop-nginx bitnami/nginix
+helm install eksworkshop-nginx bitnami/nginx
 ```
 
 아래와 같은 결과를 얻을 수 있습니다.
