@@ -117,7 +117,7 @@ Cloudwatch를 통해 수집하려면, EKS Cluster에 Cloudwatch agent를 설치�
 Role을 확인하기 위해 아래 과정을 수행합니다.
 
 ```text
-STACK_NAME=$(eksctl get nodegroup --cluster eksworkshop-eksctl -o json | jq -r '.[].StackName')
+STACK_NAME=$(eksctl get nodegroup --cluster eksworkshop -o json | jq -r '.[].StackName')
 echo $STACK_NAME
 ```
 

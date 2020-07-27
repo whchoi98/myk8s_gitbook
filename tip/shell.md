@@ -1,6 +1,6 @@
 # shell
 
-환경 변수 저 - 이 랩에서 자주 사용되는 환경 변수들.
+환경 변수 저장 관 - 이 랩에서 자주 사용되는 환경 변수들.
 
 ```text
 export CLUSTER_NAME=eksworkshop
