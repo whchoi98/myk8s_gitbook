@@ -741,7 +741,7 @@ helm chart로 배포한 Revision이 "2"로 변경되었습니다.
 정상적으로 배포되었는 지 확인합니다.
 
 ```text
-kubectl -n helmdemo get pods
+kubectl -n helm-chart-demo get pods
 ```
 
 아래와 같이 이미지가 잘못 구성된 "nodejs" pod가 에러가 발생합니다.
@@ -869,6 +869,10 @@ chmod +x ./chartmuseum
 
 Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장소는 S3를 사용합니다.  
 사전에 s3 bucket을 생성합니다.
+
+AWS 서비스 - S3 
+
+
 
 ```text
 whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
