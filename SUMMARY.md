@@ -22,7 +22,6 @@
       * [컨테이너 초기화](kubernetes-concept/workloads/pod/init-containers.md)
       * [Pod 프리셋](kubernetes-concept/workloads/pod/pod-preset.md)
       * [파드 토폴로지 분배 제약 조건](kubernetes-concept/workloads/pod/pod-topology-spread-constraints.md)
-      * [Untitled](kubernetes-concept/workloads/pod/untitled-1.md)
       * [Untitled](kubernetes-concept/workloads/pod/untitled.md)
     * [Controller](kubernetes-concept/workloads/controller.md)
   * [Service-LB-Networking](kubernetes-concept/service-lb-networking.md)
