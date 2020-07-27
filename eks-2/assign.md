@@ -344,10 +344,12 @@ EoF
 
 매니페스트 파일에는 다음과 같은 정보들을 담고 있습니다.
 
-* App : redis-cache
-* replica : 3개
-* label : app=store
-* podAntiAffinity : app=store
+{% hint style="success" %}
+* **App : redis-cache**
+* **replica : 3개**
+* **label : app=store**
+* **podAntiAffinity : app=store**
+{% endhint %}
 
 {% hint style="info" %}
 Redis-Cache를 배포할 때 label이 app입니다. 그런데 podAntiAffinity가 app이므로, Redis-cache가 없는 노드에 배포될 것입니다. 3개의 WorkerNode에 분산해서 설치하겠다는 의미입니다.
@@ -400,11 +402,13 @@ EoF
 
  매니페스트 파일에는 다음과 같은 정보들을 담고 있습니다.
 
+{% hint style="success" %}
 * App : web-server \(alpine nginx 1.12\)
 * replica : 3개
 * label : app=web-store
 * podAntiAffinity : app=web-store
 * podAffinity: app=store
+{% endhint %}
 
 {% hint style="info" %}
 Web-Server를 배포할 때 label이 web-store입니다. 그런데 podAntiAffinity가 web-store이므로, web-server가 없는 노드에 배포될 것입니다. 하지만 만약 Node가 많다면, Redis-Cache에 없는 노드에 설치될 수도 있기 때문에, podAffinity가 app이므로 Redis-Cache에 있는 노드에만 설치됩니다.
@@ -424,6 +428,7 @@ kubectl apply -f ~/environment/affinity/web-with-node-affinity.yaml
 
 ```text
 kubectl -n affinity get pods -o wide
+
 ```
 
 정상적으로 배포되었다면 아래와 같은 결과를 볼 수 있습니다. Web-Server와 Redis-Cache 서버는 모두 분산되어 배포되었습니다.
