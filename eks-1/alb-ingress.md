@@ -247,6 +247,8 @@ AWS ALB Ingress controller
 -------------------------------------------------------------------------------
 ```
 
+
+
 ### 6.namespace/App/Pod/Service 배포.
 
 샘플 어플리케이션을 배포해 보겠습니다. 2048 게임 App을 Kubernetes Cluster에 넣고 Ingress 리소스를 사용하여 트래픽을 노출해 봅니다.
