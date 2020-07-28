@@ -886,7 +886,7 @@ whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
 ```
 
 ```text
-./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2"
+./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2" &
 ```
 
 helm repo list에 정상적으로 등록되었는지 확인합니다.
