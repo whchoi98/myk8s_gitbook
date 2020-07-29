@@ -2,6 +2,10 @@
 
 ## AWS EBS CSI Driver 구성
 
+참조 URL : [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/ebs-csi.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/ebs-csi.html)
+
+Amazon EKS 클러스터가 Persistant Volume \(PV : 영구 볼륨\)을 위해 Amazon EBS 볼륨의 수명 주기를 관리할 수 있게 해주는 CSI 인터페이스를 제공합니다.
+
 ### 1.IAM 정책 구성
 
 CSI 드라이버는 Kubernetes Pod 세트로 배포됩니다. 이러한 포드에는 볼륨 생성 및 삭제, 클러스터를 구성하는 EC2 worker node에 볼륨 연결과 같은 EBS API 작업을 수행 할 수있는 권한이 있어야합니다.
@@ -10,10 +14,13 @@ CSI 드라이버는 Kubernetes Pod 세트로 배포됩니다. 이러한 포드�
 
 먼저 정책 JSON 문서를 다운로드하고이 문서에서 IAM 정책을 생성하십시오.
 
+* CSI driver를 위한 IAM Policy 샘플 다운로드
+* IAM Policy 생
+
 ```text
 mkdir ~/environment/ebs_csi_driver
 cd ~/environment/ebs_csi_driver
-curl -sSL -o ebs-cni-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/v0.4.0/docs/example-iam-policy.json
+curl -sSL -o ebs-cni-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/v0.5.0/docs/example-iam-policy.json
 
 export EBS_CNI_POLICY_NAME="Amazon_EBS_CSI_Driver"
 
@@ -249,6 +256,10 @@ kubectl create -f ~/environment/templates/mysql-statefulset.yml
 ```
 
 정상적으로 생성되었는지 확인합니다. 
+
+{% hint style="success" %}
+생성 되는데 5분 정도 시간이 소요됩니다.
+{% endhint %}
 
 ```text
 kubectl -n mysql rollout status statefulset mysql

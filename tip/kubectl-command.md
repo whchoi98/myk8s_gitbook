@@ -69,3 +69,10 @@ kubectl -n "namespaces" delete -f "manifest file path"
 kubectl logs -n "namespace" "pods name"
 ```
 
+### 인증 
+
+```text
+kubectl -n kube-system edit configmaps aws-auth
+kubectl edit clusterrole cluster-admin
+```
+

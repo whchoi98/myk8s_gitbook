@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-07-18'
+description: 'update : 2020-07-28'
 ---
 
 # Cloud9 IDE 환경 구성
@@ -113,12 +113,11 @@ Client Version: v1.16.8-eks-e16311
 kubectl은 Bash 및 Zsh에 대한 자동 완성 지원을 제공하므로 입력을 위한 타이핑을 많이 절약할 수 있습니다.
 {% endhint %}
 
-kubectl 자동완성을 설치합니다.
+kubectl 자동완성을 설치합니다
 
 ```text
-kubectl completion bash >>  ~/.bash_completion
-. /etc/profile.d/bash_completion.sh
-. ~/.bash_completion
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
 ```
 
 ## 기타 유틸리티 설치

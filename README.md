@@ -10,21 +10,21 @@ Kubernetes의 공식 블로그에 포스팅 된 문서를 기준으로 내용을
 
 ### [Kubernetes 개념](kubernetes-concept/)
 
-### [EKS 환경과 구성](eks/)
+### [EKS 환경과 구성](eks/) \(40min\)
 
-### [VPC구성과 eksctl 기반 설치](vpc-eksctl/)
+### [VPC구성과 eksctl 기반 설치](vpc-eksctl/) \(1h\)
 
-### [EKS 기반 배포](eks-1/)
+### [EKS 기반 배포](eks-1/) \(1h\)
 
-### [EKS 기반 관리](eks-2/)
+### [EKS 기반 관리](eks-2/) \(2h 30min\)
 
-### [EKS Networking](eks-networking/)
+### [EKS Networking](eks-networking/) \(1h\)
 
-### [EKS Storage](eks-storage/)
+### [EKS Storage](eks-storage/) \(1h\)
 
-### [EKS CI/CD](eks-cicd/)
+### [EKS CI/CD](eks-cicd/) \(2h\)
 
-### [EKS Service Mesh](eks-service-mesh/)
+### [EKS Service Mesh](eks-service-mesh/) \(1h\)
 
 
 
