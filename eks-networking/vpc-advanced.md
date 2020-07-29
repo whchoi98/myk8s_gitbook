@@ -118,7 +118,7 @@ curl http://localhost:61679/v1/enis | python -m json.tool
 **VPC\_ID** 변수에 VPC를 연결하기 위 다음 명령을 실행합니다.
 
 ```text
-echo "export VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')" | tee -a ~/.bash_profile
+export VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
 ```
 
 ### 2.CIDR 블록을 연결
