@@ -149,31 +149,29 @@ ready 컨디션의 상태가 `pod-eviction-timeout` \([kube-controller-manager](
 
 용량 블록의 필드는 노드에 있는 리소스의 총량을 나타냅니. 할당가능 블록은 일반 파드에서 사용할 수 있는 노드의 리소스 양을 나타냅니다.
 
-노드에서 [컴퓨팅 리소스 예약](https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#node-allocatable)하는 방법을 배우는 동안 용량 및 할당가능 리소스에 대해 자세히 읽어보자.
-
 ### 정보
 
-커널 버전, 쿠버네티스 버전 \(kubelet과 kube-proxy 버전\), \(사용하는 경우\) Docker 버전, OS 이름과 같은노드에 대한 일반적인 정보를 보여준다. 이 정보는 Kubelet에 의해 노드로부터 수집된다.
+커널 버전, 쿠버네티스 버전 \(kubelet과 kube-proxy 버전\), \(사용하는 경우\) Docker 버전, OS 이름과 같은노드에 대한 일반적인 정보를 보여 줍니. 이 정보는 Kubelet에 의해 노드로부터 수집됩니다.
 
 ### 노드 컨트롤러
 
-노드 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)는 노드의 다양한 측면을 관리하는 쿠버네티스 컨트롤 플레인 컴포넌트이다.
+노드 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)는 노드의 다양한 측면을 관리하는 쿠버네티스 컨트롤 플레인 컴포넌트입니다.
 
-노드 컨트롤러는 노드가 생성되어 유지되는 동안 다양한 역할을 한다. 첫째는 등록 시점에 \(CIDR 할당이 사용토록 설정된 경우\) 노드에 CIDR 블럭을 할당하는 것이다.
+노드 컨트롤러는 노드가 생성되어 유지되는 동안 다양한 역할을 합니. 첫째는 등록 시점에 \(CIDR 할당이 사용토록 설정된 경우\) 노드에 CIDR 블럭을 할당하는 것입니다.
 
-두 번째는 노드 컨트롤러의 내부 노드 리스트를 클라우드 제공사업자의 사용 가능한 머신 리스트 정보를 근거로 최신상태로 유지하는 것이다. 클라우드 환경에서 동작 중일 경우, 노드상태가 불량할 때마다, 노드 컨트롤러는 해당 노드용 VM이 여전히 사용 가능한지에 대해 클라우드 제공사업자에게 묻는다. 사용 가능하지 않을 경우, 노드 컨트롤러는 노드 리스트로부터 그 노드를 삭제한다.
+두 번째는 노드 컨트롤러의 내부 노드 리스트를 클라우드 제공사업자의 사용 가능한 머신 리스트 정보를 근거로 최신상태로 유지하는 것입니다. 클라우드 환경에서 동작 중일 경우, 노드상태가 불량할 때마다, 노드 컨트롤러는 해당 노드용 VM이 여전히 사용 가능한지에 대해 클라우드 제공사업자에게 질의합니다. 사용 가능하지 않을 경우, 노드 컨트롤러는 노드 리스트로부터 그 노드를 삭제합니다.
 
-세 번째는 노드의 동작 상태를 모니터링 하는 것이다. 노드 컨트롤러는 노드가 접근 불가할 경우 \(즉 노드 컨트롤러가 어떠한 사유로 하트비트 수신을 중지하는 경우, 예를 들어 노드 다운과 같은 경우이다.\) NodeStatus의 NodeReady 컨디션을 ConditionUnknown으로 업데이트 하는 책임을 지고, 노드가 계속 접근 불가할 경우 나중에 노드로부터 \(정상적인 종료를 이용하여\) 모든 파드를 축출시킨다. \(ConditionUnknown을 알리기 시작하는 기본 타임아웃 값은 40초 이고, 파드를 축출하기 시작하는 값은 5분이다.\) 노드 컨트롤러는 매 `--node-monitor-period` 초 마다 각 노드의 상태를 체크한다.
+세 번째는 노드의 동작 상태를 모니터링 하는 것입니. 노드 컨트롤러는 노드가 접근 불가할 경우 \(즉 노드 컨트롤러가 어떠한 사유로 하트비트 수신을 중지하는 경우, 예를 들어 노드 다운과 같은 경우이다.\) NodeStatus의 NodeReady 컨디션을 ConditionUnknown으로 업데이트 하는 책임을 지고, 노드가 계속 접근 불가할 경우 나중에 노드로부터 \(정상적인 종료를 이용하여\) 모든 파드를 축출시킵니다. ConditionUnknown을 알리기 시작하는 기본 타임아웃 값은 40초 이고, 파드를 축출하기 시작하는 값은 5분이다.\) 노드 컨트롤러는 매 `--node-monitor-period` 초 마다 각 노드의 상태를 체크합니다.
 
 ### **하트비트**
 
-쿠버네티스 노드에서 보내는 하트비트는 노드의 가용성을 결정하는데 도움이 된다.
+쿠버네티스 노드에서 보내는 하트비트는 노드의 가용성을 결정하는데 도움이 됩니다.
 
-하트비트의 두 가지 형태는 `NodeStatus` 와 [리스\(Lease\) 오브젝트](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#lease-v1-coordination-k8s-io) 이다. 각 노드에는 `kube-node-lease` 라는 [네임스페이스](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/namespaces) 에 관련된 리스 오브젝트가 있다. 리스는 경량 리소스로, 클러스터가 확장될 때 노드의 하트비트 성능을 향상 시킨다.
+하트비트의 두 가지 형태는 `NodeStatus` 와 [리스\(Lease\) 오브젝트](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#lease-v1-coordination-k8s-io) 입니. 각 노드에는 `kube-node-lease` 라는 [네임스페이스](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/namespaces) 에 관련된 리스 오브젝트가 있습니. 리스는 경량 리소스로, 클러스터가 확장될 때 노드의 하트비트 성능을 향상 시킵니다.
 
-kubelet은 `NodeStatus` 와 리스 오브젝트를 생성하고 업데이트 할 의무가 있다.
+kubelet은 `NodeStatus` 와 리스 오브젝트를 생성하고 업데이트 할 의무가 있습니.
 
-* kubelet은 상태가 변경되거나 구성된 상태에 대한 업데이트가 없는 경우, `NodeStatus` 를 업데이트 한다. `NodeStatus` 의 기본 업데이트 주기는 5분이다\(연결할 수 없는 노드의 시간 제한인 40초 보다 훨씬 길다\).
+* kubelet은 상태가 변경되거나 구성된 상태에 대한 업데이트가 없는 경우, `NodeStatus` 를 업데이트 합니. `NodeStatus` 의 기본 업데이트 주기는 5분이니다. \(연결할 수 없는 노드의 시간 제한인 40초 보다 훨씬 길다\).
 * kubelet은 10초마다 리스 오브젝트를 생성하고 업데이트 한다\(기본 업데이트 주기\). 리스 업데이트는 `NodeStatus` 업데이트와는 독립적으로 발생한다. 리스 업데이트가 실패하면 kubelet에 의해 재시도하며 7초로 제한된 지수 백오프를 200 밀리초에서 부터 시작한다.
 
 ### **안정성**
