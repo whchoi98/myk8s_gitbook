@@ -2,20 +2,20 @@
 
 ## 노드
 
-쿠버네티스는 컨테이너를 파드내에 배치하고 _노드_ 에서 실행함으로 워크로드를 구동한다. 노드는 클러스터에 따라 가상 또는 물리적 머신일 수 있다. 각 노드에는 [컨트롤 플레인](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-control-plane)이라는 [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)를 실행하는데 필요한 서비스가 포함되어 있다.
+쿠버네티스는 컨테이너를 파드내에 배치하고 노에서 실행함으로 워크로드를 수행합니다. 노드는 클러스터에 따라 가상 또는 물리적 머신일 수 있습니다.. 각 노드에는 [컨트롤 플레인](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-control-plane)이라는 [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)를 실행하는데 필요한 서비스가 포함되어 있다.
 
-일반적으로 클러스터에는 여러개의 노드가 있으며, 학습 또는 리소스가 제한되는 환경에서는 하나만 있을 수도 있다.
+일반적으로 클러스터에는 여러개의 노드가 있으며, 구성 방법에 따라서 한개의 노드로 구성할 수도 있습니다.
 
-노드의 [컴포넌트](https://kubernetes.io/ko/docs/concepts/overview/components/#%EB%85%B8%EB%93%9C-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8)에는 [kubelet](https://kubernetes.io/docs/reference/generated/kubelet), [컨테이너 런타임](https://kubernetes.io/docs/setup/production-environment/container-runtimes) 그리고 [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)가 포함된다.
+노드의 [컴포넌트](https://kubernetes.io/ko/docs/concepts/overview/components/#%EB%85%B8%EB%93%9C-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8)에는 [kubelet](https://kubernetes.io/docs/reference/generated/kubelet), [컨테이너 런타임](https://kubernetes.io/docs/setup/production-environment/container-runtimes) 그리고 [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)가 포함됩니다.
 
 ## 관리
 
-[API 서버](https://kubernetes.io/docs/reference/generated/kube-apiserver/)에 노드를 추가하는 두가지 주요 방법이 있다.
+[API 서버](https://kubernetes.io/docs/reference/generated/kube-apiserver/)에 노드를 추가하는 두가지 주요 방법이 있습니다.
 
-1. 노드의 kubelet으로 컨트롤 플레인에 자체 등록
+1. 노드의 kubelet으로 컨트롤 플레인에 등록
 2. 사용자 또는 다른 사용자가 노드 오브젝트를 수동으로 추가
 
-노드 오브젝트 또는 노드의 kubelet으로 자체 등록한 후 컨트롤 플레인은 새 노드 오브젝트가 유효한지 확인한다. 예를 들어 다음 JSON 매니페스트에서 노드를 만들려는 경우이다.
+노드 오브젝트 또는 노드의 kubelet으로 등록한 후 컨트롤 플레인은 새 노드 오브젝트가 유효한지 확인합니. 예를 들어 다음 JSON 매니페스트에서 노드를 만들려는 경우이다
 
 ```text
 {
