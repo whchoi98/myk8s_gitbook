@@ -135,7 +135,7 @@ kubectl describe node <insert-node-name-here>
 ]
 ```
 
-ready 컨디션의 상태가 `pod-eviction-timeout` \([kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/)에 전달된 인수\) 보다 더 길게 `Unknown` 또는 `False`로 유지되는 경우, 노드 상에 모든 파드는 노드 컨트롤러에 의해 삭제 되도록 스케줄 됩니. 기본 타임아웃 기간은 **5분** 이입니다. 노드에 접근이 불가할 때와 같은 경우, apiserver는 노드 상의 kubelet과 통신이 불가하능 합니다.apiserver와의 통신이 재개될 때까지 파드 삭제에 대한 결정은 kubelet에 전해질 수 없다. 그 사이, 삭제되도록 스케줄 되어진 파드는 분할된 노드 상에서 계속 동작할 수도 있다.
+ready 컨디션의 상태가 `pod-eviction-timeout` \([kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/)에 전달된 인수\) 보다 더 길게 `Unknown` 또는 `False`로 유지되는 경우, 노드 상에 모든 파드는 노드 컨트롤러에 의해 삭제 되도록 스케줄 됩니. 기본 타임아웃 기간은 **5분** 이입니다. 노드에 접근이 불가할 때와 같은 경우, apiserver는 노드 상의 kubelet과 통신이 불 합니다.apiserver와의 통신이 재개될 때까지 파드 삭제에 대한 결정은 kubelet에 전해질 수 없다. 그 사이, 삭제되도록 스케줄 되어진 파드는 분할된 노드 상에서 계속 동작할 수도 있다.
 
 노드 컨트롤러가 클러스터 내 동작 중지된 것을 확신할 때까지는 파드를 강제로 삭제하지 않는다. 파드가 `Terminating` 또는 `Unknown` 상태로 있을 때 접근 불가한 노드 상에서 동작되고 있는 것을 보게 될 수도 있다. 노드가 영구적으로 클러스터에서 삭제되었는지에 대한 여부를 쿠버네티스가 기반 인프라로부터 유추할 수 없는 경우, 노드가 클러스터를 영구적으로 탈퇴하게 되면, 클러스터 관리자는 손수 노드 오브젝트를 삭제해야 할 수도 있다. 쿠버네티스에서 노드 오브젝트를 삭제하면 노드 상에서 동작중인 모든 파드 오브젝트가 apiserver로부터 삭제되어 그 이름을 사용할 수 있는 결과를 낳는다.
 
