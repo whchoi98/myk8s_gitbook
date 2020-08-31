@@ -194,17 +194,17 @@ kubelet은 `NodeStatus` 와 리스 오브젝트를 생성하고 업데이트 할
 
 ### 노드 용량
 
-노드 오브젝트는 노드 리소스 용량에 대한 정보\(예: 사용 가능한 메모리의 양과 CPU의 수\)를 추적한다. 노드의 [자체 등록](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#%EB%85%B8%EB%93%9C%EC%97%90-%EB%8C%80%ED%95%9C-%EC%9E%90%EC%B2%B4-%EB%93%B1%EB%A1%9D)은 등록하는 중에 용량을 보고한다. [수동](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#%EC%88%98%EB%8F%99-%EB%85%B8%EB%93%9C-%EA%B4%80%EB%A6%AC)으로 노드를 추가하는 경우 추가할 때 노드의 용량 정보를 설정해야 한다.
+노드 오브젝트는 노드 리소스 용량에 대한 정보\(예: 사용 가능한 메모리의 양과 CPU의 수\)를 추적합니. 노드의 [자체 등록](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#%EB%85%B8%EB%93%9C%EC%97%90-%EB%8C%80%ED%95%9C-%EC%9E%90%EC%B2%B4-%EB%93%B1%EB%A1%9D)은 등록하는 중에 용량을 보고합니. [수동](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#%EC%88%98%EB%8F%99-%EB%85%B8%EB%93%9C-%EA%B4%80%EB%A6%AC)으로 노드를 추가하는 경우 추가할 때 노드의 용량 정보를 설정해야 합니.
 
-쿠버네티스 [스케줄러](https://kubernetes.io/docs/reference/generated/kube-scheduler/)는 노드 상에 모든 노드에 대해 충분한 리소스가 존재하도록 보장한다. 스케줄러는 노드 상에 컨테이너에 대한 요청의 합이 노드 용량보다 더 크지 않도록 체크한다. 요청의 합은 kubelet에서 관리하는 모든 컨테이너를 포함하지만, 컨테이너 런타임에 의해 직접적으로 시작된 컨 테이너는 제외되고 kubelet의 컨트롤 범위 밖에서 실행되는 모든 프로세스도 제외된다.
+쿠버네티스 [스케줄러](https://kubernetes.io/docs/reference/generated/kube-scheduler/)는 노드 상에 모든 노드에 대해 충분한 리소스가 존재하도록 보장합니다. 스케줄러는 노드 상에 컨테이너에 대한 요청의 합이 노드 용량보다 더 크지 않도록 체크합니. 요청의 합은 kubelet에서 관리하는 모든 컨테이너를 포함하지만, 컨테이너 런타임에 의해 직접적으로 시작된 컨 테이너는 제외되고 kubelet의 컨트롤 범위 밖에서 실행되는 모든 프로세스도 제외됩니다.
 
 {% hint style="info" %}
-**참고:** 파드 형태가 아닌 프로세스에 대해 명시적으로 리소스를 확보하려면, [시스템 데몬에 사용할 리소스 예약하기](https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#system-reserved)을 본다.
+**참고:** 파드 형태가 아닌 프로세스에 대해 명시적으로 리소스를 확보하려면, [시스템 데몬에 사용할 리소스 예약하기](https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#system-reserved)을 참조합니다.
 {% endhint %}
 
 ## 노드 토폴로지
 
 **FEATURE STATE:** `Kubernetes v1.16 [alpha]`
 
-`TopologyManager` [기능 게이트\(feature gate\)](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)를 활성화 시켜두면, kubelet이 리소스 할당 결정을 할 때 토폴로지 힌트를 사용할 수 있다. 자세한 내용은 [노드의 컨트롤 토폴로지 관리 정책](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/)을 본다.
+`TopologyManager` [기능 게이트\(feature gate\)](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)를 활성화 시켜두면, kubelet이 리소스 할당 결정을 할 때 토폴로지 힌트를 사용할 수 있습니. 자세한 내용은 [노드의 컨트롤 토폴로지 관리 정책](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/)을 참조합니다.
 
