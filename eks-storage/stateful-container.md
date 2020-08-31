@@ -4,7 +4,11 @@
 
 참조 URL : [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/ebs-csi.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/ebs-csi.html)
 
-Amazon EKS 클러스터가 Persistant Volume \(PV : 영구 볼륨\)을 위해 Amazon EBS 볼륨의 수명 주기를 관리할 수 있게 해주는 CSI 인터페이스를 제공합니다.
+[Amazon EBS CSI\(Container Storage Interface\) 드라이버](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)에서는 Amazon EKS 클러스터가 영구 볼륨\(Persistant Volume, PV\)을 위해 Amazon EBS 볼륨의 수명 주기를 관리할 수 있게 해주는 CSI 인터페이스를 제공합니다.
+
+{% hint style="info" %}
+이 드라이버는 Kubernetes 버전 1.14 이상에서만 지원됩니다. Amazon EKS 클러스터 및 노드. Fargate에서는 드라이버가 지원되지 않습니다. Amazon EKS 클러스터에서는 Amazon EBS CSI 드라이버의 알파 기능을 지원하지 않습니다. 이 드라이버는 베타 릴리스 버전이며, Amazon EKS에서 프로덕션용으로 테스트를 완료하여 지원됩니다. 세부 정보는 변경될 수 있지만 드라이버에 대한 지원은 종료되지 않습니. 
+{% endhint %}
 
 ### 1.IAM 정책 구성
 
