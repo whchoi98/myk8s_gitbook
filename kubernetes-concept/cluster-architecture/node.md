@@ -74,39 +74,39 @@ kubectl cordon $NODENAME
 ```
 
 {% hint style="info" %}
-참고: [데몬셋\(DaemonSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/daemonset)에 포함되는 일부 파드는 스케줄 불가 노드에서 실행될 수 있다. 일반적으로 데몬셋은 워크로드 애플리케이션을 비우는 경우에도 노드에서 실행되어야 하는 노드 로컬 서비스를 제공한다.
+참고: [데몬셋\(DaemonSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/daemonset)에 포함되는 일부 파드는 스케줄 불가 노드에서 실행될 수 있습니. 일반적으로 데몬셋은 워크로드 애플리케이션이 없는 경우에도 노드에서 실행되어야 하는 노드 로컬 서비스를 제공한다.
 {% endhint %}
 
-노드 오브젝트의 이름은 유효한 [DNS 서브도메인 이름](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/names/#dns-%EC%84%9C%EB%B8%8C%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%9D%B4%EB%A6%84%EB%93%A4)이어야 한다.
+노드 오브젝트의 이름은 유효한 [DNS 서브도메인 이름](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/names/#dns-%EC%84%9C%EB%B8%8C%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%9D%B4%EB%A6%84%EB%93%A4)이어야 합니다.
 
 ## 노드 상태
 
-노드의 상태는 다음의 정보를 포함한다.
+노드의 상태는 다음의 정보를 포함합니다.
 
 * [주소](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#addresses)
 * [컨디션](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#condition)
 * [용량과 할당가능](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#capacity)
 * [정보](https://kubernetes.io/ko/docs/concepts/architecture/nodes/#info)
 
-`kubectl` 을 사용해서 노드 상태와 기타 세부 정보를 볼수 있다.
+`kubectl` 을 사용해서 노드 상태와 기타 세부 정보를 볼수 있습니다.
 
 ```text
 kubectl describe node <insert-node-name-here>
 ```
 
-출력되는 각 섹션은 아래에 설명되어있다.
+출력되는 각 섹션은 아래에 설명되어 있습니다.
 
 ### 주소
 
-이 필드의 용법은 클라우드 제공사업자 또는 베어메탈 구성에 따라 다양하다.
+이 필드 클라우드 제공사업자 또는 베어메탈 구성에 따라 다양합니다.
 
-* HostName: 노드의 커널에 의해 알려진 호스트명이다. `--hostname-override` 파라미터를 통해 치환될 수 있다.
-* ExternalIP: 일반적으로 노드의 IP 주소는 외부로 라우트 가능 \(클러스터 외부에서 이용 가능\) 하다 .
-* InternalIP: 일반적으로 노드의 IP 주소는 클러스터 내에서만 라우트 가능하다.
+* HostName: 노드의 커널에 의해 알려진 호스트명입니다. `--hostname-override` 파라미터를 통해 치환될 수 있습니다.
+* ExternalIP: 일반적으로 노드의 IP 주소는 외부로 라우트 가능 \(클러스터 외부에서 이용 가능\) 합니다.
+* InternalIP: 일반적으로 노드의 IP 주소는 클러스터 내에서만 라우트 가능합니다.
 
 ### 컨디션
 
-`conditions` 필드는 모든 `Running` 노드의 상태를 기술한다. 컨디션의 예로 다음을 포함한다.
+`conditions` 필드는 모든 `Running` 노드의 상태를 기술한다. 컨디션의 예로 다음을 포함합니다.
 
 | 노드 컨디션 | 설명 |
 | :--- | :--- |
@@ -117,10 +117,10 @@ kubectl describe node <insert-node-name-here>
 | `NetworkUnavailable` | 노드에 대해 네트워크가 올바르게 구성되지 않은 경우 `True`, 반대의 경우 `False` |
 
 {% hint style="info" %}
-참고 : 커맨드 라인 도구를 사용해서 코드화된 노드의 세부 정보를 출력하는 경우 조건에는 `SchedulingDisabled` 이 포함된다. `SchedulingDisabled` 은 쿠버네티스 API의 조건이 아니며, 대신 코드화된 노드는 사양에 스케줄 불가로 표시된다.
+참고 : 커맨드 라인 도구를 사용해서 코드화된 노드의 세부 정보를 출력하는 경우 조건에는 `SchedulingDisabled` 이 포함됩니다.`SchedulingDisabled` 은 쿠버네티스 API의 조건이 아니며, 대신 코드화된 노드는 사양에 스케줄 불가로 표시됩니다.
 {% endhint %}
 
-노드 컨디션은 JSON 오브젝트로 표현된다. 예를 들어, 다음 응답은 상태 양호한 노드를 나타낸다.
+노드 컨디션은 JSON 오브젝트 형태로 표현됩니다. 예를 들어, 다음 응답은 상태 양호한 노드를 나타냅니다.
 
 ```text
 "conditions": [
@@ -135,7 +135,7 @@ kubectl describe node <insert-node-name-here>
 ]
 ```
 
-ready 컨디션의 상태가 `pod-eviction-timeout` \([kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/)에 전달된 인수\) 보다 더 길게 `Unknown` 또는 `False`로 유지되는 경우, 노드 상에 모든 파드는 노드 컨트롤러에 의해 삭제되도록 스케줄 된다. 기본 축출 타임아웃 기간은 **5분** 이다. 노드에 접근이 불가할 때와 같은 경우, apiserver는 노드 상의 kubelet과 통신이 불가하다. apiserver와의 통신이 재개될 때까지 파드 삭제에 대한 결정은 kubelet에 전해질 수 없다. 그 사이, 삭제되도록 스케줄 되어진 파드는 분할된 노드 상에서 계속 동작할 수도 있다.
+ready 컨디션의 상태가 `pod-eviction-timeout` \([kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/)에 전달된 인수\) 보다 더 길게 `Unknown` 또는 `False`로 유지되는 경우, 노드 상에 모든 파드는 노드 컨트롤러에 의해 삭제 되도록 스케줄 됩니. 기본 타임아웃 기간은 **5분** 이입니다. 노드에 접근이 불가할 때와 같은 경우, apiserver는 노드 상의 kubelet과 통신이 불가하능 합니다.apiserver와의 통신이 재개될 때까지 파드 삭제에 대한 결정은 kubelet에 전해질 수 없다. 그 사이, 삭제되도록 스케줄 되어진 파드는 분할된 노드 상에서 계속 동작할 수도 있다.
 
 노드 컨트롤러가 클러스터 내 동작 중지된 것을 확신할 때까지는 파드를 강제로 삭제하지 않는다. 파드가 `Terminating` 또는 `Unknown` 상태로 있을 때 접근 불가한 노드 상에서 동작되고 있는 것을 보게 될 수도 있다. 노드가 영구적으로 클러스터에서 삭제되었는지에 대한 여부를 쿠버네티스가 기반 인프라로부터 유추할 수 없는 경우, 노드가 클러스터를 영구적으로 탈퇴하게 되면, 클러스터 관리자는 손수 노드 오브젝트를 삭제해야 할 수도 있다. 쿠버네티스에서 노드 오브젝트를 삭제하면 노드 상에서 동작중인 모든 파드 오브젝트가 apiserver로부터 삭제되어 그 이름을 사용할 수 있는 결과를 낳는다.
 
