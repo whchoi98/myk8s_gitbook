@@ -30,20 +30,20 @@
 }
 ```
 
-쿠버네티스는 내부적으로 노드 오브젝트를 생성합니. 쿠버네티스는 kubelet이 노드의 `metadata.name` 필드와 일치하는 API 서버에 등록이 되어있는지 확인한합니다. 노드가 정상이면\(필요한 모든 서비스가 실행중인 경우\) 파드를 실행할 수 있게 ㄷ니다. 그렇지 않으면, 해당 노드는 정상이 될때까지 모든 클러스터 활동에 대해 무시된다.
+쿠버네티스는 내부적으로 노드 오브젝트를 생성합니. 쿠버네티스는 kubelet이 노드의 `metadata.name` 필드와 일치하는 API 서버에 등록이 되어있는지 확인한합니다. 노드가 정상이면\(필요한 모든 서비스가 실행중인 경우\) 파드를 실행할 수 있게 됩다. 그렇지 않으면, 해당 노드는 정상이 될때까지 모든 클러스터 활동에 대해 무시됩니다.
 
 {% hint style="info" %}
-**참고:** 쿠버네티스는 유효하지 않은 노드 오브젝트를 유지하고, 노드가 정상적인지 확인한다. 상태 확인을 중지하려면 사용자 또는 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)에서 노드 오브젝트를 명시적으로 삭제해야한다.
+**참고:** 쿠버네티스는 유효하지 않은 노드 오브젝트를 유지하고, 노드가 정상적인지 확인합니. 상태 확인을 중지하려면 사용자 또는 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)에서 노드 오브젝트를 명시적으로 삭제해야 합니다.
 {% endhint %}
 
 ### 노드에 대한 자체-등록
 
-kubelet 플래그 `--register-node`는 참\(기본값\)일 경우, kubelet 은 API 서버에 스스로 등록을 시도할 것이다. 이는 대부분의 배포판에 의해 이용되는, 선호하는 패턴이다.
+kubelet 플래그 `--register-node`는 참\(기본값\)일 경우, kubelet 은 API 서버에 스스로 등록을 시도할 것입니다. 이것는 대부분의 배포판에 의해 이용되는, 선호하는 패턴입니다.
 
-자체-등록에 대해, kubelet은 다음 옵션과 함께 시작된다.
+자체-등록에 대해, kubelet은 다음 옵션과 함께 시작됩니다.
 
 * `--kubeconfig` - apiserver에 스스로 인증하기 위한 자격증명에 대한 경로.
-* `--cloud-provider` - 자신에 대한 메터데이터를 읽기 위해 어떻게 [클라우드 제공자](https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers)와 소통할지에 대한 방법.
+* `--cloud-provider` - 자신에 대한 메터데이터를 읽기 위해 어떻게 [클라우드 제공자](https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers)와 통신할 것인지에 대한 방.
 * `--register-node` - 자동으로 API 서버에 등록.
 * `--register-with-taints` - 주어진 [테인트\(taint\)](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) 리스트\(콤마로 분리된 `<key>=<value>:<effect>`\)를 가진 노드 등록.
 
@@ -53,21 +53,21 @@ kubelet 플래그 `--register-node`는 참\(기본값\)일 경우, kubelet 은 A
 * `--node-labels` - 클러스터에 노드를 등록할 때 추가 할 [레이블](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/labels)\([NodeRestriction admission plugin](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction)에 의해 적용되는 레이블 제한 사항 참고\).
 * `--node-status-update-frequency` - 얼마나 자주 kubelet이 마스터에 노드 상태를 게시할 지 정의.
 
-[Node authorization mode](https://kubernetes.io/docs/reference/access-authn-authz/node/)와 [NodeRestriction admission plugin](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction)이 활성화 되면, kubelets 은 자신의 노드 리소스를 생성/수정할 권한을 가진다.
+[Node authorization mode](https://kubernetes.io/docs/reference/access-authn-authz/node/)와 [NodeRestriction admission plugin](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction)이 활성화 되면, kubelets 은 자신의 노드 리소스를 생성/수정할 권한을 가집니다.
 
 **수동 노드 관리**
 
-[kubectl](https://kubernetes.io/docs/user-guide/kubectl-overview/)을 사용해서 노드 오브젝트를 생성하고 수정할 수 있다.
+[kubectl](https://kubernetes.io/docs/user-guide/kubectl-overview/)을 사용해서 노드 오브젝트를 생성하고 수정할 수 있습니다.
 
-노드 오브젝트를 수동으로 생성하려면 kubelet 플래그를 `--register-node=false` 로 설정한다.
+노드 오브젝트를 수동으로 생성하려면 kubelet 플래그를 `--register-node=false` 로 설정합니다.
 
-`--register-node` 설정과 관계 없이 노드 오브젝트를 수정할 수 있다. 예를 들어 기존 노드에 레이블을 설정하거나, 스케줄 불가로 표시할 수 있다.
+`--register-node` 설정과 관계 없이 노드 오브젝트를 수정할 수 있습니. 예를 들어 기존 노드에 레이블을 설정하거나, 스케줄 불가로 표시할 수 있습니다.
 
-파드의 노드 셀렉터와 함께 노드의 레이블을 사용해서 스케줄링을 제어할 수 있다. 예를 들어, 사용 가능한 노드의 하위 집합에서만 실행되도록 파드를 제한할 수 있다.
+파드의 노드 셀렉터와 함께 노드의 레이블을 사용해서 스케줄링을 제어할 수 있습니. 예를 들어, 사용 가능한 노드의 하위 집합에서만 실행되도록 파드를 제한할 수 있습니다.
 
-노드를 스케줄 불가로 표시하면 스케줄러가 해당 노드에 새 파드를 배치할 수 없지만, 노드에 있는 기존 파드에는 영향을 미치지 않는다. 이는 노드 재부팅 또는 기타 유지보수 준비 단계에서 유용하다.
+노드를 스케줄 불가로 표시하면 스케줄러가 해당 노드에 새 파드를 배치할 수 없지만, 노드에 있는 기존 파드에는 영향을 미치지 않습니. 이는 노드 재부팅 또는 기타 유지보수 준비 단계에서 유용합니다.
 
-노드를 스케줄 불가로 표시하려면 다음을 실행한다.
+노드를 스케줄 불가로 표시하려면 다음을 실행합니다.
 
 ```text
 kubectl cordon $NODENAME
