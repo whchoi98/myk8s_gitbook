@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-11'
+description: 'update : 2020-07-22'
 ---
 
 # Helm 구성
@@ -16,7 +16,7 @@ description: 'update : 2020-11-11'
 
 **릴리스**는 쿠버네티스 클러스터에서 구동되는 차트의 인스턴스입다. 일반적으로 하나의 차트는 동일한 클러스터내에 여러 번 설치될 수 있다. 설치될 때마다, 새로운 _release_ 가 생성됩니다.
 
-헬름은 쿠버네티스 내부에  charts를 설치하고, 각 설치에 대해 새로운 release를 생성하고, 새로운 차트를 찾기 위해 헬름 차트 repositories를 검색할 수 있습니다.
+헬름은 쿠버네티스 내부에 \_charts\_를 설치하고, 각 설치에 대해 새로운 \_release\_를 생성하고, 새로운 차트를 찾기 위해 헬름 차트 \_repositories\_를 검색할 수 있습니다.
 
 ![&#xCC38;&#xC870; - https://devopscube.com/install-configure-helm-kubernetes/](../.gitbook/assets/image%20%2847%29.png)
 
@@ -49,8 +49,8 @@ helm version --short
  출력 결과 예시
 
 ```text
-~/environment $ helm version --short
-v3.4.0+g7090a89
+whchoi98:~/environment $ helm version --short
+v3.2.4+g0ad800e
 ```
 
 ### 2. 차트 Repository 구성
@@ -58,16 +58,14 @@ v3.4.0+g7090a89
 Stable한 저장소를 다운로드하여 아래와 같이 구성합니다.
 
 ```text
-helm repo add stable https://charts.helm.sh/stable
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 helm repo update
-
 ```
 
 설치 한 이후에는 설치 가능한 차트를 아래와 같은 명령으로 검색할 수 있습니다.
 
 ```text
 helm search repo stable
-
 ```
 
 ### 3. Helm 명령어 자동 완성 구성
@@ -92,9 +90,9 @@ helm search repo nginx
 출력 결과 예시
 
 ```text
-~/environment $ helm search repo nginx
+whchoi98:~/environment $ helm search repo nginx
 NAME                            CHART VERSION   APP VERSION     DESCRIPTION                                       
-stable/nginx-ingress            1.41.3          v0.34.1         DEPRECATED! An nginx Ingress controller that us...
+stable/nginx-ingress            1.41.1          v0.34.1         An nginx Ingress controller that uses ConfigMap...
 stable/nginx-ldapauth-proxy     0.1.4           1.13.5          nginx proxy with ldapauth                         
 stable/nginx-lego               0.3.1                           Chart for nginx-ingress-controller and kube-lego  
 stable/gcloud-endpoints         0.1.2           1               DEPRECATED Develop, deploy, protect and monitor...
@@ -115,10 +113,9 @@ helm search repo bitnami/nginx
 출력결과 예시
 
 ```text
-~/environment $ helm search repo bitnami/nginx
-NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                           
-bitnami/nginx                           7.1.6           1.19.4          Chart for the nginx server            
-bitnami/nginx-ingress-controller        5.6.15          0.40.2          Chart for the nginx Ingress controller
+whchoi98:~/environment $ helm search repo bitnami/nginx NAME CHART VERSION APP VERSION DESCRIPTION
+bitnami/nginx 6.0.2 1.19.1 Chart for the nginx server
+bitnami/nginx-ingress-controller 5.3.25 0.33.0 Chart for the nginx Ingress controller
 ```
 
 helm install 명령을 통해 nginx를 설치해 봅니다.
@@ -150,7 +147,7 @@ Get the NGINX URL:
 Pod와 서비스 배포를 확인합니다.
 
 ```text
-~/environment $ kubectl get svc eksworkshop-nginx
+whchoi98:~/environment $ kubectl get svc eksworkshop-nginx
 NAME                TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)                      AGE
 eksworkshop-nginx   LoadBalancer   172.20.225.235   a580840c2d2f24533a7fe36836e99a93-149103174.ap-northeast-2.elb.amazonaws.com   80:31437/TCP,443:32083/TCP   79s
 ```
@@ -179,9 +176,9 @@ helm list
 출력 예시
 
 ```text
-~/environment $ helm list 
+whchoi98:~/environment $ helm list 
 NAME                    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-eksworkshop-nginx       default         1               2020-11-09 13:18:03.861525378 +0000 UTC deployed        nginx-7.1.6     1.19.4     
+eksworkshop-nginx       default         1               2020-07-21 15:01:26.441053601 +0000 UTC deployed        nginx-6.0.2     1.19.1     
 ```
 
 아래 명령을 통해 배포된 내용을 확인합니다.
@@ -193,14 +190,14 @@ kubectl describe deployments.apps eksworkshop-nginx
 출력 결과 예시
 
 ```text
-~/environment $ kubectl describe deployments.apps eksworkshop-nginx
+whchoi98:~/environment $ kubectl describe deployments.apps eksworkshop-nginx 
 Name:                   eksworkshop-nginx
 Namespace:              default
-CreationTimestamp:      Mon, 09 Nov 2020 13:18:04 +0000
+CreationTimestamp:      Tue, 21 Jul 2020 15:01:26 +0000
 Labels:                 app.kubernetes.io/instance=eksworkshop-nginx
                         app.kubernetes.io/managed-by=Helm
                         app.kubernetes.io/name=nginx
-                        helm.sh/chart=nginx-7.1.6
+                        helm.sh/chart=nginx-6.0.2
 Annotations:            deployment.kubernetes.io/revision: 1
                         meta.helm.sh/release-name: eksworkshop-nginx
                         meta.helm.sh/release-namespace: default
@@ -213,16 +210,15 @@ Pod Template:
   Labels:  app.kubernetes.io/instance=eksworkshop-nginx
            app.kubernetes.io/managed-by=Helm
            app.kubernetes.io/name=nginx
-           helm.sh/chart=nginx-7.1.6
+           helm.sh/chart=nginx-6.0.2
   Containers:
    nginx:
-    Image:      docker.io/bitnami/nginx:1.19.4-debian-10-r6
-    Port:       8080/TCP
-    Host Port:  0/TCP
-    Liveness:   tcp-socket :http delay=0s timeout=5s period=10s #success=1 #failure=6
-    Readiness:  tcp-socket :http delay=5s timeout=3s period=5s #success=1 #failure=3
-    Environment:
-      BITNAMI_DEBUG:  false
+    Image:        docker.io/bitnami/nginx:1.19.1-debian-10-r0
+    Port:         8080/TCP
+    Host Port:    0/TCP
+    Liveness:     tcp-socket :http delay=30s timeout=5s period=10s #success=1 #failure=6
+    Readiness:    tcp-socket :http delay=5s timeout=3s period=5s #success=1 #failure=3
+    Environment:  <none>
     Mounts:
       /opt/bitnami/nginx/conf/server_blocks from nginx-server-block-paths (rw)
   Volumes:
@@ -236,11 +232,11 @@ Conditions:
   Available      True    MinimumReplicasAvailable
   Progressing    True    NewReplicaSetAvailable
 OldReplicaSets:  <none>
-NewReplicaSet:   eksworkshop-nginx-547554887f (1/1 replicas created)
+NewReplicaSet:   eksworkshop-nginx-79bfdcd875 (1/1 replicas created)
 Events:
-  Type    Reason             Age    From                   Message
-  ----    ------             ----   ----                   -------
-  Normal  ScalingReplicaSet  2m52s  deployment-controller  Scaled up replica set eksworkshop-nginx-547554887f to 1 
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  21m   deployment-controller  Scaled up replica set eksworkshop-nginx-79bfdcd875 to 1
 ```
 
 ### 5. Helm을 통한 nginx 삭제
@@ -270,15 +266,13 @@ helmdemo 라는 Chart를 생성합니다.
 
 ```text
 cd ~/environment/
-helm create helm-chart-demo
+helm create eksdemo
 ```
 
 Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성합니다.
 
 ```text
-cd ~/environment/helm-chart-demo
-~/environment/helm-chart-demo $ sudo yum -y install tree
-~/environment/helm-chart-demo $ tree 
+whchoi98:~/environment/eksdemo $ tree 
 .
 ├── charts
 ├── Chart.yaml
@@ -308,15 +302,15 @@ cd ~/environment/helm-chart-demo
 새로운 Chart구성을 위해 기본 생성된 파일들을 삭제합니다.
 
 ```text
-rm -rf ~/environment/helm-chart-demo/templates/
-rm ~/environment/helm-chart-demo/Chart.yaml
-rm ~/environment/helm-chart-demo/values.yaml
+rm -rf ~/environment/eksdemo/templates/
+rm ~/environment/eksdemo/Chart.yaml
+rm ~/environment/eksdemo/values.yaml
 ```
 
 다음 코드 블록을 실행하여 새로운 chart.yaml 파일을 생성합니다.
 
 ```text
-cat <<EoF > ~/environment/helm-chart-demo/Chart.yaml
+cat <<EoF > ~/environment/eksdemo/Chart.yaml
 apiVersion: v2
 name: eksdemo
 description: A Helm chart for EKS Workshop Microservices application
@@ -329,20 +323,20 @@ EoF
 
 ```text
 # 각 템플릿 타입을 위한 서브 폴더 생성 
-mkdir -p ~/environment/helm-chart-demo/templates/deployment
-mkdir -p ~/environment/helm-chart-demo/templates/service
+mkdir -p ~/environment/eksdemo/templates/deployment
+mkdir -p ~/environment/eksdemo/templates/service
 
 # frontend manifests 복사 
-cp ~/environment/ecsdemo-frontend/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/frontend.yaml
-cp ~/environment/ecsdemo-frontend/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/frontend.yaml
+cp ~/environment/ecsdemo-frontend/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/frontend.yaml
+cp ~/environment/ecsdemo-frontend/kubernetes/service.yaml ~/environment/eksdemo/templates/service/frontend.yaml
 
 # crystal manifests 복사 
-cp ~/environment/ecsdemo-crystal/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/crystal.yaml
-cp ~/environment/ecsdemo-crystal/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/crystal.yaml
+cp ~/environment/ecsdemo-crystal/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/crystal.yaml
+cp ~/environment/ecsdemo-crystal/kubernetes/service.yaml ~/environment/eksdemo/templates/service/crystal.yaml
 
 # nodejs manifests 복사 
-cp ~/environment/ecsdemo-nodejs/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
-cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/nodejs.yaml
+cp ~/environment/ecsdemo-nodejs/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/nodejs.yaml
+cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/eksdemo/templates/service/nodejs.yaml
 ```
 
 아래 파일들을 찾아서, "replicas:1" 값을 변경합니다.
@@ -350,9 +344,9 @@ cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/helm-chart
 변경할 파일들
 
 ```text
-~/environment/helm-chart-demo/templates/deployment/frontend.yaml
-~/environment/helm-chart-demo/templates/deployment/crystal.yaml
-~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
+~/environment/eksdemo/templates/deployment/frontend.yaml
+~/environment/eksdemo/templates/deployment/crystal.yaml
+~/environment/eksdemo/templates/deployment/nodejs.yaml
 ```
 
 ![](../.gitbook/assets/image%20%2849%29.png)
@@ -388,12 +382,12 @@ replicas: {{ .Values.replicas }}
 변경대상 파일.
 
 ```text
-~/environment/helm-chart-demo/templates/deployment/frontend.yaml
-~/environment/helm-chart-demo/templates/deployment/crystal.yaml
-~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
-~/environment/helm-chart-demo/templates/service/frontend.yaml
-~/environment/helm-chart-demo/templates/service/crystal.yaml
-~/environment/helm-chart-demo/templates/service/nodejs.yaml
+~/environment/eksdemo/templates/deployment/frontend.yaml
+~/environment/eksdemo/templates/deployment/crystal.yaml
+~/environment/eksdemo/templates/deployment/nodejs.yaml
+~/environment/eksdemo/templates/service/frontend.yaml
+~/environment/eksdemo/templates/service/crystal.yaml
+~/environment/eksdemo/templates/service/nodejs.yaml
 ```
 
 추가 구문
@@ -415,7 +409,7 @@ metadata:
 이제 values.yaml을 생성하고, Values 들에 대한 값을 정의합니다.
 
 ```text
-cat <<EoF > ~/environment/helm-chart-demo/values.yaml
+cat <<EoF > ~/environment/eksdemo/values.yaml
 # Default values for eksdemo.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -439,7 +433,7 @@ EoF
 Helm chart는 실제 배포하지 않고 **"--dry-run"** 플래그를 사용하여, 랜더링 된 템플릿을 빌드하고 출력할 수 있습니다.
 
 ```text
-helm install --debug --dry-run workshop ~/environment/helm-chart-demo
+helm install --debug --dry-run workshop ~/environment/eksdemo
 ```
 
 출력 결과 예제
@@ -617,14 +611,13 @@ spec:
 
 ```text
 kubectl create namespace helm-chart-demo
-helm install helmdemo ~/environment/helm-chart-demo
-
+helm install helmdemo ~/environment/eksdemo
 ```
 
 출력 결과 예시
 
 ```text
-~/environment $ helm install helmdemo ~/environment/helm-chart-demo
+whchoi98:~/environment $ helm install helmdemo ~/environment/eksdemo
 NAME: helmdemo
 LAST DEPLOYED: Tue Jul 21 17:27:53 2020
 NAMESPACE: default
@@ -694,7 +687,7 @@ helm list
 출력 결과 예
 
 ```text
-~/environment $ helm list 
+whchoi98:~/environment $ helm list 
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
 helmdemo        default         1               2020-07-21 17:27:53.828241377 +0000 UTC deployed        eksdemo-0.1.0   1          
 ```
@@ -725,13 +718,13 @@ frontend:
 "values.yaml" 파일이 모두 수정되었으면, helm을 upgrade 합니다.
 
 ```text
-helm upgrade helmdemo ~/environment/helm-chart-demo
+helm upgrade helmdemo ~/environment/eksdemo
 ```
 
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ helm upgrade helmdemo ~/environment/helm-chart-demo
+whchoi98:~/environment $ helm upgrade helmdemo ~/environment/eksdemo
 Release "helmdemo" has been upgraded. Happy Helming!
 NAME: helmdemo
 LAST DEPLOYED: Tue Jul 21 17:48:46 2020
@@ -778,7 +771,7 @@ helm status helmdemo
 아래와 같은 결과를 확인 할 수 있습니다.최종 배포시간과 Revision 값을 확인합니다.
 
 ```text
-~/environment $ helm status helmdemo 
+whchoi98:~/environment $ helm status helmdemo 
 NAME: helmdemo
 LAST DEPLOYED: Tue Jul 21 17:48:46 2020
 NAMESPACE: default
@@ -833,14 +826,14 @@ ecsdemo-nodejs-7dd8987798-x5v8s     1/1     Running   0          7s
 helm history를 통해 Revision을 확인해 봅니다.
 
 ```text
-~/environment $ helm history helmdemo 
+whchoi98:~/environment $ helm history helmdemo 
 REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION     
 1               Tue Jul 21 17:27:53 2020        superseded      eksdemo-0.1.0   1               Install complete
 2               Tue Jul 21 17:48:46 2020        superseded      eksdemo-0.1.0   1               Upgrade complete
 3               Tue Jul 21 17:57:23 2020        deployed        eksdemo-0.1.0   1               Rollback to 1   
 ```
 
-ChartMuseum에서 App 패키징을 수행하기 위해 value.yaml 파일 다시 정상적으로 수정합니다.
+ChartMuseum에서 App 패키징을 수행하기 위해 value.yaml 파일 내을 다시 정상적으로 수정합니다.
 
 ```text
 replicas: 3
@@ -853,7 +846,7 @@ frontend:
   image: brentley/ecsdemo-frontend
 ```
 
-생성했던 helmdemo를 삭제합니다. 아래 ChartMuseum 구성과 배포를 위해서 반드시 삭제합니다.
+생성했던 helmdemo를 삭제합니다.
 
 ```text
 helm uninstall helmdemo
@@ -888,8 +881,8 @@ AWS 서비스 - S3
 정상적으로 생성되었는지 확인합니다.
 
 ```text
-~/environment $ aws s3 ls | grep 'chartmuseum'
-2020-11-09 13:51:11 whchoi-chartmuseum-2020-11-11
+whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
+2020-07-21 18:29:34 whchoi-chartmuseum
 ```
 
 ```text
@@ -937,21 +930,21 @@ whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
 이제 앞서 생성한 eksdemo helm chart 패키징합니다. 
 
 ```text
-cd ~/environment/helm-chart-demo/
+cd ~/environment/eksdemo/
 helm package ./ 
 ```
 
 출력 결과 예시
 
 ```text
-~/environment/helm-chart-demo $ helm package ./ 
-Successfully packaged chart and saved it to: /home/ec2-user/environment/helm-chart-demo/eksdemo-0.1.0.tgz
+whchoi98:~/environment/eksdemo $ helm package ./
+Successfully packaged chart and saved it to: /home/ec2-user/environment/eksdemo/eksdemo-0.1.0.tgz
 ```
 
 eksdemo heml chart가 정상적으로 패키징 되었는지 확인합니다.
 
 ```text
-~/environment/helm-chart-demo $ tree
+whchoi98:~/environment/eksdemo $ tree
 .
 ├── charts
 ├── Chart.yaml
@@ -981,7 +974,7 @@ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts
 출력결과 예제
 
 ```text
-~/environment/eksdemo $ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts                                                                                      
+whchoi98:~/environment/eksdemo $ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts                                                                                      
 2020-07-22T00:44:50.260Z        DEBUG   [10] Incoming request: /api/charts      {"reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
 2020-07-22T00:44:50.316Z        DEBUG   [10] Adding package to storage  {"package": "eksdemo-0.1.0.tgz", "reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
 2020-07-22T00:44:50.341Z        INFO    [10] Request served     {"path": "/api/charts", "comment": "", "clientIP": "127.0.0.1", "method": "POST", "statusCode": 201, "latency": "80.44638ms", "reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
@@ -991,14 +984,14 @@ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts
 S3에 정상적으로 Chartmuseum이 배포되었는지 확인합니다.
 
 ```text
-aws s3 ls s3://whchoi-chartmuseum-2020-11-11
+aws s3 ls s3://whchoi-chartmuseum
 ```
 
 출력 결과 예제
 
 ```text
-~/environment/helm-chart-demo $ aws s3 ls s3://whchoi-chartmuseum-2020-11-11
-2020-11-09 13:58:14       1314 eksdemo-0.1.0.tgz
+whchoi98:~/environment/eksdemo $ aws s3 ls s3://whchoi-chartmuseum
+2020-07-22 00:44:51       1251 eksdemo-0.1.0.tgz
 ```
 
 이제 등록된 Repo를 업데이트하고, Chartmuseum 로컬 레포지토리를 검색해 봅니다.
@@ -1057,9 +1050,7 @@ ELB DNS 레코드로 접속해 봅니다.
 
 ![](../.gitbook/assets/image%20%2851%29.png)
 
-{% hint style="info" %}
-Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/AmazonECR/latest/userguide/push-oci-artifact.html)
-{% endhint %}
+
 
 
 
