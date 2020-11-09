@@ -21,6 +21,14 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/down
 
 ```
 
+또는 git을 통해 복제 해 둔 yaml 을 실행합니다.
+
+```text
+cd ~/environment/myeks/k8s_dashboard
+kubectl apply -f components.yaml
+
+```
+
 다음 명령을 사용하여 metrics-server 배포에서 원하는 수의 포드를 실행하고 있는지 확인합니다.
 
 ```text
@@ -41,11 +49,19 @@ metrics-server   1/1     1            1           57s
 다음 명령을 사용하여 Kubernetes 대시보드를 배포합니다.
 
 ```text
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.3/aio/deploy/recommended.yaml
 
 ```
 
-배포된 서비스들을 확인합니다.
+또는 git을 통해 복제 해 둔 yaml 을 실행합니다.
+
+```text
+cd ~/environment/myeks/k8s_dashboard
+kubectl apply -f recommended.yaml
+
+```
+
+이제 배포된 dashboard와 metric을 확인합니다. 
 
 ```text
 kubectl -n kubernetes-dashboard get svc -o wide
@@ -111,6 +127,7 @@ Kubernetes 대시보드에 연결하기 위해서, eks-admin 서비스 계정에
 
 ```text
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
+
 ```
 
 출력 결과 예시
@@ -155,7 +172,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ![](../.gitbook/assets/image%20%282%29.png)
 
-생성된 윈도우에서 아래 Path를 복사해서 뒤에 붙여 넣습니다.
+생성된 윈도우에서 아래 Path를 URL뒤에 복사해서 뒤에 붙여 넣습니다.
 
 ```text
 /api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
