@@ -74,10 +74,6 @@ Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니�
 rm -vf ${HOME}/.aws/credentials
 ```
 
-{% hint style="warning" %}
-Cloud9 생성에서 Network 설정을 하지 않았다면, Default VPC - Public Subnet에 Cloud 9 인스턴스는 배치됩니다.
-{% endhint %}
-
 5. Cloud9 IDE 역할 점검
 
 Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다.
@@ -95,6 +91,7 @@ export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
 export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 echo $ACCOUNT_ID
 echo $AWS_REGION
+
 ```
 
 bash\_profile에 저장합니다.
@@ -104,6 +101,7 @@ echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
 echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
 aws configure set default.region ${AWS_REGION}
 aws configure --profile default list
+
 ```
 
 출력결과 예제는 아래와 같습니다.
