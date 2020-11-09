@@ -48,6 +48,7 @@ VPC ID - vpc-099a900fe8dde7319
 ```text
 echo $AWS_REGION
 echo $MASTER_ARN
+
 ```
 
 VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포하는 데 사용합니다.
@@ -62,7 +63,7 @@ git clone https://github.com/whchoi98/myeks.git
 
 Cloud9 IDE 편집기에서 아래와 같이 수정합니다. 수정내용은 현재 생성된 VPC, Subnet ID , key 위치 입니다.
 
-![](../.gitbook/assets/image%20%286%29.png)
+![](../.gitbook/assets/image%20%28145%29.png)
 
 수정할 블록의 예시입니다.
 
@@ -92,7 +93,7 @@ secretsEncryption:
 eksctl을 통해 EKS Cluster를 생성합니다.
 
 ```text
-eksctl create cluster --config-file=/home/ec2-user/environment/myeks/whchoi-cluster.yaml 
+eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml 
 ```
 
 {% hint style="info" %}
@@ -102,7 +103,7 @@ Cluster를 생성하기 위해 20~30분 정도 시간이 소요됩니다.
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/whchoi-cluster.yaml
+whchoi98:~/environment $ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml
 [ℹ]  eksctl version 0.23.0
 [ℹ]  using region ap-northeast-2
 [✔]  using existing VPC (vpc-086186d07739fc568) and subnets (private:[subnet-051b3655d99b2cf0b subnet-0e3c5d12ade472f91 subnet-0dd1d98a956bf8227] public:[subnet-0d4864467efbf04a4 subnet-0662f5c059aac8576 subnet-0253297add231a70d])
@@ -177,13 +178,13 @@ STACK_NAME=$(eksctl get nodegroup --cluster eksworkshop -o json | jq -r '.[].Sta
 echo "export ROLE_NAME=${ROLE_NAME}" | tee -a ~/.bash_profile
 ```
 
-생성된 VPC와 Subnet, Internet Gateway, NAT Gateway, Route Table등을 확인해 봅니다.
+* 생성된 VPC와 Subnet, Internet Gateway, NAT Gateway, Route Table등을 확인해 봅니다.
+* 생성된 EC2 Worker Node들도 확인해 봅니다.
+* EKS와 eksctl을 통해 생생된 Cloudformation도 확인해 봅니다.
 
-생성된 EC2 Worker Node들도 확인해 봅니다.
 
-EKS와 eksctl을 통해 생생된 Cloudformation도 확인해 봅니다.
 
-참조
+### eksctl yaml code 참조
 
 eksctl 배포를 위한 Cluster Code
 
