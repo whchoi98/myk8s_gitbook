@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-07-28'
+description: 'update : 2020-11-11'
 ---
 
 # Cloud9 IDE 환경 구성
@@ -12,7 +12,7 @@ AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 �
 
 ### 1. Cloud9 IDE 환경 설정
 
-AWS 서비스에서 Cloud9을 선택하고, "Environments"를 설정합니다.
+AWS 서비스에서 Cloud9을 선택하고, `"Environments"`를 설정합니다.
 
 Cloud9 의 이름과 Description을 설정합니다.
 
@@ -22,7 +22,11 @@ Cloud9 의 이름과 Description을 설정합니다.
 
 인스턴스 타입과 운영체제, 그리고 절전모드 환경을 선택합니다. 절전모드 환경은 기본 30분입니다.
 
-![](../.gitbook/assets/image%20%2842%29.png)
+![](../.gitbook/assets/image%20%28142%29.png)
+
+{% hint style="info" %}
+Cloud9 하단의 설정 메뉴 중에 Network Setting은 변경하지 않으면, 자동으로 VPC Default로 설정되며 Cloud9 인스턴스는 해당 Default VPC의 public subnet에 자동으로 설치됩니다.
+{% endhint %}
 
 ### 3. Cloud9 터미널 접속
 
@@ -40,12 +44,25 @@ AWS 명령줄 인터페이스\(CLI\)는 AWS 서비스를 관리하는 통합 도
 
 Cloud9 IDE는 이미 AWS CLI가 설치되어 있습니다. 하지만 기본 1.x 버전이 설치되어 있습니다.
 
+```text
+$ aws --version
+aws-cli/1.18.170 Python/3.6.12 Linux/4.14.200-116.320.amzn1.x86_64 botocore/1.19.10
+```
+
 아래 명령을 통해 CLI를 2.0으로 업그레이드합니다.
 
 ```text
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
+
+```
+
+정상적으로 업그레이드 되었는지 확인합니다.
+
+```text
+aws --version
+aws-cli/2.0.62 Python/3.7.3 Linux/4.14.200-116.320.amzn1.x86_64 exe/x86_64.amzn.2018
 ```
 
 aws cli 자동완성을 설치 합니다.
@@ -55,20 +72,38 @@ which aws_completer
 export PATH=/usr/local/bin:$PATH
 source ~/.bash_profile
 complete -C '/usr/local/bin/aws_completer' aws
+
 ```
 
 ## Kubectl 설치
 
 ### Kubectl 소개
 
-쿠버네티스 커맨드 라인 도구인 [kubectl](https://kubernetes.io/docs/user-guide/kubectl/)을 사용하면, 쿠버네티스 클러스터에 대해 명령을 실행할 수 있습니. kubectl을 사용하여 애플리케이션을 배포하고, 클러스터 리소스를 검사 및 관리하며 로그를 볼 수 있다습니다. kubectl 작업의 전체 목록에 대해서는, [kubectl 개요](https://kubernetes.io/ko/docs/reference/kubectl/overview/)를 참고합니.
+쿠버네티스 커맨드 라인 도구인 [kubectl](https://kubernetes.io/docs/user-guide/kubectl/)을 사용하면, 쿠버네티스 클러스터에 대해 명령을 실행할 수 있습니. kubectl을 사용하여 애플리케이션을 배포하고, 클러스터 리소스를 검사 및 관리하며 로그를 볼 수 있다습니다. kubectl 작업의 전체 목록에 대해서는, [kubectl 개요](https://kubernetes.io/ko/docs/reference/kubectl/overview/)를 참고합니다.
 
 ### 1.kubectl 바이너리 다운로드
 
-EKS를 위한 kubectl 바이너리를 다운로드합니다.
+EKS를 위한 kubectl 바이너리를 다운로드합니다. \(2020-09-18 기준\)
+
+EKS 1.16.13 기
 
 ```text
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/kubectl
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.13/2020-09-18/bin/linux/amd64/kubectl
+
+```
+
+EKS 1.17.11 기
+
+```text
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
+
+```
+
+EKS 1.18.8 기
+
+```text
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl
+
 ```
 
 ### 2. 실행권한을 적용
@@ -77,6 +112,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/
 
 ```text
 chmod +x ./kubectl
+
 ```
 
 ### 3.Path 설정
@@ -85,6 +121,7 @@ chmod +x ./kubectl
 
 ```text
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+
 ```
 
 ### 4.셀 환경변수에 추가
@@ -101,10 +138,11 @@ echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
 kubectl version --short --client
 ```
 
-출력결과 예제
+출력결과 예제 \(1.17.11 예시\)
 
 ```text
-Client Version: v1.16.8-eks-e16311
+Client Version: v1.17.11-eks-cfdc40
+
 ```
 
 ### 5.kubectl 자동완성 설치 
@@ -135,6 +173,7 @@ for command in kubectl jq envsubst aws
   do
     which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
   done
+  
 ```
 
 ### 3.K9s 설치
@@ -143,12 +182,14 @@ K9s 설치를 위해 Linux brew 를 설치합니다. 해당 패키지를 설치�
 
 ```text
 sudo yum groupinstall -y 'Development Tools' && sudo yum install curl file git ruby which
+
 ```
 
 Linux Brew를 설치합니다.
 
 ```text
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+
 ```
 
 경로를 설정합니다.
@@ -156,6 +197,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/i
 ```text
 echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>~/.bash_profile
 eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
 ```
 
 Brew 기반의 K9s를 설치합니다.
