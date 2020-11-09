@@ -1057,7 +1057,9 @@ ELB DNS 레코드로 접속해 봅니다.
 
 ![](../.gitbook/assets/image%20%2851%29.png)
 
-
+{% hint style="info" %}
+Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/AmazonECR/latest/userguide/push-oci-artifact.html)
+{% endhint %}
 
 
 
