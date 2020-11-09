@@ -26,7 +26,7 @@ NodeSelector는 가장 간단한 노드 선택 방법입니다. NodeSelector는 
 이미 yaml로 정의된 EKS LAB을 eksctl로 배포시에, 각 Worker Node들에 Lable이 정의 되어 있었습니다.
 
 ```text
-cat ~/environment/myeks/whchoi-cluster.yaml
+cat ~/environment/myeks/eksworkshop-cluster.yaml
 ```
 
 whchoi-cluster.yaml의 내용을 살펴 봅니다.
@@ -92,13 +92,14 @@ nodeGroups:
 
 ```text
 kubectl get node --show-labels -o wide
-kubectl get pods --show-labels -o wide
+
 ```
 
 사전에 정의해 둔 "nodegroup-type=frontend-workloads" 의 노드들을 출력해 봅니다.
 
 ```text
 kubectl get nodes -l nodegroup-type=frontend-workloads
+
 ```
 
 아래와 같은 출력 결과를 볼 수 있습니다.
@@ -167,9 +168,10 @@ kubectl -n nodeselector get pods -o wide
 아래는 출력 결과 예시입니다.
 
 ```text
-whchoi98:~ $ kubectl get nodes --show-labels | grep disktype
+$ kubectl get nodes --show-labels | grep disktype
 ip-10-11-16-31.ap-northeast-2.compute.internal     Ready    <none>   120m   v1.16.12-eks-904af05   alpha.eksctl.io/cluster-name=eksworkshop,alpha.eksctl.io/instance-id=i-0ca4ddf4adea01038,alpha.eksctl.io/nodegroup-name=ng1-public,beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m5.xlarge,beta.kubernetes.io/os=linux,disktype=ssd,failure-domain.beta.kubernetes.io/region=ap-northeast-2,failure-domain.beta.kubernetes.io/zone=ap-northeast-2a,kubernetes.io/arch=amd64,kubernetes.io/hostname=ip-10-11-16-31.ap-northeast-2.compute.internal,kubernetes.io/os=linux,nodegroup-type=frontend-workloads
-whchoi98:~ $ kubectl -n nodeselector get pods -o wide
+
+$ kubectl -n nodeselector get pods -o wide
 NAME    READY   STATUS    RESTARTS   AGE     IP            NODE                                             NOMINATED NODE   READINESS GATES
 nginx   1/1     Running   0          4m18s   10.11.28.19   ip-10-11-16-31.ap-northeast-2.compute.internal   <none>           <none>
 ```
@@ -184,9 +186,9 @@ nginx   1/1     Running   0          4m18s   10.11.28.19   ip-10-11-16-31.ap-nor
 2. 규칙이 엄격한 요구 사항이 아니라 "required-hard affinity / preferred - soft affinity" 규칙을 나타낼 수 있기에 스케줄러가 규칙을 만족할 수 없더라도, 파드가 계속 유연하게 스케줄 되도록 합니다.
 3. 노드 자체에 label을 붙이기보다는 노드\(또는 다른 토폴로지 도메인\)에서 실행 중인 다른 파드의 label을 제한할 수 있습니다. 이를 통해 어떤 파드가 함께 위치할 수 있는지와 없는지에 대한 규칙을 적용할 수 있습니다 .
 
-Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종류의 Affinity로 구성됩니다. "노드 Affinity" 는 기존 `nodeSelector` 와 비슷하지만\(그러나 위에서 나열된 첫째와 두 번째 이점이 있다.\), "파드 Affinity/Anti-Affinity"  위에서 나열된 세번째 항목에 설명된 대로 노드 label이 아닌 파드 label에 대해 제한되고 위에서 나열된 첫 번째와 두 번째 속성을 가집니다 . 
+Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종류의 Affinity로 구성됩니다. "노드 Affinity" 는 기존 `nodeSelector` 와 비슷하지만\(그러나 위에서 나열된 첫째와 두 번째 이점이 있습다.\), "파드 Affinity/Anti-Affinity"  위에서 나열된 세번째 항목에 설명된 대로 노드 label이 아닌 파드 label에 대해 제한되고 위에서 나열된 첫 번째와 두 번째 속성을 가집니다 . 
 
-2.Node Affinity
+### 2.Node Affinity
 
 앞서 소개한 [nodeSelector](assign.md#nodeselector) 와 유사합니다. 노드 label을 기반으로 다양한 조건들을 명시할 수 있다는 점에서 차이가 있습니다.
 
@@ -199,8 +201,6 @@ Affinity 기능은 "노드 Affinity" 와 "파드 Affinity/Anti-Affinity" 두 종
 향후에는 `referredDuringSchedulingIgnoredDuringExecution` 와 같은 `requiredDuringSchedulingIgnoredDuringExecution` 를 제공할 계획입니다 .
 
 따라서 `requiredDuringSchedulingIgnoredDuringExecution` 의 예로는 "인텔 CPU가 있는 노드에서만 파드 실행"이 될 수 있고, `preferredDuringSchedulingIgnoredDuringExecution` 의 예로는 "장애 조치 영역 XYZ에 파드 집합을 실행하려고 하지만, 불가능하다면 다른 곳에서 일부를 실행하도록 허용"이 있을 것이다.
-
-### 2.Node Affinity
 
 아래와 같이 pod 배포를 위한 새로운 매니페스트 파일을 작성합니다.
 
@@ -285,7 +285,7 @@ kubectl label nodes ip-10-11-16-31.ap-northeast-2.compute.internal azname=ap-nor
 이제 정상적으로 pod가 생성되는 지 확인합니다.
 
 ```text
-whchoi98:~ $ kubectl -n affinity get pods -o wide
+$ kubectl -n affinity get pods -o wide
 NAME                 READY   STATUS    RESTARTS   AGE     IP            NODE                                             NOMINATED NODE   READINESS GATES
 with-node-affinity   1/1     Running   0          2m10s   10.11.24.52   ip-10-11-16-31.ap-northeast-2.compute.internal   <none>           <none>
 ```
