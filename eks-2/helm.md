@@ -49,8 +49,8 @@ helm version --short
  출력 결과 예시
 
 ```text
-whchoi98:~/environment $ helm version --short
-v3.2.4+g0ad800e
+~/environment $ helm version --short
+v3.4.0+g7090a89
 ```
 
 ### 2. 차트 Repository 구성
@@ -58,14 +58,16 @@ v3.2.4+g0ad800e
 Stable한 저장소를 다운로드하여 아래와 같이 구성합니다.
 
 ```text
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo add stable https://charts.helm.sh/stable
 helm repo update
+
 ```
 
 설치 한 이후에는 설치 가능한 차트를 아래와 같은 명령으로 검색할 수 있습니다.
 
 ```text
 helm search repo stable
+
 ```
 
 ### 3. Helm 명령어 자동 완성 구성
@@ -90,9 +92,9 @@ helm search repo nginx
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ helm search repo nginx
+~/environment $ helm search repo nginx
 NAME                            CHART VERSION   APP VERSION     DESCRIPTION                                       
-stable/nginx-ingress            1.41.1          v0.34.1         An nginx Ingress controller that uses ConfigMap...
+stable/nginx-ingress            1.41.3          v0.34.1         DEPRECATED! An nginx Ingress controller that us...
 stable/nginx-ldapauth-proxy     0.1.4           1.13.5          nginx proxy with ldapauth                         
 stable/nginx-lego               0.3.1                           Chart for nginx-ingress-controller and kube-lego  
 stable/gcloud-endpoints         0.1.2           1               DEPRECATED Develop, deploy, protect and monitor...
@@ -113,9 +115,10 @@ helm search repo bitnami/nginx
 출력결과 예시
 
 ```text
-whchoi98:~/environment $ helm search repo bitnami/nginx NAME CHART VERSION APP VERSION DESCRIPTION
-bitnami/nginx 6.0.2 1.19.1 Chart for the nginx server
-bitnami/nginx-ingress-controller 5.3.25 0.33.0 Chart for the nginx Ingress controller
+~/environment $ helm search repo bitnami/nginx
+NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                           
+bitnami/nginx                           7.1.6           1.19.4          Chart for the nginx server            
+bitnami/nginx-ingress-controller        5.6.15          0.40.2          Chart for the nginx Ingress controller
 ```
 
 helm install 명령을 통해 nginx를 설치해 봅니다.
@@ -147,7 +150,7 @@ Get the NGINX URL:
 Pod와 서비스 배포를 확인합니다.
 
 ```text
-whchoi98:~/environment $ kubectl get svc eksworkshop-nginx
+~/environment $ kubectl get svc eksworkshop-nginx
 NAME                TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)                      AGE
 eksworkshop-nginx   LoadBalancer   172.20.225.235   a580840c2d2f24533a7fe36836e99a93-149103174.ap-northeast-2.elb.amazonaws.com   80:31437/TCP,443:32083/TCP   79s
 ```
