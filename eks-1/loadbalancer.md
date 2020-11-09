@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-07-21'
+description: 'update : 2020-11-11'
 ---
 
 # Loadbalancer 기반 배포
@@ -91,7 +91,7 @@ nodeGroups:
 
 추가하게 되면 아래와 같은 배포 yaml을 가지게 됩니다. 
 
-예 - ecsdemo-frontend - 1deployment.yaml nodegroup-type: “frontend-workloads”를 지정해서 Application을 배포할 것입니다. git에서 복제한 deployment yaml에 아래 nodeSelector를 선언합니다.
+예 - ecsdemo-frontend - clb\_deployment.yaml nodegroup-type: “frontend-workloads”를 지정해서 Application을 배포할 것입니다. git에서 복제한 clb\_deployment yaml에 아래 nodeSelector를 선언합니다.
 
 ```text
       nodeSelector:
@@ -240,15 +240,16 @@ service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Defa
 
 ```text
   cd ~/environment/
-    cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
+  cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
   cp ./ecsdemo-crystal/kubernetes/deployment.yaml ./ecsdemo-crystal/kubernetes/nlb_deployment.yaml
   cp ./ecsdemo-nodejs/kubernetes/deployment.yaml ./ecsdemo-nodejs/kubernetes/nlb_deployment.yaml
   cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/nlb_service.yaml
   cp ./ecsdemo-crystal/kubernetes/service.yaml ./ecsdemo-crystal/kubernetes/nlb_service.yaml
   cp ./ecsdemo-nodejs/kubernetes/service.yaml ./ecsdemo-nodejs/kubernetes/nlb_service.yaml
+  
 ```
 
-각 APP에 생성된 NLB-service.yaml, ALB-service.yaml을 아래와 같이 annotaions:를 추가하여 수정합니다.
+각 APP에 생성된 NLB-service.yaml을 아래와 같이 annotaions:를 추가하여 수정합니다.
 
 ```text
 apiVersion: v1
@@ -258,6 +259,13 @@ metadata:
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 이하 생략
+```
+
+예 - ecsdemo-frontend - nlb\_deployment.yaml nodegroup-type: “frontend-workloads”를 지정해서 Application을 배포할 것입니다. git에서 복제한 nlb\_deployment yaml에 아래 nodeSelector를 선언합니다.
+
+```text
+      nodeSelector:
+        nodegroup-type: "frontend-workloads"
 ```
 
 NLB 구성은 IP 기반과 인스턴스 기반으로 구성이 가능합니다.
@@ -277,13 +285,13 @@ service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
 NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 각 가용 영역에서 퍼블릭 서브넷을 선택하는 대신 외부 로드 밸런서에 대해 이러한 서브넷만 사용해야 한다는 것을 Kubernetes가 알 수 있도록 다음과 같이 퍼블릭 서브넷에 태그를 지정해야 합니다 .March 26, 2020 이후에 `eksctl` 또는 Amazon EKS AWS CloudFormation 템플릿을 사용하여 VPC를 생성하는 경우 서브넷은 생성될 때 적절하게 태그가 지정됩니다.
 {% endhint %}
 
-#### 외부 로드밸런서를 위한 Public subnet 태
+#### 외부 로드밸런서를 위한 Public subnet 태그 
 
 | 키 | 값 |
 | :--- | :--- |
 | `kubernetes.io/role/elb` | `1` |
 
-#### 내부 로드밸런서를 위한 Private subnet 태
+#### 내부 로드밸런서를 위한 Private subnet 태그 
 
 | 키 | 값 |
 | :--- | :--- |
@@ -292,12 +300,13 @@ NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 
 ### 2. LB 서비스 제거와 NLB 서비스 배포
 
 ```text
-kubectl delete -f ./ecsdemo-frontend/kubernetes/clb_service.yaml
-kubectl delete -f ./ecsdemo-crystal/kubernetes/clb_service.yaml
-kubectl delete -f ./ecsdemo-nodejs/kubernetes/clb_service.yaml
-kubectl apply -f ./ecsdemo-frontend/kubernetes/NLB_service.yaml
-kubectl apply -f ./ecsdemo-crystal/kubernetes/NLB_service.yaml
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/NLB_service.yaml
+kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_deployment.yaml 
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_service.yaml 
+kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_service.yaml
+kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_service.yaml
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_service.yaml
+
 ```
 
 새로운 NLB DNS 주소를 kubectl 또는 EC2 대시보드에서 로드밸런서를 확인합니다.
