@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-07-25'
+description: 'update : 2020-11-11'
 ---
 
 # ALB Ingress 배포
@@ -40,39 +40,34 @@ eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
+$ eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
 [ℹ]  eksctl version 0.23.0
 [ℹ]  using region ap-northeast-2
 [ℹ]  will create IAM Open ID Connect provider for cluster "eksworkshop" in "ap-northeast-2"
 [✔]  created IAM Open ID Connect provider for cluster "eksworkshop" in "ap-northeast-2"
 ```
 
-이전 랩에서 수행한 $ALB\_INGRESS\_VERSION 변수에 값이 정상적으로 입력되었는지 확인합니다.
+### 2. RBAC 역할 생성과 바인딩
+
+ALB Ingress Controller에 대한 버전을 변수에 저장합니다.
 
 ```text
-echo $ALB_INGRESS_VERSION
-```
-
-출력 결과 예시
-
-```text
-whchoi98:~/environment $ echo $ALB_INGRESS_VERSION
-v1.1.8
-```
-
-만약 변수 저장이 출력되지 않는 다면 아래와 같이 입력합니다.
-
-```text
-echo 'export ALB_INGRESS_VERSION="v1.1.8"' >>  ~/.bash_profile
+echo 'export ALB_INGRESS_VERSION="v1.1.9"' >>  ~/.bash_profile
 source ~/.bash_profile
 ```
-
-### 2. RBAC 역할 생성과 바인딩
 
 ALB Ingress 컨트롤러에 필요한 관련 RBAC 역할을 생성하고 바인딩합니다.
 
 ```text
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/rbac-role.yaml
+
+```
+
+또는 이미 앞서 git 을 통해서, alb-ingress-controller와 RBAC을 다운로드 받았습니다. 아래에서 처럼 바로 실행 시킵니다.
+
+```text
+cd ~/environment/myeks/alb-controller/
+kubectl apply -f rbac-role.yaml
 ```
 
 출력 결과 예시
@@ -99,8 +94,8 @@ iam-policy.json이 정상적으로 만들어지지 않으면, 로컬로 파일�
 {% endhint %}
 
 ```text
-curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.8/docs/examples/iam-policy.json
-aws iam create-policy   --policy-name ALBIngressControllerIAMPolicy   --policy-document file://iam-policy.json
+cd ~/environment/myeks/alb-controller/
+aws iam create-policy --policy-name ALBIngressControllerIAMPolicy --policy-document file://iam-policy.json
 ```
 
 PolicyARN 변수에 생성된 PolicyARN 값을 저장합니다.
@@ -112,7 +107,7 @@ export PolicyARN=$(aws iam list-policies --query 'Policies[?PolicyName==`ALBIngr
 PolicyARN 변수에 저장된 값을 확인합니다.
 
 ```text
-whchoi98:~/environment $ echo $PolicyARN 
+$echo $PolicyARN 
 arn:aws:iam::909121566064:policy/ALBIngressControllerIAMPolicy
 ```
 
@@ -128,7 +123,7 @@ eksctl create iamserviceaccount --cluster=eksworkshop --namespace=kube-system --
 
 ```text
 whchoi98:~/environment $ eksctl create iamserviceaccount --cluster=eksworkshop --namespace=kube-system --name=alb-ingress-controller --attach-policy-arn=$PolicyARN --override-existing-serviceaccounts --approve
-[ℹ]  eksctl version 0.23.0
+[ℹ]  eksctl version 0.31.0
 [ℹ]  using region ap-northeast-2
 [ℹ]  1 iamserviceaccount (kube-system/alb-ingress-controller) was included (based on the include/exclude rules)
 [!]  metadata of serviceaccounts that exist in Kubernetes will be updated, as --override-existing-serviceaccounts was set
