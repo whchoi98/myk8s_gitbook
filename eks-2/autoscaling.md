@@ -1,3 +1,7 @@
+---
+description: 'Update : 2020-11-11'
+---
+
 # AutoScaling 구성
 
 
@@ -8,7 +12,7 @@
 
 Horizontal Pod Autoscaler는 CPU 사용량 \(또는 [사용자 정의 메트릭](https://git.k8s.io/community/contributors/design-proposals/instrumentation/custom-metrics-api.md), 아니면 다른 애플리케이션 지원 메트릭\)을 모니터하여 ReplicationController, Deployment, ReplicaSet 또는 StatefulSet의 파드 개수를 자동으로 스케일합니다 . Horizontal Pod Autoscaler는 크기를 조정할 수 없는 오브젝트\(예: 데몬셋\(DaemonSet\)\)에는 적용되지 않습니다.
 
-Horizontal Pod Autoscaler는 쿠버네티스 API 리소스 및 컨트롤러로 구현됩니. 리소스는 컨트롤러의 동작을 결정합니다. 컨트롤러는 모니터링 평균 CPU 사용률이 사용자가 지정한 대상과 일치하도록 레ReplicationController, Deployment, ReplicaSet 개수를 주기적으로 조정합니다 .
+Horizontal Pod Autoscaler는 쿠버네티스 API 리소스 및 컨트롤러로 구현됩니. 리소스는 컨트롤러의 동작을 결정합니다. 컨트롤러는 모니터링 평균 CPU 사용률이 사용자가 지정한 대상과 일치하도록 ReplicationController, Deployment, ReplicaSet 개수를 주기적으로 조정합니다 .
 
 ### 1.Metric Server 설치
 
@@ -165,9 +169,7 @@ CA\(Cluster Autoscaler\)가 제어할 ASG\(AutoScaling Group\)의 이름을 구�
 eksctl-eksworkshop-nodegroup-ng1-public-NodeGroup-1OKGC9A5SPGB1
 ```
 
-ASG Group의 최소, 최대 사이즈를 변경합니다. \(min = 3, max =8\)
-
-![](../.gitbook/assets/image%20%2856%29.png)
+ASG Group의 최소, 최대 사이즈를 확인합니다. \(min = 3, max =9\)
 
 ### 3.CA\(Cluster AutoScaler\) 구성
 
@@ -180,7 +182,7 @@ Cloud9 IDE에서 다운로드 받은 매니페스트 파일\(cluster\_autoscaler
             - --stderrthreshold=info
             - --cloud-provider=aws
             - --skip-nodes-with-local-storage=false
-            - --nodes=2:8:eksctl-eksworkshop-nodegroup-ng1-public-NodeGroup-1OKGC9A5SPGB1
+            - --nodes=3:9:eksctl-eksworkshop-nodegroup-ng1-public-NodeGroup-1OKGC9A5SPGB1
 ```
 
 인라인 정책을 구성하고 Public Worker Node의 EC2 인스턴스 프로파일에 추가합니다. 아래 그림에서 처럼 설정되어 있어야 합니다.
@@ -333,10 +335,10 @@ NAME                READY   UP-TO-DATE   AVAILABLE   AGE
 nginx-to-scaleout   1/1     1            1           11s
 ```
 
-아래 명령을 통해 Replicaset을 20개로 변경합니다.
+아래 명령을 통해 Replicaset을 50개로 변경합니다.
 
 ```text
-kubectl scale --replicas=20 deployment/nginx-to-scaleout
+kubectl scale --replicas=50 deployment/nginx-to-scaleout
 ```
 
 포드가 증가하는 것을 아래 명령을 통해 확인합니다. 또는 k9s 명령이 실행되고 있는 터미널에서 확인합니다.
