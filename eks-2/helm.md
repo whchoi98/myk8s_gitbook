@@ -270,13 +270,15 @@ helmdemo 라는 Chart를 생성합니다.
 
 ```text
 cd ~/environment/
-helm create eksdemo
+helm create helm-chart-demo
 ```
 
 Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성합니다.
 
 ```text
-~/environment/eksdemo $ tree 
+cd ~/environment/helm-chart-demo
+~/environment/helm-chart-demo $ sudo yum -y install tree
+~/environment/helm-chart-demo $ tree 
 .
 ├── charts
 ├── Chart.yaml
@@ -306,15 +308,15 @@ Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성합니
 새로운 Chart구성을 위해 기본 생성된 파일들을 삭제합니다.
 
 ```text
-rm -rf ~/environment/eksdemo/templates/
-rm ~/environment/eksdemo/Chart.yaml
-rm ~/environment/eksdemo/values.yaml
+rm -rf ~/environment/helm-chart-demo/templates/
+rm ~/environment/helm-chart-demo/Chart.yaml
+rm ~/environment/helm-chart-demo/values.yaml
 ```
 
 다음 코드 블록을 실행하여 새로운 chart.yaml 파일을 생성합니다.
 
 ```text
-cat <<EoF > ~/environment/eksdemo/Chart.yaml
+cat <<EoF > ~/environment/helm-chart-demo/Chart.yaml
 apiVersion: v2
 name: eksdemo
 description: A Helm chart for EKS Workshop Microservices application
@@ -327,20 +329,20 @@ EoF
 
 ```text
 # 각 템플릿 타입을 위한 서브 폴더 생성 
-mkdir -p ~/environment/eksdemo/templates/deployment
-mkdir -p ~/environment/eksdemo/templates/service
+mkdir -p ~/environment/helm-chart-demo/templates/deployment
+mkdir -p ~/environment/helm-chart-demo/templates/service
 
 # frontend manifests 복사 
-cp ~/environment/ecsdemo-frontend/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/frontend.yaml
-cp ~/environment/ecsdemo-frontend/kubernetes/service.yaml ~/environment/eksdemo/templates/service/frontend.yaml
+cp ~/environment/ecsdemo-frontend/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/frontend.yaml
+cp ~/environment/ecsdemo-frontend/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/frontend.yaml
 
 # crystal manifests 복사 
-cp ~/environment/ecsdemo-crystal/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/crystal.yaml
-cp ~/environment/ecsdemo-crystal/kubernetes/service.yaml ~/environment/eksdemo/templates/service/crystal.yaml
+cp ~/environment/ecsdemo-crystal/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/crystal.yaml
+cp ~/environment/ecsdemo-crystal/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/crystal.yaml
 
 # nodejs manifests 복사 
-cp ~/environment/ecsdemo-nodejs/kubernetes/deployment.yaml ~/environment/eksdemo/templates/deployment/nodejs.yaml
-cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/eksdemo/templates/service/nodejs.yaml
+cp ~/environment/ecsdemo-nodejs/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
+cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/nodejs.yaml
 ```
 
 아래 파일들을 찾아서, "replicas:1" 값을 변경합니다.
@@ -348,9 +350,9 @@ cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/eksdemo/te
 변경할 파일들
 
 ```text
-~/environment/eksdemo/templates/deployment/frontend.yaml
-~/environment/eksdemo/templates/deployment/crystal.yaml
-~/environment/eksdemo/templates/deployment/nodejs.yaml
+~/environment/helm-chart-demo/templates/deployment/frontend.yaml
+~/environment/helm-chart-demo/templates/deployment/crystal.yaml
+~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
 ```
 
 ![](../.gitbook/assets/image%20%2849%29.png)
@@ -386,12 +388,12 @@ replicas: {{ .Values.replicas }}
 변경대상 파일.
 
 ```text
-~/environment/eksdemo/templates/deployment/frontend.yaml
-~/environment/eksdemo/templates/deployment/crystal.yaml
-~/environment/eksdemo/templates/deployment/nodejs.yaml
-~/environment/eksdemo/templates/service/frontend.yaml
-~/environment/eksdemo/templates/service/crystal.yaml
-~/environment/eksdemo/templates/service/nodejs.yaml
+~/environment/helm-chart-demo/templates/deployment/frontend.yaml
+~/environment/helm-chart-demo/templates/deployment/crystal.yaml
+~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
+~/environment/helm-chart-demo/templates/service/frontend.yaml
+~/environment/helm-chart-demo/templates/service/crystal.yaml
+~/environment/helm-chart-demo/templates/service/nodejs.yaml
 ```
 
 추가 구문
@@ -413,7 +415,7 @@ metadata:
 이제 values.yaml을 생성하고, Values 들에 대한 값을 정의합니다.
 
 ```text
-cat <<EoF > ~/environment/eksdemo/values.yaml
+cat <<EoF > ~/environment/helm-chart-demo/values.yaml
 # Default values for eksdemo.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -437,7 +439,7 @@ EoF
 Helm chart는 실제 배포하지 않고 **"--dry-run"** 플래그를 사용하여, 랜더링 된 템플릿을 빌드하고 출력할 수 있습니다.
 
 ```text
-helm install --debug --dry-run workshop ~/environment/eksdemo
+helm install --debug --dry-run workshop ~/environment/helm-chart-demo
 ```
 
 출력 결과 예제
@@ -615,13 +617,14 @@ spec:
 
 ```text
 kubectl create namespace helm-chart-demo
-helm install helmdemo ~/environment/eksdemo
+helm install helmdemo ~/environment/helm-chart-demo
+
 ```
 
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ helm install helmdemo ~/environment/eksdemo
+~/environment $ helm install helmdemo ~/environment/helm-chart-demo
 NAME: helmdemo
 LAST DEPLOYED: Tue Jul 21 17:27:53 2020
 NAMESPACE: default
