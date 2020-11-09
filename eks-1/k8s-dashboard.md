@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-07-20'
+description: 'update : 2020-11-11'
 ---
 
 # K8s Dashboard 배포
@@ -18,12 +18,14 @@ kubernetes 지표 서버를 다음 명령을 사용하여 배포합니다.
 
 ```text
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
+
 ```
 
 다음 명령을 사용하여 metrics-server 배포에서 원하는 수의 포드를 실행하고 있는지 확인합니다.
 
 ```text
 kubectl get deployment metrics-server -n kube-system
+
 ```
 
 출력 결과 예시
@@ -39,7 +41,8 @@ metrics-server   1/1     1            1           57s
 다음 명령을 사용하여 Kubernetes 대시보드를 배포합니다.
 
 ```text
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.3/aio/deploy/recommended.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta8/aio/deploy/recommended.yaml
+
 ```
 
 배포된 서비스들을 확인합니다.
@@ -59,10 +62,11 @@ kubernetes-dashboard        ClusterIP   172.20.122.109   <none>        443/TCP  
 
 기본적으로 Kubernetes 대시보드 사용자의 권한은 제한되어 있습니다. eks-admin 서비스 계정 및 클러스터 역할 바인딩을 생성하고, 이를 사용하여 관리자 수준 권한으로 대시보드에 보안 연결할 수 있습니다. 
 
-아래 텍스트가 포함된 **"eks-admin-service-account.yaml"** 이라는 파일을 생성합니다. 이 매니페스트는 eks-admin이라는 서비스 계정 및 클러스터 역할 바인딩을 정의합니다.
+아래 텍스트가 포함된 **"eks-admin-service-account.yaml"** 이라는 파일을 생성합니다. 이 매니페스트는 eks-admin이라는 서비스 계정 및 클러스터 역할 바인딩을 정의합니다.   
+\(~/home/ec2-user/environment/myeks/k8s\_dashboard/eks-admin-service-account.yaml 에 이미 정의되어 있습니다.\)
 
 ```text
-cat <<EoF > ~/environment/eks-admin-service-account.yaml
+cat <<EoF > ~/environment/myeks/k8s_dashboard/eks-admin-service-account.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -88,6 +92,15 @@ EoF
 
 ```text
 kubectl apply -f eks-admin-service-account.yaml
+
+```
+
+아래와 같은 결과를 확인 할 수 있습니다.
+
+```text
+$ kubectl apply -f eks-admin-service-account.yaml
+serviceaccount/eks-admin created
+clusterrolebinding.rbac.authorization.k8s.io/eks-admin created
 ```
 
 ### 4. Kubernetes 대쉬보드 접속
