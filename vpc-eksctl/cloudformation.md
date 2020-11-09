@@ -12,10 +12,11 @@ AWS CloudFormation에서는 클라우드 환경에서 AWS 및 타사 애플리�
 
 ### 1.VPC yaml 다운로드
 
-eksworkshop에서 사용할 vpc yaml을 다운로드 받습니다.
+eksworkshop에서 사용할 vpc yaml을 로컬 PC로 다운로드 받습니다.
 
 ```text
 https://github.com/whchoi98/myeks/blob/master/EKSVPC.yml
+
 ```
 
 ### 2. Stack 생성
