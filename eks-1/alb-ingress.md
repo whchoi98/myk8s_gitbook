@@ -136,17 +136,14 @@ whchoi98:~/environment $ eksctl create iamserviceaccount --cluster=eksworkshop -
 
 ### 5.ALB Ingress Controller 포드를 배포
 
-AWS ALB Ingress 컨트롤러를 배포합니다.
-
-```text
-curl -sS "https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/alb-ingress-controller.yaml" \
-    | sed 's/# - --cluster-name=devCluster/- --cluster-name=eksworkshop/g' \
-    | kubectl apply -f -
-```
-
 {% hint style="warning" %}
 sample yaml에는 Cluster name이 devCluster로 되어 있으므로, 이것을 생성되어 있는 Cluster name = eksworkshop으로 대체합니다.
 {% endhint %}
+
+```text
+cd ~/environment/myeks/alb-controller/
+kubectl apply -f alb-ingress-controller.yaml
+```
 
 alb-ingress-controller.yaml 소스 참조
 
@@ -233,10 +230,10 @@ kubectl logs -n kube-system $(kubectl get po -n kube-system | egrep -o alb-ingre
 아래와 같은 출력결과물을 얻었다면 성공적으로 배포된 것입니다.
 
 ```text
-whchoi98:~/environment $ kubectl logs -n kube-system $(kubectl get po -n kube-system | egrep -o alb-ingress[a-zA-Z0-9-]+)
+~/environment $ kubectl logs -n kube-system $(kubectl get po -n kube-system | egrep -o alb-ingress[a-zA-Z0-9-]+)
 -------------------------------------------------------------------------------
 AWS ALB Ingress controller
-  Release:    v1.1.8
+  Release:    v1.1.9
   Build:      git-ec387ad1
   Repository: https://github.com/kubernetes-sigs/aws-alb-ingress-controller.git
 -------------------------------------------------------------------------------
@@ -247,9 +244,11 @@ AWS ALB Ingress controller
 샘플 어플리케이션을 배포해 보겠습니다. 2048 게임 App을 Kubernetes Cluster에 넣고 Ingress 리소스를 사용하여 트래픽을 노출해 봅니다.
 
 ```text
-kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/2048/2048-namespace.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/2048/2048-deployment.yaml
-kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/2048/2048-service.yaml
+cd ~/environment/myeks/alb-controller/
+kubectl apply -f 2048-namespace.yaml
+kubectl apply -f 2048-deployment.yaml
+kubectl apply -f 2048-service.yaml
+
 ```
 
 2048-namespace.yaml 소스 참조.
@@ -310,7 +309,8 @@ spec:
 2048게임 App을 위한 ingress 리소스를 배포합니다.
 
 ```text
-kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/2048/2048-ingress.yaml
+cd ~/environment/myeks/alb-controller/
+kubectl apply -f 2048-ingress.yaml
 ```
 
 2048-ingress.yaml 소스 참조.
@@ -345,7 +345,7 @@ kubectl get ingress/2048-ingress -n 2048-game
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ kubectl get ingress/2048-ingress -n 2048-game
+~/environment $ kubectl get ingress/2048-ingress -n 2048-game
 NAME           HOSTS   ADDRESS                                                                       PORTS   AGE
 2048-ingress   *       546056ac-2048game-2048ingr-6fa0-1286541160.ap-northeast-2.elb.amazonaws.com   80      12m
 ```
@@ -364,6 +364,7 @@ k9s를 통해 App배포를 확인합니다.
 
 ```text
 k9s -n 2048-game
+k9s -A
 ```
 
 ![](../.gitbook/assets/image%20%2834%29.png)
@@ -375,6 +376,7 @@ kubectl -n kube-system get pods | grep 'ingress'
 kubectl get ingresses.extensions -n 2048-game
 kubectl get svc -o wide -n 2048-game
 kubectl get pod -o wide -n 2048-game 
+
 ```
 
 출력 결과 예제
