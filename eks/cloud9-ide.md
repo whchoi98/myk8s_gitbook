@@ -204,6 +204,7 @@ Brew 기반의 K9s를 설치합니다.
 
 ```text
 brew install derailed/k9s/k9s
+
 ```
 
 ### 4.Kube krew 설치
@@ -223,12 +224,14 @@ Kube krew를 설치합니다.
   "$KREW" install --manifest=krew.yaml --archive=krew.tar.gz &&
   "$KREW" update
 )
+
 ```
 
 Kube krew경로를 설정합니다.
 
 ```text
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
 ```
 
 ### 5.Kubectx 설치
@@ -237,6 +240,7 @@ kubectx는 다중의 Kubecluster 가 존재할 때 전환이 쉽도록 도와주
 
 ```text
 kubectl krew install ctx
+
 ```
 
 ### 6.Kubens 설치
@@ -245,6 +249,7 @@ kubens는 여러개의 namespace를 전환이 쉽도록 도와주는 도구 입�
 
 ```text
 kubectl krew install ns
+
 ```
 
 ### 7.Kubetree 설치
@@ -253,6 +258,7 @@ kubetree는 linux의 tree처럼 kube의  파일구조를 확인하는 데 유용
 
 ```text
 kubectl krew install tree
+
 ```
 
 
