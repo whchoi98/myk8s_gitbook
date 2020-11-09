@@ -22,7 +22,7 @@ EC2 - 다음: 권한
 
 ![](../.gitbook/assets/image%20%2814%29.png)
 
-권한정책 연결에서 "AdministartorAccess"를 선택합니다.
+권한정책 연결에서 `"AdministratorAccess"`를 선택합니다.
 
 ![](../.gitbook/assets/image%20%2829%29.png)
 
@@ -74,15 +74,23 @@ Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니�
 rm -vf ${HOME}/.aws/credentials
 ```
 
-5. Cloud9 IDE 역할 점검
+### 5. Cloud9 IDE 역할 점검
 
 Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다.
 
 ```text
 aws sts get-caller-identity --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
+
 ```
 
-6. Shell 환경변수 저장
+실제 Role의 Arn은 아래 명령을 통해 확인 할 수 있습니다.
+
+```text
+$ aws sts get-caller-identity
+
+```
+
+### 6. Shell 환경변수 저장
 
 Account ID, Region 정보 등을 환경변수와 프로파일에 저장해 두고, EKSworkshop 에서 사용합니다.
 
@@ -160,6 +168,14 @@ The key's randomart image is:
 
 ```text
 aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
+
+```
+
+OpenSSH public key format 에러가 발생할 경우 아래와 같은 명령으로 Key 전송합니다.
+
+```text
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
+
 ```
 
 오류가 발생할 경우에는 다음과 같은 방법으로 key 페어를 등록합니다.아래 명령의 Public key값을 복사합니다.
@@ -194,7 +210,12 @@ K8s Secret 암호화를 할 때, EKS 클러스터에서 사용할 CMK를 생성�
 
 ```text
 aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms create-key --query KeyMetadata.Arn --output text)
+
 ```
+
+정상적으로 Key가 생성되었는지 **`AWS 관리 콘솔 - KMS - 고객관리형 키`**에서 확인합니다.
+
+![](../.gitbook/assets/image%20%28142%29.png)
 
 ### 2. CMK ARN 변수 저장
 
