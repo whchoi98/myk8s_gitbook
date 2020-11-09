@@ -241,7 +241,7 @@ cat <<EoF > ~/environment/asg_policy/k8s-asg-policy.json
   ]
 }
 EoF
-aws iam put-role-policy --role-name eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS --policy-name ASG-Policy-For-Worker --policy-document file://~/environment/asg_policy/k8s-asg-policy.json
+aws iam put-role-policy --role-name eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-VIUU31FEYWBY --policy-name ASG-Policy-For-Worker --policy-document file://~/environment/asg_policy/k8s-asg-policy.json
 ```
 
 정상적으로 추가되었다면, 아래와 같이 확인 됩니다.
