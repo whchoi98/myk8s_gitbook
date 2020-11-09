@@ -47,7 +47,7 @@ helm install prometheus stable/prometheus \
 아래와 같은 결과를 얻을 수 있습니다.
 
 ```text
-whchoi98:~ $ helm install prometheus stable/prometheus \
+$ helm install prometheus stable/prometheus \
 >     --namespace prometheus \
 >     --set alertmanager.persistentVolume.storageClass="gp2" \
 >     --set server.persistentVolume.storageClass="gp2"
