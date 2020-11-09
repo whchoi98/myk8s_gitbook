@@ -694,7 +694,7 @@ helm list
 출력 결과 예
 
 ```text
-whchoi98:~/environment $ helm list 
+~/environment $ helm list 
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
 helmdemo        default         1               2020-07-21 17:27:53.828241377 +0000 UTC deployed        eksdemo-0.1.0   1          
 ```
@@ -725,13 +725,13 @@ frontend:
 "values.yaml" 파일이 모두 수정되었으면, helm을 upgrade 합니다.
 
 ```text
-helm upgrade helmdemo ~/environment/eksdemo
+helm upgrade helmdemo ~/environment/helm-chart-demo
 ```
 
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ helm upgrade helmdemo ~/environment/eksdemo
+whchoi98:~/environment $ helm upgrade helmdemo ~/environment/helm-chart-demo
 Release "helmdemo" has been upgraded. Happy Helming!
 NAME: helmdemo
 LAST DEPLOYED: Tue Jul 21 17:48:46 2020
@@ -778,7 +778,7 @@ helm status helmdemo
 아래와 같은 결과를 확인 할 수 있습니다.최종 배포시간과 Revision 값을 확인합니다.
 
 ```text
-whchoi98:~/environment $ helm status helmdemo 
+~/environment $ helm status helmdemo 
 NAME: helmdemo
 LAST DEPLOYED: Tue Jul 21 17:48:46 2020
 NAMESPACE: default
@@ -833,14 +833,14 @@ ecsdemo-nodejs-7dd8987798-x5v8s     1/1     Running   0          7s
 helm history를 통해 Revision을 확인해 봅니다.
 
 ```text
-whchoi98:~/environment $ helm history helmdemo 
+~/environment $ helm history helmdemo 
 REVISION        UPDATED                         STATUS          CHART           APP VERSION     DESCRIPTION     
 1               Tue Jul 21 17:27:53 2020        superseded      eksdemo-0.1.0   1               Install complete
 2               Tue Jul 21 17:48:46 2020        superseded      eksdemo-0.1.0   1               Upgrade complete
 3               Tue Jul 21 17:57:23 2020        deployed        eksdemo-0.1.0   1               Rollback to 1   
 ```
 
-ChartMuseum에서 App 패키징을 수행하기 위해 value.yaml 파일 내을 다시 정상적으로 수정합니다.
+ChartMuseum에서 App 패키징을 수행하기 위해 value.yaml 파일 다시 정상적으로 수정합니다.
 
 ```text
 replicas: 3
@@ -853,7 +853,7 @@ frontend:
   image: brentley/ecsdemo-frontend
 ```
 
-생성했던 helmdemo를 삭제합니다.
+생성했던 helmdemo를 삭제합니다. 아래 ChartMuseum 구성과 배포를 위해서 반드시 삭제합니다.
 
 ```text
 helm uninstall helmdemo
@@ -888,8 +888,8 @@ AWS 서비스 - S3
 정상적으로 생성되었는지 확인합니다.
 
 ```text
-whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
-2020-07-21 18:29:34 whchoi-chartmuseum
+~/environment $ aws s3 ls | grep 'chartmuseum'
+2020-11-09 13:51:11 whchoi-chartmuseum-2020-11-11
 ```
 
 ```text
@@ -937,21 +937,21 @@ whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
 이제 앞서 생성한 eksdemo helm chart 패키징합니다. 
 
 ```text
-cd ~/environment/eksdemo/
+cd ~/environment/helm-chart-demo/
 helm package ./ 
 ```
 
 출력 결과 예시
 
 ```text
-whchoi98:~/environment/eksdemo $ helm package ./
-Successfully packaged chart and saved it to: /home/ec2-user/environment/eksdemo/eksdemo-0.1.0.tgz
+~/environment/helm-chart-demo $ helm package ./ 
+Successfully packaged chart and saved it to: /home/ec2-user/environment/helm-chart-demo/eksdemo-0.1.0.tgz
 ```
 
 eksdemo heml chart가 정상적으로 패키징 되었는지 확인합니다.
 
 ```text
-whchoi98:~/environment/eksdemo $ tree
+~/environment/helm-chart-demo $ tree
 .
 ├── charts
 ├── Chart.yaml
@@ -981,7 +981,7 @@ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts
 출력결과 예제
 
 ```text
-whchoi98:~/environment/eksdemo $ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts                                                                                      
+~/environment/eksdemo $ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts                                                                                      
 2020-07-22T00:44:50.260Z        DEBUG   [10] Incoming request: /api/charts      {"reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
 2020-07-22T00:44:50.316Z        DEBUG   [10] Adding package to storage  {"package": "eksdemo-0.1.0.tgz", "reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
 2020-07-22T00:44:50.341Z        INFO    [10] Request served     {"path": "/api/charts", "comment": "", "clientIP": "127.0.0.1", "method": "POST", "statusCode": 201, "latency": "80.44638ms", "reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
@@ -991,14 +991,14 @@ whchoi98:~/environment/eksdemo $ curl --data-binary "@eksdemo-0.1.0.tgz" http://
 S3에 정상적으로 Chartmuseum이 배포되었는지 확인합니다.
 
 ```text
-aws s3 ls s3://whchoi-chartmuseum
+aws s3 ls s3://whchoi-chartmuseum-2020-11-11
 ```
 
 출력 결과 예제
 
 ```text
-whchoi98:~/environment/eksdemo $ aws s3 ls s3://whchoi-chartmuseum
-2020-07-22 00:44:51       1251 eksdemo-0.1.0.tgz
+~/environment/helm-chart-demo $ aws s3 ls s3://whchoi-chartmuseum-2020-11-11
+2020-11-09 13:58:14       1314 eksdemo-0.1.0.tgz
 ```
 
 이제 등록된 Repo를 업데이트하고, Chartmuseum 로컬 레포지토리를 검색해 봅니다.
