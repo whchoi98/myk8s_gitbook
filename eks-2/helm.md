@@ -179,9 +179,9 @@ helm list
 출력 예시
 
 ```text
-whchoi98:~/environment $ helm list 
+~/environment $ helm list 
 NAME                    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-eksworkshop-nginx       default         1               2020-07-21 15:01:26.441053601 +0000 UTC deployed        nginx-6.0.2     1.19.1     
+eksworkshop-nginx       default         1               2020-11-09 13:18:03.861525378 +0000 UTC deployed        nginx-7.1.6     1.19.4     
 ```
 
 아래 명령을 통해 배포된 내용을 확인합니다.
@@ -193,14 +193,14 @@ kubectl describe deployments.apps eksworkshop-nginx
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ kubectl describe deployments.apps eksworkshop-nginx 
+~/environment $ kubectl describe deployments.apps eksworkshop-nginx
 Name:                   eksworkshop-nginx
 Namespace:              default
-CreationTimestamp:      Tue, 21 Jul 2020 15:01:26 +0000
+CreationTimestamp:      Mon, 09 Nov 2020 13:18:04 +0000
 Labels:                 app.kubernetes.io/instance=eksworkshop-nginx
                         app.kubernetes.io/managed-by=Helm
                         app.kubernetes.io/name=nginx
-                        helm.sh/chart=nginx-6.0.2
+                        helm.sh/chart=nginx-7.1.6
 Annotations:            deployment.kubernetes.io/revision: 1
                         meta.helm.sh/release-name: eksworkshop-nginx
                         meta.helm.sh/release-namespace: default
@@ -213,15 +213,16 @@ Pod Template:
   Labels:  app.kubernetes.io/instance=eksworkshop-nginx
            app.kubernetes.io/managed-by=Helm
            app.kubernetes.io/name=nginx
-           helm.sh/chart=nginx-6.0.2
+           helm.sh/chart=nginx-7.1.6
   Containers:
    nginx:
-    Image:        docker.io/bitnami/nginx:1.19.1-debian-10-r0
-    Port:         8080/TCP
-    Host Port:    0/TCP
-    Liveness:     tcp-socket :http delay=30s timeout=5s period=10s #success=1 #failure=6
-    Readiness:    tcp-socket :http delay=5s timeout=3s period=5s #success=1 #failure=3
-    Environment:  <none>
+    Image:      docker.io/bitnami/nginx:1.19.4-debian-10-r6
+    Port:       8080/TCP
+    Host Port:  0/TCP
+    Liveness:   tcp-socket :http delay=0s timeout=5s period=10s #success=1 #failure=6
+    Readiness:  tcp-socket :http delay=5s timeout=3s period=5s #success=1 #failure=3
+    Environment:
+      BITNAMI_DEBUG:  false
     Mounts:
       /opt/bitnami/nginx/conf/server_blocks from nginx-server-block-paths (rw)
   Volumes:
@@ -235,11 +236,11 @@ Conditions:
   Available      True    MinimumReplicasAvailable
   Progressing    True    NewReplicaSetAvailable
 OldReplicaSets:  <none>
-NewReplicaSet:   eksworkshop-nginx-79bfdcd875 (1/1 replicas created)
+NewReplicaSet:   eksworkshop-nginx-547554887f (1/1 replicas created)
 Events:
-  Type    Reason             Age   From                   Message
-  ----    ------             ----  ----                   -------
-  Normal  ScalingReplicaSet  21m   deployment-controller  Scaled up replica set eksworkshop-nginx-79bfdcd875 to 1
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  2m52s  deployment-controller  Scaled up replica set eksworkshop-nginx-547554887f to 1 
 ```
 
 ### 5. Helm을 통한 nginx 삭제
@@ -275,7 +276,7 @@ helm create eksdemo
 Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성합니다.
 
 ```text
-whchoi98:~/environment/eksdemo $ tree 
+~/environment/eksdemo $ tree 
 .
 ├── charts
 ├── Chart.yaml
