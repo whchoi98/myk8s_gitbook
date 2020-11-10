@@ -302,7 +302,7 @@ NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 
 ```text
 kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
 kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_deployment.yaml 
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_service.yaml 
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_deployment.yaml
 kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_service.yaml
 kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_service.yaml
 kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_service.yaml
