@@ -598,6 +598,14 @@ kubectl -n nlb-test get service ecsdemo-crystal -o wide
 
 ```
 
+Replica를 3개로 늘려서 Service Type이 없는 경우, BackEnd에서 정상적으로 이뤄지는 지 확인합니다.
+
+```text
+kubectl -n nlb-test scale deployment ecsdemo-nodejs --replicas=3
+kubectl -n nlb-test scale deployment ecsdemo-crystal --replicas=3
+
+```
+
 ### 2. LB 서비스 제거와 NLB 서비스 배포
 
 ```text
