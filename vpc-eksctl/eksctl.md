@@ -99,16 +99,16 @@ Cluster를 생성하기 위해 20~30분 정도 시간이 소요됩니다.
 출력 결과 예시
 
 ```text
-~/environment $ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml
-[ℹ]  eksctl version 0.23.0
+~/environment $ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml 
+[ℹ]  eksctl version 0.31.0
 [ℹ]  using region ap-northeast-2
-[✔]  using existing VPC (vpc-086186d07739fc568) and subnets (private:[subnet-051b3655d99b2cf0b subnet-0e3c5d12ade472f91 subnet-0dd1d98a956bf8227] public:[subnet-0d4864467efbf04a4 subnet-0662f5c059aac8576 subnet-0253297add231a70d])
+[✔]  using existing VPC (vpc-0bdd67cbc64aba483) and subnets (private:[subnet-0cf39d70d89565812 subnet-062dad2e0fc99a677 subnet-0859b55ff38586ab1] public:[subnet-07128799309969cc4 subnet-0240b3e1a59fb4802 subnet-0ff369e1bb376c450])
 [!]  custom VPC/subnets will be used; if resulting cluster doesn't function as expected, make sure to review the configuration of VPC/subnets
-[ℹ]  nodegroup "ng1-public" will use "ami-0801b8b3cce955050" [AmazonLinux2/1.16]
+[ℹ]  nodegroup "ng1-public" will use "ami-025592e84db381916" [AmazonLinux2/1.17]
 [ℹ]  using SSH public key "/home/ec2-user/environment/eksworkshop.pub" as "eksctl-eksworkshop-nodegroup-ng1-public-02:ff:18:ce:c0:1f:0f:60:77:af:2a:a4:5a:60:d4:88" 
-[ℹ]  nodegroup "ng2-private" will use "ami-0801b8b3cce955050" [AmazonLinux2/1.16]
+[ℹ]  nodegroup "ng2-private" will use "ami-025592e84db381916" [AmazonLinux2/1.17]
 [ℹ]  using SSH public key "/home/ec2-user/environment/eksworkshop.pub" as "eksctl-eksworkshop-nodegroup-ng2-private-02:ff:18:ce:c0:1f:0f:60:77:af:2a:a4:5a:60:d4:88" 
-[ℹ]  using Kubernetes version 1.16
+[ℹ]  using Kubernetes version 1.17
 [ℹ]  creating EKS cluster "eksworkshop" in "ap-northeast-2" region with un-managed nodes
 [ℹ]  2 nodegroups (ng1-public, ng2-private) were included (based on the include/exclude rules)
 [ℹ]  will create a CloudFormation stack for cluster itself and 2 nodegroup stack(s)
@@ -127,20 +127,20 @@ Cluster를 생성하기 위해 20~30분 정도 시간이 소요됩니다.
 [✔]  saved kubeconfig as "/home/ec2-user/.kube/config"
 [ℹ]  no tasks
 [✔]  all EKS cluster resources for "eksworkshop" have been created
-[ℹ]  adding identity "arn:aws:iam::909121566064:role/eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS" to auth ConfigMap
+[ℹ]  adding identity "arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-12J9DVQEL021B" to auth ConfigMap
 [ℹ]  nodegroup "ng1-public" has 0 node(s)
 [ℹ]  waiting for at least 3 node(s) to become ready in "ng1-public"
 [ℹ]  nodegroup "ng1-public" has 3 node(s)
-[ℹ]  node "ip-10-11-31-153.ap-northeast-2.compute.internal" is ready
-[ℹ]  node "ip-10-11-53-186.ap-northeast-2.compute.internal" is ready
-[ℹ]  node "ip-10-11-69-28.ap-northeast-2.compute.internal" is ready
-[ℹ]  adding identity "arn:aws:iam::909121566064:role/eksctl-eksworkshop-nodegroup-ng2-NodeInstanceRole-EHKBO7F93TJF" to auth ConfigMap
+[ℹ]  node "ip-10-11-4-228.ap-northeast-2.compute.internal" is ready
+[ℹ]  node "ip-10-11-54-141.ap-northeast-2.compute.internal" is ready
+[ℹ]  node "ip-10-11-65-66.ap-northeast-2.compute.internal" is ready
+[ℹ]  adding identity "arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-ng2-NodeInstanceRole-1LQ0HMEEW14WW" to auth ConfigMap
 [ℹ]  nodegroup "ng2-private" has 0 node(s)
 [ℹ]  waiting for at least 3 node(s) to become ready in "ng2-private"
 [ℹ]  nodegroup "ng2-private" has 3 node(s)
-[ℹ]  node "ip-10-11-114-132.ap-northeast-2.compute.internal" is ready
-[ℹ]  node "ip-10-11-146-170.ap-northeast-2.compute.internal" is ready
-[ℹ]  node "ip-10-11-189-67.ap-northeast-2.compute.internal" is ready
+[ℹ]  node "ip-10-11-114-209.ap-northeast-2.compute.internal" is ready
+[ℹ]  node "ip-10-11-154-48.ap-northeast-2.compute.internal" is ready
+[ℹ]  node "ip-10-11-191-152.ap-northeast-2.compute.internal" is ready
 [ℹ]  kubectl command should work with "/home/ec2-user/.kube/config", try 'kubectl get nodes'
 [✔]  EKS cluster "eksworkshop" in "ap-northeast-2" region is ready
 ```
@@ -156,7 +156,7 @@ kubectl get nodes
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ kubectl get nodes
+~/environment $ kubectl get nodes
 NAME                                               STATUS   ROLES    AGE    VERSION
 ip-10-11-114-132.ap-northeast-2.compute.internal   Ready    <none>   2d1h   v1.16.12-eks-904af05
 ip-10-11-146-170.ap-northeast-2.compute.internal   Ready    <none>   2d1h   v1.16.12-eks-904af05
@@ -164,14 +164,6 @@ ip-10-11-189-67.ap-northeast-2.compute.internal    Ready    <none>   2d1h   v1.1
 ip-10-11-31-153.ap-northeast-2.compute.internal    Ready    <none>   2d1h   v1.16.12-eks-904af05
 ip-10-11-53-186.ap-northeast-2.compute.internal    Ready    <none>   2d1h   v1.16.12-eks-904af05
 ip-10-11-69-28.ap-northeast-2.compute.internal     Ready    <none>   2d1h   v1.16.12-eks-904af05
-```
-
-eksworkshop에서 사용될 Stack Name, Work Node Role Name을 환경변수에 저장해 둡니다.
-
-```text
-STACK_NAME=$(eksctl get nodegroup --cluster eksworkshop -o json | jq -r '.[].StackName')
-#ROLE_NAME=$(aws cloudformation describe-stack-resources --stack-name $STACK_NAME | jq -r '.StackResources[] | select(.ResourceType=="AWS::IAM::Role") | .PhysicalResourceId')
-echo "export ROLE_NAME=${ROLE_NAME}" | tee -a ~/.bash_profile
 ```
 
 * 생성된 VPC와 Subnet, Internet Gateway, NAT Gateway, Route Table등을 확인해 봅니다.
