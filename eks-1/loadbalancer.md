@@ -85,10 +85,10 @@ spec:
 어플리케이션을 배포하고, service를 구성합니다.
 
 ```text
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/clb_deployment.yaml 
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/clb_service.yaml 
-kubectl apply -f ./ecsdemo-crystal/kubernetes/clb_deployment.yaml
-kubectl apply -f ./ecsdemo-crystal/kubernetes/clb_service.yaml 
+kubectl apply -f ./ecsdemo-nodejs/kubkubernetes/deployment.yaml 
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/service.yaml 
+kubectl apply -f ./ecsdemo-crystal/kubernetes/deployment.yaml
+kubectl apply -f ./ecsdemo-crystal/kubernetes/service.yaml 
 kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
 kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_service.yaml
 
