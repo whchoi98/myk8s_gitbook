@@ -272,7 +272,7 @@ ecsdemo-frontend   LoadBalancer   172.20.37.78   afd75bf8c69c04c3aacf6cfbdefe1c4
 
 출력결과 예시
 
-![](../.gitbook/assets/image%20%28150%29.png)
+![](../.gitbook/assets/image%20%28151%29.png)
 
 앞서 설치해 둔 K9s 유틸리티를 통해서 , 현재 배포된 Pod들의 상태를 확인해 봅니다.
 
@@ -318,7 +318,7 @@ kubectl -n clb-test scale deployment ecsdemo-crystal --replicas=3
 
 ```
 
-![](../.gitbook/assets/image%20%28152%29.png)
+![](../.gitbook/assets/image%20%28153%29.png)
 
 k9s 를 통해 Pod의 구성을 확인합니다.
 
@@ -326,7 +326,7 @@ k9s 를 통해 Pod의 구성을 확인합니다.
 LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위해서 Cloud9 에서 Terminal을 하나 더 열고 K9s를 실행 시켜 두는 것이 좋습니다.
 {% endhint %}
 
-![](../.gitbook/assets/image%20%28153%29.png)
+![](../.gitbook/assets/image%20%28155%29.png)
 
 ### 5. Loadbalancer 확인.
 
@@ -606,37 +606,15 @@ kubectl -n nlb-test scale deployment ecsdemo-crystal --replicas=3
 
 ```
 
-### 2. LB 서비스 제거와 NLB 서비스 배포
+![](../.gitbook/assets/image%20%28156%29.png)
 
-```text
-kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
-kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_deployment.yaml 
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_deployment.yaml
-kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_service.yaml
-kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_service.yaml
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_service.yaml
+k9s 를 통해 Pod의 구성을 확인합니다.
 
-```
+![](../.gitbook/assets/image%20%28154%29.png)
 
-새로운 NLB DNS 주소를 kubectl 또는 EC2 대시보드에서 로드밸런서를 확인합니다.
-
-```text
-kubectl get service ecsdemo-frontend -o wide
-```
-
-출력 결과 예시
-
-```text
-whchoi98:~/environment $ kubectl get service ecsdemo-frontend -o wide
-NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                                                                          PORT(S)        AGE   SELECTOR
-ecsdemo-frontend   LoadBalancer   172.20.107.192   ab5d562f4b56a4377a21c0ea77b2012b-ce7a720d51b7c7fa.elb.ap-northeast-2.amazonaws.com   80:30712/TCP   42s   app=ecsdemo-frontend
-```
-
-![](../.gitbook/assets/image%20%2839%29.png)
+### 
 
 
 
-웹브라우져를 통해서 NLB의 DNS 주소를 입력하면 실시간으로 로드밸런싱이 되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2811%29.png)
 
