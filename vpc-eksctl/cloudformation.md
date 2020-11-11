@@ -34,7 +34,7 @@ AWS 서비스 - Cloudformation 을 선택합니다.
 
 ![](../.gitbook/assets/image%20%2841%29.png)
 
-
+앞서 다운로드 받은 "EKSVPC.yml" 파일을 업로드 합니다.
 
 ![](../.gitbook/assets/image%20%2822%29.png)
 
