@@ -272,7 +272,7 @@ ecsdemo-frontend   LoadBalancer   172.20.37.78   afd75bf8c69c04c3aacf6cfbdefe1c4
 
 출력결과 예시
 
-![](../.gitbook/assets/image%20%28149%29.png)
+![](../.gitbook/assets/image%20%28150%29.png)
 
 앞서 설치해 둔 K9s 유틸리티를 통해서 , 현재 배포된 Pod들의 상태를 확인해 봅니다.
 
@@ -318,7 +318,7 @@ kubectl -n clb-test scale deployment ecsdemo-crystal --replicas=3
 
 ```
 
-![](../.gitbook/assets/image%20%28151%29.png)
+![](../.gitbook/assets/image%20%28152%29.png)
 
 k9s 를 통해 Pod의 구성을 확인합니다.
 
@@ -326,7 +326,7 @@ k9s 를 통해 Pod의 구성을 확인합니다.
 LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위해서 Cloud9 에서 Terminal을 하나 더 열고 K9s를 실행 시켜 두는 것이 좋습니다.
 {% endhint %}
 
-![](../.gitbook/assets/image%20%28152%29.png)
+![](../.gitbook/assets/image%20%28153%29.png)
 
 ### 5. Loadbalancer 확인.
 
@@ -342,7 +342,7 @@ service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Defa
 
 ## NLB기반 Loadbalancer 서비스 구성.
 
-### 1.NLB Service Type 기반 service yaml 구성.
+### 1.배포용 yaml 복제
 
 아래와 같이 NLB-service.yaml 를 각 App별로 생성하여 구성합니다.
 
@@ -357,7 +357,7 @@ service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Defa
   
 ```
 
-2.Yaml 변경
+### 2.Yaml 변경
 
 NLB 구성을 위해 복사한 Yaml 파일을 변경합니다.
 
@@ -427,6 +427,78 @@ spec:
       targetPort: 3000
 ```
 
+ecsdemo-nodejs nlb\_deployment.yaml
+
+```text
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecsdemo-nodejs
+  labels:
+    app: ecsdemo-nodejs
+#name space change 
+  namespace: nlb-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecsdemo-nodejs
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ecsdemo-nodejs
+    spec:
+      containers:
+      - image: brentley/ecsdemo-nodejs:latest
+        imagePullPolicy: Always
+        name: ecsdemo-nodejs
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "backend-workloads"
+```
+
+ecsdemo-nodejs nlb\_service.yaml
+
+```text
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsdemo-nodejs
+#name space change 
+  namespace: nlb-test
+#add annotations for Internal nlb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+spec:
+  selector:
+    app: ecsdemo-nodejs
+#type LoadBalancer
+  type: LoadBalancer
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+
+
+```
+
+### 3.FrontEnd 어플리케이션 배포
+
+새로운 namespace를 구성합니다.
+
+```text
+kubectl create namespace nlb-test
+```
+
 어플리케이션을 배포하고, service를 구성합니다.
 
 ```text
@@ -445,32 +517,19 @@ kubectl -n nlb-test get service ecsdemo-frontend -o wide
 
 ```
 
-
-
-각 APP에 생성된 NLB-service.yaml을 아래와 같이 annotaions:를 추가하여 수정합니다.
+Replica를 3개로 늘려서 LB가 FrontEnd에서 정상적으로 이뤄지는 지 확인합니다.
 
 ```text
-apiVersion: v1
-kind: Service
-metadata:
-  name: ecsdemo-frontend
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-이하 생략
+kubectl -n clb-test scale deployment ecsdemo-frontend --replicas=3
 ```
 
-예 - ecsdemo-frontend - nlb\_deployment.yaml nodegroup-type: “frontend-workloads”를 지정해서 Application을 배포할 것입니다. git에서 복제한 nlb\_deployment yaml에 아래 nodeSelector를 선언합니다.
-
-```text
-      nodeSelector:
-        nodegroup-type: "frontend-workloads"
-```
-
-NLB 구성은 IP 기반과 인스턴스 기반으로 구성이 가능합니다.
+{% hint style="info" %}
+NLB를 구성하기 위해서는 annotation을 통한 Labeling이 필요합니다. 아래 내용을 확인하고 목적에 맞게 설정합니다. 
+{% endhint %}
 
 ```text
 #인스턴스 기반 외부 NLB
-service.beta.kubernetes.io/aws-load-balancer-type: nlb
+service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 
 #인스턴스 기반 내부 NLB
 service.beta.kubernetes.io/aws-load-balancer-internal: "true"
@@ -495,15 +554,47 @@ NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 
 | :--- | :--- |
 | `kubernetes.io/role/internal-elb` | `1` |
 
+아래 출력되는 결과의 EXTERNAL-IP를 복사해서 브라우져 창에서 실행해 봅니다.
+
 ```text
-kubectl create namespace nlb-test
+kubectl -n nlb-test get service ecsdemo-frontend -o wide                                                           
+NAME               TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)        AGE   SELECTOR
+ecsdemo-frontend   LoadBalancer   172.20.42.31   a7400b4751cf74f8e9cf9acb0c22c8b7-674596f9c43ee0e0.elb.ap-northeast-2.amazonaws.com   80:32228/TCP   17m   app=ecsdemo-frontend
 ```
 
+![](../.gitbook/assets/image%20%28148%29.png)
 
+앞서 설치해 둔 K9s 유틸리티를 통해서 , 현재 배포된 Pod들의 상태를 확인해 봅니다.
 
 ```text
-kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
-kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_service.yaml
+k9s -A
+
+```
+
+### 4.BackEnd 어플리케이션 배포
+
+Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어플리케이션들은 Private Subnet에 배포할 것입니다. 이 구성은 앞서 이미 Yaml 파일의 Deployment에서 nodeSelector로 지정하였습니다.
+
+```text
+#ecsdemo nodejs nlb depolyment apply
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_deployment.yaml
+#ecsdemo nodejs nlb service apply
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_service.yaml
+
+#ecsdemo crystal nlb depolyment apply
+kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_deployment.yaml
+#ecsdemo crystal nlb service apply
+kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_service.yaml 
+
+```
+
+정상적으로 Pod가 배포되었는지 아래 명령을 통해서 확인해 봅니다.
+
+```text
+kubectl -n nlb-test get deployments ecsdemo-nodejs -o wide
+kubectl -n nlb-test get service ecsdemo-nodejs -o wide 
+kubectl -n nlb-test get deployments ecsdemo-crystal -o wide
+kubectl -n nlb-test get service ecsdemo-crystal -o wide 
 
 ```
 
