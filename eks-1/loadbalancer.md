@@ -38,9 +38,9 @@ git clone https://github.com/brentley/ecsdemo-crystal.git
 아래와 같이 새로운 deployment, service를 복사합니다.
 
 ```text
-  cd ~/environment/
-  cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
-  cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/clb_service.yaml
+ cd ~/environment/
+ cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
+ cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/clb_service.yaml
  
 ```
 
