@@ -41,6 +41,10 @@ git clone https://github.com/brentley/ecsdemo-crystal.git
  cd ~/environment/
  cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
  cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/clb_service.yaml
+ cp ./ecsdemo-crystal/kubernetes/deployment.yaml ./ecsdemo-crystal/kubernetes/clb_deployment.yaml
+ cp ./ecsdemo-crystal/kubernetes/service.yaml ./ecsdemo-crystal/kubernetes/clb_service.yaml
+ cp ./ecsdemo-nodejs/kubernetes/deployment.yaml ./ecsdemo-nodejs/kubernetes/clb_deployment.yaml
+ cp ./ecsdemo-nodejs/kubernetes/service.yaml ./ecsdemo-nodejs/kubernetes/clb_service.yaml
  
 ```
 
@@ -82,21 +86,29 @@ spec:
 
 ### 3. 어플리케이션 배포와 서비스 구성.
 
+기본 Loadbalacer 구성을 위해 새로운 Namespace를 생성합니다.
+
+```text
+kubectl create namespace clb-test
+
+```
+
 어플리케이션을 배포하고, service를 구성합니다.
 
 ```text
+kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
+kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_service.yaml
 kubectl apply -f ./ecsdemo-nodejs/kubkubernetes/deployment.yaml 
 kubectl apply -f ./ecsdemo-nodejs/kubernetes/service.yaml 
 kubectl apply -f ./ecsdemo-crystal/kubernetes/deployment.yaml
 kubectl apply -f ./ecsdemo-crystal/kubernetes/service.yaml 
-kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
-kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_service.yaml
 
 ```
 
 정상적으로 Pod가 배포되었는지 아래 명령을 통해서 확인해 봅니다.
 
 ```text
+kubectl get deployment ecsdemo-frontend -o wide
 kubectl get deployment ecsdemo-crystal  -o wide
 kubectl get deployment ecsdemo-nodejs  -o wide
 kubectl get service ecsdemo-frontend -o wide
