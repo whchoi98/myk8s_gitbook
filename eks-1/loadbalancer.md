@@ -40,63 +40,11 @@ git clone https://github.com/brentley/ecsdemo-crystal.git
 ```text
   cd ~/environment/
   cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
-  cp ./ecsdemo-crystal/kubernetes/deployment.yaml ./ecsdemo-crystal/kubernetes/clb_deployment.yaml
-  cp ./ecsdemo-nodejs/kubernetes/deployment.yaml ./ecsdemo-nodejs/kubernetes/clb_deployment.yaml
   cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/clb_service.yaml
-  cp ./ecsdemo-crystal/kubernetes/service.yaml ./ecsdemo-crystal/kubernetes/clb_service.yaml
-  cp ./ecsdemo-nodejs/kubernetes/service.yaml ./ecsdemo-nodejs/kubernetes/clb_service.yaml
-  
+ 
 ```
 
 ### 2. 배포용 Node 선택.
-
-앞서 랩을 진행과정에서 eksctl을 통해 배포한 , yaml 파일에는 Worker Node에 Label을 설정하였습니다.
-
-```text
-# A simple example of ClusterConfig object:
----
-apiVersion: eksctl.io/v1alpha5
-kind: ClusterConfig
-
-
-생략.
-
-nodeGroups:
-  - name: ng1-public
-    instanceType: m5.xlarge
-    desiredCapacity: 3
-    minSize: 3
-    maxSize: 9
-    volumeSize: 100
-    volumeType: gp2 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "frontend-workloads"
-생략
-  - name: ng2-private
-    instanceType: m5.xlarge
-    desiredCapacity: 3
-    privateNetworking: true
-    minSize: 3
-    maxSize: 9
-    volumeSize: 100
-    volumeType: gp2 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "backend-workloads"
-이하 생략
-```
-
-3개의 복제된 clb\_depolyment.yaml 파일에 아래내용을 추가합니다. 이것은 Worker Node중에 Public Subnet에 위치한 Workernode에 App을 배포하는 것입니다.
-
-추가하게 되면 아래와 같은 배포 yaml을 가지게 됩니다. 
-
-예 - ecsdemo-frontend - clb\_deployment.yaml nodegroup-type: “frontend-workloads”를 지정해서 Application을 배포할 것입니다. git에서 복제한 clb\_deployment yaml에 아래 nodeSelector를 선언합니다.
-
-```text
-      nodeSelector:
-        nodegroup-type: "frontend-workloads"
-```
 
 clb\_deployment.yaml은 다음과 같이 구성됩니다.
 
@@ -130,8 +78,6 @@ spec:
           ports:
             - containerPort: 3000
               protocol: TCP
-      nodeSelector:
-        nodegroup-type: "frontend-workloads"
 ```
 
 ### 3. 어플리케이션 배포와 서비스 구성.
