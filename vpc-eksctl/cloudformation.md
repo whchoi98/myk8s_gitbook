@@ -12,14 +12,21 @@ AWS CloudFormation에서는 클라우드 환경에서 AWS 및 타사 애플리�
 
 ### 1.VPC yaml 다운로드
 
-eksworkshop에서 사용할 vpc yaml을 로컬 PC로 다운로드 받습니다.
+eksworkshop에서 사용할 다양한 yaml file을 git에서 내려받습니다. Cloud9에서 아래와 같이 실행합니다.
 
 ```text
-https://github.com/whchoi98/myeks/blob/master/EKSVPC.yml
+cd ~/environment
+git clone https://github.com/whchoi98/myeks
 
 ```
 
+
+
 ### 2. Stack 생성
+
+Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC.yml 파일을 로컬 PC에 다운로드 합니다. EKS 환경 구성을 위한 VPC 구성용 Cloudformation 입니다.
+
+![](../.gitbook/assets/image%20%28147%29.png)
 
 AWS 서비스 - Cloudformation 을 선택합니다. 
 
@@ -27,7 +34,7 @@ AWS 서비스 - Cloudformation 을 선택합니다.
 
 ![](../.gitbook/assets/image%20%2841%29.png)
 
-앞서 다운로드 받은 EKSVPC.yml 파일을 선택해서 업로드합니다.
+
 
 ![](../.gitbook/assets/image%20%2822%29.png)
 
