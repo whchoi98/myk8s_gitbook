@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-11'
+description: 'update : 2020-11-12'
 ---
 
 # Cloud9 IDE 환경 구성
@@ -261,5 +261,76 @@ kubectl krew install tree
 
 ```
 
+## **EKS 환경 구성 요약**
 
+1.AWS Cloud 9 인스턴스 활성화 및 콘솔 접속
+
+2.AWS CLI 2.0 업그레이드 및 자동완성 설치
+
+```text
+#AWS CLI를 2.0으로 업그레이드합니다.
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+#AWS CLI 자동완성을 설치합니다.
+which aws_completer
+export PATH=/usr/local/bin:$PATH
+source ~/.bash_profile
+complete -C '/usr/local/bin/aws_completer' aws
+
+```
+
+3. Cloud9에 Kubectl 설치 \(1.17 기준\)
+
+```text
+# EKS 1.17.11 기반 설치
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+
+# Kubectl 자동완성 설치
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+
+```
+
+4. 기타 유틸리티 설치
+
+```text
+#GNU gettext,jq,bash 자동완성, moreutil 설치
+sudo yum -y install jq gettext bash-completion moreutils tree
+
+#yq 구성
+for command in kubectl jq envsubst aws
+  do
+    which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
+  done
+  
+#K9s 설치
+sudo yum groupinstall -y 'Development Tools' && sudo yum install curl file git ruby which
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>~/.bash_profile
+eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+brew install derailed/k9s/k9s
+
+#Kube krew 설치
+(
+  set -x; cd "$(mktemp -d)" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" &&
+  tar zxvf krew.tar.gz &&
+  KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" &&
+  "$KREW" install --manifest=krew.yaml --archive=krew.tar.gz &&
+  "$KREW" update
+)
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+#kubectx 설치
+kubectl krew install ctx
+
+#kubetree 설치
+kubectl krew install tree
+
+```
 

@@ -1,3 +1,7 @@
+---
+description: 'Update : 2020-11-11'
+---
+
 # Health Check 구성
 
 ## 컨테이너 프로브 소개
@@ -288,14 +292,14 @@ kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas
 
 ```text
 # pod readiness-deployment-589b548d5-xnmcm가 정상작동하지 않습니다.
-whchoi98:~/environment/healthchecks $ kubectl -n healthchecks get pods -l app=readiness-deployment
+~/environment/healthchecks $ kubectl -n healthchecks get pods -l app=readiness-deployment
 NAME                                   READY   STATUS    RESTARTS   AGE
 readiness-deployment-589b548d5-qhw6k   1/1     Running   0          9m52s
 readiness-deployment-589b548d5-xbj47   1/1     Running   0          9m52s
 readiness-deployment-589b548d5-xnmcm   0/1     Running   0          9m52s
 
 #Replicas에서 1개의 Pod가 가용하지 않음을 확인 할 수 있습니다.
-whchoi98:~/environment/healthchecks $ kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
+~/environment/healthchecks $ kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
 Replicas:               3 desired | 3 updated | 3 total | 2 available | 1 unavailable
 ```
 
