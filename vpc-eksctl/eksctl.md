@@ -30,18 +30,19 @@ eksctl version
 ```text
 aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId'
 aws ec2 describe-subnets  --filters "Name=cidr-block,Values=10.11.*" --query 'Subnets[*].[CidrBlock,SubnetId,AvailabilityZone]' --output table
+
 ```
 
 아래는 예제입니다.
 
 ```text
-Public subnet 01 - subnet-0e85e68a85894cf50
-Public subnet 02 - subnet-0b8a862c807869d6b
-Public subnet 03 - subnet-019d103bacc5dcb21
-Private subnet 01 - subnet-0eb13d8b433c106a2
-Private subnet 02 - subnet-0b188593b2d1755ce
-Private subnet 03 - subnet-0a7fb1ebc6b148035
-VPC ID - vpc-099a900fe8dde7319
+VPC ID - vpc-0bdd67cbc64aba483
+Public subnet 01 - subnet-07128799309969cc4
+Public subnet 02 - subnet-0240b3e1a59fb4802
+Public subnet 03 - subnet-0ff369e1bb376c450
+Private subnet 01 - subnet-062dad2e0fc99a677
+Private subnet 02 - subnet-0859b55ff38586ab1
+Private subnet 03 - subnet-0cf39d70d89565812
 ```
 
 저장해둔 Region 정보와 master\_arn을 확인합니다.
@@ -68,19 +69,19 @@ metadata:
   region: ap-northeast-2
 
 vpc: 
-  id: vpc-0928469124a2c6d88
+  id: vpc-0bdd67cbc64aba483
   subnets:
     public:
-      ap-northeast-2a: { id: subnet-0df111a4f39d322b4}
-      ap-northeast-2b: { id: subnet-0f67cf423d8478715}
-      ap-northeast-2c: { id: subnet-0ad86676bb6ffc1e7}
+      ap-northeast-2a: { id: subnet-07128799309969cc4}
+      ap-northeast-2b: { id: subnet-0240b3e1a59fb4802}
+      ap-northeast-2c: { id: subnet-0ff369e1bb376c450}
     private:
-      ap-northeast-2a: { id: subnet-015d8f5faa0881bba}
-      ap-northeast-2b: { id: subnet-0b8a4d9193391cd18}
-      ap-northeast-2c: { id: subnet-0d33baddfa2a54a6d}
+      ap-northeast-2a: { id: subnet-062dad2e0fc99a677}
+      ap-northeast-2b: { id: subnet-0859b55ff38586ab1}
+      ap-northeast-2c: { id: subnet-0cf39d70d89565812}
 
 secretsEncryption:
-  keyARN: arn:aws:kms:ap-northeast-2:xxxxxxxx:key/xxxxxxxx
+  keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/6ba77a10-cf0b-4af8-b7b7-54bb5ea2f5c9
 ```
 
 ### 4. cluster 생성
@@ -98,7 +99,7 @@ Cluster를 생성하기 위해 20~30분 정도 시간이 소요됩니다.
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml
+~/environment $ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml
 [ℹ]  eksctl version 0.23.0
 [ℹ]  using region ap-northeast-2
 [✔]  using existing VPC (vpc-086186d07739fc568) and subnets (private:[subnet-051b3655d99b2cf0b subnet-0e3c5d12ade472f91 subnet-0dd1d98a956bf8227] public:[subnet-0d4864467efbf04a4 subnet-0662f5c059aac8576 subnet-0253297add231a70d])
@@ -177,11 +178,9 @@ echo "export ROLE_NAME=${ROLE_NAME}" | tee -a ~/.bash_profile
 * 생성된 EC2 Worker Node들도 확인해 봅니다.
 * EKS와 eksctl을 통해 생생된 Cloudformation도 확인해 봅니다.
 
+### 6.eksctl yaml code 참조
 
-
-### eksctl yaml code 참조
-
-eksctl 배포를 위한 Cluster Code
+eksctl 배포를 위한 EKS Cluster yaml 파일
 
 ```text
 # A simple example of ClusterConfig object:
@@ -261,4 +260,6 @@ cloudWatch:
 
 
 ```
+
+
 
