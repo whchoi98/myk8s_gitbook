@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-07-18'
+description: 'update : 2020-11-12'
 ---
 
 # 인증/자격증명 및 환경 구성
