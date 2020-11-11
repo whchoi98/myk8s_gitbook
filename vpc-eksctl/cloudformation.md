@@ -60,3 +60,25 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 ![](../.gitbook/assets/image%20%2838%29.png)
 
+## Cloudformation 기반 VPC 구성 요약
+
+#### 1.EKS workshop을 위한 File Download
+
+```text
+cd ~/environment
+git clone https://github.com/whchoi98/myeks
+
+```
+
+#### 2. Cloudformation 기반 배포
+
+**`AWS 서비스 - Cloudformation`**
+
+**`스택생성 - 새 리소스 사용`**
+
+**`스택생성 - 템플릿 파일 업로드`**
+
+**`파일선택 - EKSVPC.yml 선택`**
+
+**`출력정보 확인`**
+
