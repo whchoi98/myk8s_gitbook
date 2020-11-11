@@ -48,9 +48,73 @@ git clone https://github.com/brentley/ecsdemo-crystal.git
  
 ```
 
-### 2. 배포용 Node 선택.
+### 2. Yaml 변경
 
-clb\_deployment.yaml은 다음과 같이 구성됩니다.
+ecsdemo-frontend clb\_deployment.yaml은 다음과 같이 구성됩니다.
+
+```text
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecsdemo-frontend
+  labels:
+    app: ecsdemo-frontend
+#name space change 
+  namespace: clb-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecsdemo-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ecsdemo-frontend
+    spec:
+      containers:
+      - image: brentley/ecsdemo-frontend:latest
+        imagePullPolicy: Always
+        name: ecsdemo-frontend
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+#Container URL change.
+        - name: CRYSTAL_URL
+          value: "http://ecsdemo-crystal.clb-test.svc.cluster.local/crystal"
+        - name: NODEJS_URL
+          value: "http://ecsdemo-nodejs.clb-test.svc.cluster.local/"
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "frontend-workloads"
+```
+
+ecsdemo-frontend clb\_service.yaml은 다음과 같이 구성됩니다.
+
+```text
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsdemo-frontend
+#name space change 
+  namespace: clb-test
+spec:
+  selector:
+    app: ecsdemo-frontend
+#Service Type change
+  type: LoadBalancer
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+```
+
+ecsdemo-crystal clb\_deployment.yaml은 다음과 같이 구성됩니다.
 
 ```text
 apiVersion: apps/v1
@@ -59,7 +123,8 @@ metadata:
   name: ecsdemo-crystal
   labels:
     app: ecsdemo-crystal
-  namespace: default
+#name space change 
+  namespace: clb-test
 spec:
   replicas: 1
   selector:
@@ -76,15 +141,94 @@ spec:
         app: ecsdemo-crystal
     spec:
       containers:
-        - image: 'brentley/ecsdemo-crystal:latest'
-          imagePullPolicy: Always
-          name: ecsdemo-crystal
-          ports:
-            - containerPort: 3000
-              protocol: TCP
+      - image: brentley/ecsdemo-crystal:latest
+        imagePullPolicy: Always
+        name: ecsdemo-crystal
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "backend-workloads"
+
 ```
 
-### 3. 어플리케이션 배포와 서비스 구성.
+ecsdemo-crystal clb\_service.yaml은 다음과 같이 구성됩니다.
+
+```text
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsdemo-crystal
+#name space change 
+  namespace: clb-test
+spec:
+  selector:
+    app: ecsdemo-crystal
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+```
+
+ecsdemo-nodejs clb\_deployment.yaml은 다음과 같이 구성됩니다.
+
+```text
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecsdemo-nodejs
+  labels:
+    app: ecsdemo-nodejs
+#name space change 
+  namespace: clb-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecsdemo-nodejs
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ecsdemo-nodejs
+    spec:
+      containers:
+      - image: brentley/ecsdemo-nodejs:latest
+        imagePullPolicy: Always
+        name: ecsdemo-nodejs
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "backend-workloads"
+```
+
+ecsdemo-nodejs clb\_service.yaml은 다음과 같이 구성됩니다.
+
+```text
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsdemo-nodejs
+#name space change 
+  namespace: clb-test
+spec:
+  selector:
+    app: ecsdemo-nodejs
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+
+```
+
+### 3. FrontEnd 어플리케이션 배포와 서비스 구성.
 
 기본 Loadbalacer 구성을 위해 새로운 Namespace를 생성합니다.
 
@@ -96,83 +240,93 @@ kubectl create namespace clb-test
 어플리케이션을 배포하고, service를 구성합니다.
 
 ```text
+#ecsdemo frontend clb depolyment apply
 kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
+#ecsdemo frontend clb service apply
 kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_service.yaml
-kubectl apply -f ./ecsdemo-nodejs/kubkubernetes/deployment.yaml 
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/service.yaml 
-kubectl apply -f ./ecsdemo-crystal/kubernetes/deployment.yaml
-kubectl apply -f ./ecsdemo-crystal/kubernetes/service.yaml 
 
 ```
 
 정상적으로 Pod가 배포되었는지 아래 명령을 통해서 확인해 봅니다.
 
 ```text
-kubectl get deployment ecsdemo-frontend -o wide
-kubectl get deployment ecsdemo-crystal  -o wide
-kubectl get deployment ecsdemo-nodejs  -o wide
-kubectl get service ecsdemo-frontend -o wide
+kubectl -n clb-test get deployments ecsdemo-frontend -o wide
+kubectl -n clb-test get service ecsdemo-frontend -o wide 
 
+```
+
+Replica를 3개로 늘려서 LB가 FrontEnd에서 정상적으로 이뤄지는 지 확인합니다.
+
+```text
+kubectl -n clb-test scale deployment ecsdemo-frontend --replicas=3
+
+```
+
+아래 출력되는 결과의 EXTERNAL-IP를 복사해서 브라우져 창에서 실행해 봅니다.
+
+```text
+kubectl -n clb-test get service ecsdemo-frontend -o wide                                                           
+NAME               TYPE           CLUSTER-IP     EXTERNAL-IP                                                                   PORT(S)        AGE     SELECTOR
+ecsdemo-frontend   LoadBalancer   172.20.37.78   afd75bf8c69c04c3aacf6cfbdefe1c4f-884593752.ap-northeast-2.elb.amazonaws.com   80:31380/TCP   5m45s   app=ecsdemo-frontend
 ```
 
 출력결과 예시
 
-```text
-whchoi98:~/environment $ kubectl get deployment ecsdemo-crystal  -o wide
-NAME              READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS        IMAGES                            SELECTOR
-ecsdemo-crystal   1/1     1            1           6m52s   ecsdemo-crystal   brentley/ecsdemo-crystal:latest   app=ecsdemo-crystal
-whchoi98:~/environment $ kubectl get deployment ecsdemo-nodejs  -o wide                                                                                                                        
-NAME             READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS       IMAGES                           SELECTOR
-ecsdemo-nodejs   1/1     1            1           7m17s   ecsdemo-nodejs   brentley/ecsdemo-nodejs:latest   app=ecsdemo-nodejs
-whchoi98:~/environment $ kubectl get service ecsdemo-frontend -o wide
-NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                                                                    PORT(S)        AGE     SELECTOR
-ecsdemo-frontend   LoadBalancer   172.20.222.76   a4082a6b75ef24b608a0a6705a2ca35a-1509938170.ap-northeast-2.elb.amazonaws.com   80:30547/TCP   3m39s   app=ecsdemo-frontend
-```
+![](../.gitbook/assets/image%20%28148%29.png)
 
-### 4. Replicas 구성
-
-3개 이상의 Replica를 구성하여, Loadbalancer가 정상적으로 동작하는 지 확인합니다.
+앞서 설치해 둔 K9s 유틸리티를 통해서 , 현재 배포된 Pod들의 상태를 확인해 봅니다.
 
 ```text
-kubectl scale deployment ecsdemo-frontend --replicas=3
-kubectl scale deployment ecsdemo-nodejs --replicas=3
-kubectl scale deployment ecsdemo-crystal --replicas=3
-```
-
-정상적으로 배포되었는지 확인합니다.
-
-```text
-kubectl get deployment ecsdemo-nodejs  -o wide
-kubectl get deployment ecsdemo-crystal  -o wide
-kubectl get deployment ecsdemo-frontend  -o wide
+k9s -A
 
 ```
 
-출력 결과 예시
+
+
+### 4. BackEnd 어플리케이션 배포
+
+Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어플리케이션들은 Private Subnet에 배포할 것입니다. 이 구성은 앞서 이미 Yaml 파일의 Deployment에서 nodeSelector로 지정하였습니다.
 
 ```text
-whchoi98:~/environment $ kubectl get deployment ecsdemo-nodejs  -o wide                                                                                                                
-NAME             READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS       IMAGES                           SELECTOR
-ecsdemo-nodejs   3/3     3            3           14m   ecsdemo-nodejs   brentley/ecsdemo-nodejs:latest   app=ecsdemo-nodejs
-whchoi98:~/environment $ kubectl get deployment ecsdemo-crystal  -o wide                                                                                                                       
-NAME              READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS        IMAGES                            SELECTOR
-ecsdemo-crystal   3/3     3            3           14m   ecsdemo-crystal   brentley/ecsdemo-crystal:latest   app=ecsdemo-crystal
-whchoi98:~/environment $ kubectl get deployment ecsdemo-frontend  -o wide                                                                                                                      
-NAME               READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS         IMAGES                             SELECTOR
-ecsdemo-frontend   3/3     3            3           13m   ecsdemo-frontend   brentley/ecsdemo-frontend:latest   app=ecsdemo-frontend
+#ecsdemo nodejs clb depolyment apply
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/clb_deployment.yaml
+#ecsdemo nodejs clb service apply
+kubectl apply -f ./ecsdemo-nodejs/kubernetes/clb_service.yaml
+
+#ecsdemo crystal clb depolyment apply
+kubectl apply -f ./ecsdemo-crystal/kubernetes/clb_deployment.yaml
+#ecsdemo crystal clb service apply
+kubectl apply -f ./ecsdemo-crystal/kubernetes/clb_service.yaml 
+
 ```
+
+정상적으로 Pod가 배포되었는지 아래 명령을 통해서 확인해 봅니다.
+
+```text
+kubectl -n clb-test get deployments ecsdemo-nodejs -o wide
+kubectl -n clb-test get service ecsdemo-nodejs -o wide 
+kubectl -n clb-test get deployments ecsdemo-crystal -o wide
+kubectl -n clb-test get service ecsdemo-crystal -o wide 
+
+```
+
+Replica를 3개로 늘려서 Service Type이 없는 경우, BackEnd에서 정상적으로 이뤄지는 지 확인합니다.
+
+```text
+kubectl -n clb-test scale deployment ecsdemo-nodejs --replicas=3
+kubectl -n clb-test scale deployment ecsdemo-crystal --replicas=3
+
+```
+
+![](../.gitbook/assets/image%20%28150%29.png)
 
 k9s 를 통해 Pod의 구성을 확인합니다.
-
-```text
-k9s
-```
 
 {% hint style="info" %}
 LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위해서 Cloud9 에서 Terminal을 하나 더 열고 K9s를 실행 시켜 두는 것이 좋습니다.
 {% endhint %}
 
-![](../.gitbook/assets/image%20%2813%29.png)
+![](../.gitbook/assets/image%20%28151%29.png)
 
 ### 5. Loadbalancer 확인.
 
@@ -183,12 +337,10 @@ CLB의 DNS Name을 복사해서 Web Browser에서 입력합니다.
 ![](../.gitbook/assets/image.png)
 
 {% hint style="info" %}
-service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Default로 Classic LB가 구성됩니다.
+service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Default로 Classic LB가 구성됩니다. 또한 별도로 Service Type을 지정하지 않으면, ClusterIP로 지정됩니다.
 {% endhint %}
 
-웹브라우져를 통해서 CLB의 DNS 주소를 입력하면 실시간으로 로드밸런싱이 되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2835%29.png)
 
 ## NLB기반 Loadbalancer 서비스 구성.
 
