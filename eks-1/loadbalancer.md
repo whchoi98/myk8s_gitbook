@@ -520,7 +520,7 @@ kubectl -n nlb-test get service ecsdemo-frontend -o wide
 Replica를 3개로 늘려서 LB가 FrontEnd에서 정상적으로 이뤄지는 지 확인합니다.
 
 ```text
-kubectl -n clb-test scale deployment ecsdemo-frontend --replicas=3
+kubectl -n nlb-test scale deployment ecsdemo-frontend --replicas=3
 ```
 
 {% hint style="info" %}
