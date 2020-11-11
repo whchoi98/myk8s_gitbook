@@ -6,7 +6,7 @@ description: 'update : 2020-07-18'
 
 ## 인증 및 자격증명 환경 구성
 
-### 1.IAM 역할 생성
+### 1.Cloud9을 위한 IAM 역할 생성
 
 **IAM - 역할 - 역할 만들기**
 
@@ -86,7 +86,7 @@ aws sts get-caller-identity --query Arn | grep eksworkshop-admin -q && echo "IAM
 실제 Role의 Arn은 아래 명령을 통해 확인 할 수 있습니다.
 
 ```text
-$ aws sts get-caller-identity
+aws sts get-caller-identity
 
 ```
 
@@ -250,6 +250,58 @@ whchoi98:~/environment $ echo $MASTER_ARN
 arn:aws:kms:ap-northeast-2:909121566064:key/9a0c5a6c-be81-4463-90e4-e3b1252d96fc
 whchoi98:~/environment $ echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
 export MASTER_ARN=arn:aws:kms:ap-northeast-2:909121566064:key/9a0c5a6c-be81-4463-90e4-e3b1252d96fc
+```
+
+인증/자격증명 및 환경 구성 요약
+
+1.Cloud9를 위한 IAM 역할\(Role\) 생성 및 IAM 역할 연경
+
+**`AWS 서비스 - IAM - 역할 - 역할 만들기`**
+
+**`역할만들기 - AWS서비스 - EC2선택`**
+
+**`역할만들기 - 정책이름 - AdministratorAccess 선택`**
+
+**`역할만들기 - 역할이름 - eksworkshop-admin 생성`**
+
+**`AWS 서비스 - EC2 - 인스턴스 - "Cloud9 인스턴스 선택" - 작업 - 보안 - IAM 역할 수정`**
+
+**`IAM 역할 수정 - IAM 역할 - "eksworkshop-admin 선택"`**
+
+**`Cloud9 콘솔 - Preference - AWS Settings - Credentials - AWS managed temporary credentials 비활성`**
+
+```text
+#임시 자격 증명 삭제
+rm -vf ${HOME}/.aws/credentials
+
+```
+
+2.Cloud 9 또는 기타장소에서 Key 생성
+
+```text
+#key 생성 , Key name - eksworkshop
+ssh-keygen
+
+```
+
+3. Public Key를 AWS 키페어 집합소에 전송
+
+```text
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
+```
+
+4. KMS 기반 key 생성
+
+```text
+#KMS Key 생성
+aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms create-key --query KeyMetadata.Arn --output text)
+
+#CMK의 ARN을 $MASTER_ARN에 입력
+export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
+
+#KMS Key를 쉽게 참조 할 수 있도록 MASTER 환경변수를 bash_profile에 저장
+echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
+
 ```
 
 
