@@ -65,6 +65,7 @@ kubectl apply -f recommended.yaml
 
 ```text
 kubectl -n kubernetes-dashboard get svc -o wide
+
 ```
 
 ```text
@@ -211,4 +212,6 @@ kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.3/
 ```text
 unset DASHBOARD_VERSION
 ```
+
+
 
