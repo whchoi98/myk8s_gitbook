@@ -18,6 +18,7 @@ description: 'update : 2020-11-11'
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/local/bin
 eksctl version
+
 ```
 
 ### 2.VPC/Subnet 정보 확인
@@ -53,13 +54,7 @@ echo $MASTER_ARN
 
 VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포하는 데 사용합니다.
 
-### 3. eksctl 배포 yaml 다운로드
-
-Cloud9에서 eksctl 배포용 yaml파일을 다운로드 받습니다.
-
-```text
-git clone https://github.com/whchoi98/myeks.git
-```
+### 3. eksctl 배포 yaml 수정
 
 Cloud9 IDE 편집기에서 아래와 같이 수정합니다. 수정내용은 현재 생성된 VPC, Subnet ID , key 위치 입니다.
 
