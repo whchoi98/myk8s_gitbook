@@ -252,9 +252,9 @@ whchoi98:~/environment $ echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash
 export MASTER_ARN=arn:aws:kms:ap-northeast-2:909121566064:key/9a0c5a6c-be81-4463-90e4-e3b1252d96fc
 ```
 
-인증/자격증명 및 환경 구성 요약
+## 인증/자격증명 및 환경 구성 요약
 
-1.Cloud9를 위한 IAM 역할\(Role\) 생성 및 IAM 역할 연경
+#### **1.Cloud9를 위한 IAM 역할\(Role\) 생성 및 IAM 역할 연결.**
 
 **`AWS 서비스 - IAM - 역할 - 역할 만들기`**
 
@@ -276,7 +276,7 @@ rm -vf ${HOME}/.aws/credentials
 
 ```
 
-2.Cloud 9 또는 기타장소에서 Key 생성
+**2.Cloud 9 또는 기타장소에서 Key 생성.**
 
 ```text
 #key 생성 , Key name - eksworkshop
@@ -284,13 +284,13 @@ ssh-keygen
 
 ```
 
-3. Public Key를 AWS 키페어 집합소에 전송
+**3. Public Key를 AWS 키페어 집합소에 전송.**
 
 ```text
 aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
 ```
 
-4. KMS 기반 key 생성
+**4. KMS 기반 key 생성.**
 
 ```text
 #KMS Key 생성
