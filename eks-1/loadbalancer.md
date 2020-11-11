@@ -272,7 +272,7 @@ ecsdemo-frontend   LoadBalancer   172.20.37.78   afd75bf8c69c04c3aacf6cfbdefe1c4
 
 출력결과 예시
 
-![](../.gitbook/assets/image%20%28148%29.png)
+![](../.gitbook/assets/image%20%28149%29.png)
 
 앞서 설치해 둔 K9s 유틸리티를 통해서 , 현재 배포된 Pod들의 상태를 확인해 봅니다.
 
@@ -318,7 +318,7 @@ kubectl -n clb-test scale deployment ecsdemo-crystal --replicas=3
 
 ```
 
-![](../.gitbook/assets/image%20%28150%29.png)
+![](../.gitbook/assets/image%20%28151%29.png)
 
 k9s 를 통해 Pod의 구성을 확인합니다.
 
@@ -326,7 +326,7 @@ k9s 를 통해 Pod의 구성을 확인합니다.
 LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위해서 Cloud9 에서 Terminal을 하나 더 열고 K9s를 실행 시켜 두는 것이 좋습니다.
 {% endhint %}
 
-![](../.gitbook/assets/image%20%28151%29.png)
+![](../.gitbook/assets/image%20%28152%29.png)
 
 ### 5. Loadbalancer 확인.
 
@@ -334,13 +334,11 @@ LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위�
 
 CLB의 DNS Name을 복사해서 Web Browser에서 입력합니다.
 
-![](../.gitbook/assets/image.png)
+![](../.gitbook/assets/image%20%28147%29.png)
 
 {% hint style="info" %}
 service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Default로 Classic LB가 구성됩니다. 또한 별도로 Service Type을 지정하지 않으면, ClusterIP로 지정됩니다.
 {% endhint %}
-
-
 
 ## NLB기반 Loadbalancer 서비스 구성.
 
@@ -358,6 +356,96 @@ service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Defa
   cp ./ecsdemo-nodejs/kubernetes/service.yaml ./ecsdemo-nodejs/kubernetes/nlb_service.yaml
   
 ```
+
+2.Yaml 변경
+
+NLB 구성을 위해 복사한 Yaml 파일을 변경합니다.
+
+ecsdemo-frontend nlb\_deployment.yaml
+
+```text
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecsdemo-frontend
+  labels:
+    app: ecsdemo-frontend
+#name space change 
+  namespace: nlb-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecsdemo-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ecsdemo-frontend
+    spec:
+      containers:
+      - image: brentley/ecsdemo-frontend:latest
+        imagePullPolicy: Always
+        name: ecsdemo-frontend
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+#Container URL change.
+        env:
+        - name: CRYSTAL_URL
+          value: "http://ecsdemo-crystal.nlb-test.svc.cluster.local/crystal"
+        - name: NODEJS_URL
+          value: "http://ecsdemo-nodejs.nlb-test.svc.cluster.local/"
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "frontend-workloads"
+```
+
+ecsdemo-frontend nlb\_service.yaml
+
+```text
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsdemo-frontend
+#name space change 
+  namespace: clb-test
+#add annotations for External nlb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+spec:
+  selector:
+    app: ecsdemo-frontend
+  type: LoadBalancer
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+```
+
+어플리케이션을 배포하고, service를 구성합니다.
+
+```text
+#ecsdemo frontend nlb depolyment apply
+kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
+#ecsdemo frontend nlb service apply
+kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_service.yaml
+
+```
+
+정상적으로 Pod가 배포되었는지 아래 명령을 통해서 확인해 봅니다.
+
+```text
+kubectl -n nlb-test get deployments ecsdemo-frontend -o wide
+kubectl -n nlb-test get service ecsdemo-frontend -o wide 
+
+```
+
+
 
 각 APP에 생성된 NLB-service.yaml을 아래와 같이 annotaions:를 추가하여 수정합니다.
 
@@ -406,6 +494,18 @@ NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 
 | 키 | 값 |
 | :--- | :--- |
 | `kubernetes.io/role/internal-elb` | `1` |
+
+```text
+kubectl create namespace nlb-test
+```
+
+
+
+```text
+kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
+kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_service.yaml
+
+```
 
 ### 2. LB 서비스 제거와 NLB 서비스 배포
 
