@@ -68,7 +68,7 @@ Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니�
 
 ![](../.gitbook/assets/image%20%2815%29.png)
 
-임시 자격증명이 설치되지 않도록 기존 자격 증명 파일을 제거합니다.
+임시 자격증명을 사용하지 않도록 기존 자격 증명 파일을 제거합니다.
 
 ```text
 rm -vf ${HOME}/.aws/credentials
