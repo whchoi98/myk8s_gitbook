@@ -54,6 +54,7 @@ ALB Ingress Controller에 대한 버전을 변수에 저장합니다.
 ```text
 echo 'export ALB_INGRESS_VERSION="v1.1.9"' >>  ~/.bash_profile
 source ~/.bash_profile
+
 ```
 
 ALB Ingress 컨트롤러에 필요한 관련 RBAC 역할을 생성하고 바인딩합니다.
@@ -84,6 +85,7 @@ serviceaccount/alb-ingress-controller created
 `ALBIngressControllerIAMPolicy`라는 IAM 정책을 만듭니다.
 
 ```text
+cd ~/environment/myeks/alb-controller/
 aws iam create-policy \
    --policy-name ALBIngressControllerIAMPolicy \
    --policy-document https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/iam-policy.json
