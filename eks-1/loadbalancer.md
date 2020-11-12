@@ -413,7 +413,7 @@ kind: Service
 metadata:
   name: ecsdemo-frontend
 #name space change 
-  namespace: clb-test
+  namespace: nlb-test
 #add annotations for External nlb
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
