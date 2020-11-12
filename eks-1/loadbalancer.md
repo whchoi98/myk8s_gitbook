@@ -491,6 +491,69 @@ spec:
 
 ```
 
+ecsdemo-crystal nlb\_deployment.yaml
+
+```text
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecsdemo-crystal
+  labels:
+    app: ecsdemo-crystal
+#name space change 
+  namespace: nlb-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecsdemo-crystal
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ecsdemo-crystal
+    spec:
+      containers:
+      - image: brentley/ecsdemo-crystal:latest
+        imagePullPolicy: Always
+        name: ecsdemo-crystal
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "backend-workloads"
+```
+
+ecsdemo-nodejs nlb\_service.yaml
+
+```text
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsdemo-crystal
+#name space change 
+  namespace: nlb-test
+#add annotations for Internal nlb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+spec:
+  selector:
+    app: ecsdemo-crystal
+#type LoadBalancer
+  type: LoadBalancer
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+
+```
+
 ### 3.FrontEnd 어플리케이션 배포
 
 새로운 namespace를 구성합니다.
