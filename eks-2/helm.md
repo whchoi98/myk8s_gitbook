@@ -438,6 +438,10 @@ EoF
 
 ### 3. Chart 배포
 
+```text
+kubectl create namespace helm-chart-demo
+```
+
 Helm chart는 실제 배포하지 않고 **"--dry-run"** 플래그를 사용하여, 랜더링 된 템플릿을 빌드하고 출력할 수 있습니다.
 
 ```text
