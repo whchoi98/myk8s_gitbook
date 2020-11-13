@@ -622,7 +622,6 @@ spec:
 템플릿이 정상적으로 렌더링되고, 빌드 출력이 이뤄졌으므로 차트를 배포합니다.
 
 ```text
-kubectl create namespace helm-chart-demo
 helm install helmdemo ~/environment/helm-chart-demo
 
 ```
