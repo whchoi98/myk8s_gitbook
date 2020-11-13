@@ -271,6 +271,8 @@ helmdemo 라는 Chart를 생성합니다.
 ```text
 cd ~/environment/
 helm create helm-chart-demo
+sudo yum -y install tree
+
 ```
 
 Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성합니다.
