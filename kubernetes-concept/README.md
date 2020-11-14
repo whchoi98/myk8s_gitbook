@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-07-10'
+description: 'update : 2020-11-11'
 ---
 
 # 1.Kubernetes 개념
