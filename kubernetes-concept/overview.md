@@ -14,9 +14,9 @@ description: '참조 원문 : https://kubernetes.io/'
 
 사용자가 원하는 상태를 설명하는 방법은 쿠버네티스 API를 사용해서 오브젝트\(객체\)를 만드는 것인데, 일반적으로 `kubectl`이라는 커맨드라인 인터페이스를 사용합니다.  또한 클러스터와 상호 작용하고 원하는 상태를 설정하거나 수정하기 위해서 쿠버네티스 API를 직접 사용할 수도 있습니다.
 
-원하는 상태를 설정하면, 쿠버네티스 컨트롤 플레인\(제어부\)은 Pod Lifecycle Event Generator \([PLEG](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/pod-lifecycle-event-generator.md)\)를 통해 클러스터의 현재 상태를 원하는 상태와 일치시킵니다. 그렇게 함으로써, 쿠버네티스가 컨테이너를 시작 또는 재시작하거나, 주어진 애플리케이션의 복제 수를 확장 하는 등의 다양한 작업을 자동으로 수행합니다. 쿠버네티스 컨트롤 플레인은 클러스터에서 실행 중인 프로세스의 집합\(collection\)으로 구성됩니다. 
+원하는 상태를 설정하면, 쿠버네티스 컨트롤 플레인\(제어부\)은 Pod Lifecycle Event Generator \([PLEG](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/pod-lifecycle-event-generator.md)\)를 통해 클러스터의 현재 상태를 원하는 상태와 일치시킵니다. 그렇게 함으로써, 쿠버네티스가 컨테이너를 시작, 재시작하거나, 주어진 애플리케이션의 복제 수를 확장 하는 등의 다양한 작업을 자동으로 수행합니다. 쿠버네티스 컨트롤 플레인은 클러스터에서 실행 중인 프로세스의 집합\(collection\)으로 구성됩니다. 
 
-* **쿠버네티스 마스터**는 클러스터 내 마스터 노드로 지정된 노드 내에서 구동되는 세 개의 프로세스 집합입니. 해당 프로세스는 [kube-apiserver](https://kubernetes.io/docs/admin/kube-apiserver/), [kube-controller-manager](https://kubernetes.io/docs/admin/kube-controller-manager/) 및 [kube-scheduler](https://kubernetes.io/docs/admin/kube-scheduler/) 입니다.
+* **쿠버네티스 마스터**는 클러스터 내 마스터 노드로 지정된 노드 내에서 구동되는 세 개의 프로세스 집합입니다. 해당 프로세스는 [kube-apiserver](https://kubernetes.io/docs/admin/kube-apiserver/), [kube-controller-manager](https://kubernetes.io/docs/admin/kube-controller-manager/) 및 [kube-scheduler](https://kubernetes.io/docs/admin/kube-scheduler/) 입니다.
 * 클러스터 내 마스터 노드가 아닌 각각의 노드는 다음 두 개의 프로세스를 구동시킵니다.\( 일반적으로 워커 노드라고 불리웁니다.\)
   * [**kubelet**](https://kubernetes.io/docs/admin/kubelet/) **-** 쿠버네티스 마스터와 통신하는 프로세
   * [**kube-proxy**](https://kubernetes.io/docs/admin/kube-proxy/) **-** 각 노드의 쿠버네티스 네트워킹 서비스를 반영하는 네트워크 프록시
