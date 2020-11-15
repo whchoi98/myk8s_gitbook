@@ -83,7 +83,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ### 1.kubectl 바이너리 다운로드
 
-EKS를 위한 kubectl 바이너리를 다운로드합니다. \(2020-09-18 기준\)
+EKS를 위한 kubectl 바이너리를 다운로드합니다. \(2020-09-18 기준\) 3개의 Version 가운데 1개를 다운로드 받습니다.
 
 EKS 1.16.13 기반 설치 
 
@@ -92,7 +92,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.13/2020-09-18
 
 ```
 
-#### EKS 1.17.11 기반 설치 
+#### EKS 1.17.11 기반 설치 \(2020.11 기준 Hands on LAB 권장\)
 
 ```text
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
@@ -130,12 +130,14 @@ mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/
 
 ```text
 echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+
 ```
 
 정상적으로 설치되었는지 확인합니다.
 
 ```text
 kubectl version --short --client
+
 ```
 
 출력결과 예제 \(1.17.11 예시\)
@@ -147,15 +149,16 @@ Client Version: v1.17.11-eks-cfdc40
 
 ### 5.kubectl 자동완성 설치 
 
+kubectl 자동완성을 설치합니다. 
+
 {% hint style="info" %}
 kubectl은 Bash 및 Zsh에 대한 자동 완성 지원을 제공하므로 입력을 위한 타이핑을 많이 절약할 수 있습니다.
 {% endhint %}
 
-kubectl 자동완성을 설치합니다
-
 ```text
 source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
+
 ```
 
 ## 기타 유틸리티 설치
@@ -166,7 +169,7 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 sudo yum -y install jq gettext bash-completion moreutils
 ```
 
-### 2.yq 구성
+### 2.jq 구성
 
 ```text
 for command in kubectl jq envsubst aws
@@ -176,9 +179,17 @@ for command in kubectl jq envsubst aws
   
 ```
 
+{% hint style="info" %}
+**jq**는 커맨드라인에서 JSON을 조작할 수 있는 도구입니다. 프로그래밍 언어는 아니지만 JSON 데이터를 다루기 위한 다양한 기능들을 제공합니다. kubectl의 결과들 중에서 복잡한 중첩 JSON구조  내에서 키를 찾을 때 유용합니다.
+{% endhint %}
+
 ### 3.K9s 설치
 
-K9s 설치를 위해 Linux brew 를 설치합니다. 해당 패키지를 설치하기 위해 필수 패키지를 먼저 설치합니다.
+K9s는 쿠버네티스 클러스터와 상호작용을 통해 직관적인 UI 터미널을 제공합니다. 이 도구를 통해서 쿠버네티스 자원들을 쉽게 탐색하고 관리할 수 있도록 도움을 줍니다.\(참조 - [https://github.com/derailed/k9s](https://github.com/derailed/k9s)\)
+
+K9s 설치를 위해 Linux brew 를 설치합니다. 
+
+해당 패키지를 설치하기 위해 필수 패키지를 먼저 설치합니다.
 
 ```text
 sudo yum groupinstall -y 'Development Tools' && sudo yum install curl file git ruby which
@@ -207,7 +218,14 @@ brew install derailed/k9s/k9s
 
 ```
 
-### 4.Kube krew 설치
+설치가 완료되면 정상 작동하는지 확인합니다.
+
+```text
+k9s
+
+```
+
+### 4.Kube krew 설치 \(option\)
 
 {% hint style="info" %}
 kube krew는 Mac OS brew, CentOS yum, Ubuntu apt 처럼 Kube에 관련된 좋은 유틸리티를 제공하고 있습니다.
@@ -234,7 +252,7 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 ```
 
-### 5.Kubectx 설치
+### 5.Kubectx 설치 \(Option\)
 
 kubectx는 다중의 Kubecluster 가 존재할 때 전환이 쉽도록 도와주는 훌륭한 도구입니다. kubectx를 설치합니다.
 
@@ -243,7 +261,7 @@ kubectl krew install ctx
 
 ```
 
-### 6.Kubens 설치
+### 6.Kubens 설치 \(Option\)
 
 kubens는 여러개의 namespace를 전환이 쉽도록 도와주는 도구 입니다. kubens를 설치합니다.
 
@@ -252,7 +270,7 @@ kubectl krew install ns
 
 ```
 
-### 7.Kubetree 설치
+### 7.Kubetree 설치 \(Option\)
 
 kubetree는 linux의 tree처럼 kube의  파일구조를 확인하는 데 유용한 도구입니다.
 
