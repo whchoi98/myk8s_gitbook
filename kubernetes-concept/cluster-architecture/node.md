@@ -6,11 +6,11 @@ description: 'Update : 2020-11-11'
 
 ## 노드
 
-쿠버네티스는 컨테이너를 파드내에 배치하고 노드에서 실행함으로 워크로드를 수행합니다.  노드는 클러스터에 따라 가상머신 또는 물리적 머신일 수 있습니다.. 각 노드에는 [컨트롤 플레인](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-control-plane)이라는 [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)를 실행하는데 필요한 서비스가 포함되어 있다.
+쿠버네티스는 컨테이너를 파드내에 배치하고 노드에서 실행함으로 워크로드를 수행합니다.  노드는 클러스터에 따라 가상머신 또는 물리적 머신일 수 있습니다.  각 노드에는 [컨트롤 플레인](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-control-plane)이라는 [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)를 실행하는데 필요한 서비스가 포함되어 있다.
 
-일반적으로 클러스터에는 여러개의 노드가 있으며, 구성 방법에 따라서 한개의 노드로 구성할 수도 있습니다.
+일반적으로 클러스터에는 여러 개의 노드가 있으며, 구성 방법에 따라서 한개의 노드로 구성할 수도 있습니다.
 
-노드의 [컴포넌트](https://kubernetes.io/ko/docs/concepts/overview/components/#%EB%85%B8%EB%93%9C-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8)에는 [kubelet](https://kubernetes.io/docs/reference/generated/kubelet), [컨테이너 런타임](https://kubernetes.io/docs/setup/production-environment/container-runtimes) 그리고 [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)가 포함됩니다.
+각 노드의 [컴포넌트](https://kubernetes.io/ko/docs/concepts/overview/components/#%EB%85%B8%EB%93%9C-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8)에는 [kubelet](https://kubernetes.io/docs/reference/generated/kubelet), [컨테이너 런타임](https://kubernetes.io/docs/setup/production-environment/container-runtimes) 그리고 [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)가 포함됩니다.
 
 ## 관리
 
