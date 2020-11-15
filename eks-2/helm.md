@@ -879,6 +879,7 @@ ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, A
 ```text
 curl -LO https://s3.amazonaws.com/chartmuseum/release/latest/bin/linux/amd64/chartmuseum
 chmod +x ./chartmuseum
+
 ```
 
 Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장소는 S3를 사용합니다.  
@@ -898,6 +899,8 @@ AWS 서비스 - S3
 ~/environment $ aws s3 ls | grep 'chartmuseum'
 2020-11-09 13:51:11 whchoi-chartmuseum-2020-11-11
 ```
+
+아래 명령어를 통해서 debug하고 정상적으로 동작하는지 확인합니다. **`--storage-amazon-bucket="생성한 버킷 이름"`** 을 입력합니다.
 
 ```text
 ./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2" &
@@ -932,7 +935,7 @@ helm repo add chartmuseum http://localhost:8888
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
+~/environment $ helm repo add chartmuseum http://localhost:8888
 2020-07-22T00:21:48.451Z        DEBUG   [5] Incoming request: /index.yaml       {"reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
 2020-07-22T00:21:48.451Z        DEBUG   [5] Entry found in cache store  {"repo": "", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
 2020-07-22T00:21:48.452Z        DEBUG   [5] Fetching chart list from storage    {"repo": "", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
@@ -941,7 +944,7 @@ whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
 "chartmuseum" has been added to your repositories
 ```
 
-이제 앞서 생성한 eksdemo helm chart 패키징합니다. 
+이제 앞서 생성한 eksdemo helm chart 패키징 합니다. 
 
 ```text
 cd ~/environment/helm-chart-demo/
@@ -1013,6 +1016,7 @@ aws s3 ls s3://whchoi-chartmuseum-2020-11-11
 ```text
 helm repo update
 helm search repo chartmuseum
+
 ```
 
 출력결과 예제
