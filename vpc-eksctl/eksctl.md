@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-12'
+description: 'update : 2020-11-15'
 ---
 
 # eksctl 구성
@@ -28,8 +28,11 @@ eksctl version
 다음 명령을 통해서 확인 할 수 있습니다.
 
 ```text
-aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId'
-aws ec2 describe-subnets  --filters "Name=cidr-block,Values=10.11.*" --query 'Subnets[*].[CidrBlock,SubnetId,AvailabilityZone]' --output table
+export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
+echo $vpc_ID
+aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)'
+echo $vpc_ID > vpc_subnet.txt
+aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> vpc_subnet.txt
 
 ```
 
@@ -37,12 +40,12 @@ aws ec2 describe-subnets  --filters "Name=cidr-block,Values=10.11.*" --query 'Su
 
 ```text
 VPC ID - vpc-0bdd67cbc64aba483
-Public subnet 01 - subnet-07128799309969cc4
-Public subnet 02 - subnet-0240b3e1a59fb4802
-Public subnet 03 - subnet-0ff369e1bb376c450
-Private subnet 01 - subnet-062dad2e0fc99a677
-Private subnet 02 - subnet-0859b55ff38586ab1
-Private subnet 03 - subnet-0cf39d70d89565812
+subnet-0cefc84fccc10a43e 10.11.160.0/19 eksworkshop-PrivateSubnet03
+subnet-085d5b141c99056e4 10.11.96.0/19 eksworkshop-PrivateSubnet01
+subnet-045d2dae51ad1a4b8 10.11.64.0/19 eksworkshop-PublicSubnet03
+subnet-09cf854ef0cceca69 10.11.128.0/19 eksworkshop-PrivateSubnet02
+subnet-0d91e62f267e8ac28 10.11.32.0/19 eksworkshop-PublicSubnet02
+subnet-07e14cab3b1c197ea 10.11.0.0/19 eksworkshop-PublicSubnet01
 ```
 
 저장해둔 Region 정보와 master\_arn을 확인합니다.

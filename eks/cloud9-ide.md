@@ -85,21 +85,21 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 EKS를 위한 kubectl 바이너리를 다운로드합니다. \(2020-09-18 기준\)
 
-EKS 1.16.13 기
+EKS 1.16.13 기반 설치 
 
 ```text
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.13/2020-09-18/bin/linux/amd64/kubectl
 
 ```
 
-EKS 1.17.11 기
+#### EKS 1.17.11 기반 설치 
 
 ```text
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
 
 ```
 
-EKS 1.18.8 기
+EKS 1.18.8 기반 설치 
 
 ```text
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl
