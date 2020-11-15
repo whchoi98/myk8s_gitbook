@@ -93,7 +93,7 @@ secretsEncryption:
 ```
 
 {% hint style="warning" %}
-vpc/subnet id , CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.
+**vpc/subnet id , CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.**
 {% endhint %}
 
 ### 4. cluster 생성
@@ -163,6 +163,7 @@ Cluster를 생성하기 위해 20~30분 정도 시간이 소요됩니다.
 
 ```text
 kubectl get nodes
+
 ```
 
 출력 결과 예시
@@ -182,9 +183,9 @@ ip-10-11-69-28.ap-northeast-2.compute.internal     Ready    <none>   2d1h   v1.1
 * 생성된 EC2 Worker Node들도 확인해 봅니다.
 * EKS와 eksctl을 통해 생생된 Cloudformation도 확인해 봅니다.
 
-### 6.eksctl yaml code 참조
+### 6.eksctl yaml code 참조 \(option\)
 
-eksctl 배포를 위한 EKS Cluster yaml 파일
+eksctl 배포를 위한 EKS Cluster yaml 파일은 다음과 같습니다. 각자의 Cloud9 콘솔에서 파일을 확인해 봅니다.
 
 ```text
 # A simple example of ClusterConfig object:
