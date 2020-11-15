@@ -29,6 +29,7 @@ cd ~/environment
 git clone https://github.com/brentley/ecsdemo-frontend.git
 git clone https://github.com/brentley/ecsdemo-nodejs.git
 git clone https://github.com/brentley/ecsdemo-crystal.git
+
 ```
 
 정상적으로 복제 이후 Cloud9에서 아래와 같이 확인됩니다.
