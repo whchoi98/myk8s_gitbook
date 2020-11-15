@@ -48,11 +48,12 @@ subnet-0d91e62f267e8ac28 10.11.32.0/19 eksworkshop-PublicSubnet02
 subnet-07e14cab3b1c197ea 10.11.0.0/19 eksworkshop-PublicSubnet01
 ```
 
-저장해둔 Region 정보와 master\_arn을 확인합니다.
+저장해둔 Region 정보와 master\_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
 
 ```text
 echo $AWS_REGION
 echo $MASTER_ARN
+cat master_arn.txt
 
 ```
 
@@ -71,6 +72,7 @@ metadata:
   name: eksworkshop
   region: ap-northeast-2
 
+#vpc id와 각 서브넷 id는 vpc_subnet.txt 값들이 입력됩니다.
 vpc: 
   id: vpc-0bdd67cbc64aba483
   subnets:
@@ -83,6 +85,7 @@ vpc:
       ap-northeast-2b: { id: subnet-0859b55ff38586ab1}
       ap-northeast-2c: { id: subnet-0cf39d70d89565812}
 
+# keyARN의 값에는 master_arn.txt 값이 입력됩니다.
 secretsEncryption:
   keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/6ba77a10-cf0b-4af8-b7b7-54bb5ea2f5c9
 ```
