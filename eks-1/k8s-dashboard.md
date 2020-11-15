@@ -187,6 +187,13 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ![](../.gitbook/assets/image%20%2820%29.png)
 
+앞서 생성해 두었던 K9s로 어떤 namespace에 생성되었는지 살펴보고, 어떤 PoD들이 생성되었는지 확인해 봅니다.
+
+```text
+k9s -A
+
+```
+
 ### 5.Kubernetes 대쉬보드 삭제
 
 랩을 진행하면서 K8s Dashboard에서 Pod 현황을 살펴보고 싶다면, 삭제 하지 않습니다. 다음 Lab과 연관성이 없습니다.
