@@ -38,12 +38,14 @@ description: 'update : 2020-11-11'
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 chmod 700 get_helm.sh
 ./get_helm.sh
+
 ```
 
 정상적으로 설치되었는지 확인합니다.
 
 ```text
 helm version --short
+
 ```
 
  출력 결과 예시
@@ -160,6 +162,7 @@ ELB 주소를 확인합니다.
 ```text
 export SERVICE_IP=$(kubectl get svc --namespace default eksworkshop-nginx --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
 echo "NGINX URL: http://$SERVICE_IP/"
+
 ```
 
 해당 주소로 접속해 봅니다.
@@ -174,6 +177,7 @@ EC2 대시보드에서 ELB가 정상적으로 생성된 것을 확인 할 수 �
 
 ```text
 helm list 
+
 ```
 
 출력 예시
@@ -188,6 +192,7 @@ eksworkshop-nginx       default         1               2020-11-09 13:18:03.8615
 
 ```text
 kubectl describe deployments.apps eksworkshop-nginx
+
 ```
 
 출력 결과 예시
@@ -411,7 +416,6 @@ metadata:
   name: ecsdemo-xxxx
   labels:
     app: ecsdemo-xxxx
-  namespace: helm-chart-demo
 ```
 
 이제 values.yaml을 생성하고, Values 들에 대한 값을 정의합니다.
@@ -437,10 +441,6 @@ EoF
 ```
 
 ### 3. Chart 배포
-
-```text
-kubectl create namespace helm-chart-demo
-```
 
 Helm chart는 실제 배포하지 않고 **"--dry-run"** 플래그를 사용하여, 랜더링 된 템플릿을 빌드하고 출력할 수 있습니다.
 
@@ -675,7 +675,7 @@ deployment.apps/ecsdemo-nodejs     3/3     3            3           2m44s   ecsd
 아래 명령을 통해 service loadbalancer\(ELB\) 의 DNS name을 확인합니다.
 
 ```text
-kubectl -n helm-chart-demo get svc ecsdemo-frontend
+kubectl get svc ecsdemo-frontend
 ```
 
 출력 결과 예시
@@ -811,12 +811,14 @@ Rollback 명령을 통해 정상 배포 버전으로 Rolling Back  합니다.
 
 ```text
 helm rollback helmdemo 1
+
 ```
 
 이제 배포에 실패했던 nodejs Pod가 정상적으로 배포되었는지 확인합니다.
 
 ```text
-kubectl -n helm-chart-demo get pods
+kubectl get pods
+
 ```
 
 아래와 같이 정상적으로 Pod가 배포됩니다.

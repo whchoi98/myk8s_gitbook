@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-15'
+description: 'update : 2020-11-11'
 ---
 
 # Cloudformation 구성
@@ -57,10 +57,6 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 이 값을 확인해 봅니다. \(다음 단원에서 aws cli 통해서 Cloud9 인스턴스 홈 디렉토리에 결과값을 txt 파일로 저장할 것입니다.\)
 
 ![](../.gitbook/assets/image%20%2838%29.png)
-
-구성이 완료되면 다음과 같은 VPC가 구성됩니다.
-
-![](../.gitbook/assets/image%20%28158%29.png)
 
 ## Cloudformation 기반 VPC 구성 요약
 
