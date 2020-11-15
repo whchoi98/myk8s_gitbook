@@ -8,6 +8,8 @@ description: 'update : 2020-11-15'
 
 `eksctl`은 관리형 Kubernetes 서비스 인 EKS에서 클러스터를 생성하기위한 간단한 CLI 도구입니다. Go로 작성되었으며 CloudFormation을 사용하며 [Weaveworks](https://www.weave.works/) 가 작성했으며 단 하나의 명령으로 몇 분 안에 기본 클러스터를 만듭니다.
 
+이것은 EKS를 구성하기 위한 도구 이며,  AWS 관리콘솔에서 제공하는 EKS UI, CDK, Terraform, Rancher 등 다양한 도구로도 구성이 가능합니다.
+
 ## eksctl을 통한 EKS 구성
 
 ### 1.eksctl 설치
@@ -25,7 +27,7 @@ eksctl version
 
 앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC id, Subnet id를 확인합니다.
 
-다음 명령을 통해서 확인 할 수 있습니다. 결과값은 홈디렉토리 **`vpc_subnet.txt`** 에 저장합니다. 아래 명령을 실행하면 자동으로 저장됩니다.
+다음 aws cli 명령을 통해서 확인 할 수 있습니다. 결과값은 홈디렉토리 **`vpc_subnet.txt`** 에 저장합니다. 아래 명령을 실행하면 자동으로 저장됩니다.
 
 ```text
 export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
@@ -89,6 +91,10 @@ vpc:
 secretsEncryption:
   keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/6ba77a10-cf0b-4af8-b7b7-54bb5ea2f5c9
 ```
+
+{% hint style="warning" %}
+vpc/subnet id , CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.
+{% endhint %}
 
 ### 4. cluster 생성
 
