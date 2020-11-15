@@ -18,9 +18,9 @@
 
 ### API 서버를 통한 제어
 
-[잡\(Job\)](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion) 컨트롤러는 쿠버네티스 내장 컨트롤러의 예시이다. 내장 컨트롤러는 클러스터 API 서버와 상호 작용하며 상태를 관리한다.
+[잡\(Job\)](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion) 컨트롤러는 쿠버네티스 내장 컨트롤러의 예시입니다. 내장 컨트롤러는 클러스터 API 서버와 상호 작용하며 상태를 관리한다.
 
-잡은 단일 [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/) 또는 여러 파드를 실행하고, 작업을 수행한 다음 중지하는 쿠버네티스 리소스 이다.
+잡은 단일 [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/) 또는 여러 파드를 실행하고, 작업을 수행한 다음 중지하는 쿠버네티스 리소스 입니다.
 
 \(일단 [스케줄되면](https://kubernetes.io/ko/docs/concepts/scheduling-eviction/), 파드 오브젝트는 kubelet 의 의도한 상태 중 일부가 된다.\)
 
