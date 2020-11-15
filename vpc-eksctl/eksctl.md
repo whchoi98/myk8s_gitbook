@@ -25,7 +25,7 @@ eksctl version
 
 앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC id, Subnet id를 확인합니다.
 
-다음 명령을 통해서 확인 할 수 있습니다.
+다음 명령을 통해서 확인 할 수 있습니다. 결과값은 홈디렉토리 **`vpc_subnet.txt`** 에 저장합니다. 아래 명령을 실행하면 자동으로 저장됩니다.
 
 ```text
 export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
@@ -36,7 +36,7 @@ aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]
 
 ```
 
-아래는 예제입니다.
+아래는 **`vpc_subnet.txt`** 에 저장된 예제입니다.
 
 ```text
 VPC ID - vpc-0bdd67cbc64aba483
