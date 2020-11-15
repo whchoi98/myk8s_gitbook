@@ -54,7 +54,7 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 이때 필요한 것이, VPC id, Subnet id 입니다. 출력이 되면 subnet id는 public subnet 01,02,03, private subnet 01,02,03으로 출력됩니다. 
 
-이 값을 따로 저장해 둡니다.
+이 값을 확인해 봅니다. \(다음 단원에서 aws cli 통해서 Cloud9 인스턴스 홈 디렉토리에 결과값을 txt 파일로 저장할 것입니다.\)
 
 ![](../.gitbook/assets/image%20%2838%29.png)
 
