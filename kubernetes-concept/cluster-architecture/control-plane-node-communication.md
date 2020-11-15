@@ -28,13 +28,13 @@ API 서버에서 kubelet으로의 연결은 다음의 용도로 사용됩니다.
 * 실행 중인 파드에 \(kubectl을 통해\) 연결.
 * kubelet의 포트-포워딩 기능을 제공. 
 
-이 연결은 kubelet의 HTTPS 엔드포인트에서 종료된다. 기본적으로, API 서버는 kubelet의 서빙\(serving\) 인증서를 확인하지 않으므로, 연결이 중간자\(man-in-the-middle\) 공격의 대상이 되며, 신뢰할 수 없는 네트워크 및/또는 공용 네트워크에서 실행하기에 **안전하지 않다** .
+이 연결은 kubelet의 HTTPS 엔드포인트에서 종료됩니다.  기본적으로, API 서버는 kubelet의 서빙\(serving\) 인증서를 확인하지 않으므로, 연결이 중간자\(man-in-the-middle\) 공격의 대상이 되며, 신뢰할 수 없는 네트워크 및/또는 공용 네트워크에서 실행하기에 안전하지 않습니다.
 
-이 연결을 확인하려면, `--kubelet-certificate-authority` 플래그를 사용하여 API 서버에 kubelet의 서빙 인증서를 확인하는 데 사용할 루트 인증서 번들을 제공한다.
+이 연결을 확인하려면, `--kubelet-certificate-authority` 플래그를 사용하여 API 서버에 kubelet의 서빙 인증서를 확인하는 데 사용할 루트 인증서 번들을 제공합니다. 
 
-이것이 가능하지 않은 경우, 신뢰할 수 없는 네트워크 또는 공용 네트워크를 통한 연결을 피하기 위해 필요한 경우 API 서버와 kubelet 사이에 [SSH 터널링](https://kubernetes.io/ko/docs/concepts/architecture/control-plane-node-communication/#ssh-%ED%84%B0%EB%84%90)을 사용한다.
+이것이 가능하지 않은 경우, 신뢰할 수 없는 네트워크 또는 공용 네트워크를 통한 연결을 피하기 위해 필요한 경우 API 서버와 kubelet 사이에 [SSH 터널링](https://kubernetes.io/ko/docs/concepts/architecture/control-plane-node-communication/#ssh-%ED%84%B0%EB%84%90)을 사용합니다. 
 
-마지막으로, kubelet API를 보호하려면 [Kubelet 인증 및/또는 권한 부여](https://kubernetes.io/docs/admin/kubelet-authentication-authorization/)를 활성화해야 한다.
+마지막으로, kubelet API를 보호하려면 [Kubelet 인증 및/또는 권한 부여](https://kubernetes.io/docs/admin/kubelet-authentication-authorization/)를 활성화해야 합니다. 
 
 ### API 서버에서 노드, 파드 및 서비스로의 통신
 
