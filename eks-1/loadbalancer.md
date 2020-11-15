@@ -360,7 +360,7 @@ service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Defa
 
 ### 2.Yaml 변경
 
-NLB 구성을 위해 복사한 Yaml 파일을 변경합니다.
+NLB 구성을 위해 복사한 Yaml 파일을 다음과 같이 변경합니다.
 
 ecsdemo-frontend nlb\_deployment.yaml
 
@@ -606,7 +606,7 @@ service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
 NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 각 가용 영역에서 퍼블릭 서브넷을 선택하는 대신 외부 로드 밸런서에 대해 이러한 서브넷만 사용해야 한다는 것을 Kubernetes가 알 수 있도록 다음과 같이 퍼블릭 서브넷에 태그를 지정해야 합니다 .March 26, 2020 이후에 `eksctl` 또는 Amazon EKS AWS CloudFormation 템플릿을 사용하여 VPC를 생성하는 경우 서브넷은 생성될 때 적절하게 태그가 지정됩니다.
 {% endhint %}
 
-#### 외부 로드밸런서를 위한 Public subnet 태그 
+#### 참조 - 외부 로드밸런서를 위한 Public subnet 태그 
 
 | 키 | 값 |
 | :--- | :--- |
@@ -634,6 +634,10 @@ ecsdemo-frontend   LoadBalancer   172.20.42.31   a7400b4751cf74f8e9cf9acb0c22c8b
 k9s -A
 
 ```
+
+{% hint style="info" %}
+우리 LAB에서는 NLB의 Internal과 External을 어떻게 변경했는지 yaml 파일을 다시 확인해 봅니다.
+{% endhint %}
 
 ### 4.BackEnd 어플리케이션 배포
 
