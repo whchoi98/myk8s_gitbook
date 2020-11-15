@@ -1,5 +1,5 @@
 ---
-description: 40min
+description: 'Update : 2020-11-15 / 40min'
 ---
 
 # 2.EKS 환경 구성
