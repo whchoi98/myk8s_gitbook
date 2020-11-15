@@ -51,7 +51,7 @@ git clone https://github.com/brentley/ecsdemo-crystal.git
 
 ### 2. Yaml 변경
 
-ecsdemo-frontend clb\_deployment.yaml은 다음과 같이 구성됩니다.
+ecsdemo-frontend clb\_deployment.yaml은 다음과 같이 변경합니다.
 
 ```text
 apiVersion: apps/v1
@@ -95,7 +95,7 @@ spec:
         nodegroup-type: "frontend-workloads"
 ```
 
-ecsdemo-frontend clb\_service.yaml은 다음과 같이 구성됩니다.
+ecsdemo-frontend clb\_service.yaml은 다음과 같이 변경합니다.
 
 ```text
 apiVersion: v1
