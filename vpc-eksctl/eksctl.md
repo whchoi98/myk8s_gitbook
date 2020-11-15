@@ -183,6 +183,10 @@ ip-10-11-69-28.ap-northeast-2.compute.internal     Ready    <none>   2d1h   v1.1
 * 생성된 EC2 Worker Node들도 확인해 봅니다.
 * EKS와 eksctl을 통해 생생된 Cloudformation도 확인해 봅니다.
 
+다음과 같은 구성도가 완성되었습니다.
+
+![](../.gitbook/assets/image%20%28159%29.png)
+
 ### 6.eksctl yaml code 참조 \(option\)
 
 eksctl 배포를 위한 EKS Cluster yaml 파일은 다음과 같습니다. 각자의 Cloud9 콘솔에서 파일을 확인해 봅니다.
