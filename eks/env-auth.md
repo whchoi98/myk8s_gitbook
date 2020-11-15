@@ -206,7 +206,7 @@ EKS에서는 K8s와 Key를 통한 인증이 많이 일어납니다. 안전한 �
 
 ### 1.CMK 생성
 
-K8s Secret 암호화를 할 때, EKS 클러스터에서 사용할 CMK를 생성합니다.
+K8s Secret 암호화를 할 때, EKS 클러스터에서 사용할 CMK\(Cusomter Management Key : 사용자 관리형 키\)를 생성합니다.
 
 ```text
 aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms create-key --query KeyMetadata.Arn --output text)
@@ -225,7 +225,7 @@ CMK의 ARN을 $MASTER\_ARN에 입력해 둡니다.
 export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
 ```
 
-MASTER\_ARN에 입력된 값을 조회해 봅니다.
+MASTER\_ARN에 입력된 값을 조회하고, 홈디렉토리에 **`master_arn.txt`** 파일을 저장합니다. master\_arn 의 값은 계속 사용되는 값입니다.
 
 ```text
  echo $MASTER_ARN
