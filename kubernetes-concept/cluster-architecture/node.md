@@ -1,16 +1,12 @@
----
-description: 'Update : 2020-11-11'
----
-
 # 노드
 
 ## 노드
 
-쿠버네티스는 컨테이너를 파드내에 배치하고 노드에서 실행함으로 워크로드를 수행합니다.  노드는 클러스터에 따라 가상머신 또는 물리적 머신일 수 있습니다.  각 노드에는 [컨트롤 플레인](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-control-plane)이라는 [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)를 실행하는데 필요한 서비스가 포함되어 있다.
+쿠버네티스는 컨테이너를 파드내에 배치하고 노에서 실행함으로 워크로드를 수행합니다. 노드는 클러스터에 따라 가상 또는 물리적 머신일 수 있습니다.. 각 노드에는 [컨트롤 플레인](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-control-plane)이라는 [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)를 실행하는데 필요한 서비스가 포함되어 있다.
 
-일반적으로 클러스터에는 여러 개의 노드가 있으며, 구성 방법에 따라서 한개의 노드로 구성할 수도 있습니다.
+일반적으로 클러스터에는 여러개의 노드가 있으며, 구성 방법에 따라서 한개의 노드로 구성할 수도 있습니다.
 
-각 노드의 [컴포넌트](https://kubernetes.io/ko/docs/concepts/overview/components/#%EB%85%B8%EB%93%9C-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8)에는 [kubelet](https://kubernetes.io/docs/reference/generated/kubelet), [컨테이너 런타임](https://kubernetes.io/docs/setup/production-environment/container-runtimes) 그리고 [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)가 포함됩니다.
+노드의 [컴포넌트](https://kubernetes.io/ko/docs/concepts/overview/components/#%EB%85%B8%EB%93%9C-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8)에는 [kubelet](https://kubernetes.io/docs/reference/generated/kubelet), [컨테이너 런타임](https://kubernetes.io/docs/setup/production-environment/container-runtimes) 그리고 [kube-proxy](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)가 포함됩니다.
 
 ## 관리
 
@@ -19,7 +15,7 @@ description: 'Update : 2020-11-11'
 1. 노드의 kubelet으로 컨트롤 플레인에 등록
 2. 사용자 또는 다른 사용자가 노드 오브젝트를 수동으로 추가
 
-노드 오브젝트 또는 노드의 kubelet으로 등록한 후 컨트롤 플레인은 새 노드 오브젝트가 유효한지 확인합니다.  예를 들어 다음 JSON 매니페스트에서 노드를 만들려는 경우입니다.
+노드 오브젝트 또는 노드의 kubelet으로 등록한 후 컨트롤 플레인은 새 노드 오브젝트가 유효한지 확인합니. 예를 들어 다음 JSON 매니페스트에서 노드를 만들려는 경우입니다.
 
 ```text
 {
@@ -34,10 +30,10 @@ description: 'Update : 2020-11-11'
 }
 ```
 
-쿠버네티스는 내부적으로 노드 오브젝트를 생성합니다.  쿠버네티스는 kubelet이 노드의 `metadata.name` 필드와 일치하는 API 서버에 등록이 되어있는지 확인합니다.  노드가 정상이면\(필요한 모든 서비스가 실행중인 경우\) 파드를 실행할 수 있게 됩니다.  그렇지 않으면, 해당 노드는 정상이 될때까지 모든 클러스터 활동에 대해 무시됩니다.
+쿠버네티스는 내부적으로 노드 오브젝트를 생성합니. 쿠버네티스는 kubelet이 노드의 `metadata.name` 필드와 일치하는 API 서버에 등록이 되어있는지 확인한합니다. 노드가 정상이면\(필요한 모든 서비스가 실행중인 경우\) 파드를 실행할 수 있게 됩다. 그렇지 않으면, 해당 노드는 정상이 될때까지 모든 클러스터 활동에 대해 무시됩니다.
 
 {% hint style="info" %}
-**참고:** 쿠버네티스는 유효하지 않은 노드 오브젝트를 유지하고, 노드가 정상적인지 확인합니다.  상태 확인을 중지하려면 사용자 또는 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)에서 노드 오브젝트를 명시적으로 삭제해야 합니다.
+**참고:** 쿠버네티스는 유효하지 않은 노드 오브젝트를 유지하고, 노드가 정상적인지 확인합니. 상태 확인을 중지하려면 사용자 또는 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)에서 노드 오브젝트를 명시적으로 삭제해야 합니다.
 {% endhint %}
 
 ### 노드에 대한 자체-등록
@@ -47,7 +43,7 @@ kubelet 플래그 `--register-node`는 참\(기본값\)일 경우, kubelet 은 A
 자체-등록에 대해, kubelet은 다음 옵션과 함께 시작됩니다.
 
 * `--kubeconfig` - apiserver에 스스로 인증하기 위한 자격증명에 대한 경로.
-* `--cloud-provider` - 자신에 대한 메터데이터를 읽기 위해 어떻게 [클라우드 제공자](https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers)와 통신할 것인지에 대한 방법 .
+* `--cloud-provider` - 자신에 대한 메터데이터를 읽기 위해 어떻게 [클라우드 제공자](https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers)와 통신할 것인지에 대한 방.
 * `--register-node` - 자동으로 API 서버에 등록.
 * `--register-with-taints` - 주어진 [테인트\(taint\)](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) 리스트\(콤마로 분리된 `<key>=<value>:<effect>`\)를 가진 노드 등록.
 
@@ -65,11 +61,11 @@ kubelet 플래그 `--register-node`는 참\(기본값\)일 경우, kubelet 은 A
 
 노드 오브젝트를 수동으로 생성하려면 kubelet 플래그를 `--register-node=false` 로 설정합니다.
 
-`--register-node` 설정과 관계 없이 노드 오브젝트를 수정할 수 있습니다 . 예를 들어 기존 노드에 레이블을 설정하거나, 스케줄 불가로 표시할 수 있습니다.
+`--register-node` 설정과 관계 없이 노드 오브젝트를 수정할 수 있습니. 예를 들어 기존 노드에 레이블을 설정하거나, 스케줄 불가로 표시할 수 있습니다.
 
-파드의 노드 셀렉터와 함께 노드의 레이블을 사용해서 스케줄링을 제어할 수 있습니다 . 예를 들어, 사용 가능한 노드의 하위 집합에서만 실행되도록 파드를 제한할 수 있습니다.
+파드의 노드 셀렉터와 함께 노드의 레이블을 사용해서 스케줄링을 제어할 수 있습니. 예를 들어, 사용 가능한 노드의 하위 집합에서만 실행되도록 파드를 제한할 수 있습니다.
 
-노드를 스케줄 불가로 표시하면 스케줄러가 해당 노드에 새 파드를 배치할 수 없지만, 노드에 있는 기존 파드에는 영향을 미치지 않습니다 . 이는 노드 재부팅 또는 기타 유지보수 준비 단계에서 유용합니다.
+노드를 스케줄 불가로 표시하면 스케줄러가 해당 노드에 새 파드를 배치할 수 없지만, 노드에 있는 기존 파드에는 영향을 미치지 않습니. 이는 노드 재부팅 또는 기타 유지보수 준비 단계에서 유용합니다.
 
 노드를 스케줄 불가로 표시하려면 다음을 실행합니다.
 
@@ -78,7 +74,7 @@ kubectl cordon $NODENAME
 ```
 
 {% hint style="info" %}
-참고: [데몬셋\(DaemonSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/daemonset)에 포함되는 일부 파드는 스케줄 불가능한 노드에서 실행될 수 있습니다 . 일반적으로 데몬셋은 워크로드 애플리케이션이 없는 경우에도 노드에서 실행되어야 하는 노드 로컬 서비스를 제공합니다 .
+참고: [데몬셋\(DaemonSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/daemonset)에 포함되는 일부 파드는 스케줄 불가 노드에서 실행될 수 있습니. 일반적으로 데몬셋은 워크로드 애플리케이션이 없는 경우에도 노드에서 실행되어야 하는 노드 로컬 서비스를 제공한다.
 {% endhint %}
 
 노드 오브젝트의 이름은 유효한 [DNS 서브도메인 이름](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/names/#dns-%EC%84%9C%EB%B8%8C%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%9D%B4%EB%A6%84%EB%93%A4)이어야 합니다.
