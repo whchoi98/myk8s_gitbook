@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-11'
+description: 'update : 2020-11-15'
 ---
 
 # K8s Dashboard 배포
