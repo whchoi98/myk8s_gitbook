@@ -20,8 +20,6 @@ git clone https://github.com/whchoi98/myeks
 
 ```
 
-
-
 ### 2. Stack 생성
 
 Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC.yml 파일을 로컬 PC에 다운로드 합니다. EKS 환경 구성을 위한 VPC 구성용 Cloudformation 입니다.
