@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-12'
+description: 'update : 2020-11-15'
 ---
 
 # 인증/자격증명 및 환경 구성
@@ -68,7 +68,7 @@ Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니�
 
 ![](../.gitbook/assets/image%20%2815%29.png)
 
-임시 자격증명이 설치되지 않도록 기존 자격 증명 파일을 제거합니다.
+임시 자격증명을 사용하지 않도록 기존 자격 증명 파일을 제거합니다.
 
 ```text
 rm -vf ${HOME}/.aws/credentials
@@ -229,6 +229,9 @@ MASTER\_ARN에 입력된 값을 조회해 봅니다.
 
 ```text
  echo $MASTER_ARN
+ echo $MASTER_ARN > master_arn.txt
+ cat master_arn.txt
+ 
 ```
 
 출력 결과 예제 
@@ -310,6 +313,7 @@ aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms cr
 
 #CMK의 ARN을 $MASTER_ARN에 입력
 export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
+echo $MASTER_ARN > master_arn.txt
 
 #KMS Key를 쉽게 참조 할 수 있도록 MASTER 환경변수를 bash_profile에 저장
 echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
