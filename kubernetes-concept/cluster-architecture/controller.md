@@ -2,19 +2,19 @@
 
 ## 컨트롤러
 
-로보틱스와 자동화에서 _컨트롤 루프_ 는 시스템 상태를 조절하는 종료되지 않는 루프이다.
+로보틱스와 자동화에서 _컨트롤 루프_ 는 시스템 상태를 조절하는 종료되지 않는 루프입니다.
 
-컨트롤 루프의 예시: 실내 온도 조절기
+**컨트롤 루프의 예시: 실내 온도 조절기**
 
-사용자는 온도를 설정해서, 사용자가 _의도한 상태_ 를 온도 조절기에 알려준다. _현재 상태_ 이다. 온도 조절기는 장비를 켜거나 꺼서 현재 상태를 의도한 상태에 가깝게 만든다.
+사용자는 온도를 설정하고, 사용자가 의도한 상태 를 온도 조절기에 알려준다. 현재 상태입니다. 온도 조절기는 장비를 켜거나 꺼서 현재 상태를 의도한 상태에 가깝게 만듭니다.
 
-쿠버네티스에서 컨트롤러는 [클러스터](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-cluster) 의 상태를 관찰 한 다음, 필요한 경우에 생성 또는 변경을 요청하는 컨트롤 루프이다. 각 컨트롤러는 현재 클러스터 상태를 의도한 상태에 가깝게 이동한다.
+쿠버네티스에서 컨트롤러는 [클러스터](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-cluster) 의 상태를 관찰 한 다음, 필요한 경우에 생성 또는 변경을 요청하는 컨트롤 루프입니다. 각 컨트롤러는 현재 클러스터 상태를 의도한 상태에 가깝게 이동한다.
 
 ## 컨트롤러 패턴
 
-컨트롤러는 적어도 하나 이상의 쿠버네티스 리소스 유형을 추적한다. 이 [오브젝트](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/kubernetes-objects/#kubernetes-objects) 는 의도한 상태를 표현하는 사양 필드를 가지고 있다. 해당 리소스의 컨트롤러\(들\)은 현재 상태를 의도한 상태에 가깝게 만드는 역할을 한다.
+컨트롤러는 적어도 하나 이상의 쿠버네티스 리소스 유형을 추적합니다. 이 [오브젝트](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/kubernetes-objects/#kubernetes-objects) 는 의도한 상태를 표현하는 사양 필드를 가지고 있습니다. 해당 리소스의 컨트롤러\(들\)은 현재 상태를 의도한 상태에 가깝게 만드는 역할을 합니다.
 
-컨트롤러는 스스로 작업을 수행할 수 있다. 보다 일반적으로, 쿠버네티스에서는 컨트롤러가 [API 서버](https://kubernetes.io/docs/reference/generated/kube-apiserver/) 로 유용한 부수적인 효과가 있는 메시지를 발송한다. 그 예시는 아래에서 볼 수 있다.
+컨트롤러는 스스로 작업을 수행할 수 있습니다. 좀 더 일반적으로, 쿠버네티스에서는 컨트롤러가 [API 서버](https://kubernetes.io/docs/reference/generated/kube-apiserver/) 로 유용한 부수적인 효과가 있는 메시지를 발송하게 됩니다. 그 예시는 아래에서 볼 수 있습니다.
 
 ### API 서버를 통한 제어
 
