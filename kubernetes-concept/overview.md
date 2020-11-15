@@ -32,17 +32,17 @@ description: '참조 원문 : https://kubernetes.io/'
 * [볼륨](https://kubernetes.io/ko/docs/concepts/storage/volumes/)
 * [네임스페이스\(Namespace\)](https://kubernetes.io/ko/docs/concepts/overview/working-with-objects/namespaces/)
 
-또한, 쿠버네티스에는 기초적 오브젝트를 기반으로, 부가 기능 및 편의 기능을 제공하는 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)에 의존하는 보다 높은 수준의 추상적 개념도 포함되어 있습니다. 아래와 같은 것들이 해당됩니다.
+또한, 쿠버네티스에는 기본 오브젝트를 기반으로, 부가 기능 및 편의 기능을 제공하는 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)에 의존하는 보다 높은 수준의 추상적 개념도 포함되어 있습니다. 아래와 같은 것들이 해당됩니다.
 
 * [디플로이먼트\(Deployment\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/deployment/)
 * [데몬셋\(DaemonSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/daemonset/)
 * [스테이트풀셋\(StatefulSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/statefulset/)
-* [레플리카셋\(ReplicaSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/replicaset/)
+* [리플리카셋\(ReplicaSet\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/replicaset/)
 * [잡\(Job\)](https://kubernetes.io/ko/docs/concepts/workloads/controllers/jobs-run-to-completion/)
 
 ### 쿠버네티스 컨트롤 플레인 <a id="&#xCFE0;&#xBC84;&#xB124;&#xD2F0;&#xC2A4;-&#xCEE8;&#xD2B8;&#xB864;-&#xD50C;&#xB808;&#xC778;"></a>
 
-쿠버네티스 마스터와 kubelet 프로세스와 같은 쿠버네티스 컨트롤 플레인의 다양한 구성 요소는 쿠버네티스가 클러스터와 통신하는 방식을 담당합니. 컨트롤 플레인은 시스템 내 모든 쿠버네티스 오브젝트의 레코드를 유지하면서, 오브젝트의 상태를 관리하는 제어 루프를 지속적으로 구동시킵니다. 컨트롤 플레인의 제어 루프는 클러스터 내 변경이 발생하면 언제라도 응답하고 시스템 내 모든 오브젝트의 실제 상태가 사용자가 원하는 상태와 일치시키기 위한 일을 담당합니다.
+쿠버네티스 마스터, kubelet 프로세스와 같은 쿠버네티스 컨트롤 플레인의 다양한 구성 요소는 쿠버네티스가 클러스터와 통신하는 방식을 담당합니다.  컨트롤 플레인은 시스템 내 모든 쿠버네티스 오브젝트의 레코드를 유지하면서, 오브젝트의 상태를 관리하는 제어 루프를 지속적으로 구동시킵니다. 컨트롤 플레인의 제어 루프는 클러스터 내 변경이 발생하면 언제라도 응답하고 시스템 내 모든 오브젝트의 실제 상태가 사용자가 원하는 상태와 일치시키기 위한 일을 담당합니다.
 
 예를 들어, 쿠버네티스 API를 사용해서 디플로이먼트를 만들 때에는, 원하 상태를 시스템에 신규로 입력해야 합니다. 이를 통해 쿠버네티스 컨트롤 플레인이 오브젝트 생성을 기록하고, 사용자 명령로 필요한 애플리케이션을 시작시키고 클러스터 노드에 스케줄링합니. 이 과정을 통해서 클러스터의 실제 상태가 원하는 상태와 일치하게 됩니다.
 
