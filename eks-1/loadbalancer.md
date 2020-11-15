@@ -12,7 +12,7 @@ description: 'update : 2020-11-11'
 
 ![](../.gitbook/assets/image%20%288%29.png)
 
-노드 타입 구조의 경우 노드의 IP주소와 Port에 종속되고, 확장성과 유연함에 한계가 있습니다.
+노드 타입 구조의 경우 노드의 IP주소와 Port에 종속되고, 확장성과 유연함에 한계가 있습니다. 하지만 NodePort를 사용해도 대부분의 포트 기반의 서비스를 구성할 수 있습니다.
 
 대부분은 Loadbalancer 타입과 Ingress 기반과 Service 가 연계되어 확장성과 유연함을 갖는 구조를 제공합니다.
 
