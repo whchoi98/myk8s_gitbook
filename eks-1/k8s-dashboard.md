@@ -189,6 +189,8 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ### 5.Kubernetes 대쉬보드 삭제
 
+랩을 진행하면서 K8s Dashboard에서 Pod 현황을 살펴보고 싶다면, 삭제 하지 않습니다. 다음 Lab과 연관성이 없습니다.
+
 Proxy를 먼저 삭제합니다.jobs의 결과에서 Proxy 번호를 확인하고 kill을 통해서 삭제합니다.
 
 ```text
