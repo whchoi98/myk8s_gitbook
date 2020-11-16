@@ -530,7 +530,7 @@ spec:
         nodegroup-type: "backend-workloads"
 ```
 
-ecsdemo-nodejs nlb\_service.yaml
+ecsdemo-crystal nlb\_service.yaml
 
 ```text
 apiVersion: v1
