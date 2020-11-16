@@ -39,7 +39,7 @@ kubectl get deployment metrics-server -n kube-system
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ kubectl get deployment metrics-server -n kube-system
+~/environment $ kubectl get deployment metrics-server -n kube-system
 NAME             READY   UP-TO-DATE   AVAILABLE   AGE
 metrics-server   1/1     1            1           57s
 ```
