@@ -44,7 +44,7 @@ kubectl get pods --all-namespaces -o wide
 출력결과 예제
 
 ```text
-whchoi98:~/environment $ kubectl get pods --all-namespaces -o wide
+~/environment $ kubectl get pods --all-namespaces -o wide
 NAMESPACE           NAME                                                  READY   STATUS    RESTARTS   AGE     IP              NODE                                               NOMINATED NODE   READINESS GATES
 2048-game           2048-deployment-dd74cc68d-2bnxc                       1/1     Running   0          3d19h   10.11.58.105    ip-10-11-55-30.ap-northeast-2.compute.internal     <none>           <none>
 ```
