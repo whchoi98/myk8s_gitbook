@@ -35,9 +35,10 @@ eksctl을 사용하여 ALB Ingress Controller를 위한 IAM Policy를 생성합�
 
 ```text
 eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
+
 ```
 
-출력 결과 예시
+출력 결과 예시입니다.
 
 ```text
 $ eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
