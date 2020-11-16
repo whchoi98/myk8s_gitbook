@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-11'
+description: 'update : 2020-11-15'
 ---
 
 # K8s Dashboard 배포
@@ -176,7 +176,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 생성된 윈도우에서 아래 Path를 URL뒤에 복사해서 뒤에 붙여 넣습니다.
 
 ```text
-/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
 ```
 
 앞서 생성한 eks-admin 토큰 값을 Kubernettes Dashboard에 입력합니다.
@@ -187,7 +187,16 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ![](../.gitbook/assets/image%20%2820%29.png)
 
+앞서 생성해 두었던 K9s로 어떤 namespace에 생성되었는지 살펴보고, 어떤 PoD들이 생성되었는지 확인해 봅니다.
+
+```text
+k9s -A
+
+```
+
 ### 5.Kubernetes 대쉬보드 삭제
+
+랩을 진행하면서 K8s Dashboard에서 Pod 현황을 살펴보고 싶다면, 삭제 하지 않습니다. 다음 Lab과 연관성이 없습니다.
 
 Proxy를 먼저 삭제합니다.jobs의 결과에서 Proxy 번호를 확인하고 kill을 통해서 삭제합니다.
 
