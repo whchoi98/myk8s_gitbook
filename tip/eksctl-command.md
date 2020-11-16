@@ -4,8 +4,6 @@
 
 ### cluster 생성 . 
 
-기존 생성해 둔 Yaml 파일을 사용하는 방법입니다.
-
 ```text
 eksctl create cluster --config-file=/home/ec2-user/environment/myeks/whchoi-cluster.yaml 
 ```
@@ -43,8 +41,6 @@ eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
 ```text
 eksctl create iamserviceaccount --cluster=eksworkshop --namespace=kube-system --name=alb-ingress-controller --attach-policy-arn=$PolicyARN --override-existing-serviceaccounts --approve
 ```
-
-
 
 
 
