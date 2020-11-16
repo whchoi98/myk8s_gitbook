@@ -70,6 +70,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingre
 ```text
 cd ~/environment/myeks/alb-controller/
 kubectl apply -f rbac-role.yaml
+
 ```
 
 출력 결과 예시
@@ -140,7 +141,7 @@ whchoi98:~/environment $ eksctl create iamserviceaccount --cluster=eksworkshop -
 ### 5.ALB Ingress Controller 포드를 배포
 
 {% hint style="warning" %}
-sample yaml에는 Cluster name이 devCluster로 되어 있으므로, 이것을 생성되어 있는 Cluster name = eksworkshop으로 대체합니다.
+sample yaml에는 Cluster name이 devCluster로 되어 있으므로, 이것을 생성되어 있는 각자 랩의 Cluster name = eksworkshop으로 대체합니다.
 {% endhint %}
 
 ```text
