@@ -21,7 +21,7 @@ Calico는 유연한 네트워킹 기능과 보안 기능을 결합하여 네이�
 [`aws/amazon-vpc-cni-k8s` GitHub 프로젝트](https://github.com/aws/amazon-vpc-cni-k8s)에서 Calico 매니페스트를 적용합니다. 이 매니페스트는 `kube-system` 네임스페이스에 데몬 세트를 생성합니다.
 
 ```text
-kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.6/config/v1.6/calico.yaml
+kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.7/config/v1.7/calico.yaml
 ```
 
 calico 매니페스트 파일의 주요 내용을 살펴 봅니다. 
