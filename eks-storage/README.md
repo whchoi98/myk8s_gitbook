@@ -1,5 +1,5 @@
 ---
-description: 1h
+description: 2h
 ---
 
 # 7.EKS Storage
