@@ -1,5 +1,5 @@
 ---
-description: 2h 30min
+description: 2h
 ---
 
 # 5.EKS 기반 관리
@@ -37,6 +37,4 @@ CloudWatch 기반의 Container Insight를 통해 , EKS 환경에서 FluentD를 �
 ### X-Ray 기반의 추적
 
 X-Ray 기반의 어플리케이션 상세 분석과 트래킹하는 방법에 대해서 알아봅니다.
-
-이 랩을 전체 구성하고, 이해하는 데는 2시간 30분 정도 소요 됩니다. 
 
