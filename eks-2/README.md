@@ -1,5 +1,5 @@
 ---
-description: 2h
+description: 2h 30min
 ---
 
 # 5.EKS 기반 관리
