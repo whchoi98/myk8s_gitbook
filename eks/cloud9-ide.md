@@ -84,13 +84,14 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ### 1.kubectl 바이너리 다운로드
 
-EKS를 위한 kubectl 바이너리를 다운로드합니다. \(2020-09-18 기준\) 3개의 Version 가운데 1개를 다운로드 받습니다.
+EKS를 위한 kubectl 바이너리를 다운로드합니다. 4개의 Version 가운데 1개를 다운로드 받습니다.
 
 kubectl은 Version 1개 정도의 차이 호환성은 가지고 갑니다.
 
 **EKS 1.16.15 기반 설치** 
 
 ```text
+cd ~
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.15/2020-11-02/bin/darwin/amd64/kubectl
 
 ```
@@ -98,6 +99,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.15/2020-11-02
 #### EKS 1.17.12 기반 설치 
 
 ```text
+cd ~
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.12/2020-11-02/bin/darwin/amd64/kubectl
 
 ```
@@ -105,6 +107,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.12/2020-11-02
 **EKS 1.18.9 기반 설치** 
 
 ```text
+cd ~
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/darwin/amd64/kubectl
 
 ```
@@ -112,6 +115,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/
 **EKS 1.19.6 기반 설치**
 
 ```text
+cd ~
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/darwin/amd64/kubectl
 
 ```
@@ -124,7 +128,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/
 
 ```text
 chmod +x ./kubectl
-sudo chmod +x /usr/local/bin/kubectl
+
 ```
 
 ### 3.Path 설정
@@ -311,11 +315,12 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ```
 
-3. Cloud9에 Kubectl 설치 \(1.17 기준\)
+3. Cloud9에 Kubectl 설치 \(1.19 기준\)
 
 ```text
-# EKS 1.17.11 기반 설치
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
+# EKS 1.19.6 기반 설치
+cd ~
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/darwin/amd64/kubectl
 chmod +x ./kubectl
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
 echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
