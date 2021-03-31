@@ -92,19 +92,21 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.13/2020-09-18
 
 ```
 
-#### EKS 1.17.11 기반 설치 \(2020.11 기준 Hands on LAB 권장\)
+#### EKS 1.17.11 기반 설치 
 
 ```text
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
 
 ```
 
-EKS 1.18.8 기반 설치 
+**EKS 1.18.8 기반 설치** 
 
 ```text
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl
 
 ```
+
+EKS 1.19
 
 ### 2. 실행권한을 적용
 
