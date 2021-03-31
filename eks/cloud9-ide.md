@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-15'
+description: 'update : 2021-04-01'
 ---
 
 # Cloud9 IDE 환경 구성
@@ -86,6 +86,8 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 EKS를 위한 kubectl 바이너리를 다운로드합니다. \(2020-09-18 기준\) 3개의 Version 가운데 1개를 다운로드 받습니다.
 
+kubectl은 Version 1개 정도의 차이 호환성은 가지고 갑니다.
+
 **EKS 1.16.15 기반 설치** 
 
 ```text
@@ -122,7 +124,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/
 
 ```text
 chmod +x ./kubectl
-
+sudo chmod +x /usr/local/bin/kubectl
 ```
 
 ### 3.Path 설정
