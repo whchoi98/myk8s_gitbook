@@ -46,7 +46,7 @@ Cloud9 IDE는 이미 AWS CLI가 설치되어 있습니다. 하지만 기본 1.x 
 
 ```text
 $ aws --version
-aws-cli/1.18.170 Python/3.6.12 Linux/4.14.200-116.320.amzn1.x86_64 botocore/1.19.10
+aws-cli/1.19.39 Python/2.7.18 Linux/4.14.225-169.362.amzn2.x86_64 botocore/1.20.39
 ```
 
 아래 명령을 통해 CLI를 2.0으로 업그레이드합니다.
@@ -61,8 +61,9 @@ sudo ./aws/install
 정상적으로 업그레이드 되었는지 확인합니다.
 
 ```text
+source ~/.bashrc
 aws --version
-aws-cli/2.0.62 Python/3.7.3 Linux/4.14.200-116.320.amzn1.x86_64 exe/x86_64.amzn.2018
+
 ```
 
 aws cli 자동완성을 설치 합니다.
@@ -85,28 +86,35 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 EKS를 위한 kubectl 바이너리를 다운로드합니다. \(2020-09-18 기준\) 3개의 Version 가운데 1개를 다운로드 받습니다.
 
-EKS 1.16.13 기반 설치 
+**EKS 1.16.15 기반 설치** 
 
 ```text
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.13/2020-09-18/bin/linux/amd64/kubectl
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.15/2020-11-02/bin/darwin/amd64/kubectl
 
 ```
 
-#### EKS 1.17.11 기반 설치 
+#### EKS 1.17.12 기반 설치 
 
 ```text
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.12/2020-11-02/bin/darwin/amd64/kubectl
 
 ```
 
-**EKS 1.18.8 기반 설치** 
+**EKS 1.18.9 기반 설치** 
 
 ```text
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/darwin/amd64/kubectl
 
 ```
 
-EKS 1.19
+**EKS 1.19.6 기반 설치**
+
+```text
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/darwin/amd64/kubectl
+
+```
+
+#### 🎯 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/install-kubectl.html)
 
 ### 2. 실행권한을 적용
 
