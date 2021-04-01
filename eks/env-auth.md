@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-04-01'
+description: 'update : 2020-11-15'
 ---
 
 # 인증/자격증명 및 환경 구성
@@ -72,7 +72,6 @@ Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니�
 
 ```text
 rm -vf ${HOME}/.aws/credentials
-
 ```
 
 ### 5. Cloud9 IDE 역할 점검
@@ -120,9 +119,9 @@ whchoi98:~ $ aws configure --profile default list
       Name                    Value             Type    Location
       ----                    -----             ----    --------
    profile                  default           manual    --profile
-access_key     ****************OF5M         iam-role    
-secret_key     ****************sDz7         iam-role    
-    region           ap-northeast-2              env    ['AWS_REGION', 'AWS_DEFAULT_REGION']
+access_key     ****************AHEW         iam-role    
+secret_key     ****************8czE         iam-role    
+    region           ap-northeast-2      config-file    ~/.aws/config
 ```
 
 ## SSH 키 생성
@@ -134,7 +133,6 @@ eksworkshop에서 사용될 키를 생성합니다.
 Cloud9에서 ssh key를 생성합니다.
 
 ```text
-cd ~
 ssh-keygen
 ```
 
@@ -169,7 +167,7 @@ The key's randomart image is:
 생성된 SSH key를  Key 페어로 전송합니다. 앞서 eksworkshop.pub 로 public key가 생성되었습니다.
 
 ```text
-aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://~/eksworkshop.pub
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
 
 ```
 
@@ -183,7 +181,7 @@ aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/
 오류가 발생할 경우에는 다음과 같은 방법으로 key 페어를 등록합니다.아래 명령의 Public key값을 복사합니다.
 
 ```text
-cat ~/eksworkshop.pub 
+cat ~/environment/eksworkshop.pub 
 ```
 
 아래 ec2 대쉬보드에서 키를 등록합니다.
@@ -225,7 +223,6 @@ CMK의 ARN을 $MASTER\_ARN에 입력해 둡니다.
 
 ```text
 export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
-
 ```
 
 MASTER\_ARN에 입력된 값을 조회하고, 홈디렉토리에 **`master_arn.txt`** 파일을 저장합니다. master\_arn 의 값은 계속 사용되는 값입니다.
