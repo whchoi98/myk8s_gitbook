@@ -92,7 +92,7 @@ kubectl은 Version 1개 정도의 차이 호환성은 가지고 갑니다.
 
 ```text
 cd ~
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.15/2020-11-02/bin/darwin/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.15/bin/linux/amd64/kubectl
 
 ```
 
@@ -100,7 +100,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.15/2020-11-02
 
 ```text
 cd ~
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.12/2020-11-02/bin/darwin/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.12/bin/linux/amd64/kubectl
 
 ```
 
@@ -108,7 +108,7 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.12/2020-11-02
 
 ```text
 cd ~
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/darwin/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.9/bin/linux/amd64/kubectl
 
 ```
 
@@ -116,51 +116,33 @@ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/
 
 ```text
 cd ~
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/darwin/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.6/bin/linux/amd64/kubectl
 
 ```
 
-#### 🎯 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/install-kubectl.html)
+#### 🎯 추가 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/install-kubectl.html)
 
-### 2. 실행권한을 적용
+### 2. 실행권한을 적용 및 구성 
 
 바이너리에 실행권한을 적용합니다.
 
 ```text
 chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
 
 ```
 
-### 3.Path 설정
-
-바이너리를 PATH의 폴더에 복사합니다. kubectl 버전이 이미 설치된 경우 $HOME/bin/kubectl을 생성하고 $HOME/bin이 $PATH로 시작하도록 해야 합니다.
-
-```text
-mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
-
-```
-
-### 4.셀 환경변수에 추가
-
-셸 초기화 파일에 $HOME/bin 경로를 추가하면 셸을 열 때 구성됩니다.
-
-```text
-echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-
-```
-
-정상적으로 설치되었는지 확인합니다.
+### 3. kubectl 설치 확인  
 
 ```text
 kubectl version --short --client
 
 ```
 
-출력결과 예제 \(1.17.11 예시\)
+출력결과 예제 \(1.19.6 예시\)
 
 ```text
-Client Version: v1.17.11-eks-cfdc40
-
+Client Version: v1.19.6
 ```
 
 ### 5.kubectl 자동완성 설치 
@@ -183,6 +165,7 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 ```text
 sudo yum -y install jq gettext bash-completion moreutils
+
 ```
 
 ### 2.jq 구성
@@ -217,13 +200,14 @@ Linux Brew를 설치합니다.
 ```text
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 
+#Press Control-D to install to /home/ec2-user/.linuxbrew
 ```
 
 경로를 설정합니다.
 
 ```text
-echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>~/.bash_profile
-eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+echo 'eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"' >> /home/ec2-user/.bash_profile
+eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"
 
 ```
 
@@ -320,7 +304,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 ```text
 # EKS 1.19.6 기반 설치
 cd ~
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/darwin/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.6/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
 echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
@@ -346,8 +330,8 @@ for command in kubectl jq envsubst aws
 #K9s 설치
 sudo yum groupinstall -y 'Development Tools' && sudo yum install curl file git ruby which
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>~/.bash_profile
-eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+echo 'eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"' >> /home/ec2-user/.bash_profile
+eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"
 brew install derailed/k9s/k9s
 
 #Kube krew 설치
