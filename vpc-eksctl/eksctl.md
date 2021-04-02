@@ -30,30 +30,39 @@ eksctl version
 다음 aws cli 명령을 통해서 확인 할 수 있습니다. 결과값은 홈디렉토리 **`vpc_subnet.txt`** 에 저장합니다. 아래 명령을 실행하면 자동으로 저장됩니다.
 
 ```text
+#VPC ID export
 export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
 echo $vpc_ID
+
+#Subnet ID, CIDR, Subnet Name export
 aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)'
 echo $vpc_ID > vpc_subnet.txt
 aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> vpc_subnet.txt
+cat vpc_subnet.txt
 
 ```
 
 아래는 **`vpc_subnet.txt`** 에 저장된 예제입니다.
 
 ```text
-VPC ID - vpc-0bdd67cbc64aba483
-subnet-0cefc84fccc10a43e 10.11.160.0/19 eksworkshop-PrivateSubnet03
-subnet-085d5b141c99056e4 10.11.96.0/19 eksworkshop-PrivateSubnet01
-subnet-045d2dae51ad1a4b8 10.11.64.0/19 eksworkshop-PublicSubnet03
-subnet-09cf854ef0cceca69 10.11.128.0/19 eksworkshop-PrivateSubnet02
-subnet-0d91e62f267e8ac28 10.11.32.0/19 eksworkshop-PublicSubnet02
-subnet-07e14cab3b1c197ea 10.11.0.0/19 eksworkshop-PublicSubnet01
+vpc-04a7f563ebe750a92
+subnet-0db014e6a52f7b002 10.11.16.0/20 eksworkshop-PublicSubnet02
+subnet-01a18de77c71a9d8d 10.11.32.0/20 eksworkshop-PublicSubnet03
+subnet-0786a534253c21a1e 10.11.48.0/20 eksworkshop-PublicSubnet04
+subnet-0396e3d1dfe08d224 10.11.0.0/20 eksworkshop-PublicSubnet01
+subnet-0e49bdf1a4b2a0f6a 10.11.80.0/20 eksworkshop-PrivateSubnet02
+subnet-0914eefaede7a14c9 10.11.64.0/20 eksworkshop-PrivateSubnet01
+subnet-01db4b6773a94e6a2 10.11.96.0/20 eksworkshop-PrivateSubnet03
+subnet-034369344c2f8e598 10.11.112.0/20 eksworkshop-PrivateSubnet04
 ```
 
 저장해둔 Region 정보와 master\_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
 
 ```text
+#사용자 AWS Region 확
 echo $AWS_REGION
+
+#사용자 KMS Key ARM
 echo $MASTER_ARN
 cat master_arn.txt
 
@@ -65,35 +74,36 @@ VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포�
 
 Cloud9 IDE 편집기에서 아래와 같이 수정합니다. 수정내용은 현재 생성된 VPC, Subnet ID , key 위치 입니다.
 
-![](../.gitbook/assets/image%20%28145%29.png)
+![](../.gitbook/assets/image%20%28164%29.png)
 
 수정할 블록의 예시입니다.
 
 ```text
-metadata:
-  name: eksworkshop
-  region: ap-northeast-2
-
-#vpc id와 각 서브넷 id는 vpc_subnet.txt 값들이 입력됩니다.
 vpc: 
-  id: vpc-0bdd67cbc64aba483
+  id: vpc-04a7f563ebe750a92
   subnets:
-    public:
-      ap-northeast-2a: { id: subnet-07128799309969cc4}
-      ap-northeast-2b: { id: subnet-0240b3e1a59fb4802}
-      ap-northeast-2c: { id: subnet-0ff369e1bb376c450}
     private:
-      ap-northeast-2a: { id: subnet-062dad2e0fc99a677}
-      ap-northeast-2b: { id: subnet-0859b55ff38586ab1}
-      ap-northeast-2c: { id: subnet-0cf39d70d89565812}
+      ap-northeast-2a: { id: subnet-0914eefaede7a14c9}
+      ap-northeast-2b: { id: subnet-0e49bdf1a4b2a0f6a}
+      ap-northeast-2c: { id: subnet-01db4b6773a94e6a2}
+      ap-northeast-2d: { id: subnet-034369344c2f8e598}
+    public:
+      ap-northeast-2a: { id: subnet-0396e3d1dfe08d224}
+      ap-northeast-2b: { id: subnet-0db014e6a52f7b002}
+      ap-northeast-2c: { id: subnet-01a18de77c71a9d8d}
+      ap-northeast-2d: { id: subnet-0786a534253c21a1e}
 
-# keyARN의 값에는 master_arn.txt 값이 입력됩니다.
 secretsEncryption:
-  keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/6ba77a10-cf0b-4af8-b7b7-54bb5ea2f5c9
+  keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/25a2f579-9f22-4d79-ad6f-1a468d06244b
+
+nodeGroups:
+중
+    ssh: 
+        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
 ```
 
 {% hint style="warning" %}
-**vpc/subnet id , CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.**
+**vpc/subnet id , KMS CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.**
 {% endhint %}
 
 ### 4. cluster 생성
