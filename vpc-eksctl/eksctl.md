@@ -30,6 +30,7 @@ eksctl version
 다음 aws cli 명령을 통해서 확인 할 수 있습니다. 결과값은 홈디렉토리 **`vpc_subnet.txt`** 에 저장합니다. 아래 명령을 실행하면 자동으로 저장됩니다.
 
 ```text
+cd ~/environment/
 #VPC ID export
 export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
 echo $vpc_ID
@@ -59,7 +60,7 @@ subnet-034369344c2f8e598 10.11.112.0/20 eksworkshop-PrivateSubnet04
 저장해둔 Region 정보와 master\_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
 
 ```text
-#사용자 AWS Region 확
+#사용자 AWS Region
 echo $AWS_REGION
 
 #사용자 KMS Key ARM
@@ -109,15 +110,15 @@ nodeGroups:
 ```
 
 {% hint style="warning" %}
-**vpc/subnet id , KMS CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.**
+**vpc/subnet id , KMS CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 또한 Cloud9의 publickeyPath의 경로도 확인하고, 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.**
 {% endhint %}
 
 ### 4. cluster 생성
 
-eksctl을 통해 EKS Cluster를 생성합니다.
+eksctl을 통해 EKS Cluster를 생성합니다. default는 1.18입니다. 명령 뒤에 확장자 "--version 1.19"를 입력해서 1.19를 설치합니다.
 
 ```text
-eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml 
+eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml --version 
 ```
 
 {% hint style="info" %}
