@@ -97,7 +97,13 @@ secretsEncryption:
   keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/25a2f579-9f22-4d79-ad6f-1a468d06244b
 
 nodeGroups:
-중
+  - name: ng-public-01
+중략 
+    ssh: 
+        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
+중략  
+  - name: ng-private-01
+중략  
     ssh: 
         publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
 ```
