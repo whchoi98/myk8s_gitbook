@@ -32,13 +32,15 @@ AWS 서비스 - Cloudformation 을 선택합니다.
 
 ![](../.gitbook/assets/image%20%2841%29.png)
 
-앞서 다운로드 받은 "EKSVPC.yml" 파일을 업로드 합니다.
+앞서 다운로드 받은 "EKSVPC4AZ.yml" 파일을 업로드 합니다. \(2개 AZ는 EKSVPC2AZ.yml , 3개 AZ는 EKSVPC3AZ.yml, 4개 AZ는 EKSVPC4AZ.yml을 선택합니다.\)
 
-![](../.gitbook/assets/image%20%2822%29.png)
+![](../.gitbook/assets/image%20%28162%29.png)
 
 ### 3. Stack 상세 정보 구성
 
 Cloudformation Stack 상세 정보 구성을 합니다.
+
+![](../.gitbook/assets/image%20%28163%29.png)
 
 ![](../.gitbook/assets/image%20%2823%29.png)
 
@@ -56,11 +58,11 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 이 값을 확인해 봅니다. \(다음 단원에서 aws cli 통해서 Cloud9 인스턴스 홈 디렉토리에 결과값을 txt 파일로 저장할 것입니다.\)
 
-![](../.gitbook/assets/image%20%2838%29.png)
+![](../.gitbook/assets/image%20%28160%29.png)
 
 구성이 완료되면 다음과 같은 VPC가 구성됩니다.
 
-![](../.gitbook/assets/image%20%28158%29.png)
+![](../.gitbook/assets/image%20%28161%29.png)
 
 ## Cloudformation 기반 VPC 구성 요약
 
@@ -80,7 +82,7 @@ git clone https://github.com/whchoi98/myeks
 
 **`스택생성 - 템플릿 파일 업로드`**
 
-**`파일선택 - EKSVPC.yml 선택`**
+**`파일선택 - EKSVPCxAZ.yml 선택`**
 
 **`출력정보 확인`**
 

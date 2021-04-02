@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-15'
+description: 'update : 2021-04-01'
 ---
 
 # Cloud9 IDE 환경 구성
@@ -46,7 +46,7 @@ Cloud9 IDE는 이미 AWS CLI가 설치되어 있습니다. 하지만 기본 1.x 
 
 ```text
 $ aws --version
-aws-cli/1.18.170 Python/3.6.12 Linux/4.14.200-116.320.amzn1.x86_64 botocore/1.19.10
+aws-cli/1.19.39 Python/2.7.18 Linux/4.14.225-169.362.amzn2.x86_64 botocore/1.20.39
 ```
 
 아래 명령을 통해 CLI를 2.0으로 업그레이드합니다.
@@ -61,8 +61,9 @@ sudo ./aws/install
 정상적으로 업그레이드 되었는지 확인합니다.
 
 ```text
+source ~/.bashrc
 aws --version
-aws-cli/2.0.62 Python/3.7.3 Linux/4.14.200-116.320.amzn1.x86_64 exe/x86_64.amzn.2018
+
 ```
 
 aws cli 자동완성을 설치 합니다.
@@ -83,68 +84,65 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ### 1.kubectl 바이너리 다운로드
 
-EKS를 위한 kubectl 바이너리를 다운로드합니다. \(2020-09-18 기준\) 3개의 Version 가운데 1개를 다운로드 받습니다.
+EKS를 위한 kubectl 바이너리를 다운로드합니다. 4개의 Version 가운데 1개를 다운로드 받습니다.
 
-EKS 1.16.13 기반 설치 
+kubectl은 Version 1개 정도의 차이 호환성은 가지고 갑니다.
+
+**EKS 1.16.15 기반 설치** 
 
 ```text
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.13/2020-09-18/bin/linux/amd64/kubectl
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.15/bin/linux/amd64/kubectl
 
 ```
 
-#### EKS 1.17.11 기반 설치 \(2020.11 기준 Hands on LAB 권장\)
+#### EKS 1.17.12 기반 설치 
 
 ```text
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.12/bin/linux/amd64/kubectl
 
 ```
 
-EKS 1.18.8 기반 설치 
+**EKS 1.18.9 기반 설치** 
 
 ```text
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.9/bin/linux/amd64/kubectl
 
 ```
 
-### 2. 실행권한을 적용
+**EKS 1.19.6 기반 설치**
+
+```text
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.6/bin/linux/amd64/kubectl
+
+```
+
+#### 🎯 추가 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/install-kubectl.html)
+
+### 2. 실행권한을 적용 및 구성 
 
 바이너리에 실행권한을 적용합니다.
 
 ```text
 chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
 
 ```
 
-### 3.Path 설정
-
-바이너리를 PATH의 폴더에 복사합니다. kubectl 버전이 이미 설치된 경우 $HOME/bin/kubectl을 생성하고 $HOME/bin이 $PATH로 시작하도록 해야 합니다.
-
-```text
-mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
-
-```
-
-### 4.셀 환경변수에 추가
-
-셸 초기화 파일에 $HOME/bin 경로를 추가하면 셸을 열 때 구성됩니다.
-
-```text
-echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-
-```
-
-정상적으로 설치되었는지 확인합니다.
+### 3. kubectl 설치 확인  
 
 ```text
 kubectl version --short --client
 
 ```
 
-출력결과 예제 \(1.17.11 예시\)
+출력결과 예제 \(1.19.6 예시\)
 
 ```text
-Client Version: v1.17.11-eks-cfdc40
-
+Client Version: v1.19.6
 ```
 
 ### 5.kubectl 자동완성 설치 
@@ -167,6 +165,7 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 ```text
 sudo yum -y install jq gettext bash-completion moreutils
+
 ```
 
 ### 2.jq 구성
@@ -201,13 +200,14 @@ Linux Brew를 설치합니다.
 ```text
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 
+#Press Control-D to install to /home/ec2-user/.linuxbrew
 ```
 
 경로를 설정합니다.
 
 ```text
-echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>~/.bash_profile
-eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+echo 'eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"' >> /home/ec2-user/.bash_profile
+eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"
 
 ```
 
@@ -299,11 +299,12 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ```
 
-3. Cloud9에 Kubectl 설치 \(1.17 기준\)
+3. Cloud9에 Kubectl 설치 \(1.19 기준\)
 
 ```text
-# EKS 1.17.11 기반 설치
-curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.11/2020-09-18/bin/linux/amd64/kubectl
+# EKS 1.19.6 기반 설치
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.6/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
 echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
@@ -329,8 +330,8 @@ for command in kubectl jq envsubst aws
 #K9s 설치
 sudo yum groupinstall -y 'Development Tools' && sudo yum install curl file git ruby which
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>~/.bash_profile
-eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+echo 'eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"' >> /home/ec2-user/.bash_profile
+eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"
 brew install derailed/k9s/k9s
 
 #Kube krew 설치
