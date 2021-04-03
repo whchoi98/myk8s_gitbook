@@ -118,7 +118,8 @@ nodeGroups:
 eksctl을 통해 EKS Cluster를 생성합니다. default는 1.18입니다. 하지만 git을 통해 다운 받은 eksctl 용 yaml파일에 1.19 설치가 선언되어 있습니다.
 
 ```text
-eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster.yaml 
+eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster-3az.yaml
+ 
 ```
 
 {% hint style="info" %}
