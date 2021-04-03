@@ -186,7 +186,7 @@ api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/prox
 
 정상적으로 생성된 것을 확인합니다.
 
-![](../.gitbook/assets/image%20%2820%29.png)
+![](../.gitbook/assets/image%20%28165%29.png)
 
 앞서 생성해 두었던 K9s로 어떤 namespace에 생성되었는지 살펴보고, 어떤 PoD들이 생성되었는지 확인해 봅니다.
 
