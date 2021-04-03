@@ -49,12 +49,11 @@ cat vpc_subnet.txt
 vpc-04a7f563ebe750a92
 subnet-0db014e6a52f7b002 10.11.16.0/20 eksworkshop-PublicSubnet02
 subnet-01a18de77c71a9d8d 10.11.32.0/20 eksworkshop-PublicSubnet03
-subnet-0786a534253c21a1e 10.11.48.0/20 eksworkshop-PublicSubnet04
 subnet-0396e3d1dfe08d224 10.11.0.0/20 eksworkshop-PublicSubnet01
 subnet-0e49bdf1a4b2a0f6a 10.11.80.0/20 eksworkshop-PrivateSubnet02
 subnet-0914eefaede7a14c9 10.11.64.0/20 eksworkshop-PrivateSubnet01
 subnet-01db4b6773a94e6a2 10.11.96.0/20 eksworkshop-PrivateSubnet03
-subnet-034369344c2f8e598 10.11.112.0/20 eksworkshop-PrivateSubnet04
+
 ```
 
 저장해둔 Region 정보와 master\_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
@@ -235,12 +234,10 @@ vpc:
       ap-northeast-2a: { id: subnet-07b001f1937567fb7}
       ap-northeast-2b: { id: subnet-03811b74f76270aed}
       ap-northeast-2c: { id: subnet-02ce8af3b04458b8f}
-      ap-northeast-2d: { id: subnet-0c23440ad2800c0ef}
     private:
       ap-northeast-2a: { id: subnet-0074fd1438d35d4ef}
       ap-northeast-2b: { id: subnet-0c82a7e8f40fa4268}
       ap-northeast-2c: { id: subnet-083b57160bcdc8320}
-      ap-northeast-2d: { id: subnet-0693a31f5373e153b}
 
 secretsEncryption:
   keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/25a2f579-9f22-4d79-ad6f-1a468d06244b
