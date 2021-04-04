@@ -32,7 +32,7 @@ AWS 서비스 - Cloudformation 을 선택합니다.
 
 ![](../.gitbook/assets/image%20%2841%29.png)
 
-앞서 다운로드 받은 "EKSVPC3AZ.yml" 파일을 업로드 합니다. \(2개 AZ는 EKSVPC2AZ.yml , 3개 AZ는 EKSVPC3AZ.yml, 4개 AZ는 EKSVPC4AZ.yml을 선택합니다.\)
+앞서 다운로드 받은 "EKSVPC4AZ.yml" 파일을 업로드 합니다. \(2개 AZ는 EKSVPC2AZ.yml , 3개 AZ는 EKSVPC3AZ.yml, 4개 AZ는 EKSVPC4AZ.yml을 선택합니다.\)
 
 ![](../.gitbook/assets/image%20%28162%29.png)
 

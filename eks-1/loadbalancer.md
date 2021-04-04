@@ -51,7 +51,7 @@ git clone https://github.com/brentley/ecsdemo-crystal.git
 
 ### 2. Yaml 변경
 
-~/environment/ecsdemo-frontend/kubernetes/ecsdemo-frontend/clb\_deployment.yaml 파일은은 다음과 같이 변경합니다.
+ecsdemo-frontend clb\_deployment.yaml은 다음과 같이 변경합니다.
 
 ```text
 apiVersion: apps/v1
@@ -95,7 +95,7 @@ spec:
         nodegroup-type: "frontend-workloads"
 ```
 
-~/environment/ecsdemo-frontend/kubernetes/ecsdemo-frontend/clb\_service.yaml은 다음과 같이 변경합니다.
+ecsdemo-frontend clb\_service.yaml은 다음과 같이 변경합니다.
 
 ```text
 apiVersion: v1
@@ -115,7 +115,7 @@ spec:
       targetPort: 3000
 ```
 
-~/environment/ecsdemo-frontend/kubernetes/ecsdemo-crystal/clb\_deployment.yaml은 다음과 같이 변경합니다.
+ecsdemo-crystal clb\_deployment.yaml은 다음과 같이 변경합니다.
 
 ```text
 apiVersion: apps/v1
@@ -154,7 +154,7 @@ spec:
 
 ```
 
-~/environment/ecsdemo-frontend/kubernetes/ecsdemo-crystal/clb\_service.yaml은 다음과 같이 변경합니다.
+ecsdemo-crystal clb\_service.yaml은 다음과 같이 변경합니다.
 
 ```text
 apiVersion: v1
@@ -172,7 +172,7 @@ spec:
       targetPort: 3000
 ```
 
-~/environment/ecsdemo-frontend/kubernetes/ecsdemo-nodejs/clb\_deployment.yaml은 다음과 같이 변경합니다.
+ecsdemo-nodejs clb\_deployment.yaml은 다음과 같이 변경합니다.
 
 ```text
 apiVersion: apps/v1
@@ -210,7 +210,7 @@ spec:
         nodegroup-type: "backend-workloads"
 ```
 
-~/environment/ecsdemo-frontend/kubernetes/ecsdemo-nodejs/clb\_service.yaml은 다음과 같이 변경합니다.
+ecsdemo-nodejs clb\_service.yaml은 다음과 같이 변경합니다.
 
 ```text
 apiVersion: v1
