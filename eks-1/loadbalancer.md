@@ -282,8 +282,6 @@ k9s -A
 
 ```
 
-
-
 ### 4. BackEnd 어플리케이션 배포
 
 Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어플리케이션들은 Private Subnet에 배포할 것입니다. 이 구성은 앞서 이미 Yaml 파일의 Deployment에서 nodeSelector로 지정하였습니다.
@@ -340,6 +338,20 @@ CLB의 DNS Name을 복사해서 Web Browser에서 입력합니다.
 {% hint style="info" %}
 service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Default로 Classic LB가 구성됩니다. 또한 별도로 Service Type을 지정하지 않으면, ClusterIP로 지정됩니다.
 {% endhint %}
+
+아래 kubectl 명령을 통해 service type을 확인해 봅니다.
+
+```text
+ kubectl -n clb-test get service -o wide
+```
+
+```text
+whchoi98:~/environment $ kubectl -n clb-test get service -o wide
+NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)        AGE    SELECTOR
+ecsdemo-crystal    ClusterIP      172.20.180.230   <none>                                                                       80/TCP         27m    app=ecsdemo-crystal
+ecsdemo-frontend   LoadBalancer   172.20.213.219   a6531bc45d323472d869946b9bfac449-46256153.ap-northeast-2.elb.amazonaws.com   80:31699/TCP   108m   app=ecsdemo-frontend
+ecsdemo-nodejs     ClusterIP      172.20.181.252   <none>                                                                       80/TCP         22m    app=ecsdemo-nodejs
+```
 
 ## NLB기반 Loadbalancer 서비스 구성.
 
