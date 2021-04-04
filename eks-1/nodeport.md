@@ -96,10 +96,12 @@ spec:
   selector:
     app: ecsdemo-frontend
 #Service Type change
-  type: LoadBalancer
+  type: node-port
   ports:
    -  protocol: TCP
       port: 80
       targetPort: 3000
 ```
+
+
 
