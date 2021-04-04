@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-15'
+description: 'update : 2020-11-15 / 20min'
 ---
 
 # K8s Dashboard 배포
