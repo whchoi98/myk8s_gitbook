@@ -680,12 +680,6 @@ k9s 를 통해 Pod의 구성을 확인합니다.
 
 ![](../.gitbook/assets/image%20%28154%29.png)
 
-{% hint style="warning" %}
-만약 Internal NLB를 yaml에서 삭제한다면 정상적으로 서비스는 제공될까요?
-
-네, 가능합니다. 이럴 경우 기본 ClusterIP로 동작되고 각 kube-proxy에서 마스터 노드로 부터 업데이트 받은 라우팅 테이블을 통해 분산처리 됩니다.
-{% endhint %}
-
 
 
 
