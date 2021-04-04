@@ -214,7 +214,7 @@ ip-10-11-85-11.ap-northeast-2.compute.internal    Ready    <none>   5m4s    v1.1
 
 다음과 같은 구성도가 완성되었습니다.
 
-
+![](../.gitbook/assets/image%20%28166%29.png)
 
 ### 6.eksctl yaml code 참조 \(option\)
 

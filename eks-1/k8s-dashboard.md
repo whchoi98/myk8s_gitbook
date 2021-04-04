@@ -17,7 +17,7 @@ description: 'update : 2020-11-15'
 kubernetes 지표 서버를 다음 명령을 사용하여 배포합니다.
 
 ```text
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
 ```
 
@@ -49,7 +49,7 @@ metrics-server   1/1     1            1           57s
 다음 명령을 사용하여 Kubernetes 대시보드를 배포합니다.
 
 ```text
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.3/aio/deploy/recommended.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
 
 ```
 
@@ -134,25 +134,26 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 출력 결과 예시
 
 ```text
-Name:         eks-admin-token-s4rbb
+Name:         eks-admin-token-psdqk
 Namespace:    kube-system
 Labels:       <none>
 Annotations:  kubernetes.io/service-account.name: eks-admin
-              kubernetes.io/service-account.uid: cd162bc8-004f-401f-97d3-8ff6fc118257
+              kubernetes.io/service-account.uid: 7e9b6218-bcb6-4262-9bf4-be55abdfc078
 
 Type:  kubernetes.io/service-account-token
 
 Data
 ====
-ca.crt:     1025 bytes
+token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IkVJZ3JvMjV6Y1NqWTlRM2VLN0E0WXBUR19tbFMyLUpNa01XbTdOT1ROdzQifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJla3MtYWRtaW4tdG9rZW4tcHNkcWsiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZWtzLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiN2U5YjYyMTgtYmNiNi00MjYyLTliZjQtYmU1NWFiZGZjMDc4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmVrcy1hZG1pbiJ9.knFP6lhXP47_XHoGlaKKWT6rgCopjLUOfEvQEHy_85gjOtHTcAviUUWCSynyW1Mvbs0Iif6e8QrP4dYTj_tWNrVuz6w_lwdRrBFjFn_WhtjUngRFPhi2gChgzkJGkWjHdn_nlBhBXUny6UjBxpc178cJqQelHR1fY_ITJ8EZ0EPo_LzDd4ezdcpvJjTO68p4FkMPkI968DZKGO6oIKQV7A_7mYar77hRQmq1K8iFtSKcs0eFSJxLf5RzvFHc0YH4YrKn7GuRX83TxwvmlbAqbQ-T74ktHmJThbp-0vWHftsl_1VmK11QrZAqcrj1PrRRn5H2tEIg-qBVnNbAYPq9Dg
+ca.crt:     1066 bytes
 namespace:  11 bytes
-token: <authentication_token>
 ```
 
 Kubernetes 대쉬보드 접속을 위해 kubectl proxy를 시작합니다.
 
 ```text
 kubectl proxy --port=8080 --address=0.0.0.0 --disable-filter=true &
+
 ```
 
 {% hint style="success" %}
@@ -185,7 +186,7 @@ api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/prox
 
 정상적으로 생성된 것을 확인합니다.
 
-![](../.gitbook/assets/image%20%2820%29.png)
+![](../.gitbook/assets/image%20%28165%29.png)
 
 앞서 생성해 두었던 K9s로 어떤 namespace에 생성되었는지 살펴보고, 어떤 PoD들이 생성되었는지 확인해 봅니다.
 
