@@ -17,7 +17,7 @@ description: 'update : 2020-11-15'
 아래와 같이 eksctl을 설치하고 버전을 확인합니다.
 
 ```text
-# eksctl 설
+# eksctl 설정 
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/local/bin
 # eksctl 자동완성 - bash
