@@ -40,6 +40,7 @@
   * [eksctl 구성](vpc-eksctl/eksctl.md)
 * [4.EKS Service 이해](eks-1/README.md)
   * [K8s Dashboard 배포](eks-1/k8s-dashboard.md)
+  * [NodePort 기반 배포](eks-1/nodeport.md)
   * [Loadbalancer 기반 배포](eks-1/loadbalancer.md)
   * [ALB Ingress 배포](eks-1/alb-ingress.md)
 * [5.EKS 기반 관리](eks-2/README.md)
