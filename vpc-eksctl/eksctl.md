@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-15'
+description: 'update : 2020-04-04 / 30min'
 ---
 
 # eksctl 구성

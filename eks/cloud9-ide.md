@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-04-01'
+description: 'update : 2021-04-01 /15min'
 ---
 
 # Cloud9 IDE 환경 구성

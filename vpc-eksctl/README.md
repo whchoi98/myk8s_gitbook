@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2020-11-17 / 1h'
+description: 'Update : 2020-04-04 / 50min'
 ---
 
 # 3.VPC구성과 eksctl 기반 설치
