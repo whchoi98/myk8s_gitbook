@@ -403,7 +403,7 @@ spec:
           value: "http://ecsdemo-nodejs.nlb-test.svc.cluster.local/"
 #add nodeSelector
       nodeSelector:
-        nodegroup-type: "frontend-workloads"
+        nodegroup-type: "backend-workloads"
 ```
 
 ecsdemo-frontend nlb\_service.yaml
