@@ -18,7 +18,7 @@ description: 'update : 2020-04-04 / 1h 30min'
 
 ![](../.gitbook/assets/image%20%285%29.png)
 
-## 기본 Loadbalancer 서비스 기반 구성
+## CLB Loadbalancer 서비스 기반 구성
 
 ### 1.배포용 yaml 복제.
 

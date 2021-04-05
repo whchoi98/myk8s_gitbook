@@ -195,7 +195,7 @@ k9s -A
 
 ```
 
-### 5.Kubernetes 대쉬보드 삭제
+### 5.Kubernetes 대쉬보드 삭제 \(Option\)
 
 랩을 진행하면서 K8s Dashboard에서 Pod 현황을 살펴보고 싶다면, 삭제 하지 않습니다. 다음 Lab과 연관성이 없습니다.
 
