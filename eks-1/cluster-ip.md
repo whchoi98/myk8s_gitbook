@@ -88,8 +88,6 @@ kubectl -n network-test exec -it alpine-app-6d8d6bb647-mwzbp -- bash
 
 ```
 
-
-
 ```text
 bash-5.0# ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
