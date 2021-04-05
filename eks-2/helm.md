@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-04-06'
+description: 'update : 2021-04-06 /1h'
 ---
 
 # Helm 구성
@@ -340,6 +340,7 @@ cd ~/environment/helm-chart-demo
 rm -rf ~/environment/helm-chart-demo/templates/
 rm ~/environment/helm-chart-demo/Chart.yaml
 rm ~/environment/helm-chart-demo/values.yaml
+
 ```
 
 다음 코드 블록을 실행하여 새로운 chart.yaml 파일을 생성합니다.
@@ -438,6 +439,7 @@ metadata:
   name: ecsdemo-xxxx
   labels:
     app: ecsdemo-xxxx
+  namespace: helm-chart-demo
 ```
 
 이제 values.yaml을 생성하고, Values 들에 대한 값을 정의합니다.
@@ -462,23 +464,31 @@ frontend:
 EoF
 ```
 
+helmdemo에 사용할 namespace를 생성합니다.
+
+```text
+kubectl create namespace helm-chart-demo
+
+```
+
 ### 3. Chart 배포
 
 Helm chart는 실제 배포하지 않고 **"--dry-run"** 플래그를 사용하여, 랜더링 된 템플릿을 빌드하고 출력할 수 있습니다.
 
 ```text
 helm install --debug --dry-run workshop ~/environment/helm-chart-demo
+
 ```
 
 출력 결과 예제
 
 ```text
-whchoi98:~/environment $ helm install --debug --dry-run workshop ~/environment/eksdemo
-install.go:159: [debug] Original chart version: ""
-install.go:176: [debug] CHART PATH: /home/ec2-user/environment/eksdemo
+whchoi98:~/environment/helm-chart-demo $ helm install --debug --dry-run workshop ~/environment/helm-chart-demo
+install.go:173: [debug] Original chart version: ""
+install.go:190: [debug] CHART PATH: /home/ec2-user/environment/helm-chart-demo
 
 NAME: workshop
-LAST DEPLOYED: Tue Jul 21 17:19:19 2020
+LAST DEPLOYED: Mon Apr  5 18:41:37 2021
 NAMESPACE: default
 STATUS: pending-install
 REVISION: 1
@@ -566,12 +576,12 @@ spec:
         app: ecsdemo-crystal
     spec:
       containers:
-        - image: brentley/ecsdemo-crystal:latest
-          imagePullPolicy: Always
-          name: ecsdemo-crystal
-          ports:
-            - containerPort: 3000
-              protocol: TCP
+      - image: brentley/ecsdemo-crystal:latest
+        imagePullPolicy: Always
+        name: ecsdemo-crystal
+        ports:
+        - containerPort: 3000
+          protocol: TCP
 ---
 # Source: eksdemo/templates/deployment/frontend.yaml
 apiVersion: apps/v1
@@ -597,17 +607,17 @@ spec:
         app: ecsdemo-frontend
     spec:
       containers:
-        - image: brentley/ecsdemo-frontend:latest
-          imagePullPolicy: Always
-          name: ecsdemo-frontend
-          ports:
-            - containerPort: 3000
-              protocol: TCP
-          env:
-            - name: CRYSTAL_URL
-              value: 'http://ecsdemo-crystal.default.svc.cluster.local/crystal'
-            - name: NODEJS_URL
-              value: 'http://ecsdemo-nodejs.default.svc.cluster.local/'
+      - image: brentley/ecsdemo-frontend:latest
+        imagePullPolicy: Always
+        name: ecsdemo-frontend
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+        - name: CRYSTAL_URL
+          value: "http://ecsdemo-crystal.default.svc.cluster.local/crystal"
+        - name: NODEJS_URL
+          value: "http://ecsdemo-nodejs.default.svc.cluster.local/"
 ---
 # Source: eksdemo/templates/deployment/nodejs.yaml
 apiVersion: apps/v1
@@ -633,12 +643,12 @@ spec:
         app: ecsdemo-nodejs
     spec:
       containers:
-        - image: brentley/ecsdemo-nodejs:latest
-          imagePullPolicy: Always
-          name: ecsdemo-nodejs
-          ports:
-            - containerPort: 3000
-              protocol: TCP
+      - image: brentley/ecsdemo-nodejs:latest
+        imagePullPolicy: Always
+        name: ecsdemo-nodejs
+        ports:
+        - containerPort: 3000
+          protocol: TCP
 ```
 
 템플릿이 정상적으로 렌더링되고, 빌드 출력이 이뤄졌으므로 차트를 배포합니다.
@@ -651,9 +661,9 @@ helm install helmdemo ~/environment/helm-chart-demo
 출력 결과 예시
 
 ```text
-~/environment $ helm install helmdemo ~/environment/helm-chart-demo
+whchoi98:~/environment $ helm install helmdemo ~/environment/helm-chart-demo
 NAME: helmdemo
-LAST DEPLOYED: Tue Jul 21 17:27:53 2020
+LAST DEPLOYED: Mon Apr  5 18:43:07 2021
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
@@ -664,32 +674,33 @@ TEST SUITE: None
 
 ```text
 kubectl -n helm-chart-demo get svc,pod,deploy -o wide
+
 ```
 
 출력 결과 예시
 
 ```text
 whchoi98:~/environment $ kubectl -n helm-chart-demo get svc,pod,deploy -o wide
-NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)        AGE     SELECTOR
-service/ecsdemo-crystal    ClusterIP      172.20.167.203   <none>                                                                        80/TCP         2m44s   app=ecsdemo-crystal
-service/ecsdemo-frontend   LoadBalancer   172.20.195.10    a6ad6b49efa9a426d86ce1779cee31f6-759353285.ap-northeast-2.elb.amazonaws.com   80:31738/TCP   2m44s   app=ecsdemo-frontend
-service/ecsdemo-nodejs     ClusterIP      172.20.44.202    <none>                                                                        80/TCP         2m45s   app=ecsdemo-nodejs
+NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP                                                                    PORT(S)        AGE   SELECTOR
+service/ecsdemo-crystal    ClusterIP      172.20.99.129   <none>                                                                         80/TCP         45s   app=ecsdemo-crystal
+service/ecsdemo-frontend   LoadBalancer   172.20.108.82   a8efd85e4e6834e248dd722b977aab20-1171313341.ap-northeast-2.elb.amazonaws.com   80:31043/TCP   45s   app=ecsdemo-frontend
+service/ecsdemo-nodejs     ClusterIP      172.20.172.98   <none>                                                                         80/TCP         45s   app=ecsdemo-nodejs
 
-NAME                                    READY   STATUS    RESTARTS   AGE     IP              NODE                                               NOMINATED NODE   READINESS GATES
-pod/ecsdemo-crystal-6d5f6f4b47-78lcr    1/1     Running   0          2m44s   10.11.148.146   ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
-pod/ecsdemo-crystal-6d5f6f4b47-9dn47    1/1     Running   0          2m44s   10.11.120.83    ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
-pod/ecsdemo-crystal-6d5f6f4b47-k26nr    1/1     Running   0          2m44s   10.11.165.194   ip-10-11-189-67.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-frontend-7f5fddd684-7mlg2   1/1     Running   0          2m44s   10.11.72.249    ip-10-11-69-28.ap-northeast-2.compute.internal     <none>           <none>
-pod/ecsdemo-frontend-7f5fddd684-dcvzf   1/1     Running   0          2m44s   10.11.97.62     ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
-pod/ecsdemo-frontend-7f5fddd684-s9nfh   1/1     Running   0          2m44s   10.11.56.6      ip-10-11-53-186.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-nodejs-7dd8987798-7rx6g     1/1     Running   0          2m44s   10.11.99.190    ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
-pod/ecsdemo-nodejs-7dd8987798-9cdxv     1/1     Running   0          2m44s   10.11.183.26    ip-10-11-189-67.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-nodejs-7dd8987798-bn9dd     1/1     Running   0          2m44s   10.11.136.126   ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
+NAME                                    READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
+pod/ecsdemo-crystal-856c46f686-g57xz    1/1     Running   0          45s   10.11.92.238   ip-10-11-86-68.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-crystal-856c46f686-kjpv9    1/1     Running   0          46s   10.11.11.200   ip-10-11-1-70.ap-northeast-2.compute.internal     <none>           <none>
+pod/ecsdemo-crystal-856c46f686-xw6lc    1/1     Running   0          45s   10.11.38.189   ip-10-11-37-63.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-frontend-679545f5b5-6fb25   1/1     Running   0          46s   10.11.46.68    ip-10-11-38-198.ap-northeast-2.compute.internal   <none>           <none>
+pod/ecsdemo-frontend-679545f5b5-m4chs   1/1     Running   0          46s   10.11.14.43    ip-10-11-4-24.ap-northeast-2.compute.internal     <none>           <none>
+pod/ecsdemo-frontend-679545f5b5-q6nbr   1/1     Running   0          46s   10.11.16.130   ip-10-11-22-15.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-nodejs-99fbbf9-4gz9l        1/1     Running   0          46s   10.11.38.74    ip-10-11-37-63.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-nodejs-99fbbf9-82wfg        1/1     Running   0          46s   10.11.69.153   ip-10-11-79-51.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-nodejs-99fbbf9-b6z8l        1/1     Running   0          46s   10.11.16.199   ip-10-11-26-173.ap-northeast-2.compute.internal   <none>           <none>
 
-NAME                               READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS         IMAGES                             SELECTOR
-deployment.apps/ecsdemo-crystal    3/3     3            3           2m44s   ecsdemo-crystal    brentley/ecsdemo-crystal:latest    app=ecsdemo-crystal
-deployment.apps/ecsdemo-frontend   3/3     3            3           2m44s   ecsdemo-frontend   brentley/ecsdemo-frontend:latest   app=ecsdemo-frontend
-deployment.apps/ecsdemo-nodejs     3/3     3            3           2m44s   ecsdemo-nodejs     brentley/ecsdemo-nodejs:latest     app=ecsdemo-nodejs
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS         IMAGES                             SELECTOR
+deployment.apps/ecsdemo-crystal    3/3     3            3           46s   ecsdemo-crystal    brentley/ecsdemo-crystal:latest    app=ecsdemo-crystal
+deployment.apps/ecsdemo-frontend   3/3     3            3           46s   ecsdemo-frontend   brentley/ecsdemo-frontend:latest   app=ecsdemo-frontend
+deployment.apps/ecsdemo-nodejs     3/3     3            3           46s   ecsdemo-nodejs     brentley/ecsdemo-nodejs:latest     app=ecsdemo-nodejs
 ```
 
 ### 4. 서비스 확인
@@ -697,7 +708,8 @@ deployment.apps/ecsdemo-nodejs     3/3     3            3           2m44s   ecsd
 아래 명령을 통해 service loadbalancer\(ELB\) 의 DNS name을 확인합니다.
 
 ```text
-kubectl get svc ecsdemo-frontend
+kubectl -n helm-chart-demo get svc ecsdemo-frontend
+
 ```
 
 출력 결과 예시
