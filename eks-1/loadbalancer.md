@@ -14,6 +14,11 @@ Loadbalancer 기반의 서비스 타입은 현재 CLB \(Classic Load Balancer\)�
 
 ![CLB &#xAE30;&#xBC18; LAB &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28170%29.png)
 
+* namespace : clb-test
+* ecsdemo-frontend service type : LoadbBlancer
+* ecsdemo-crystal service type: Cluster-IP \(Default\)
+* ecsdemo-nodejs service type: Cluster-IP \(Default\)
+
 ### 1.배포용 yaml 복제.
 
 LAB에서 사용할 App을 복제합니다.

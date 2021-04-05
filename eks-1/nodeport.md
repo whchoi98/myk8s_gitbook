@@ -14,6 +14,9 @@ NodePort 타입기반의 Service는 Node에서 Port를 외부에 노출 시키�
 
 ![NodePort &#xD0C0;&#xC785; &#xAE30;&#xBC18;&#xC758; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28172%29.png)
 
+* namespace : nodeport-test
+* ecsdemo-frontend service type : nodePort
+
 ### 1.배포용 yaml 복제.
 
 NodePort 타입의 서비스 구성을 위해서 LAB에서 사용할 App을 복제합니다.
