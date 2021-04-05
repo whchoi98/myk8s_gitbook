@@ -118,5 +118,44 @@ spec:
       targetPort: 3000
 ```
 
+## Application 배포 
+
+### 1.namespace 생성 
+
+이제 Namespace를 먼저 생성합니다.
+
+```text
+kubectl create namespace nodeport-test
+
+```
+
+### 2. Application , Service 배포
+
+nodeport 용 어플리케이션과 서비스를 배포합니다.
+
+```text
+cd ~/environment/ecsdemo-frontend/kubernetes/
+kubectl apply -f nodeport_deployment.yaml
+kubectl apply -f nodeport_service.yaml
+
+```
+
+정상적으로 배포되었는지 확인해 봅니다.
+
+```text
+kubectl -n nodeport-test get service
+
+```
+
+아래와 같은 결과를 볼 수 있습니다.
+
+```text
+whchoi98:~/environment/ecsdemo-frontend/kubernetes (main) $ kubectl -n nodeport-test get service
+NAME               TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+ecsdemo-frontend   NodePort   172.20.164.40   <none>        80:30080/TCP   20h
+```
+
+### 3. 서비스 확인
+
 
 
