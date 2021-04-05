@@ -40,17 +40,12 @@ Ingress 는 반드시 Ingress Controller가 존재해야하며, 외부에서 내
 
 ![&#xCC38;&#xC870; - https://aws.amazon.com/ko/blogs/opensource/kubernetes-ingress-aws-alb-ingress-controller/](../.gitbook/assets/image%20%2821%29.png)
 
-Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases)
+Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases),  
+[https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
 
 ### 1.IAM OIDC Provider 생성
 
 IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을 사용하여 IAM OIDC Provider를 생성합니다.
-
-> 참조 URL - [https://eksctl.io/usage/iamserviceaccounts/](https://eksctl.io/usage/iamserviceaccounts/)
->
-> Amazon EKS는 클러스터 운영자가 AWS IAM 역할을 Kubernetes 서비스 계정에 매핑 할 수 있도록하는 [ISA \(IAM Roles for Service Accounts\)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) 를 지원합니다 .
->
-> 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 \(RDS, MQ, STS, DynamoDB\) 또는 AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
 
 ```text
 eksctl utils associate-iam-oidc-provider \
@@ -59,7 +54,7 @@ eksctl utils associate-iam-oidc-provider \
     --approve
 ```
 
-### 2. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로
+### 2. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드 
 
 ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다. \(이미 앞서 git에서 받은 폴더에 포함되어 있습니다.\)
 
@@ -79,184 +74,104 @@ aws iam create-policy \
     --policy-document file://iam-policy.json
 ```
 
-또는 이미 앞서 git 을 통해서, alb-ingress-controller와 RBAC을 다운로드 받았습니다. 아래에서 처럼 바로 실행 시킵니다.
+아래 처럼 결과가 출력됩니다.
 
 ```text
-cd ~/environment/myeks/alb-controller/
-kubectl apply -f rbac-role.yaml
+{
+    "Policy": {
+        "PolicyName": "AWSLoadBalancerControllerIAMPolicy",
+        "PolicyId": "ANPAYQA25S5LHDCBBTDHD",
+        "Arn": "arn:aws:iam::xxxxxxx:policy/AWSLoadBalancerControllerIAMPolicy",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 0,
+        "PermissionsBoundaryUsageCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2021-04-04T18:52:47+00:00",
+        "UpdateDate": "2021-04-04T18:52:47+00:00"
+    }
+}
+```
+
+### 4. AWS Ingress Controller IAM 역할 및 Service Account 생성
+
+이 단계에서는 AWS Ingress Controller 에 대한 IAM Roel , Service Account를 생성하고, 3번 단계에서 출력되었던 AWS Account ID를 복사해서 사용해아합니다.
+
+```text
+eksctl create iamserviceaccount \
+--cluster=<cluster-name> \
+--namespace=kube-system \
+--name=aws-load-balancer-controller \
+--attach-policy-arn=arn:aws:iam::<AWS_ACCOUNT_ID>:policy/AWSLoadBalancerControllerIAMPolicy \
+--override-existing-serviceaccounts \
+--approve
+```
+
+> 참조  URL - [https://eksctl.io/usage/iamserviceaccounts/](https://eksctl.io/usage/iamserviceaccounts/)
+>
+> Amazon EKS는 클러스터 운영자가 AWS IAM 역할을 Kubernetes 서비스 계정에 매핑 할 수 있도록하는 [ISA \(IAM Roles for Service Accounts\)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) 를 지원합니다 .
+>
+> 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 \(RDS, MQ, STS, DynamoDB\) , AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
+
+### 5. EKS Cluster에 컨트롤러 추가
+
+Helm 또는 YAML 기반의 Menifes를 통해 클러스터에 컨트롤러를 추가합니다. 여기에서는 YAML 기반의 설치를 소개합니다.
+
+* 먼저 Cert Manager를 설치합니다.
+
+Kubernetes 1.16 이상에서는 아래의 명령을 실행합니다.
+
+```text
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
 
 ```
 
-출력 결과 예시
+Kubernetes 1.16 이하 버전에서는 아래 명령을 수행합니다. 이 랩에서는 이 명령을 사용하지 않습니다.
 
 ```text
-whchoi98:~/environment $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/rbac-role.yaml
-clusterrole.rbac.authorization.k8s.io/alb-ingress-controller created
-clusterrolebinding.rbac.authorization.k8s.io/alb-ingress-controller created
-serviceaccount/alb-ingress-controller created
-```
-
-### 3.ALBIngressControllerIAMPolicy 정책 생성.
-
-`ALBIngressControllerIAMPolicy`라는 IAM 정책을 만듭니다.
-
-```text
-cd ~/environment/myeks/alb-controller/
-aws iam create-policy \
-   --policy-name ALBIngressControllerIAMPolicy \
-   --policy-document https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/iam-policy.json
-```
-
-{% hint style="danger" %}
-iam-policy.json이 정상적으로 만들어지지 않으면, 로컬로 파일을 다운로드 받아서 실행합니다.
-{% endhint %}
-
-```text
-cd ~/environment/myeks/alb-controller/
-aws iam create-policy --policy-name ALBIngressControllerIAMPolicy --policy-document file://iam-policy.json
-```
-
-PolicyARN 변수에 생성된 PolicyARN 값을 저장합니다.
-
-```text
-export PolicyARN=$(aws iam list-policies --query 'Policies[?PolicyName==`ALBIngressControllerIAMPolicy`].Arn' --output text)
-```
-
-PolicyARN 변수에 저장된 값을 확인합니다.
-
-```text
-$echo $PolicyARN 
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager-legacy.yaml
 
 ```
 
-### 4.ALB Ingress 컨트롤러 포드에 권한 부여.
+* YAML 기반의 컨트롤러 추가
 
-eksctl을 사용하여 AWS ALB Ingress 컨르톨러를 실행하는 포드에 대해 Kubernetes 서비스 계정과 IAM 역할을 생성합니다. \(3분 정도 소요됩니다.\)
+아래 명령을 통해 최신의 컨트롤러를 추가합니다. 이마 앞서 git을 실행하였다면 폴더에 포함되어 있습니다.
 
 ```text
-eksctl create iamserviceaccount --cluster=eksworkshop --namespace=kube-system --name=alb-ingress-controller --attach-policy-arn=$PolicyARN --override-existing-serviceaccounts --approve
+cd ~/environment/myeks/alb-controller 
+wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.1.2/docs/install/v2_1_2_full.yaml
 
 ```
 
-출력 결과 예시
+~/environment/myeks/alb-controller/v2\_1\_2\_full.yaml 파일을 아래와 같이 수정합니다. cluster-name에 현재 적용할 EKS Cluster 이름을 입력합니다. 랩에서는 "eksworkshop" 입니다. git을 통해 받은 파일이라면 이미 수정되어 있습니다.
 
 ```text
-whchoi98:~/environment $ eksctl create iamserviceaccount --cluster=eksworkshop --namespace=kube-system --name=alb-ingress-controller --attach-policy-arn=$PolicyARN --override-existing-serviceaccounts --approve
-[ℹ]  eksctl version 0.31.0
-[ℹ]  using region ap-northeast-2
-[ℹ]  1 iamserviceaccount (kube-system/alb-ingress-controller) was included (based on the include/exclude rules)
-[!]  metadata of serviceaccounts that exist in Kubernetes will be updated, as --override-existing-serviceaccounts was set
-[ℹ]  1 task: { 2 sequential sub-tasks: { create IAM role for serviceaccount "kube-system/alb-ingress-controller", create serviceaccount "kube-system/alb-ingress-controller" } }
-[ℹ]  building iamserviceaccount stack "eksctl-eksworkshop-addon-iamserviceaccount-kube-system-alb-ingress-controller"
-[ℹ]  deploying stack "eksctl-eksworkshop-addon-iamserviceaccount-kube-system-alb-ingress-controller"
-[ℹ]  serviceaccount "kube-system/alb-ingress-controller" already exists
-[ℹ]  updated serviceaccount "kube-system/alb-ingress-controller"
-```
-
-### 5.ALB Ingress Controller 포드를 배포
-
-{% hint style="warning" %}
-sample yaml에는 Cluster name이 devCluster로 되어 있으므로, 이것을 생성되어 있는 각자 랩의 Cluster name = eksworkshop으로 대체합니다.
-{% endhint %}
-
-```text
-cd ~/environment/myeks/alb-controller/
-kubectl apply -f alb-ingress-controller.yaml
-
-```
-
-alb-ingress-controller.yaml 소스 참조
-
-```text
-# Application Load Balancer (ALB) Ingress Controller Deployment Manifest.
-# This manifest details sensible defaults for deploying an ALB Ingress Controller.
-# GitHub: https://github.com/kubernetes-sigs/aws-alb-ingress-controller
 apiVersion: apps/v1
 kind: Deployment
-metadata:
-  labels:
-    app.kubernetes.io/name: alb-ingress-controller
-  name: alb-ingress-controller
-  # Namespace the ALB Ingress Controller should run in. Does not impact which
-  # namespaces it's able to resolve ingress resource for. For limiting ingress
-  # namespace scope, see --watch-namespace.
-  namespace: kube-system
+. . . 
+name: aws-load-balancer-controller
+namespace: kube-system
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: alb-ingress-controller
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: alb-ingress-controller
-    spec:
-      containers:
-        - name: alb-ingress-controller
-          args:
-            # Limit the namespace where this ALB Ingress Controller deployment will
-            # resolve ingress resources. If left commented, all namespaces are used.
-            # - --watch-namespace=your-k8s-namespace
-
-            # Setting the ingress-class flag below ensures that only ingress resources with the
-            # annotation kubernetes.io/ingress.class: "alb" are respected by the controller. You may
-            # choose any class you'd like for this controller to respect.
-            - --ingress-class=alb
-
-            # REQUIRED
-            # Name of your cluster. Used when naming resources created
-            # by the ALB Ingress Controller, providing distinction between
-            # clusters.
-            # - --cluster-name=devCluster
-
-            # AWS VPC ID this ingress controller will use to create AWS resources.
-            # If unspecified, it will be discovered from ec2metadata.
-            # - --aws-vpc-id=vpc-xxxxxx
-
-            # AWS region this ingress controller will operate in.
-            # If unspecified, it will be discovered from ec2metadata.
-            # List of regions: http://docs.aws.amazon.com/general/latest/gr/rande.html#vpc_region
-            # - --aws-region=us-west-1
-
-            # Enables logging on all outbound requests sent to the AWS API.
-            # If logging is desired, set to true.
-            # - --aws-api-debug
-
-            # Maximum number of times to retry the aws calls.
-            # defaults to 10.
-            # - --aws-max-retries=10
-          env:
-            # AWS key id for authenticating with the AWS API.
-            # This is only here for examples. It's recommended you instead use
-            # a project like kube2iam for granting access.
-            # - name: AWS_ACCESS_KEY_ID
-            #   value: KEYVALUE
-
-            # AWS key secret for authenticating with the AWS API.
-            # This is only here for examples. It's recommended you instead use
-            # a project like kube2iam for granting access.
-            # - name: AWS_SECRET_ACCESS_KEY
-            #   value: SECRETVALUE
-          # Repository location of the ALB Ingress Controller.
-          image: docker.io/amazon/aws-alb-ingress-controller:v1.1.9
-      serviceAccountName: alb-ingress-controller
+    . . . 
+    template:
+        spec:
+            containers:
+                - args:
+                    - --cluster-name=<INSERT_CLUSTER_NAME>
 ```
 
-배포가 완료되고 컨트롤러가 정상적으로 시작되었는지 확인합니다.
+컨트롤러를 생성합니다.
+
+```text
+cd ~/environment/myeks/alb-controller
+kubectl apply -f v2_1_2_full.yaml
+
+```
+
+아래 명령을 통해 로그를 확인 할 수 있습니다.
 
 ```text
 kubectl logs -n kube-system $(kubectl get po -n kube-system | egrep -o alb-ingress[a-zA-Z0-9-]+)
-```
-
-아래와 같은 출력결과물을 얻었다면 성공적으로 배포된 것입니다.
-
-```text
-~/environment $ kubectl logs -n kube-system $(kubectl get po -n kube-system | egrep -o alb-ingress[a-zA-Z0-9-]+)
--------------------------------------------------------------------------------
-AWS ALB Ingress controller
-  Release:    v1.1.9
-  Build:      git-ec387ad1
-  Repository: https://github.com/kubernetes-sigs/aws-alb-ingress-controller.git
--------------------------------------------------------------------------------
 ```
 
 ### 6.namespace/App/Pod/Service 배포.
@@ -265,118 +180,15 @@ AWS ALB Ingress controller
 
 ```text
 cd ~/environment/myeks/alb-controller/
-kubectl apply -f 2048-namespace.yaml
-kubectl apply -f 2048-deployment.yaml
-kubectl apply -f 2048-service.yaml
+kubectl apply -f 2048_full.yaml
 
 ```
 
-2048-namespace.yaml 소스 참조.
-
-```text
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: "2048-game"
-```
-
-2048-deployment.yaml 소스 참조.
-
-```text
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: "2048-deployment"
-  namespace: "2048-game"
-spec:
-  selector:
-    matchLabels:
-      app: "2048"
-  replicas: 5
-  template:
-    metadata:
-      labels:
-        app: "2048"
-    spec:
-      containers:
-      - image: alexwhen/docker-2048
-        imagePullPolicy: Always
-        name: "2048"
-        ports:
-        - containerPort: 80
-```
-
-2048-service.yaml 소스 참조.
-
-```text
-apiVersion: v1
-kind: Service
-metadata:
-  name: "service-2048"
-  namespace: "2048-game"
-spec:
-  ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-  type: NodePort
-  selector:
-    app: "2048"
-```
-
-### 7. ALB Ingress 배포
-
-2048게임 App을 위한 ingress 리소스를 배포합니다.
-
-```text
-cd ~/environment/myeks/alb-controller/
-kubectl apply -f 2048-ingress.yaml
-
-```
-
-2048-ingress.yaml 소스 참조.
-
-```text
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: "2048-ingress"
-  namespace: "2048-game"
-  annotations:
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
-  labels:
-    app: 2048-ingress
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: "service-2048"
-              servicePort: 80
-```
-
-생성된 리소스를 확인합니다.
-
-```text
-kubectl get ingress/2048-ingress -n 2048-game
-
-```
-
-출력 결과 예시
-
-```text
-~/environment $ kubectl get ingress/2048-ingress -n 2048-game
-NAME           HOSTS   ADDRESS                                                                       PORTS   AGE
-2048-ingress   *       546056ac-2048game-2048ingr-6fa0-1286541160.ap-northeast-2.elb.amazonaws.com   80      12m
-```
-
-### 8.서비스 확인
+### 7.서비스 확인
 
 ALB 생성된 것을 확인합니다.
 
-![](../.gitbook/assets/image%20%2840%29.png)
+![](../.gitbook/assets/image%20%28168%29.png)
 
 브라우저를 열고 2040 앱 실행을 확인합니다.
 
@@ -394,30 +206,33 @@ k9s -A
 다음 kubectl 명령으로 구성된 정보를 모두 확인 할 수 있습니다.
 
 ```text
-kubectl -n kube-system get pods | grep 'ingress'
-kubectl get ingresses.extensions -n 2048-game
-kubectl get svc -o wide -n 2048-game
-kubectl get pod -o wide -n 2048-game 
+kubectl -n kube-system get pods | grep "controller"
+kubectl get ingresses.extensions -n game-2048
+kubectl get svc -o wide -n game-2048
+kubectl get pod -o wide -n game-2048 
 
 ```
 
 출력 결과 예제
 
 ```text
-whchoi98:~/environment $ kubectl -n kube-system get pods | grep 'ingress'
-alb-ingress-controller-5bb796df77-kmtwc   1/1     Running   0          23h
-whchoi98:~/environment $ kubectl get ingresses.extensions -n 2048-game
-NAME           HOSTS   ADDRESS                                                                       PORTS   AGE
-2048-ingress   *       546056ac-2048game-2048ingr-6fa0-1286541160.ap-northeast-2.elb.amazonaws.com   80      23h
-whchoi98:~/environment $ kubectl get svc -o wide -n 2048-game
-NAME           TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE   SELECTOR
-service-2048   NodePort   172.20.174.86   <none>        80:31366/TCP   23h   app=2048
-whchoi98:~/environment $ kubectl get pod -o wide -n 2048-game 
-NAME                              READY   STATUS    RESTARTS   AGE   IP              NODE                                               NOMINATED NODE   READINESS GATES
-2048-deployment-dd74cc68d-65shq   1/1     Running   0          23h   10.11.35.89     ip-10-11-53-186.ap-northeast-2.compute.internal    <none>           <none>
-2048-deployment-dd74cc68d-j28zx   1/1     Running   0          23h   10.11.116.136   ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
-2048-deployment-dd74cc68d-lmn2c   1/1     Running   0          23h   10.11.25.106    ip-10-11-31-153.ap-northeast-2.compute.internal    <none>           <none>
-2048-deployment-dd74cc68d-rppqk   1/1     Running   0          23h   10.11.140.124   ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
-2048-deployment-dd74cc68d-trncw   1/1     Running   0          23h   10.11.165.220   ip-10-11-189-67.ap-northeast-2.compute.internal    <none>           <none>
+whchoi98:~/environment/myeks/alb-controller (master) $ kubectl -n kube-system get pods | grep "controller"
+aws-load-balancer-controller-86598b5d8d-8w2p2   1/1     Running   0          22h
+whchoi98:~/environment/myeks/alb-controller (master) $ kubectl get ingresses.extensions -n game-2048
+Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
+NAME           CLASS    HOSTS   ADDRESS                                                                      PORTS   AGE
+ingress-2048   <none>   *       k8s-game2048-ingress2-2810c0c2ad-98799391.ap-northeast-2.elb.amazonaws.com   80      22h
+whchoi98:~/environment/myeks/alb-controller (master) $ kubectl get svc -o wide -n game-2048
+NAME           TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+service-2048   NodePort   172.20.5.167   <none>        80:31574/TCP   22h   app.kubernetes.io/name=app-2048
+whchoi98:~/environment/myeks/alb-controller (master) $ kubectl get pod -o wide -n game-2048 
+NAME                               READY   STATUS    RESTARTS   AGE   IP              NODE                                               NOMINATED NODE   READINESS GATES
+deployment-2048-79785cfdff-5mf6r   1/1     Running   0          22h   10.11.102.117   ip-10-11-110-220.ap-northeast-2.compute.internal   <none>           <none>
+deployment-2048-79785cfdff-7l8t6   1/1     Running   0          22h   10.11.74.40     ip-10-11-79-51.ap-northeast-2.compute.internal     <none>           <none>
+deployment-2048-79785cfdff-7mlmf   1/1     Running   0          22h   10.11.2.77      ip-10-11-1-70.ap-northeast-2.compute.internal      <none>           <none>
+deployment-2048-79785cfdff-t67vn   1/1     Running   0          22h   10.11.93.140    ip-10-11-86-68.ap-northeast-2.compute.internal     <none>           <none>
+deployment-2048-79785cfdff-wz69h   1/1     Running   0          22h   10.11.24.255    ip-10-11-26-173.ap-northeast-2.compute.internal    <none>           <none>
 ```
+
+
 

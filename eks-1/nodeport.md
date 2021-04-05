@@ -10,11 +10,11 @@ nodeport 타입의 service는 Node\(EC2인스턴스\)의 포트를 통해서 서
 
 ## Nodeport 기반 Service 구성 
 
-![Cluster IP &#xD0C0;&#xC785; &#xAE30;&#xBC18; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28178%29.png)
+![Cluster IP &#xD0C0;&#xC785; &#xAE30;&#xBC18; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28179%29.png)
 
 NodePort 타입기반의 Service는 Node에서 Port를 외부에 노출 시키고 , 해당 포트로 유입되는 트래픽을 Service로 전달하고  Pod Container의 포트로 전달합니다.
 
-![NodePort &#xD0C0;&#xC785; &#xAE30;&#xBC18;&#xC758; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28173%29.png)
+![NodePort &#xD0C0;&#xC785; &#xAE30;&#xBC18;&#xC758; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28174%29.png)
 
 * namespace : nodeport-test
 * ecsdemo-frontend service type : nodePort
@@ -194,11 +194,11 @@ Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니�
 
 Public-SG 라는 Security Group을 생성하고, 해당 인스턴스에 적용합니다.
 
-![](../.gitbook/assets/image%20%28176%29.png)
+![](../.gitbook/assets/image%20%28177%29.png)
 
 Security Group에서 TCP 30080를 허용합니다.
 
-![](../.gitbook/assets/image%20%28183%29.png)
+![](../.gitbook/assets/image%20%28184%29.png)
 
 이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다.
 
@@ -208,7 +208,7 @@ node공인ip주소:30080
 
 아래와 같은 결과를 확인할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28177%29.png)
+![](../.gitbook/assets/image%20%28178%29.png)
 
 이제 Pod를 3개로 늘려서 서비스를 확인해 봅니다.
 
@@ -218,7 +218,7 @@ kubectl -n nodeport-test get pods
 
 ```
 
-![](../.gitbook/assets/image%20%28181%29.png)
+![](../.gitbook/assets/image%20%28182%29.png)
 
 {% hint style="info" %}
 NodePort 30080을 하나의 노드에서만 Security Group으로 허용했는데도, 서비스 분산이 이뤄집니다. 이것은 특정 Node로 Nodeport로 트래픽이 인입하고, 내부에서는 Service를 통해서 Label Selector를 통해서 부하 분산이 이뤄지고 있는 것입니다.

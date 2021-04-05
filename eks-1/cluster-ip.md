@@ -16,13 +16,13 @@ Service의 종류는 아래와 같습니다.
 
 아래 그림에서 처럼 Service의 기본은 CLUSTER-IP 방식입니다. 외부로 노출되지 않으며, Service에는  Pod Container의 포트를 기술해 줍니다.
 
-![Cluster IP &#xD0C0;&#xC785; &#xAE30;&#xBC18; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28178%29.png)
+![Cluster IP &#xD0C0;&#xC785; &#xAE30;&#xBC18; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28179%29.png)
 
 ## CoreDNS와 Service
 
 아래와 같은 구성을 만들고, Cluster IP의 동작에 대해 이해할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28172%29.png)
+![](../.gitbook/assets/image%20%28173%29.png)
 
 ### 1.CoreDNS와 Service 역할 확인을 위한 App배포 
 

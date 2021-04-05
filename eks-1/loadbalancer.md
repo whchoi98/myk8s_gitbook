@@ -12,7 +12,7 @@ Loadbalancer 기반의 서비스 타입은 현재 CLB \(Classic Load Balancer\)�
 
 다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다. 
 
-![CLB &#xAE30;&#xBC18; LAB &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28171%29.png)
+![CLB &#xAE30;&#xBC18; LAB &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28172%29.png)
 
 * namespace : clb-test
 * ecsdemo-frontend service type : LoadbBlancer
@@ -356,7 +356,7 @@ ecsdemo-nodejs     ClusterIP      172.20.181.252   <none>                       
 
 다음과 같은 구성을 통해서 NLB 서비스를 구현해 봅니다. 
 
-![](../.gitbook/assets/image%20%28182%29.png)
+![](../.gitbook/assets/image%20%28183%29.png)
 
 * namespace : nlb-test
 * ecsdemo-frontend service type : nlb \(external\)
