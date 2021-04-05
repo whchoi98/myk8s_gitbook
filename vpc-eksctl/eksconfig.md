@@ -118,11 +118,11 @@ mapUsers:
 
 EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드들을 확인할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28175%29.png)
+![](../.gitbook/assets/image%20%28177%29.png)
 
 EKS Cluster내에 생성된 워크로드들을 확인해 볼 수 있습니다.
 
-![](../.gitbook/assets/image%20%28176%29.png)
+![](../.gitbook/assets/image%20%28180%29.png)
 
 managed Node type으로 설치한 경우에는 Configuration Compute에서 추가로 확인할 수 있습니다.
 
@@ -137,7 +137,7 @@ kubectl get nodes -o wide
 
 ```
 
-![](../.gitbook/assets/image%20%28174%29.png)
+![](../.gitbook/assets/image%20%28176%29.png)
 
 다음 섹션에서 워크로드들을 생성한 이후 EKS Cluster 메뉴에서 확인해 봅니다.
 
