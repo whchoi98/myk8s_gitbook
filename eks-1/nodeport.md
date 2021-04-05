@@ -4,7 +4,9 @@ description: 'Update: 2021-04-04 / 30min'
 
 # NodePort 기반 배포
 
+## Overview
 
+nodeport 타입의 service는 Node\(EC2인스턴스\)의 포트를 통해서 서비스로 전달하는 방식입니다. 특정 노드로 유입 시킨 이후에 Service에서 로드밸런싱을 사용할 수 있습니다.하지만 최초 모든 트래픽이 하나의 노드로 집중되기 때문에 이에 대한 설계 고려가 필요합니다.
 
 ## Nodeport 기반 Service 구성 
 
