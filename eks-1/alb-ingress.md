@@ -4,6 +4,10 @@ description: 'update : 2020-11-11 / 30min'
 
 # ALB Ingress 배포
 
+## Ingress
+
+Ingress는 d
+
 ## ALB Ingress 개요.
 
 [Kubernetes용 AWS ALB 수신 컨트롤러](https://github.com/kubernetes-sigs/aws-alb-ingress-controller)는 `kubernetes.io/ingress.class: alb` 주석과 클러스터에 수신 리소스가 생성될 때마다 Application Load Balancer\(ALB\) 및 필수 지원 AWS 리소스가 생성되도록 트리거하는 컨트롤러입니다. 수신 리소스는 ALB를 구성하여 HTTP 또는 HTTPS 트래픽을 클러스터 내 다른 포드로 라우팅합니다. ALB 수신 컨트롤러는 Amazon EKS 클러스터에서 실행 중인 프로덕션 워크로드에서 지원됩니다.
