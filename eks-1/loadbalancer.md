@@ -6,11 +6,7 @@ description: 'update : 2020-04-04 / 1h 30min'
 
 ## Loadbalancer 서비스 타입 소개.
 
-앞서 Service 배포의 ClusterIP 타입을 Kubernetes Dashboard 배포를 통해 확인했습니다.
 
-그외에 NodePort 타입으로도 구성이 가능합니다. 아래는 NodePort 타입으로 구성하는 아키텍쳐입니다. 
-
-![](../.gitbook/assets/image%20%288%29.png)
 
 노드 타입 구조의 경우 노드의 IP주소와 Port에 종속되고, 확장성과 유연함에 한계가 있습니다. 하지만 NodePort를 사용해도 대부분의 포트 기반의 서비스를 구성할 수 있습니다.
 

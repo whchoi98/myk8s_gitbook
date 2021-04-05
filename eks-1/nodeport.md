@@ -227,3 +227,9 @@ kubectl -n nodeport-test get pods
 NodePort 30080을 하나의 노드에서만 Security Group으로 허용했는데도, 서비스 분산이 이뤄집니다. 이것은 특정 Node로 Nodeport로 트래픽이 인입하고, 내부에서는 Service를 통해서 Label Selector를 통해서 부하 분산이 이뤄지고 있는 것입니다.
 {% endhint %}
 
+## CoreDNS와 Service
+
+### 1.CoreDNS와 Service 역할 확인을 위한 App배포 
+
+
+

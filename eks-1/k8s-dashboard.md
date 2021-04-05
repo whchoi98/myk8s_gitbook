@@ -164,6 +164,8 @@ kubernetes dashboard는 ClusterIP 타입으로 서비스 배포됩니다. Cluste
 
 ![](../.gitbook/assets/image%20%2828%29.png)
 
+
+
 외부에서 접속되지 않으므로, Cloud9 IDE에서 Preview를 통해 Proxy로 접속합니다.
 
 Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
