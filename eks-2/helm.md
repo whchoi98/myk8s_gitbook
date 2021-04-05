@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-11-15'
+description: 'update : 2021-04-06'
 ---
 
 # Helm 구성
@@ -56,8 +56,8 @@ helm version --short
  출력 결과 예시
 
 ```text
-~/environment $ helm version --short
-v3.4.0+g7090a89
+whchoi98:~ $ helm version --short
+v3.5.3+g041ce5a
 ```
 
 ### 2. 차트 Repository 구성
@@ -86,6 +86,7 @@ helm completion bash >> ~/.bash_completion
 . /etc/profile.d/bash_completion.sh
 . ~/.bash_completion
 source <(helm completion bash)
+
 ```
 
 ### 4. **Helm 을 통한 nginx 배포 및 확인.**
