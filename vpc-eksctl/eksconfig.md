@@ -122,7 +122,7 @@ EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드�
 
 EKS Cluster내에 생성된 워크로드들을 확인해 볼 수 있습니다.
 
-![](../.gitbook/assets/image%20%28182%29.png)
+![](../.gitbook/assets/image%20%28183%29.png)
 
 managed Node type으로 설치한 경우에는 Configuration Compute에서 추가로 확인할 수 있습니다.
 

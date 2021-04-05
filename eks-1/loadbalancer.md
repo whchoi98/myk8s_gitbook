@@ -354,6 +354,15 @@ ecsdemo-nodejs     ClusterIP      172.20.181.252   <none>                       
 
 ## NLB기반 Loadbalancer 서비스 구성.
 
+다음과 같은 구성을 통해서 NLB 서비스를 구현해 봅니다. 
+
+![](../.gitbook/assets/image%20%28181%29.png)
+
+* namespace : nlb-test
+* ecsdemo-frontend service type : nlb \(external\)
+* ecsdemo-crystal service type: nlb\(internal\)
+* ecsdemo-nodejs service type: nlb\(internal\)
+
 ### 1.배포용 yaml 복제
 
 아래와 같이 NLB-service.yaml 를 각 App별로 생성하여 구성합니다.

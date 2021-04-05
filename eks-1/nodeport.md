@@ -198,7 +198,7 @@ Public-SG 라는 Security Group을 생성하고, 해당 인스턴스에 적용�
 
 Security Group에서 TCP 30080를 허용합니다.
 
-![](../.gitbook/assets/image%20%28181%29.png)
+![](../.gitbook/assets/image%20%28182%29.png)
 
 이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다.
 
