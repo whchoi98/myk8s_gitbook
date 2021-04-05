@@ -4,7 +4,13 @@ description: 2021-04-04 / 20min
 
 # NodePort 기반 배포
 
+Kubernetes에서는 Pod의 전면에서 Pod로 트래픽이 들어오는 트래픽을 전달하는 service 자원이 제공됩니다. 해당 Service 자원은 Pod의 IP 주소와 관계 없이 Pod의 Label Selector를 보고 트래픽을 전달하는 역할을 담당합니다.
 
+Service의 종류는 아래와 같습니다.
+
+* Cluster IP - Service 자원의 기본 타입이며 Kubernetes 내부에서만 접근 가
+* NodePort - 로컬 호스트의 특정 포트를 Serivce의 특정 포트와 연결
+* Loadbalancer - AWS CLB, NLB 등과 같은 로드밸런서가 노드 전면에서 처리하는 방식
 
 ## 기본 Loadbalancer 서비스 기반 구성
 
