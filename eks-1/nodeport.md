@@ -12,11 +12,19 @@ Service의 종류는 아래와 같습니다.
 * NodePort - 로컬 호스트의 특정 포트를 Serivce의 특정 포트와 연결
 * Loadbalancer - AWS CLB, NLB 등과 같은 로드밸런서가 노드 전면에서 처리하는 방식
 
-## 기본 Loadbalancer 서비스 기반 구성
+## Nodeport 기반 Service 구성 
+
+아래 그림에서 처럼 Service의 기본은 CLUSTER-IP 방식입니다. 외부로 노출되지 않으며, Service에는  Pod Container의 포트를 기술해 줍니다.
+
+![Cluster IP &#xD0C0;&#xC785; &#xAE30;&#xBC18; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28173%29.png)
+
+NodePort 타입기반의 Service는 Node에서 Port를 외부에 노출 시키고 , 해당 포트로 유입되는 트래픽을 Service로 전달하고  Pod Container의 포트로 전달합니다.
+
+![NodePort &#xD0C0;&#xC785; &#xAE30;&#xBC18;&#xC758; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28170%29.png)
 
 ### 1.배포용 yaml 복제.
 
-LAB에서 사용할 App을 복제합니다.
+NodePort 타입의 서비스 구성을 위해서 LAB에서 사용할 App을 복제합니다.
 
 ```text
 cd ~/environment
@@ -102,9 +110,10 @@ spec:
   selector:
     app: ecsdemo-frontend
 #Service Type change
-  type: node-port
+  type: NodePort
   ports:
    -  protocol: TCP
+      nodePort: 30080
       port: 80
       targetPort: 3000
 ```
