@@ -20,6 +20,11 @@ description: 'update : 2020-11-15'
 
 ![&#xCC38;&#xC870; - https://devopscube.com/install-configure-helm-kubernetes/](../.gitbook/assets/image%20%2847%29.png)
 
+Helm Chart의 구조는 아래와 같습니다.
+
+* values.yaml : 사용자가 원하는 값들을 설정하는 파일
+* tempates: 설치할 리소스 파일들이 존재하는 디렉토리. 해당 디렉토리 내부에 Deployment , Service 등이 존재.
+
 ## Helm 설치와 간단한 배포
 
 아래와 같은 순서대로 구성합니다.
