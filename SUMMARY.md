@@ -38,6 +38,7 @@
 * [3.VPC구성과 eksctl 기반 설치](vpc-eksctl/README.md)
   * [Cloudformation 구성](vpc-eksctl/cloudformation.md)
   * [eksctl 구성](vpc-eksctl/eksctl.md)
+  * [EKS 구성확인](vpc-eksctl/eksconfig.md)
 * [4.EKS Service 이해](eks-1/README.md)
   * [K8s Dashboard 배포](eks-1/k8s-dashboard.md)
   * [NodePort 기반 배포](eks-1/nodeport.md)

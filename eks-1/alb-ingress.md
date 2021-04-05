@@ -6,30 +6,45 @@ description: 'update : 2020-11-11 / 30min'
 
 ## Ingress
 
-Ingress는 d
+### 소개
 
-## ALB Ingress 개요.
+Ingress는 앞서 소개된 Loadbalancer 방식과 다르게 URL 패스에 대한 설정을 담당하는 자원입니다. 외부에서 요청하는 HTTP에 대한 트래픽 처리를 지원하게 됩니다. \(eg. 도메인 기반 라우팅\) 사용자들이 외부에서 접근이 가능한 URL을 제공하여 , 사용자의 접근성을 편리하게 제공합니다.
 
-[Kubernetes용 AWS ALB 수신 컨트롤러](https://github.com/kubernetes-sigs/aws-alb-ingress-controller)는 `kubernetes.io/ingress.class: alb` 주석과 클러스터에 수신 리소스가 생성될 때마다 Application Load Balancer\(ALB\) 및 필수 지원 AWS 리소스가 생성되도록 트리거하는 컨트롤러입니다. 수신 리소스는 ALB를 구성하여 HTTP 또는 HTTPS 트래픽을 클러스터 내 다른 포드로 라우팅합니다. ALB 수신 컨트롤러는 Amazon EKS 클러스터에서 실행 중인 프로덕션 워크로드에서 지원됩니다.
+Ingress는 Ingress Controller가 존재하고, Ingress 에 정의된 트래픽 라우팅 규칙에 따라 라우팅을 처리합니다.
 
-## ALB Ingress 구성
+### Ingress Controller
+
+Ingress 는 반드시 Ingress Controller가 존재해야하며, 외부에서 내부로 요청되는 트래픽을 읽고 서비스로 전달하는 역할을 합니다. 다른 컨트롤러와 다르게 목적에 맞게 수동으로 설치해야 합니다.
+
+* NGINX Ingress Controller
+* HA Proxy
+* AWS ALB Ingress Controller
+* Kong
+* traefik
+
+## AWS ALB Ingress 개요.
+
+[Kubernetes용 AWS ALB 수신 컨트롤러](https://github.com/kubernetes-sigs/aws-alb-ingress-controller)는 `kubernetes.io/ingress.class: alb` 주석과 클러스터에 수신 리소스가 생성될 때마다 Application Load Balancer\(ALB\) 및 필수 지원 AWS 리소스가 생성되도록 트리거하는 컨트롤러입니다. 
+
+수신 리소스는 ALB를 구성하여 HTTP 또는 HTTPS 트래픽을 클러스터 내 다른 포드로 라우팅합니다. ALB 수신 컨트롤러는 Amazon EKS 클러스터에서 실행 중인 프로덕션 워크로드에서 지원됩니다.
+
+## AWS ALB Ingress 구성
 
 아래와 같은 구성 단계로 ALB Ingress를 구성합니다.
 
-1. **ALB Ingress Controller 를 위한 IAM Policy 생성.**
-2. **RABAC 역할 생성과 바인딩.**
-3. **ALBIngress Controller IAM Policy 정책 부여.**
-4. **ALB Ingress 컨트롤러 포드에 권한 부여.**
-5. **ALB Ingress Controller 포드 배포.**
-6. **샘플 App/namespace/Pod/Service 배포.**
-7. **ALB Ingress 배포.**
-8. **ALB DNS로 접속 확인.**
+1. IAM OIDC 공급자 생성
+2. AWS Loadbalancer 컨트롤러에 대한 IAM 정책 다운로드.
+3. AWSLoadBalancerControllerIAMPolicy 이름의 IAM 정책 생성.
+4. AWS Load Balancer 컨트롤러에 대한 IAM역할 및 ServiceAccount 생성
+5. EKS Cluster에 컨트롤러 추가  
 
 ![&#xCC38;&#xC870; - https://aws.amazon.com/ko/blogs/opensource/kubernetes-ingress-aws-alb-ingress-controller/](../.gitbook/assets/image%20%2821%29.png)
 
-### 1.IAM Policy 생성
+Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases)
 
-eksctl을 사용하여 ALB Ingress Controller를 위한 IAM Policy를 생성합니다.
+### 1.IAM OIDC Provider 생성
+
+IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을 사용하여 IAM OIDC Provider를 생성합니다.
 
 > 참조 URL - [https://eksctl.io/usage/iamserviceaccounts/](https://eksctl.io/usage/iamserviceaccounts/)
 >
@@ -38,37 +53,30 @@ eksctl을 사용하여 ALB Ingress Controller를 위한 IAM Policy를 생성합�
 > 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 \(RDS, MQ, STS, DynamoDB\) 또는 AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
 
 ```text
-eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
+eksctl utils associate-iam-oidc-provider \
+    --region ap-northeast-2 \
+    --cluster eksworkshop \
+    --approve
+```
+
+### 2. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로
+
+ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다. \(이미 앞서 git에서 받은 폴더에 포함되어 있습니다.\)
+
+```text
+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.1.2/docs/install/iam_policy.json
 
 ```
 
-출력 결과 예시입니다.
+### 3. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
+
+AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 
 ```text
-$ eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
-2021-04-04 16:06:04 [ℹ]  eksctl version 0.43.0
-2021-04-04 16:06:04 [ℹ]  using region ap-northeast-2
-2021-04-04 16:06:05 [ℹ]  will create IAM Open ID Connect provider for cluster "eksworkshop" in "ap-northeast-2"
-2021-04-04 16:06:06 [✔]  created IAM Open ID Connect provider for cluster "eksworkshop" in "ap-northeast-2"
-```
-
-### 2. RBAC 역할 생성과 바인딩
-
-ALB Ingress Controller에 대한 버전을 변수에 저장합니다.
-
-```text
-echo 'export ALB_INGRESS_VERSION="v1.1.9"' >>  ~/.bash_profile
-source ~/.bash_profile
-
-```
-
-ALB Ingress 컨트롤러에 필요한 관련 RBAC 역할을 생성하고 바인딩합니다.
-
-Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases)
-
-```text
-kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/rbac-role.yaml
-
+cd ~/
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam-policy.json
 ```
 
 또는 이미 앞서 git 을 통해서, alb-ingress-controller와 RBAC을 다운로드 받았습니다. 아래에서 처럼 바로 실행 시킵니다.
