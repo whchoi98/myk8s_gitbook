@@ -42,10 +42,10 @@ eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
 
 ```text
 $ eksctl utils associate-iam-oidc-provider --cluster=eksworkshop --approve
-[ℹ]  eksctl version 0.23.0
-[ℹ]  using region ap-northeast-2
-[ℹ]  will create IAM Open ID Connect provider for cluster "eksworkshop" in "ap-northeast-2"
-[✔]  created IAM Open ID Connect provider for cluster "eksworkshop" in "ap-northeast-2"
+2021-04-04 16:06:04 [ℹ]  eksctl version 0.43.0
+2021-04-04 16:06:04 [ℹ]  using region ap-northeast-2
+2021-04-04 16:06:05 [ℹ]  will create IAM Open ID Connect provider for cluster "eksworkshop" in "ap-northeast-2"
+2021-04-04 16:06:06 [✔]  created IAM Open ID Connect provider for cluster "eksworkshop" in "ap-northeast-2"
 ```
 
 ### 2. RBAC 역할 생성과 바인딩
@@ -59,6 +59,8 @@ source ~/.bash_profile
 ```
 
 ALB Ingress 컨트롤러에 필요한 관련 RBAC 역할을 생성하고 바인딩합니다.
+
+Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases)
 
 ```text
 kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/${ALB_INGRESS_VERSION}/docs/examples/rbac-role.yaml
@@ -112,7 +114,7 @@ PolicyARN 변수에 저장된 값을 확인합니다.
 
 ```text
 $echo $PolicyARN 
-arn:aws:iam::909121566064:policy/ALBIngressControllerIAMPolicy
+
 ```
 
 ### 4.ALB Ingress 컨트롤러 포드에 권한 부여.
@@ -121,6 +123,7 @@ eksctl을 사용하여 AWS ALB Ingress 컨르톨러를 실행하는 포드에 �
 
 ```text
 eksctl create iamserviceaccount --cluster=eksworkshop --namespace=kube-system --name=alb-ingress-controller --attach-policy-arn=$PolicyARN --override-existing-serviceaccounts --approve
+
 ```
 
 출력 결과 예시
@@ -147,6 +150,7 @@ sample yaml에는 Cluster name이 devCluster로 되어 있으므로, 이것을 �
 ```text
 cd ~/environment/myeks/alb-controller/
 kubectl apply -f alb-ingress-controller.yaml
+
 ```
 
 alb-ingress-controller.yaml 소스 참조
@@ -221,7 +225,7 @@ spec:
             # - name: AWS_SECRET_ACCESS_KEY
             #   value: SECRETVALUE
           # Repository location of the ALB Ingress Controller.
-          image: docker.io/amazon/aws-alb-ingress-controller:v1.1.8
+          image: docker.io/amazon/aws-alb-ingress-controller:v1.1.9
       serviceAccountName: alb-ingress-controller
 ```
 
@@ -315,6 +319,7 @@ spec:
 ```text
 cd ~/environment/myeks/alb-controller/
 kubectl apply -f 2048-ingress.yaml
+
 ```
 
 2048-ingress.yaml 소스 참조.
@@ -344,6 +349,7 @@ spec:
 
 ```text
 kubectl get ingress/2048-ingress -n 2048-game
+
 ```
 
 출력 결과 예시
