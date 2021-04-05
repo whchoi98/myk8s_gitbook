@@ -6,15 +6,13 @@ description: 'update : 2020-04-04 / 1h 30min'
 
 ## Loadbalancer 서비스 타입 소개.
 
-
-
-노드 타입 구조의 경우 노드의 IP주소와 Port에 종속되고, 확장성과 유연함에 한계가 있습니다. 하지만 NodePort를 사용해도 대부분의 포트 기반의 서비스를 구성할 수 있습니다.
-
-대부분은 Loadbalancer 타입과 Ingress 기반과 Service 가 연계되어 확장성과 유연함을 갖는 구조를 제공합니다.
-
-![](../.gitbook/assets/image%20%285%29.png)
+Loadbalancer 기반의 서비스 타입은 현재 CLB \(Classic Load Balancer\)와 NLB\(Network Load Balancer\) 2가지 타입을 지원하고 있습니다. 모두 Port 기반의 LB를 제공하고 있으며, Kubernetes 의 Node와 Service 전면에서 서비스를 제공합니다.
 
 ## CLB Loadbalancer 서비스 기반 구성
+
+다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다. 
+
+![CLB &#xAE30;&#xBC18; LAB &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28170%29.png)
 
 ### 1.배포용 yaml 복제.
 
