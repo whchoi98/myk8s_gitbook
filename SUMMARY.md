@@ -41,6 +41,7 @@
   * [EKS 구성확인](vpc-eksctl/eksconfig.md)
 * [4.EKS Service 이해](eks-1/README.md)
   * [K8s Dashboard 배포](eks-1/k8s-dashboard.md)
+  * [Cluster IP 기반 배포](eks-1/cluster-ip.md)
   * [NodePort 기반 배포](eks-1/nodeport.md)
   * [Loadbalancer 기반 배포](eks-1/loadbalancer.md)
   * [ALB Ingress 배포](eks-1/alb-ingress.md)
