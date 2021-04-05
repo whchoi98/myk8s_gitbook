@@ -95,6 +95,7 @@ Helm Chart를 통한 간단한 nginx 배포를 위해 repo에서 nginx를 검색
 
 ```text
 helm search repo nginx
+
 ```
 
 출력 결과 예시
@@ -112,6 +113,7 @@ stable/gcloud-endpoints         0.1.2           1               DEPRECATED Devel
 
 ```text
 helm repo add bitnami https://charts.bitnami.com/bitnami
+
 ```
 
 다시 nginx를 검색해 봅니다.
@@ -132,41 +134,52 @@ bitnami/nginx-ingress-controller        5.6.15          0.40.2          Chart fo
 helm install 명령을 통해 nginx를 설치해 봅니다.
 
 ```text
-helm install eksworkshop-nginx bitnami/nginx
+kubectl create namespace helm-test
+helm install helm-nginx bitnami/nginx --namespace helm-test
+
 ```
 
 아래와 같은 결과를 얻을 수 있습니다.
 
 ```text
-whchoi98:~/environment $ helm install eksworkshop-nginx bitnami/nginx
-NAME: eksworkshop-nginx
-LAST DEPLOYED: Tue Jul 21 15:01:26 2020
-NAMESPACE: default
+whchoi98:~ $ helm install helm-nginx bitnami/nginx --namespace helm-test                                                                 
+NAME: helm-nginx
+LAST DEPLOYED: Mon Apr  5 18:23:06 2021
+NAMESPACE: helm-test
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
 NOTES:
-Get the NGINX URL:
+** Please be patient while the chart is being deployed **
+
+NGINX can be accessed through the following DNS name from within your cluster:
+
+    helm-nginx.helm-test.svc.cluster.local (port 80)
+
+To access NGINX from outside the cluster, follow the steps below:
+
+1. Get the NGINX URL by running these commands:
 
   NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-        Watch the status with: 'kubectl get svc --namespace default -w eksworkshop-nginx'
+        Watch the status with: 'kubectl get svc --namespace helm-test -w helm-nginx'
 
-  export SERVICE_IP=$(kubectl get svc --namespace default eksworkshop-nginx --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
-  echo "NGINX URL: http://$SERVICE_IP/"
+    export SERVICE_PORT=$(kubectl get --namespace helm-test -o jsonpath="{.spec.ports[0].port}" services helm-nginx)
+    export SERVICE_IP=$(kubectl get svc --namespace helm-test helm-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    echo "http://${SERVICE_IP}:${SERVICE_PORT}"
 ```
 
 Pod와 서비스 배포를 확인합니다.
 
 ```text
-~/environment $ kubectl get svc eksworkshop-nginx
-NAME                TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)                      AGE
-eksworkshop-nginx   LoadBalancer   172.20.225.235   a580840c2d2f24533a7fe36836e99a93-149103174.ap-northeast-2.elb.amazonaws.com   80:31437/TCP,443:32083/TCP   79s
+whchoi98:~ $ kubectl -n helm-test get service 
+NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP                                                                   PORT(S)        AGE
+eksworkshop-nginix-nginx   LoadBalancer   172.20.58.93   ac0c5778fc7814b3586e670d9cc150d6-876194346.ap-northeast-2.elb.amazonaws.com   80:30760/TCP   107s
 ```
 
 ELB 주소를 확인합니다.
 
 ```text
-export SERVICE_IP=$(kubectl get svc --namespace default eksworkshop-nginx --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+export SERVICE_IP=$(kubectl get svc --namespace helm-test helm-nginx --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
 echo "NGINX URL: http://$SERVICE_IP/"
 
 ```
@@ -182,52 +195,53 @@ EC2 대시보드에서 ELB가 정상적으로 생성된 것을 확인 할 수 �
 설치된 helm list를 확인합니다.
 
 ```text
-helm list 
+helm list -n helm-test
 
 ```
 
 출력 예시
 
 ```text
-~/environment $ helm list 
-NAME                    NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-eksworkshop-nginx       default         1               2020-11-09 13:18:03.861525378 +0000 UTC deployed        nginx-7.1.6     1.19.4     
+whchoi98:~ $ helm list -n helm-test 
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+helm-nginx      helm-test       1               2021-04-05 18:23:06.961632762 +0000 UTC deployed        nginx-8.8.1     1.19.9   
 ```
 
 아래 명령을 통해 배포된 내용을 확인합니다.
 
 ```text
-kubectl describe deployments.apps eksworkshop-nginx
+kubectl describe deployments.apps helm-nginx -n helm-test
 
 ```
 
 출력 결과 예시
 
 ```text
-~/environment $ kubectl describe deployments.apps eksworkshop-nginx
-Name:                   eksworkshop-nginx
-Namespace:              default
-CreationTimestamp:      Mon, 09 Nov 2020 13:18:04 +0000
-Labels:                 app.kubernetes.io/instance=eksworkshop-nginx
+whchoi98:~ $ kubectl describe deployments.apps helm-nginx -n helm-test
+Name:                   helm-nginx
+Namespace:              helm-test
+CreationTimestamp:      Mon, 05 Apr 2021 18:23:07 +0000
+Labels:                 app.kubernetes.io/instance=helm-nginx
                         app.kubernetes.io/managed-by=Helm
                         app.kubernetes.io/name=nginx
-                        helm.sh/chart=nginx-7.1.6
+                        helm.sh/chart=nginx-8.8.1
 Annotations:            deployment.kubernetes.io/revision: 1
-                        meta.helm.sh/release-name: eksworkshop-nginx
-                        meta.helm.sh/release-namespace: default
-Selector:               app.kubernetes.io/instance=eksworkshop-nginx,app.kubernetes.io/name=nginx
+                        meta.helm.sh/release-name: helm-nginx
+                        meta.helm.sh/release-namespace: helm-test
+Selector:               app.kubernetes.io/instance=helm-nginx,app.kubernetes.io/name=nginx
 Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
 StrategyType:           RollingUpdate
 MinReadySeconds:        0
 RollingUpdateStrategy:  25% max unavailable, 25% max surge
 Pod Template:
-  Labels:  app.kubernetes.io/instance=eksworkshop-nginx
-           app.kubernetes.io/managed-by=Helm
-           app.kubernetes.io/name=nginx
-           helm.sh/chart=nginx-7.1.6
+  Labels:           app.kubernetes.io/instance=helm-nginx
+                    app.kubernetes.io/managed-by=Helm
+                    app.kubernetes.io/name=nginx
+                    helm.sh/chart=nginx-8.8.1
+  Service Account:  default
   Containers:
    nginx:
-    Image:      docker.io/bitnami/nginx:1.19.4-debian-10-r6
+    Image:      docker.io/bitnami/nginx:1.19.9-debian-10-r0
     Port:       8080/TCP
     Host Port:  0/TCP
     Liveness:   tcp-socket :http delay=0s timeout=5s period=10s #success=1 #failure=6
@@ -239,7 +253,7 @@ Pod Template:
   Volumes:
    nginx-server-block-paths:
     Type:      ConfigMap (a volume populated by a ConfigMap)
-    Name:      eksworkshop-nginx-server-block
+    Name:      helm-nginx-server-block
     Optional:  false
 Conditions:
   Type           Status  Reason
@@ -247,11 +261,11 @@ Conditions:
   Available      True    MinimumReplicasAvailable
   Progressing    True    NewReplicaSetAvailable
 OldReplicaSets:  <none>
-NewReplicaSet:   eksworkshop-nginx-547554887f (1/1 replicas created)
+NewReplicaSet:   helm-nginx-85869fb5bd (1/1 replicas created)
 Events:
   Type    Reason             Age    From                   Message
   ----    ------             ----   ----                   -------
-  Normal  ScalingReplicaSet  2m52s  deployment-controller  Scaled up replica set eksworkshop-nginx-547554887f to 1 
+  Normal  ScalingReplicaSet  3m11s  deployment-controller  Scaled up replica set helm-nginx-85869fb5bd to 1
 ```
 
 ### 5. Helm을 통한 nginx 삭제
@@ -259,14 +273,16 @@ Events:
 아래 명령을 통해 생성된 Helm을 삭제합니다.
 
 ```text
-helm uninstall eksworkshop-nginx
+helm uninstall helm-nginx -n helm-test
+
 ```
 
 정상적으로 삭제되었는지 확인합니다.
 
 ```text
-helm list
-kubectl get service eksworkshop-nginx
+helm list -n helm-test
+kubectl -n helm-test get service 
+
 ```
 
 {% hint style="info" %}
