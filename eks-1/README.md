@@ -1,5 +1,5 @@
 ---
-description: 2h
+description: 2h 30min
 ---
 
 # 4.EKS Service 이해
