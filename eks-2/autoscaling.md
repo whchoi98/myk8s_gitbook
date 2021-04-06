@@ -21,6 +21,7 @@ Namespace 생성, helm Chart를 통해 metric-server 설치를 진행합니다. 
 ```text
 kubectl create namespace metrics
 helm install my-metric-server bitnami/metrics-server --namespace metrics
+
 ```
 
 metric API 상태를 확인합니다.
