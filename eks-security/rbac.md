@@ -26,7 +26,9 @@ Role과 Subject의 연결을 정의하며, 두 가지 유형의 역할 \(Role, C
 
 가상 클러스터를 네임스페이스라고 하며, 네임스페이스는 여러 개의 팀이나, 프로젝트에 걸쳐서 많은 사용자가 있는 환경에서 사용
 
-## RBAC 시험용 Pod 구성 
+## RBAC 시험용 환경 구성
+
+### 1. Pod 구성 
 
 Pod 생성
 
@@ -61,7 +63,9 @@ EoF
 
 ```
 
-## IAM 사용자 Mapping
+### 
+
+### 2. IAM 사용자 Mapping
 
 rbac-user라는 k8s 사용자를 정의하고 해당 IAM 사용자에 매핑합니다. 다음을 실행하여 기존 ConfigMap을 가져오고 aws-auth.yaml 이라는 파일에 저장합니다.
 
@@ -96,7 +100,9 @@ kubectl apply -f aws-auth.yaml
 
 ```
 
-## 신규 사용자 테스트
+### 
+
+### 3. 신규 사용자 테스트
 
 지금까지 EKS Cluster 운영은 관리자로 클러스터에 액세스했습니다. 이제 새로 생성 된 rbac-user로 클러스터에 액세스하면 어떻게되는지 살펴 보겠습니다.
 
@@ -189,6 +195,67 @@ kubectl apply -f rbacuser-role-binding.yaml
 ```
 
 ### 2.Role/RoleBinding 시험 
+
+이제 사용자, 역할 및 RoleBinding이 정의되었으므로 rbac-user로 다시 전환하고 테스트 해 봅니다.
+
+rbac-user로 다시 전환하려면 rbac-user 환경 변수를 제공하는 다음 명령을 실행하고 해당 변수가 사용되었는지 확인합니다.
+
+```text
+. rbacuser_creds.sh
+aws sts get-caller-identity
+
+```
+
+rbac-user로서 다음을 실행하여 rbac 네임 스페이스에서 Pod 정보를 조회해 봅니다.
+
+```text
+kubectl get pods -n rbac-test
+
+```
+
+rbac-user로 다음을 실행해서 권한이 제대로 바인딩되었는지 확인해 봅니다.
+
+```text
+kubectl get pods -n kube-system
+
+```
+
+
+
+```text
+unset AWS_SECRET_ACCESS_KEY
+unset AWS_ACCESS_KEY_ID
+kubectl delete namespace rbac-test
+
+```
+
+rback-user 에 대한 모든 정보와 configMap을 삭제하려면 아래를 수행합니다.
+
+```text
+rm rbacuser_creds.sh
+rm rbacuser-role.yaml
+rm rbacuser-role-binding.yaml
+aws iam delete-access-key --user-name=rbac-user --access-key-id=$(jq -r .AccessKey.AccessKeyId /tmp/create_output.json)
+aws iam delete-user --user-name rbac-user
+rm /tmp/create_output.json
+
+```
+
+기존 aws-auth.yaml 파일을 편집하여 기존 configMap에서 rbac-user 매핑을 제거합니다.
+
+```text
+data:
+  mapUsers: |
+    []
+```
+
+ConfigMap을 적용하고 aws-auth.yaml 파일을 삭제합니다.
+
+```text
+kubectl apply -f aws-auth.yaml
+rm aws-auth.yaml
+
+```
 
 
 
