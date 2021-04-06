@@ -368,16 +368,16 @@ mkdir -p ~/environment/helm-chart-demo/templates/deployment
 mkdir -p ~/environment/helm-chart-demo/templates/service
 
 # frontend manifests 복사 
-cp ~/environment/ecsdemo-frontend/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/frontend.yaml
-cp ~/environment/ecsdemo-frontend/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/frontend.yaml
+cp ~/environment/myeks/helm-chart-demo/ecsdemo-frontend-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/frontend.yaml
+cp ~/environment/myeks/helm-chart-demo/ecsdemo-frontend-service.yaml ~/environment/helm-chart-demo/templates/service/frontend.yaml
 
 # crystal manifests 복사 
-cp ~/environment/ecsdemo-crystal/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/crystal.yaml
-cp ~/environment/ecsdemo-crystal/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/crystal.yaml
+cp ~/environment/myeks/helm-chart-demo/ecsdemo-crystal-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/crystal.yaml
+cp ~/environment/myeks/helm-chart-demo/ecsdemo-crystal-service.yaml ~/environment/helm-chart-demo/templates/service/crystal.yaml
 
 # nodejs manifests 복사 
-cp ~/environment/ecsdemo-nodejs/kubernetes/deployment.yaml ~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
-cp ~/environment/ecsdemo-nodejs/kubernetes/service.yaml ~/environment/helm-chart-demo/templates/service/nodejs.yaml
+cp ~/environment/myeks/helm-chart-demo/ecsdemo-nodejs-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
+cp ~/environment/myeks/helm-chart-demo/ecsdemo-nodejs-service.yaml ~/environment/helm-chart-demo/templates/service/nodejs.yaml
 ```
 
 아래 파일들을 찾아서, "replicas:1" 값을 변경합니다.
