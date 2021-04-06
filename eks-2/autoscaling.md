@@ -234,19 +234,20 @@ eksctl get nodegroup --cluster eksworkshop -o json | jq -r '.[].StackName'
 아래와 같은 값을 복사합니다. \(--stack-name\)
 
 ```text
-eksctl-eksworkshop-nodegroup-ng1-public
+eksctl-eksworkshop-nodegroup-ng-public-01
 ```
 
 StackName의 값을 아래 aws cli에 넣고, IAM Role Name 값을 확인합니다.
 
 ```text
-aws cloudformation describe-stack-resources --stack-name eksctl-eksworkshop-nodegroup-ng1-public | jq -r '.StackResources[] | select(.ResourceType=="AWS::IAM::Role") | .PhysicalResourceId'
+aws cloudformation describe-stack-resources --stack-name eksctl-eksworkshop-nodegroup-ng-public-01 | jq -r '.StackResources[] | select(.ResourceType=="AWS::IAM::Role") | .PhysicalResourceId'
 ```
 
 아래와 같은 값을 복사해 둡니다. \(--role-name\)
 
 ```text
-eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS
+eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG
+
 ```
 
 정책 아래와 같이 json파일을 만들고 추가합니다.
@@ -271,7 +272,7 @@ cat <<EoF > ~/environment/asg_policy/k8s-asg-policy.json
   ]
 }
 EoF
-aws iam put-role-policy --role-name eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-VIUU31FEYWBY --policy-name ASG-Policy-For-Worker --policy-document file://~/environment/asg_policy/k8s-asg-policy.json
+aws iam put-role-policy --role-name eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG --policy-name ASG-Policy-For-Worker --policy-document file://~/environment/asg_policy/k8s-asg-policy.json
 ```
 
 정상적으로 추가되었다면, 아래와 같이 확인 됩니다.
@@ -281,13 +282,14 @@ aws iam put-role-policy --role-name eksctl-eksworkshop-nodegroup-ng1-NodeInstanc
 aws cli를 통해서도 확인 할 수 있습니다.
 
 ```text
-aws iam get-role-policy --role-name eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS --policy-name ASG-Policy-For-Worker
+aws iam get-role-policy --role-name eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG --policy-name ASG-Policy-For-Worker
+
 ```
 
 aws cli를 통한 출력 결과 예제입니다.
 
 ```text
-whchoi98:~/environment/cluster-autoscaler $ aws iam get-role-policy --role-name eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS --policy-name ASG-Policy-For-Worker
+whchoi98:~/environment/cluster-autoscaler $ aws iam get-role-policy --role-name eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG --policy-name ASG-Policy-For-Worker
 {
     "RoleName": "eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS",
     "PolicyName": "ASG-Policy-For-Worker",
@@ -351,12 +353,13 @@ spec:
         nodegroup-type: "frontend-workloads"
 EoF
 kubectl apply -f ~/environment/cluster-autoscaler/nginx.yaml
+
 ```
 
 정상적으로 배포되었는지 확인해 봅니다.
 
 ```text
-kubectl get deployment/nginx-to-scaleout
+kubectl get deployment/nginx-to-scaleout nodegroup-type=frontend-workloads
 ```
 
 아래와 같은 출력 결과를 확인 해 볼 수 있습니다.
@@ -371,26 +374,29 @@ nginx-to-scaleout   1/1     1            1           11s
 
 ```text
 kubectl scale --replicas=50 deployment/nginx-to-scaleout
+
 ```
 
 포드가 증가하는 것을 아래 명령을 통해 확인합니다. 또는 k9s 명령이 실행되고 있는 터미널에서 확인합니다.
 
 ```text
 kubectl get pods -o wide --watch
+
 ```
 
 Pod가 Replicaset이 발생하면서, Pod 상태가 Pending 이 발생하면 EC2 worker node가 추가되고 있는 것입니다.
 
 ```text
-nginx-to-scaleout-77cc8cc66f-kdwk5   1/1     Running             0          8s      10.11.43.235   ip-10-11-53-186.ap-northeast-2.compute.internal    <none>           <none>
-nginx-to-scaleout-77cc8cc66f-brccd   1/1     Running             0          8s      10.11.23.161   ip-10-11-31-153.ap-northeast-2.compute.internal    <none>           <none>
-nginx-to-scaleout-77cc8cc66f-npnnl   1/1     Running             0          8s      10.11.143.136   ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
-nginx-to-scaleout-77cc8cc66f-54dj8   1/1     Running             0          9s      10.11.88.50     ip-10-11-69-28.ap-northeast-2.compute.internal     <none>           <none>
-nginx-to-scaleout-77cc8cc66f-n8bvm   1/1     Running             0          9s      10.11.180.3     ip-10-11-189-67.ap-northeast-2.compute.internal    <none>           <none>
-nginx-to-scaleout-77cc8cc66f-ns62p   1/1     Running             0          10s     10.11.146.175   ip-10-11-146-170.ap-northeast-2.compute.internal   <none>           <none>
-nginx-to-scaleout-77cc8cc66f-r9n4d   1/1     Running             0          11s     10.11.56.6      ip-10-11-53-186.ap-northeast-2.compute.internal    <none>           <none>
-nginx-to-scaleout-77cc8cc66f-fwwf4   1/1     Running             0          11s     10.11.5.5       ip-10-11-31-153.ap-northeast-2.compute.internal    <none>           <none>
-nginx-to-scaleout-77cc8cc66f-vvmnv   1/1     Running             0          12s     10.11.165.178   ip-10-11-189-67.ap-northeast-2.compute.internal    <none>           <none>
+nginx-to-scaleout-5c74d46fd6-qmj9k   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-9wpt9   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-m5lck   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-9smbd   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-2ltqn   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-jvnpl   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-tnvtp   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-jm5nj   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-tsrvq   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
+nginx-to-scaleout-5c74d46fd6-lprfm   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
 ```
 
 아래와 같이 EC2 대시보드에서 인스턴스들이 추가 됩니다.
