@@ -29,7 +29,7 @@ Helm Chart의 구조는 아래와 같습니다.
 
 아래와 같은 구성으로 LAB을 진행합니다.
 
-![Helm LAB &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28187%29.png)
+![Helm &#xAE30;&#xBC18; &#xBC30;&#xD3EC; &#xAD6C;&#xC131;](../.gitbook/assets/image%20%28188%29.png)
 
 아래와 같은 순서대로 구성합니다.
 
