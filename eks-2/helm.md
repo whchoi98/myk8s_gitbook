@@ -903,6 +903,7 @@ ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, A
 먼저 ChartMuseum을 설치합니다.
 
 ```text
+cd ~/environment
 curl -LO https://s3.amazonaws.com/chartmuseum/release/latest/bin/linux/amd64/chartmuseum
 chmod +x ./chartmuseum
 
