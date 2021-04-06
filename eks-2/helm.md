@@ -360,84 +360,27 @@ EoF
 
 ```
 
-앞서 microservice 어플리케이션 매니페스트 파일들을 servicename.yaml로 템플릿 디렉토리에 복사합니다.
+앞서 git에서 복제한 파일들 중에서 helm-chart-demo 폴더의 파일을 복사합니다.
 
 ```text
 # 각 템플릿 타입을 위한 서브 폴더 생성 
 mkdir -p ~/environment/helm-chart-demo/templates/deployment
 mkdir -p ~/environment/helm-chart-demo/templates/service
 
-# frontend manifests 복사 
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-frontend-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/frontend.yaml
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-frontend-service.yaml ~/environment/helm-chart-demo/templates/service/frontend.yaml
+# helm chart pod deploy용 manifest 파일 복
 
-# crystal manifests 복사 
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-crystal-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/crystal.yaml
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-crystal-service.yaml ~/environment/helm-chart-demo/templates/service/crystal.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-frontend-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/frontend.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-crystal-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/crystal.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-nodejs-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
 
-# nodejs manifests 복사 
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-nodejs-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-nodejs-service.yaml ~/environment/helm-chart-demo/templates/service/nodejs.yaml
+# helm chart pod service용 manifest 파일 복
+cp ./myeks/helm-chart-demo/ecsdemo-frontend-service.yaml ~/environment/helm-chart-demo/templates/service/frontend.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-crystal-service.yaml ~/environment/helm-chart-demo/templates/service/crystal.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-nodejs-service.yaml ~/environment/helm-chart-demo/templates/service/nodejs.yaml
+
 ```
 
-아래 파일들을 찾아서, "replicas:1" 값을 변경합니다.
-
-변경할 파일들
-
-```text
-~/environment/helm-chart-demo/templates/deployment/frontend.yaml
-~/environment/helm-chart-demo/templates/deployment/crystal.yaml
-~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
-```
-
-![](../.gitbook/assets/image%20%2849%29.png)
-
-Cloud9 IDE 편집기를 이용해서 3개 파일의 "replicas:1" 값을 변경하고, 저장합니다.
-
-```text
-replicas: {{ .Values.replicas }}
-```
-
-추가로 3개 파일의 "image: 'brentley/ecsdemo-xxx' 을 찾아서, 아래와 같이 변경합니다.
-
-~/environment/eksdemo/templates/deployment/frontend.yaml
-
-```text
-- image: {{ .Values.frontend.image }}:{{ .Values.version }}
-```
-
-~/environment/eksdemo/templates/deployment/crystal.yaml
-
-```text
-- image: {{ .Values.crystal.image }}:{{ .Values.version }}
-```
-
-~/environment/eksdemo/templates/deployment/nodejs.yaml
-
-```text
-- image: {{ .Values.nodejs.image }}:{{ .Values.version }}
-```
-
-새로운 namespace에 생성하기 위해서 deployment, service 매니페스트 파일에 namespace를 추가합니다.
-
-변경대상 파일.
-
-```text
-~/environment/helm-chart-demo/templates/deployment/frontend.yaml
-~/environment/helm-chart-demo/templates/deployment/crystal.yaml
-~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
-~/environment/helm-chart-demo/templates/service/frontend.yaml
-~/environment/helm-chart-demo/templates/service/crystal.yaml
-~/environment/helm-chart-demo/templates/service/nodejs.yaml
-```
-
-추가 구문
-
-```text
-  namespace: helm-chart-demo
-```
-
-변경 이후 파일 내용
+아래 deploy용 yaml manifest 파일은 replica와 image 값이 helm chart의 value를 참조하도록 선언되어 있습니다. 각 파일에서 확인해 봅니다. \(ecsdemo-frontend-deployment.yaml, ecsdemo-crystal-deployment.yaml, ecsdemo-nodejs-deployment.yaml\)
 
 ```text
 metadata:
@@ -445,7 +388,12 @@ metadata:
   labels:
     app: ecsdemo-xxxx
   namespace: helm-chart-demo
+replicas: {{ .Values.replicas }}
+- image: {{ .Values.frontend.image }}:{{ .Values.version }}
+
 ```
+
+
 
 이제 values.yaml을 생성하고, Values 들에 대한 값을 정의합니다.
 
@@ -456,6 +404,7 @@ cat <<EoF > ~/environment/helm-chart-demo/values.yaml
 # Declare variables to be passed into your templates.
 
 # Release-wide Values
+namespace: 'helm-chart-demo'
 replicas: 3
 version: 'latest'
 
@@ -488,12 +437,12 @@ helm install --debug --dry-run workshop ~/environment/helm-chart-demo
 출력 결과 예제
 
 ```text
-whchoi98:~/environment/helm-chart-demo $ helm install --debug --dry-run workshop ~/environment/helm-chart-demo
+whchoi98:~/environment/myeks (master) $ helm install --debug --dry-run workshop ~/environment/helm-chart-demo
 install.go:173: [debug] Original chart version: ""
 install.go:190: [debug] CHART PATH: /home/ec2-user/environment/helm-chart-demo
 
 NAME: workshop
-LAST DEPLOYED: Mon Apr  5 18:41:37 2021
+LAST DEPLOYED: Tue Apr  6 04:18:41 2021
 NAMESPACE: default
 STATUS: pending-install
 REVISION: 1
@@ -506,6 +455,7 @@ crystal:
   image: brentley/ecsdemo-crystal
 frontend:
   image: brentley/ecsdemo-frontend
+namespace: helm-chart-demo
 nodejs:
   image: brentley/ecsdemo-nodejs
 replicas: 3
@@ -514,11 +464,12 @@ version: latest
 HOOKS:
 MANIFEST:
 ---
-# Source: eksdemo/templates/service/crystal.yaml
+# Source: helm-chart-demo/templates/service/crystal.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: ecsdemo-crystal
+#name space change 
   namespace: helm-chart-demo
 spec:
   selector:
@@ -528,26 +479,29 @@ spec:
       port: 80
       targetPort: 3000
 ---
-# Source: eksdemo/templates/service/frontend.yaml
+# Source: helm-chart-demo/templates/service/frontend.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: ecsdemo-frontend
+#name space change 
   namespace: helm-chart-demo
 spec:
   selector:
     app: ecsdemo-frontend
+#Service Type change
   type: LoadBalancer
   ports:
    -  protocol: TCP
       port: 80
       targetPort: 3000
 ---
-# Source: eksdemo/templates/service/nodejs.yaml
+# Source: helm-chart-demo/templates/service/nodejs.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: ecsdemo-nodejs
+#name space change 
   namespace: helm-chart-demo
 spec:
   selector:
@@ -557,16 +511,16 @@ spec:
       port: 80
       targetPort: 3000
 ---
-# Source: eksdemo/templates/deployment/crystal.yaml
+# Source: helm-chart-demo/templates/deployment/crystal.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ecsdemo-crystal
   labels:
     app: ecsdemo-crystal
+#name space change 
   namespace: helm-chart-demo
 spec:
-  replicas: 3
   selector:
     matchLabels:
       app: ecsdemo-crystal
@@ -581,20 +535,24 @@ spec:
         app: ecsdemo-crystal
     spec:
       containers:
-      - image: brentley/ecsdemo-crystal:latest
+      - image: brentley/ecsdemo-frontend:latest
         imagePullPolicy: Always
         name: ecsdemo-crystal
         ports:
         - containerPort: 3000
           protocol: TCP
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "backend-workloads"
 ---
-# Source: eksdemo/templates/deployment/frontend.yaml
+# Source: helm-chart-demo/templates/deployment/frontend.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ecsdemo-frontend
   labels:
     app: ecsdemo-frontend
+#name space change 
   namespace: helm-chart-demo
 spec:
   replicas: 3
@@ -619,18 +577,23 @@ spec:
         - containerPort: 3000
           protocol: TCP
         env:
+#Container URL change.
         - name: CRYSTAL_URL
-          value: "http://ecsdemo-crystal.default.svc.cluster.local/crystal"
+          value: "http://ecsdemo-crystal.clb-test.svc.cluster.local/crystal"
         - name: NODEJS_URL
-          value: "http://ecsdemo-nodejs.default.svc.cluster.local/"
+          value: "http://ecsdemo-nodejs.clb-test.svc.cluster.local/"
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "backend-workloads"
 ---
-# Source: eksdemo/templates/deployment/nodejs.yaml
+# Source: helm-chart-demo/templates/deployment/nodejs.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ecsdemo-nodejs
   labels:
     app: ecsdemo-nodejs
+#name space change 
   namespace: helm-chart-demo
 spec:
   replicas: 3
@@ -648,12 +611,15 @@ spec:
         app: ecsdemo-nodejs
     spec:
       containers:
-      - image: brentley/ecsdemo-nodejs:latest
+      - image: brentley/ecsdemo-frontend:latest
         imagePullPolicy: Always
         name: ecsdemo-nodejs
         ports:
         - containerPort: 3000
           protocol: TCP
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "backend-workloads"
 ```
 
 템플릿이 정상적으로 렌더링되고, 빌드 출력이 이뤄졌으므로 차트를 배포합니다.
@@ -685,27 +651,25 @@ kubectl -n helm-chart-demo get svc,pod,deploy -o wide
 출력 결과 예시
 
 ```text
-whchoi98:~/environment $ kubectl -n helm-chart-demo get svc,pod,deploy -o wide
-NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP                                                                    PORT(S)        AGE   SELECTOR
-service/ecsdemo-crystal    ClusterIP      172.20.99.129   <none>                                                                         80/TCP         45s   app=ecsdemo-crystal
-service/ecsdemo-frontend   LoadBalancer   172.20.108.82   a8efd85e4e6834e248dd722b977aab20-1171313341.ap-northeast-2.elb.amazonaws.com   80:31043/TCP   45s   app=ecsdemo-frontend
-service/ecsdemo-nodejs     ClusterIP      172.20.172.98   <none>                                                                         80/TCP         45s   app=ecsdemo-nodejs
+whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get svc,pod,deploy -o wide
+NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)        AGE   SELECTOR
+service/ecsdemo-crystal    ClusterIP      172.20.182.234   <none>                                                                        80/TCP         9s    app=ecsdemo-crystal
+service/ecsdemo-frontend   LoadBalancer   172.20.128.128   a11483f32ee4e4a139a61a52e58555e3-121394870.ap-northeast-2.elb.amazonaws.com   80:30829/TCP   9s    app=ecsdemo-frontend
+service/ecsdemo-nodejs     ClusterIP      172.20.61.202    <none>                                                                        80/TCP         9s    app=ecsdemo-nodejs
 
-NAME                                    READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
-pod/ecsdemo-crystal-856c46f686-g57xz    1/1     Running   0          45s   10.11.92.238   ip-10-11-86-68.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-crystal-856c46f686-kjpv9    1/1     Running   0          46s   10.11.11.200   ip-10-11-1-70.ap-northeast-2.compute.internal     <none>           <none>
-pod/ecsdemo-crystal-856c46f686-xw6lc    1/1     Running   0          45s   10.11.38.189   ip-10-11-37-63.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-frontend-679545f5b5-6fb25   1/1     Running   0          46s   10.11.46.68    ip-10-11-38-198.ap-northeast-2.compute.internal   <none>           <none>
-pod/ecsdemo-frontend-679545f5b5-m4chs   1/1     Running   0          46s   10.11.14.43    ip-10-11-4-24.ap-northeast-2.compute.internal     <none>           <none>
-pod/ecsdemo-frontend-679545f5b5-q6nbr   1/1     Running   0          46s   10.11.16.130   ip-10-11-22-15.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-nodejs-99fbbf9-4gz9l        1/1     Running   0          46s   10.11.38.74    ip-10-11-37-63.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-nodejs-99fbbf9-82wfg        1/1     Running   0          46s   10.11.69.153   ip-10-11-79-51.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-nodejs-99fbbf9-b6z8l        1/1     Running   0          46s   10.11.16.199   ip-10-11-26-173.ap-northeast-2.compute.internal   <none>           <none>
+NAME                                    READY   STATUS              RESTARTS   AGE   IP              NODE                                               NOMINATED NODE   READINESS GATES
+pod/ecsdemo-crystal-67b4f9c664-mtplx    1/1     Running             0          9s    10.11.69.188    ip-10-11-70-192.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-frontend-576d7899b5-kg9pg   1/1     Running             0          9s    10.11.110.141   ip-10-11-110-116.ap-northeast-2.compute.internal   <none>           <none>
+pod/ecsdemo-frontend-576d7899b5-klz2v   1/1     Running             0          9s    10.11.66.14     ip-10-11-70-192.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-frontend-576d7899b5-vbs2s   1/1     Running             0          9s    10.11.82.59     ip-10-11-92-125.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-nodejs-b489f9f78-5m56b      1/1     Running             0          9s    10.11.84.25     ip-10-11-92-125.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-nodejs-b489f9f78-pbh2v      0/1     ContainerCreating   0          9s    <none>          ip-10-11-70-192.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-nodejs-b489f9f78-rsrnb      1/1     Running             0          9s    10.11.103.47    ip-10-11-110-116.ap-northeast-2.compute.internal   <none>           <none>
 
 NAME                               READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS         IMAGES                             SELECTOR
-deployment.apps/ecsdemo-crystal    3/3     3            3           46s   ecsdemo-crystal    brentley/ecsdemo-crystal:latest    app=ecsdemo-crystal
-deployment.apps/ecsdemo-frontend   3/3     3            3           46s   ecsdemo-frontend   brentley/ecsdemo-frontend:latest   app=ecsdemo-frontend
-deployment.apps/ecsdemo-nodejs     3/3     3            3           46s   ecsdemo-nodejs     brentley/ecsdemo-nodejs:latest     app=ecsdemo-nodejs
+deployment.apps/ecsdemo-crystal    1/1     1            1           9s    ecsdemo-crystal    brentley/ecsdemo-frontend:latest   app=ecsdemo-crystal
+deployment.apps/ecsdemo-frontend   3/3     3            3           9s    ecsdemo-frontend   brentley/ecsdemo-frontend:latest   app=ecsdemo-frontend
+deployment.apps/ecsdemo-nodejs     2/3     3            2           9s    ecsdemo-nodejs     brentley/ecsdemo-frontend:latest   app=ecsdemo-nodejs
 ```
 
 ### 4. 서비스 확인
@@ -732,7 +696,8 @@ ecsdemo-frontend   LoadBalancer   172.20.195.10   a6ad6b49efa9a426d86ce1779cee31
 helm list에도 정상적으로 등록되어 있는지 확인합니다.
 
 ```text
-helm list 
+helm list
+
 ```
 
 출력 결과 예
