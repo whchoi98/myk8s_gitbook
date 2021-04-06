@@ -1018,31 +1018,32 @@ eksdemo heml chart가 정상적으로 패키징 되었는지 확인합니다.
 Chartmuseum에 패키징을 업로드 합니다.
 
 ```text
-curl --data-binary "@helm-chart-demo-0.1.0.tgz " http://localhost:8888/api/charts
+curl --data-binary "@helm-chart-demo-0.1.0.tgz" http://localhost:8888/api/charts
 
 ```
 
 출력결과 예제
 
 ```text
-~/environment/eksdemo $ curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts                                                                                      
-2020-07-22T00:44:50.260Z        DEBUG   [10] Incoming request: /api/charts      {"reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
-2020-07-22T00:44:50.316Z        DEBUG   [10] Adding package to storage  {"package": "eksdemo-0.1.0.tgz", "reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
-2020-07-22T00:44:50.341Z        INFO    [10] Request served     {"path": "/api/charts", "comment": "", "clientIP": "127.0.0.1", "method": "POST", "statusCode": 201, "latency": "80.44638ms", "reqID": "b1474d56-8f4b-4502-8a78-3c032997d3a9"}
+whchoi98:~/environment/helm-chart-demo $ curl --data-binary "@helm-chart-demo-0.1.0.tgz" http://localhost:8888/api/charts
+2021-04-06T08:44:51.077Z        DEBUG   [16] Incoming request: /api/charts      {"reqID": "7d175c21-50e7-43b2-9e81-5922ede8982d"}
+2021-04-06T08:44:51.108Z        DEBUG   [16] Adding package to storage  {"package": "helm-chart-demo-0.1.0.tgz", "reqID": "7d175c21-50e7-43b2-9e81-5922ede8982d"}
+2021-04-06T08:44:51.137Z        INFO    [16] Request served     {"path": "/api/charts", "comment": "", "clientIP": "127.0.0.1", "method": "POST", "statusCode": 201, "latency": "60.471257ms", "reqID": "7d175c21-50e7-43b2-9e81-5922ede8982d"}
 {"saved":true}
 ```
 
 S3에 정상적으로 Chartmuseum이 배포되었는지 확인합니다.
 
 ```text
-aws s3 ls s3://whchoi-chartmuseum-2020-11-11
+aws s3 ls s3://whchoi-chartmuseum-2021-04-06
+
 ```
 
 출력 결과 예제
 
 ```text
-~/environment/helm-chart-demo $ aws s3 ls s3://whchoi-chartmuseum-2020-11-11
-2020-11-09 13:58:14       1314 eksdemo-0.1.0.tgz
+whchoi98:~/environment/helm-chart-demo $ aws s3 ls s3://whchoi-chartmuseum-2021-04-06
+2021-04-06 08:44:52       1400 helm-chart-demo-0.1.0.tgz
 ```
 
 이제 등록된 Repo를 업데이트하고, Chartmuseum 로컬 레포지토리를 검색해 봅니다.
@@ -1056,26 +1057,27 @@ helm search repo chartmuseum
 출력결과 예제
 
 ```text
-whchoi98:~/environment/eksdemo $ helm search repo chartmuseum
-NAME                    CHART VERSION   APP VERSION     DESCRIPTION                                       
-stable/chartmuseum      2.13.0          0.12.0          Host your own Helm Chart Repository               
-chartmuseum/eksdemo     0.1.0           1               A Helm chart for EKS Workshop Microservices app...
+whchoi98:~/environment/helm-chart-demo $ helm search repo chartmuseum
+NAME                            CHART VERSION   APP VERSION     DESCRIPTION                                       
+stable/chartmuseum              2.14.2          0.12.0          DEPRECATED Host your own Helm Chart Repository    
+chartmuseum/helm-chart-demo     0.1.0           1               A Helm chart for EKS Workshop Microservices app...
 ```
 
 등록된 Chartmuseum 로컬 레포지토리에서 패키지를 배포합니다.
 
 ```text
-helm install chartmuseum/eksdemo --generate-name 
+helm install chartmuseum/helm-chart-demo --generate-name
+
 ```
 
 출력 결과 예시
 
 ```text
-whchoi98:~/environment/eksdemo $ helm install chartmuseum/eksdemo --generate-name 
-2020-07-22T01:31:31.175Z        DEBUG   [17] Incoming request: /charts/eksdemo-0.1.0.tgz        {"reqID": "c40236a3-898b-4e4e-8499-4c6ef3fdac05"}
-2020-07-22T01:31:31.214Z        INFO    [17] Request served     {"path": "/charts/eksdemo-0.1.0.tgz", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "38.964464ms", "reqID": "c40236a3-898b-4e4e-8499-4c6ef3fdac05"}
-NAME: eksdemo-1595381491
-LAST DEPLOYED: Wed Jul 22 01:31:31 2020
+whchoi98:~/environment/helm-chart-demo $ helm install chartmuseum/helm-chart-demo --generate-name
+2021-04-06T08:48:11.597Z        DEBUG   [18] Incoming request: /charts/helm-chart-demo-0.1.0.tgz        {"reqID": "5091a3ad-ddaf-4489-be01-0422eafdb57c"}
+2021-04-06T08:48:11.629Z        INFO    [18] Request served     {"path": "/charts/helm-chart-demo-0.1.0.tgz", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "31.778266ms", "reqID": "5091a3ad-ddaf-4489-be01-0422eafdb57c"}
+NAME: helm-chart-demo-1617698891
+LAST DEPLOYED: Tue Apr  6 08:48:12 2021
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
@@ -1091,11 +1093,11 @@ kubectl -n helm-chart-demo get svc
 출력 결과 예시
 
 ```text
-whchoi98:~/environment/eksdemo $ kubectl -n helm-chart-demo get svc
-NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)        AGE
-ecsdemo-crystal    ClusterIP      172.20.192.8     <none>                                                                        80/TCP         102s
-ecsdemo-frontend   LoadBalancer   172.20.103.30    ab1e1d50b04bf43e2af0c925f8196b01-411132414.ap-northeast-2.elb.amazonaws.com   80:30447/TCP   102s
-ecsdemo-nodejs     ClusterIP      172.20.207.172   <none>                                                                        80/TCP         102s
+whchoi98:~/environment/helm-chart-demo $ kubectl -n helm-chart-demo get svc
+NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)        AGE
+ecsdemo-crystal    ClusterIP      172.20.249.215   <none>                                                                         80/TCP         29s
+ecsdemo-frontend   LoadBalancer   172.20.157.65    aa398e00e767f432ca8ead4754008e86-1747267288.ap-northeast-2.elb.amazonaws.com   80:31303/TCP   29s
+ecsdemo-nodejs     ClusterIP      172.20.60.44     <none>                                                                         80/TCP         29s                                                                     80/TCP         102s
 ```
 
 ELB DNS 레코드로 접속해 봅니다.
@@ -1103,7 +1105,7 @@ ELB DNS 레코드로 접속해 봅니다.
 ![](../.gitbook/assets/image%20%2851%29.png)
 
 {% hint style="info" %}
-Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/AmazonECR/latest/userguide/push-oci-artifact.html)
+Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/ko_kr/AmazonECR/latest/userguide/push-oci-artifact.html)
 {% endhint %}
 
 
