@@ -29,7 +29,7 @@ Helm Chart의 구조는 아래와 같습니다.
 
 아래와 같은 구성으로 LAB을 진행합니다.
 
-![Helm LAB &#xBAA9;&#xD45C; &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28188%29.png)
+![Helm LAB &#xBAA9;&#xD45C; &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28190%29.png)
 
 아래와 같은 순서대로 구성합니다.
 
@@ -914,29 +914,28 @@ Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장�
 
 AWS 서비스 - S3 
 
-![](../.gitbook/assets/image%20%28104%29.png)
+![](../.gitbook/assets/image%20%28189%29.png)
 
 버킷이름은 고유해야 합니다.
 
-![](../.gitbook/assets/image%20%28111%29.png)
+![](../.gitbook/assets/image%20%28188%29.png)
 
 정상적으로 생성되었는지 확인합니다.
 
 ```text
-~/environment $ aws s3 ls | grep 'chartmuseum'
-2020-11-09 13:51:11 whchoi-chartmuseum-2020-11-11
+aws s3 ls | grep 'chartmuseum'
+
+```
+
+```text
+whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
+2021-04-06 08:14:49 whchoi-chartmuseum-2021-04-06
 ```
 
 아래 명령어를 통해서 debug하고 정상적으로 동작하는지 확인합니다. **`--storage-amazon-bucket="생성한 버킷 이름"`** 을 입력합니다.
 
 ```text
-./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2" &
-```
-
-helm repo list에 정상적으로 등록되었는지 확인합니다.
-
-```text
-helm repo list
+./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum-2021-04-06 --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2" &
 ```
 
 Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트를 오픈해 줍니다.
@@ -946,6 +945,13 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 ![](../.gitbook/assets/image%20%2850%29.png)
 
 ![](../.gitbook/assets/image%20%2853%29.png)
+
+helm repo list에 정상적으로 등록되었는지 확인합니다.
+
+```text
+helm repo list
+
+```
 
 이제 외부에서 정상적으로 서비스가 접속되는 지 확인해 봅니다.
 
@@ -957,17 +963,18 @@ Helm Client \(Cloud9 IDE\)에 저장소를 추가해 봅니다.
 
 ```text
 helm repo add chartmuseum http://localhost:8888
+
 ```
 
 출력 결과 예시
 
 ```text
-~/environment $ helm repo add chartmuseum http://localhost:8888
-2020-07-22T00:21:48.451Z        DEBUG   [5] Incoming request: /index.yaml       {"reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
-2020-07-22T00:21:48.451Z        DEBUG   [5] Entry found in cache store  {"repo": "", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
-2020-07-22T00:21:48.452Z        DEBUG   [5] Fetching chart list from storage    {"repo": "", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
-2020-07-22T00:21:48.520Z        DEBUG   [5] No change detected between cache and storage        {"repo": "", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
-2020-07-22T00:21:48.520Z        INFO    [5] Request served      {"path": "/index.yaml", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "68.746464ms", "reqID": "4ea86b51-1e05-457f-87cd-88681f0d2ce2"}
+whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
+2021-04-06T08:19:36.368Z        DEBUG   [3] Incoming request: /index.yaml       {"reqID": "572624a5-6e8e-4566-a071-1828c7aafeb7"}
+2021-04-06T08:19:36.368Z        DEBUG   [3] Entry found in cache store  {"repo": "", "reqID": "572624a5-6e8e-4566-a071-1828c7aafeb7"}
+2021-04-06T08:19:36.368Z        DEBUG   [3] Fetching chart list from storage    {"repo": "", "reqID": "572624a5-6e8e-4566-a071-1828c7aafeb7"}
+2021-04-06T08:19:36.424Z        DEBUG   [3] No change detected between cache and storage        {"repo": "", "reqID": "572624a5-6e8e-4566-a071-1828c7aafeb7"}
+2021-04-06T08:19:36.424Z        INFO    [3] Request served      {"path": "/index.yaml", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "56.032676ms", "reqID": "572624a5-6e8e-4566-a071-1828c7aafeb7"}
 "chartmuseum" has been added to your repositories
 ```
 
@@ -976,6 +983,7 @@ helm repo add chartmuseum http://localhost:8888
 ```text
 cd ~/environment/helm-chart-demo/
 helm package ./ 
+
 ```
 
 출력 결과 예시
@@ -1005,14 +1013,13 @@ eksdemo heml chart가 정상적으로 패키징 되었는지 확인합니다.
 └── values.yaml
 ```
 
-
-
 ### 3. Chartmuseum 으로 부터 배포
 
 Chartmuseum에 패키징을 업로드 합니다.
 
 ```text
-curl --data-binary "@eksdemo-0.1.0.tgz" http://localhost:8888/api/charts
+curl --data-binary "@helm-chart-demo-0.1.0.tgz " http://localhost:8888/api/charts
+
 ```
 
 출력결과 예제
