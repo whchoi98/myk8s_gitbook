@@ -32,16 +32,17 @@
 
 ```text
 helm search repo stable/prometheus
+
 ```
 
-아래와 같이 prometheus namespace를 만들고, helm을 통해 설치합니다. 앞서 랩에서 이미 Worker node의 스토리지 타입은 gp2 타입으로 배포되었습니다.
+아래와 같이 prometheus namespace를 만들고, helm을 통해 설치합니다. 앞서 랩에서 이미 Worker node의 스토리지 타입은 gp3 타입으로 배포되었습니다.
 
 ```text
 kubectl create namespace prometheus
 helm install prometheus stable/prometheus \
     --namespace prometheus \
-    --set alertmanager.persistentVolume.storageClass="gp2" \
-    --set server.persistentVolume.storageClass="gp2"
+    --set alertmanager.persistentVolume.storageClass="gp3" \
+    --set server.persistentVolume.storageClass="gp3"
 ```
 
 아래와 같은 결과를 얻을 수 있습니다.
@@ -49,8 +50,8 @@ helm install prometheus stable/prometheus \
 ```text
 $ helm install prometheus stable/prometheus \
 >     --namespace prometheus \
->     --set alertmanager.persistentVolume.storageClass="gp2" \
->     --set server.persistentVolume.storageClass="gp2"
+>     --set alertmanager.persistentVolume.storageClass="gp3" \
+>     --set server.persistentVolume.storageClass="gp3"
 NAME: prometheus
 LAST DEPLOYED: Thu Jul 23 08:19:32 2020
 NAMESPACE: prometheus
@@ -71,7 +72,8 @@ Get the Prometheus server URL by running these commands in the same shell:
 이제 Prometheus가 정상적으로 배포되었는지 확인합니다.
 
 ```text
-kubectl -n prometheus get all 
+kubectl -n prometheus get all
+
 ```
 
 앞서 소개한 주요 컴포넌트들이 Pod형태로 배포된 것을 확인 할 수 있습니다. 앞서 아키텍쳐 도식도와 비교해서 확인해 봅니다.
