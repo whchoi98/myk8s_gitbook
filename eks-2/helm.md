@@ -731,10 +731,11 @@ REVISION        UPDATED                         STATUS          CHART           
 1               Tue Apr  6 07:33:42 2021        deployed        helm-chart-demo-0.1.0   1               Install complete
 ```
 
-Rolling Back 시험을 위해, 먼저 helm Chart의 Value를 변경합니다. ~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 nodejs.image 값을 아래와 같이 수정합니다.
+Rolling Back 시험을 위해, 먼저 helm Chart의 Value를 변경합니다. ~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 replicat의 값을 아래와 같이 수정합니다.
 
 ```text
-nodejs-non-existing
+replicas: 1
+
 ```
 
 변경 후 File 내용 확인 \(values.yaml\)
@@ -746,17 +747,10 @@ nodejs-non-existing
 
 # Release-wide Values
 namespace: 'helm-chart-demo'
-replicas: 3
+## 변경 부
+replicas: 1
 version: 'latest'
 
-# Service Specific Values
-nodejs:
-### 변경 부분 ###
-  image: nodejs-non-existing
-crystal:
-  image: brentley/ecsdemo-crystal
-frontend:
-  image: brentley/ecsdemo-frontend
 ```
 
 "values.yaml" 파일이 모두 수정되었으면, helm을 upgrade 합니다.
@@ -884,23 +878,18 @@ REVISION        UPDATED                         STATUS          CHART           
 3               Tue Apr  6 07:48:37 2021        deployed        helm-chart-demo-0.1.0   1               Rollback to 1   
 ```
 
-ChartMuseum에서 App 패키징을 수행하기 위해 value.yaml 파일 다시 정상적으로 수정합니다.
+~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 replicat의 값을 아래와 같이 수정합니다.해 value.yaml 파일 다시 정상적으로 수정합니다.
 
 ```text
 replicas: 3
-version: latest
-nodejs:
-  image: brentley/ecsdemo-nodejs
-crystal:
-  image: brentley/ecsdemo-crystal
-frontend:
-  image: brentley/ecsdemo-frontend
+
 ```
 
 생성했던 helmdemo를 삭제합니다. 아래 ChartMuseum 구성과 배포를 위해서 반드시 삭제합니다.
 
 ```text
-helm uninstall helmdemo
+helm uninstall -n helm-chart-demo rollingback-app
+
 ```
 
 ## ChartMuseum 구성과 배포.
