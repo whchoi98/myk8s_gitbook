@@ -10,7 +10,7 @@ description: 'Update : 2020-11-11'
 
 핸들러는 다음과 같이 세가지 타입이 있습니다.
 
-* [ExecAction](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#execaction-v1-core) 은 컨테이너 내에서 지정된 명령어를 실행합니 . 명령어가 상태 코드 0으로 종료되면 진단이 성공한 것으로 판단합니다.
+* [ExecAction](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#execaction-v1-core) 은 컨테이너 내에서 지정된 명령어를 실행합니다 . 명령어가 상태 코드 0으로 종료되면 진단이 성공한 것으로 판단합니다.
 * [TCPSocketAction](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#tcpsocketaction-v1-core) 은 지정된 포트에서 컨테이너의 IP주소에 대해 TCP 검사를 수행합니다 . 포트가 활성화되어 있다면 진단이 성공한 것으로 간주합니다.
 * [HTTPGetAction](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#httpgetaction-v1-core) 은 지정한 포트 및 경로에서 컨테이너의 IP주소에 대한 HTTP Get 요청을 수행합니다 . 응답의 상태 코드가 200보다 크고 400보다 작으면 진단이 성공한 것으로 간주합니다.
 
