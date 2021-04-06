@@ -142,7 +142,7 @@ php-apache   Deployment/php-apache   0%/50%    1         10        1          16
 
 ![](../.gitbook/assets/image%20%2862%29.png)
 
-## CA 구성과 클러스터 확장
+## CA 구성과 클러스터 확장 - Node 레벨 확장
 
 AWS를 위한 Cluster Autoscaler는 Auto Scaling Group과 연계하여 제공합니다. 사용자는 아래와 같은 4가지 배포 옵션을 선택할 수 있습니다.
 
