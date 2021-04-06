@@ -2,7 +2,7 @@
 description: 'update : 2021-04-06 /1h'
 ---
 
-# Helm 구성
+# 패키지 관리 - Helm
 
 ## Helm 소개
 

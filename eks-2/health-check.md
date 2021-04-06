@@ -2,7 +2,7 @@
 description: 'Update : 2020-11-11'
 ---
 
-# Health Check 구성
+# 고가용성 Health Check 구성
 
 ## 컨테이너 프로브 소개
 
