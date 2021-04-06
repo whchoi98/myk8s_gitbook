@@ -167,6 +167,7 @@ wget https://eksworkshop.com/beginner/080_scaling/deploy_ca.files/cluster_autosc
 ```text
 export K8S_VERSION=$(kubectl version --short | grep 'Server Version:' | sed 's/[^0-9.]*\([0-9.]*\).*/\1/' | cut -d. -f1,2)
 export AUTOSCALER_VERSION=$(curl -s "https://api.github.com/repos/kubernetes/autoscaler/releases" | grep '"tag_name":' | sed -s 's/.*-\([0-9][0-9\.]*\).*/\1/' | grep -m1 ${K8S_VERSION})
+
 ```
 
 저장된 값을 확인해 봅니다.
@@ -174,10 +175,13 @@ export AUTOSCALER_VERSION=$(curl -s "https://api.github.com/repos/kubernetes/aut
 ```text
 echo $K8S_VERSION
 echo $AUTOSCALER_VERSION
+
 ```
 
 ```text
+cd ~/environment/cluster-autoscaler
 echo "$(envsubst < cluster_autoscaler.yml)" > cluster_autoscaler.yml
+
 ```
 
 ### 2.ASG \(Auto Scaling Group\) 구성
@@ -186,13 +190,14 @@ CA\(Cluster Autoscaler\)가 제어할 ASG\(AutoScaling Group\)의 이름을 구�
 
 **EC2 대시보드 - Auto Scaling**
 
-![](../.gitbook/assets/image%20%2859%29.png)
+![](../.gitbook/assets/image%20%28187%29.png)
 
 ```text
-eksctl-eksworkshop-nodegroup-ng1-public-NodeGroup-1OKGC9A5SPGB1
+eksctl-eksworkshop-nodegroup-ng-public-01-NodeGroup-ZCRPGHX2NH7Q
+
 ```
 
-ASG Group의 최소, 최대 사이즈를 확인합니다. \(min = 3, max =9\)
+ASG Group의 최소, 최대 사이즈를 확인합니다. \(min = 3, max =**6**\)
 
 ### 3.CA\(Cluster AutoScaler\) 구성
 
@@ -210,13 +215,15 @@ Cloud9 IDE에서 다운로드 받은 매니페스트 파일\(cluster\_autoscaler
 
 인라인 정책을 구성하고 Public Worker Node의 EC2 인스턴스 프로파일에 추가합니다. 아래 그림에서 처럼 설정되어 있어야 합니다.
 
+![](../.gitbook/assets/image%20%28192%29.png)
+
 ![](../.gitbook/assets/image%20%2854%29.png)
 
 ![](../.gitbook/assets/image%20%2858%29.png)
 
 ![](../.gitbook/assets/image%20%2861%29.png)
 
-인라인 정책이 Public Worker Node의 EC2 인스턴스 프로파일에 없다면 아래와 같이 추가합니다.
+인라인 정책이 Public Worker Node의 EC2 인스턴스 프로파일에 없다면 아래와 같이 추가합니다. \(이미 eksctl을 배포할 때 추가되었기 때문에 아래는 생략해도 됩니다.\)
 
 먼저 StackName을 확인합니다.
 
@@ -242,7 +249,7 @@ aws cloudformation describe-stack-resources --stack-name eksctl-eksworkshop-node
 eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS
 ```
 
-정책을 아래와 같이 json파일을 만들고 추가합니다.
+정책 아래와 같이 json파일을 만들고 추가합니다.
 
 ```text
 mkdir ~/environment/asg_policy
@@ -303,7 +310,7 @@ whchoi98:~/environment/cluster-autoscaler $ aws iam get-role-policy --role-name 
 }
 ```
 
-Cluster Auto Scaler를 배포합니다.
+이제 Cluster Auto Scaler를 배포합니다.
 
 ```text
 kubectl apply -f ~/environment/cluster-autoscaler/cluster_autoscaler.yml
@@ -340,6 +347,8 @@ spec:
           requests:
             cpu: 500m
             memory: 512Mi
+      nodeSelector:
+        nodegroup-type: "frontend-workloads"
 EoF
 kubectl apply -f ~/environment/cluster-autoscaler/nginx.yaml
 ```

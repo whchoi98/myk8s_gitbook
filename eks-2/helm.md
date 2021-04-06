@@ -29,7 +29,7 @@ Helm Chart의 구조는 아래와 같습니다.
 
 아래와 같은 구성으로 LAB을 진행합니다.
 
-![Helm LAB &#xBAA9;&#xD45C; &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28190%29.png)
+![Helm LAB &#xBAA9;&#xD45C; &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28191%29.png)
 
 아래와 같은 순서대로 구성합니다.
 
@@ -297,7 +297,7 @@ ELB 삭제 시간으로 3분 정도 소요됩니다.
 
 아래와 같은 구성으로 LAB을 진행합니다.
 
-![ Helm Chart &#xAE30;&#xBC18;&#xC758; App&#xBC30;&#xD3EC;](../.gitbook/assets/image%20%28187%29.png)
+![ Helm Chart &#xAE30;&#xBC18;&#xC758; App&#xBC30;&#xD3EC;](../.gitbook/assets/image%20%28188%29.png)
 
 ### 1.Chart 만들기
 
@@ -914,11 +914,11 @@ Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장�
 
 AWS 서비스 - S3 
 
-![](../.gitbook/assets/image%20%28189%29.png)
+![](../.gitbook/assets/image%20%28190%29.png)
 
 버킷이름은 고유해야 합니다.
 
-![](../.gitbook/assets/image%20%28188%29.png)
+![](../.gitbook/assets/image%20%28189%29.png)
 
 정상적으로 생성되었는지 확인합니다.
 
