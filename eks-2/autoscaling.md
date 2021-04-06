@@ -159,6 +159,7 @@ CA 배포를 위한 매니페스트 파일을 다운으로 하고, 새롭게 생
 mkdir ~/environment/cluster-autoscaler
 cd ~/environment/cluster-autoscaler
 wget https://eksworkshop.com/beginner/080_scaling/deploy_ca.files/cluster_autoscaler.yml
+
 ```
 
 앞서 다운로드 받은 매니페스트 파일의 내용 중에서 CA \(Cluster Autoscaler\) version 값을 , 현재 EKS version에 맞추어서 변경합니다.
