@@ -27,11 +27,15 @@ Helm Chart의 구조는 아래와 같습니다.
 
 ## Helm 설치와 간단한 배포
 
+아래와 같은 구성으로 LAB을 진행합니다.
+
+![Helm LAB &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28187%29.png)
+
 아래와 같은 순서대로 구성합니다.
 
-1. **Helm3 최신 버전 설치**
-2. **Chart Repo 구성**
-3. **Helm 명령어 자동완성 구성**
+1. **Cloud9에 Helm3 최신 버전 설치**
+2. **Cloud9에 원격 Chart Repo 구성**
+3. **Cloud9에 Helm 명령어 자동완성 구성**
 4. **Helm 을 통한 nginx 배포 및 확인.**
 5. **Helm 을 통한 nginx 삭제.**
 
@@ -348,11 +352,12 @@ rm ~/environment/helm-chart-demo/values.yaml
 ```text
 cat <<EoF > ~/environment/helm-chart-demo/Chart.yaml
 apiVersion: v2
-name: eksdemo
+name: helm-chart-demo
 description: A Helm chart for EKS Workshop Microservices application
 version: 0.1.0
 appVersion: 1.0
 EoF
+
 ```
 
 앞서 microservice 어플리케이션 매니페스트 파일들을 servicename.yaml로 템플릿 디렉토리에 복사합니다.
