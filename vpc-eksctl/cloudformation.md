@@ -24,7 +24,7 @@ git clone https://github.com/whchoi98/myeks
 
 Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC3AZ.yml 파일을 로컬 PC에 다운로드 합니다. EKS 환경 구성을 위한 VPC 구성용 Cloudformation 입니다.
 
-![](../.gitbook/assets/image%20%28195%29.png)
+![](../.gitbook/assets/image%20%28197%29.png)
 
 AWS 서비스 - Cloudformation 을 선택합니다. 
 

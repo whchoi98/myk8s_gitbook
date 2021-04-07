@@ -49,10 +49,15 @@ IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을
 
 ```text
 eksctl utils associate-iam-oidc-provider \
-    --region ap-northeast-2 \
+    --region ${AWS_REGION} \
     --cluster eksworkshop \
     --approve
+    
 ```
+
+다음과 같이 IAM 서비스 메뉴에서 생성된 OIDC를 확인 할 수 있습니다.
+
+![](../.gitbook/assets/image%20%28196%29.png)
 
 ### 2. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드 
 
@@ -68,10 +73,10 @@ curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-lo
 AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 
 ```text
-cd ~/
+cd ~/environment/myeks/alb-controller
 aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
-    --policy-document file://iam-policy.json
+    --policy-document file://./iam-policy.json
 ```
 
 아래 처럼 결과가 출력됩니다.
@@ -80,18 +85,22 @@ aws iam create-policy \
 {
     "Policy": {
         "PolicyName": "AWSLoadBalancerControllerIAMPolicy",
-        "PolicyId": "ANPAYQA25S5LHDCBBTDHD",
-        "Arn": "arn:aws:iam::xxxxxxx:policy/AWSLoadBalancerControllerIAMPolicy",
+        "PolicyId": "ANPA5MSDOOD6OR6VVGXZ4",
+        "Arn": "arn:aws:iam::920338198780:policy/AWSLoadBalancerControllerIAMPolicy",
         "Path": "/",
         "DefaultVersionId": "v1",
         "AttachmentCount": 0,
         "PermissionsBoundaryUsageCount": 0,
         "IsAttachable": true,
-        "CreateDate": "2021-04-04T18:52:47+00:00",
-        "UpdateDate": "2021-04-04T18:52:47+00:00"
+        "CreateDate": "2021-04-07T15:58:25+00:00",
+        "UpdateDate": "2021-04-07T15:58:25+00:00"
     }
 }
 ```
+
+아래와 같이 IAM - 정책 메뉴에서 새롭게 생성된 정책을 확인할 수 있습니다. 
+
+![](../.gitbook/assets/image%20%28195%29.png)
 
 ### 4. AWS Ingress Controller IAM 역할 및 Service Account 생성
 
