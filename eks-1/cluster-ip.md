@@ -57,7 +57,7 @@ ip a 와 /etc/resolve.conf를 조회해 봅니다.
 
 ```text
 ip a
-cat /etc/resolve.conf
+cat /etc/resolv.conf
 ```
 
 다음과 같이 출력됩니다.
