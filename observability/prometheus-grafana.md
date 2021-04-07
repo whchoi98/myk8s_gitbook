@@ -39,7 +39,7 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 
 ```
 
-아래와 같이 prometheus namespace를 만들고, helm을 통해 설치합니다. 앞서 랩에서 이미 Worker node의 스토리지 타입은 gp3 타입으로 배포되었습니다.
+아래와 같이 prometheus namespace를 만들고, helm을 통해 설치합니다. 
 
 ```text
 kubectl create namespace prometheus
