@@ -118,8 +118,7 @@ PING 10.11.37.106 (10.11.37.106) 56(84) bytes of data.
 이제 Service를 배포합니다.
 
 ```text
-kubectl apply -f test-service-01.yaml
-
+kubectl apply -f ~/environment/myeks/network-test/test-service-01.yaml
 ```
 
 다시 앞서 생성한 Container에서 service의 nameservice를 조회해 봅니다.
