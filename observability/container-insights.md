@@ -206,7 +206,7 @@ fluentd-cloudwatch   12        12        12      12           12          <none>
 
 CloudWatch 대쉬보드 - Container Insight에 접속해서 각 주요 기능을 살펴 봅니다.
 
-Container Insight - Resource
+Cloudwatch - Container Insight - Resource
 
 ![](../.gitbook/assets/image%20%28110%29.png)
 
