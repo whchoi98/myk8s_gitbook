@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2021-04-05 / 10min'
+description: 'Update : 2021-04-07 / 10min'
 ---
 
 # EKS 구성확인
@@ -131,8 +131,13 @@ managed Node type으로 설치한 경우에는 Configuration Compute에서 추�
 이제 아래와 같은 EKS Cluster가 완성되었습니다. kubectl 명령을 통해 확인해 봅니다.
 
 ```text
+#kube-system namespace에 생성된 자원 확
 kubectl -n kube-system get all
+
+#주요 Pod의 상세 정보 확
 kubectl -n kube-system pods <pod-name> -o wide
+
+# node 상세 정보 확
 kubectl get nodes -o wide
 
 ```
