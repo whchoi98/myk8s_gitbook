@@ -57,7 +57,7 @@ eksctl utils associate-iam-oidc-provider \
 
 다음과 같이 IAM 서비스 메뉴에서 생성된 OIDC를 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28196%29.png)
+![](../.gitbook/assets/image%20%28197%29.png)
 
 ### 2. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드 
 
@@ -100,20 +100,74 @@ aws iam create-policy \
 
 아래와 같이 IAM - 정책 메뉴에서 새롭게 생성된 정책을 확인할 수 있습니다. 
 
-![](../.gitbook/assets/image%20%28195%29.png)
+![](../.gitbook/assets/image%20%28196%29.png)
 
 ### 4. AWS Ingress Controller IAM 역할 및 Service Account 생성
 
-이 단계에서는 AWS Ingress Controller 에 대한 IAM Roel , Service Account를 생성하고, 3번 단계에서 출력되었던 AWS Account ID를 복사해서 사용해아합니다.
+이 단계에서는 AWS Ingress Controller 에 대한 IAM Roel , Service Account를 생성하고, 3번 단계에서 출력되었던 AWS Account ID를 복사해서 사용해아합니다. 앞서 "${ACCOUNT\_ID}에 저장해 두었습니다.
 
 ```text
 eksctl create iamserviceaccount \
---cluster=<cluster-name> \
+--cluster=eksworkshop \
 --namespace=kube-system \
 --name=aws-load-balancer-controller \
---attach-policy-arn=arn:aws:iam::<AWS_ACCOUNT_ID>:policy/AWSLoadBalancerControllerIAMPolicy \
+--attach-policy-arn=arn:aws:iam::${ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
 --override-existing-serviceaccounts \
 --approve
+
+```
+
+Kubernetes에 정상적으로 Service Account가 등록되었는지 확인해 봅니다.
+
+```text
+kubectl get serviceaccounts -n kube-system aws-load-balancer-controller -o yaml
+
+```
+
+아래와 같이 출력 예제를 확인해 볼 수 있습니다.
+
+```text
+whchoi:~/environment/myeks/alb-controller (master) $ kubectl get serviceaccounts -n kube-system aws-load-balancer-controller -o yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::920338198780:role/eksctl-eksworkshop-addon-iamserviceaccount-k-Role1-OV9MERC8QPAV
+  creationTimestamp: "2021-04-07T16:17:17Z"
+  labels:
+    app.kubernetes.io/managed-by: eksctl
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:eks.amazonaws.com/role-arn: {}
+        f:labels:
+          .: {}
+          f:app.kubernetes.io/managed-by: {}
+    manager: eksctl
+    operation: Update
+    time: "2021-04-07T16:17:17Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:secrets:
+        .: {}
+        k:{"name":"aws-load-balancer-controller-token-hr5rh"}:
+          .: {}
+          f:name: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2021-04-07T16:17:17Z"
+  name: aws-load-balancer-controller
+  namespace: kube-system
+  resourceVersion: "42507"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/aws-load-balancer-controller
+  uid: 673de39f-a336-4d01-8fd1-8045b410e02a
+secrets:
+- name: aws-load-balancer-controller-token-hr5rh
 ```
 
 > 참조  URL - [https://eksctl.io/usage/iamserviceaccounts/](https://eksctl.io/usage/iamserviceaccounts/)
@@ -122,126 +176,161 @@ eksctl create iamserviceaccount \
 >
 > 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 \(RDS, MQ, STS, DynamoDB\) , AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
 
-### 5. EKS Cluster에 컨트롤러 추가
+### 5. 인증서 관리자 설치
 
-Helm 또는 YAML 기반의 Menifes를 통해 클러스터에 컨트롤러를 추가합니다. 여기에서는 YAML 기반의 설치를 소개합니다.
-
-* 먼저 Cert Manager를 설치합니다.
-
-Kubernetes 1.16 이상에서는 아래의 명령을 실행합니다.
+아래와 같이 Cert Manager \(인증서 관리자\)를 설치합니다.
 
 ```text
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
 
 ```
 
-Kubernetes 1.16 이하 버전에서는 아래 명령을 수행합니다. 이 랩에서는 이 명령을 사용하지 않습니다.
+### 6. AWS ALB Loadbalancer Controller Pod 설치
+
+Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다.
 
 ```text
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager-legacy.yaml
-
-```
-
-* YAML 기반의 컨트롤러 추가
-
-아래 명령을 통해 최신의 컨트롤러를 추가합니다. 이마 앞서 git을 실행하였다면 폴더에 포함되어 있습니다.
-
-```text
-cd ~/environment/myeks/alb-controller 
 wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.1.2/docs/install/v2_1_2_full.yaml
 
 ```
 
-~/environment/myeks/alb-controller/v2\_1\_2\_full.yaml 파일을 아래와 같이 수정합니다. cluster-name에 현재 적용할 EKS Cluster 이름을 입력합니다. 랩에서는 "eksworkshop" 입니다. git을 통해 받은 파일이라면 이미 수정되어 있습니다.
-
-```text
-apiVersion: apps/v1
-kind: Deployment
-. . . 
-name: aws-load-balancer-controller
-namespace: kube-system
-spec:
-    . . . 
-    template:
-        spec:
-            containers:
-                - args:
-                    - --cluster-name=<INSERT_CLUSTER_NAME>
-```
-
-컨트롤러를 생성합니다.
+이미 git을 통해 사전에 다운로드 받아 두었습니다. 직접 실행합니다.
 
 ```text
 cd ~/environment/myeks/alb-controller
 kubectl apply -f v2_1_2_full.yaml
+```
+
+## ALB Ingress Controller 기반 ALB 확인
+
+아래와 같이 새로운 manifest 파일을 생성합니다.
+
+```text
+cat <<EoF > ~/environment/myeks/alb-controller/alb_front_full.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: alb-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecsdemo-frontend
+  labels:
+    app: ecsdemo-frontend
+  namespace: alb-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ecsdemo-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: ecsdemo-frontend
+    spec:
+      containers:
+      - image: brentley/ecsdemo-frontend:latest
+        imagePullPolicy: Always
+        name: ecsdemo-frontend
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        env:
+        - name: CRYSTAL_URL
+          value: "http://ecsdemo-crystal.alb-test.svc.cluster.local/crystal"
+        - name: NODEJS_URL
+          value: "http://ecsdemo-nodejs.alb-test.svc.cluster.local/"
+#add nodeSelector
+      nodeSelector:
+        nodegroup-type: "backend-workloads"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsdemo-frontend
+  namespace: alb-test
+spec:
+  selector:
+    app: ecsdemo-frontend
+  type: NodePort
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 3000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ecsdemo-frontend
+  namespace: alb-test
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: "ecsdemo-frontend"
+              servicePort: 80
+EoF
 
 ```
 
-아래 명령을 통해 로그를 확인 할 수 있습니다.
+yaml 파일을 배포하고, 서비스를 확인합니다.
 
 ```text
-kubectl logs -n kube-system $(kubectl get po -n kube-system | egrep -o alb-ingress[a-zA-Z0-9-]+)
-```
-
-### 6.namespace/App/Pod/Service 배포.
-
-샘플 어플리케이션을 배포해 보겠습니다. 2048 게임 App을 Kubernetes Cluster에 넣고 Ingress 리소스를 사용하여 트래픽을 노출해 봅니다.
-
-```text
-cd ~/environment/myeks/alb-controller/
-kubectl apply -f 2048_full.yaml
+kubectl apply -f ~/environment/myeks/alb-controller/alb_front_full.yaml 
+kubectl -n alb-test get all
 
 ```
 
-### 7.서비스 확인
-
-ALB 생성된 것을 확인합니다.
-
-![](../.gitbook/assets/image%20%28168%29.png)
-
-브라우저를 열고 2040 앱 실행을 확인합니다.
-
-![](../.gitbook/assets/image%20%2837%29.png)
-
-k9s를 통해 App배포를 확인합니다.
+아래와 같은 결과를 확인 할 수 있습니다.
 
 ```text
-k9s -n 2048-game
-k9s -A
+whchoi:~/environment/myeks/alb-controller (master) $ kubectl -n alb-test get all
+NAME                                   READY   STATUS    RESTARTS   AGE
+pod/ecsdemo-frontend-6cc7bb877-tjsrk   1/1     Running   0          48s
+pod/ecsdemo-frontend-6cc7bb877-tknk7   1/1     Running   0          48s
+pod/ecsdemo-frontend-6cc7bb877-xgfxj   1/1     Running   0          48s
+
+NAME                       TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+service/ecsdemo-frontend   NodePort   172.20.63.91   <none>        80:32203/TCP   48s
+
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/ecsdemo-frontend   3/3     3            3           48s
+
+NAME                                         DESIRED   CURRENT   READY   AGE
+replicaset.apps/ecsdemo-frontend-6cc7bb877   3         3         3       48s
+
+NAME                                                               SERVICE-NAME       SERVICE-PORT   TARGET-TYPE   AGE
+targetgroupbinding.elbv2.k8s.aws/k8s-albtest-ecsdemof-b28228de87   ecsdemo-frontend   80             ip            46s
 ```
 
-![](../.gitbook/assets/image%20%2834%29.png)
-
-다음 kubectl 명령으로 구성된 정보를 모두 확인 할 수 있습니다.
+ingress 배포 현황을 살펴보고, ADDRESS를 복사해서 브라우저에서 확인해 봅니다.
 
 ```text
-kubectl -n kube-system get pods | grep "controller"
-kubectl get ingresses.extensions -n game-2048
-kubectl get svc -o wide -n game-2048
-kubectl get pod -o wide -n game-2048 
+kubectl -n alb-test get ingress -o wide
 
 ```
 
-출력 결과 예제
+ 아래와 같이 결과를 확인 할 수 있습니다.
 
 ```text
-whchoi98:~/environment/myeks/alb-controller (master) $ kubectl -n kube-system get pods | grep "controller"
-aws-load-balancer-controller-86598b5d8d-8w2p2   1/1     Running   0          22h
-whchoi98:~/environment/myeks/alb-controller (master) $ kubectl get ingresses.extensions -n game-2048
+whchoi:~/environment/myeks/alb-controller (master) $ kubectl -n alb-test get ingress -o wide
 Warning: extensions/v1beta1 Ingress is deprecated in v1.14+, unavailable in v1.22+; use networking.k8s.io/v1 Ingress
-NAME           CLASS    HOSTS   ADDRESS                                                                      PORTS   AGE
-ingress-2048   <none>   *       k8s-game2048-ingress2-2810c0c2ad-98799391.ap-northeast-2.elb.amazonaws.com   80      22h
-whchoi98:~/environment/myeks/alb-controller (master) $ kubectl get svc -o wide -n game-2048
-NAME           TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
-service-2048   NodePort   172.20.5.167   <none>        80:31574/TCP   22h   app.kubernetes.io/name=app-2048
-whchoi98:~/environment/myeks/alb-controller (master) $ kubectl get pod -o wide -n game-2048 
-NAME                               READY   STATUS    RESTARTS   AGE   IP              NODE                                               NOMINATED NODE   READINESS GATES
-deployment-2048-79785cfdff-5mf6r   1/1     Running   0          22h   10.11.102.117   ip-10-11-110-220.ap-northeast-2.compute.internal   <none>           <none>
-deployment-2048-79785cfdff-7l8t6   1/1     Running   0          22h   10.11.74.40     ip-10-11-79-51.ap-northeast-2.compute.internal     <none>           <none>
-deployment-2048-79785cfdff-7mlmf   1/1     Running   0          22h   10.11.2.77      ip-10-11-1-70.ap-northeast-2.compute.internal      <none>           <none>
-deployment-2048-79785cfdff-t67vn   1/1     Running   0          22h   10.11.93.140    ip-10-11-86-68.ap-northeast-2.compute.internal     <none>           <none>
-deployment-2048-79785cfdff-wz69h   1/1     Running   0          22h   10.11.24.255    ip-10-11-26-173.ap-northeast-2.compute.internal    <none>           <none>
+NAME               CLASS    HOSTS   ADDRESS                                                                       PORTS   AGE
+ecsdemo-frontend   <none>   *       k8s-albtest-ecsdemof-ee882fe5b1-1732413705.ap-northeast-2.elb.amazonaws.com   80      2m34s
 ```
 
-
+![](../.gitbook/assets/image%20%28195%29.png)
 
