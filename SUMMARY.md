@@ -62,7 +62,6 @@
 * [8.EKS Storage](eks-storage/README.md)
   * [Stateful Container-EBS](eks-storage/stateful-container.md)
   * [Stateful Container-EFS](eks-storage/stateful-container-efs.md)
-  * [Velero를 통한 Backup](eks-storage/velero-backup.md)
 * [9.EKS Security](eks-security/README.md)
   * [RBAC](eks-security/rbac.md)
   * [IAM 그룹 기반 관리](eks-security/iam_group.md)
