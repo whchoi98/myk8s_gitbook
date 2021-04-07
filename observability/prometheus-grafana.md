@@ -28,7 +28,7 @@
 
 ### 1.Prometheus 설치. 
 
-앞서 [Helm Chart](helm.md#1-helm)를 설치하였습니다. Helm Chart를 활용해서 설치합니다.
+앞서 [Helm Chart](../eks-2/helm.md#1-helm)를 설치하였습니다. Helm Chart를 활용해서 설치합니다.
 
 ```text
 helm search repo stable/prometheus

@@ -26,7 +26,7 @@ Amazon EKS 및 Kubernetes에서 Container Insights는 컨테이너화된 버전�
 
 ### 1.WordPress/DB 설치
 
-[Helm Chart](helm.md#4-helm-nginx)에서 등록된 Bitnami Repo에서 설치합니다. 
+[Helm Chart](../eks-2/helm.md#4-helm-nginx)에서 등록된 Bitnami Repo에서 설치합니다. 
 
 ```text
 helm repo list
