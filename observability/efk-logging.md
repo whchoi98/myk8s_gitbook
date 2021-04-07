@@ -1,3 +1,7 @@
+---
+description: 'Update : 2021-04-08'
+---
+
 # EFK기반 로깅
 
 ## EFK 소개
@@ -117,6 +121,7 @@ eksctl create iamserviceaccount \
 
 ```text
 kubectl -n logging describe serviceaccounts fluent-bit
+
 ```
 
 아래와 같은 결과를 확인 할 수 있습니다.
@@ -173,7 +178,7 @@ aws es create-elasticsearch-domain \
 
 ```
 
-AWS ES를 배포하게 되면 아래와 같이 "로드 중"으로 도메인 상태가 표기 됩니다.
+AWS Console 에서 Elasticsearch를 검색합니다. AWS ES를 배포하게 되면 아래와 같이 "로드 중"으로 도메인 상태가 표기 됩니다.
 
 ![](../.gitbook/assets/image%20%2890%29.png)
 
@@ -195,7 +200,7 @@ Endpoint URL은 아래에서 확인이 가능합니다.
 
 ```text
 # Need to retrieve the Fluent Bit Role ARN, ES_Endpoint
-export FLUENTBIT_ROLE=$(eksctl get iamserviceaccount --cluster eksworkshop --namespace logging -o json | jq '.iam.serviceAccounts[].status.roleARN' -r)
+export FLUENTBIT_ROLE=$(eksctl get iamserviceaccount --cluster eksworkshop --namespace logging -o json | jq '.[].status.roleARN' -r) 
 export ES_ENDPOINT=$(aws es describe-elasticsearch-domain --domain-name ${ES_DOMAIN_NAME} --output text --query "DomainStatus.Endpoint")
 
 # Update the Elasticsearch internal database
@@ -241,6 +246,7 @@ fluent Bit 파일을 배포합니다.
 
 ```text
 kubectl apply -f ~/environment/logging/fluentbit.yaml
+
 ```
 
 정상적으로 모든 Worker Node에 설치되었는지 확인해 봅니다.
