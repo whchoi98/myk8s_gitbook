@@ -247,6 +247,7 @@ arn:aws:kms:ap-northeast-2:xxxxxxx:key/xxxxxxx
 
 ```text
 echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
+
 ```
 
 출력 결과 예제
