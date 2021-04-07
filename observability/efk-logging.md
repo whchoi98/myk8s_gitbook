@@ -117,6 +117,7 @@ eksctl create iamserviceaccount \
 
 ```text
 kubectl -n logging describe serviceaccounts fluent-bit
+
 ```
 
 아래와 같은 결과를 확인 할 수 있습니다.
