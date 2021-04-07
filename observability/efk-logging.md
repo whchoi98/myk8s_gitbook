@@ -174,7 +174,7 @@ aws es create-elasticsearch-domain \
 
 ```
 
-AWS ES를 배포하게 되면 아래와 같이 "로드 중"으로 도메인 상태가 표기 됩니다.
+AWS Console 에서 Elasticsearch를 검색합니다. AWS ES를 배포하게 되면 아래와 같이 "로드 중"으로 도메인 상태가 표기 됩니다.
 
 ![](../.gitbook/assets/image%20%2890%29.png)
 
@@ -242,6 +242,7 @@ fluent Bit 파일을 배포합니다.
 
 ```text
 kubectl apply -f ~/environment/logging/fluentbit.yaml
+
 ```
 
 정상적으로 모든 Worker Node에 설치되었는지 확인해 봅니다.
