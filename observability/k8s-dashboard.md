@@ -160,12 +160,6 @@ kubectl proxy --port=8080 --address=0.0.0.0 --disable-filter=true &
 kubernetes dashboard는 ClusterIP 타입으로 서비스 배포됩니다. ClusterIP구성으로 외부에 노출되지 않습니다. 따라서 Kubectl proxy 설정이 필요합니다.
 {% endhint %}
 
-아래 그림은 Kubernetes 대쉬보드의 접속 방식에 대한 도식입니다.
-
-![](../.gitbook/assets/image%20%2828%29.png)
-
-
-
 외부에서 접속되지 않으므로, Cloud9 IDE에서 Preview를 통해 Proxy로 접속합니다.
 
 Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.

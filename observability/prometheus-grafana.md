@@ -124,7 +124,7 @@ kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090 &
 
 ```
 
-외부에서 접속되지 않으므로, Cloud9 IDE에서 Preview를 통해 Proxy로 접속합니다. \([K8s Dashboard ](../eks-1/k8s-dashboard.md)접속 형태와 유사합니다.\)
+외부에서 접속되지 않으므로, Cloud9 IDE에서 Preview를 통해 Proxy로 접속합니다. \([K8s Dashboard ](k8s-dashboard.md)접속 형태와 유사합니다.\)
 
 Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
 
