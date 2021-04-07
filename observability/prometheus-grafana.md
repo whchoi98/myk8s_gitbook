@@ -31,7 +31,7 @@
 앞서 [Helm Chart](../eks-2/helm.md#1-helm)를 설치하였습니다. Helm Chart를 활용해서 설치합니다.
 
 ```text
-helm search repo stable/prometheus
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
 ```
 
@@ -39,10 +39,9 @@ helm search repo stable/prometheus
 
 ```text
 kubectl create namespace prometheus
-helm install prometheus stable/prometheus \
+helm upgrade -i prometheus prometheus-community/prometheus \
     --namespace prometheus \
-    --set alertmanager.persistentVolume.storageClass="gp3" \
-    --set server.persistentVolume.storageClass="gp3"
+    --set alertmanager.persistentVolume.storageClass="gp2",server.persistentVolume.storageClass="gp2"
 ```
 
 아래와 같은 결과를 얻을 수 있습니다.
@@ -174,6 +173,7 @@ helm chart를 통해 설치를 위해, repo 검색을 합니다.
 
 ```text
 helm search repo grafana
+
 ```
 
 아래와 같은 결과를 얻을 수 있습니다.
