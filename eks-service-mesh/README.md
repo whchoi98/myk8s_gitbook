@@ -2,5 +2,5 @@
 description: 1h
 ---
 
-# 10.EKS Service Mesh
+# 11.EKS Service Mesh
 

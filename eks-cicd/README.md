@@ -2,5 +2,5 @@
 description: 2h
 ---
 
-# 9.EKS CI/CD
+# 10.EKS CI/CD
 
