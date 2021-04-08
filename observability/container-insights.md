@@ -1,3 +1,7 @@
+---
+description: 'Update : 2021-04-08'
+---
+
 # Container Insights
 
 ## 소개
@@ -124,10 +128,13 @@ echo $STACK_NAME
 Role이 Private/Public 2개의 노드입니다. 그중 public node의 role을 "--stack-name" 뒤의 값에 입력합니다. 해당 값을 사용자 bash profile에 입력하고, role 이름을 다시 확인합니다.
 
 ```text
-PUB_ROLE_NAME=$(aws cloudformation describe-stack-resources --stack-name eksctl-eksworkshop-nodegroup-ng1-public | jq -r '.StackResources[] | select(.ResourceType=="AWS::IAM::Role") | .PhysicalResourceId')
+PUB_ROLE_NAME=$(aws cloudformation describe-stack-resources --stack-name eksctl-eksworkshop-nodegroup-ng-public-01 | jq -r '.StackResources[] | select(.ResourceType=="AWS::IAM::Role") | .PhysicalResourceId')
 echo "export PUB_ROLE_NAME=${PUB_ROLE_NAME}" | tee -a ~/.bash_profile
 test -n "$PUB_ROLE_NAME" && echo PUB_ROLE_NAME is "$PUB_ROLE_NAME" || echo PUB_ROLE_NAME is not set
 
+PRI_ROLE_NAME=$(aws cloudformation describe-stack-resources --stack-name eksctl-eksworkshop-nodegroup-ng-private-01 | jq -r '.StackResources[] | select(.ResourceType=="AWS::IAM::Role") | .PhysicalResourceId')
+echo "export PUB_ROLE_NAME=${PRI_ROLE_NAME}" | tee -a ~/.bash_profile
+test -n "$PRI_ROLE_NAME" && echo PRI_ROLE_NAME is "$PRI_ROLE_NAME" || echo PRI_ROLE_NAME is not set
 ```
 
 정책\(Policy\)를 Worker node 의 IAM 역할\(Role\)에 연결합니다.
@@ -137,6 +144,10 @@ aws iam attach-role-policy \
   --role-name $PUB_ROLE_NAME \
   --policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
 
+aws iam attach-role-policy \
+  --role-name $PRI_ROLE_NAME \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+  
 ```
 
 위의 과정을 IAM 대시보드에서 수행해도 됩니다.
@@ -145,6 +156,7 @@ aws iam attach-role-policy \
 
 ```text
 aws iam list-attached-role-policies --role-name $PUB_ROLE_NAME | grep CloudWatchAgentServerPolicy || echo 'Policy not found'
+aws iam list-attached-role-policies --role-name $PRI_ROLE_NAME | grep CloudWatchAgentServerPolicy || echo 'Policy not found'
 
 ```
 
@@ -174,27 +186,18 @@ curl -s https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-containe
 
 ```
 
-또는 아래와 같이 로컬의 파일을 수정해서 적용합니다.
-
-```text
-cd ~/environment/myeks/
-sed "s//eksworkshop/;s//${AWS_REGION}/" cwagent-fluentd-quickstart.yaml | kubectl apply -f -
-kubectl -n amazon-cloudwatch get daemonsets
-
-```
-
 아래와 같은 결과를 확인 할 수 있습니다.
 
 ```text
-whchoi98:~/environment/myeks (master) $ kubectl -n amazon-cloudwatch get daemonsets
+whchoi:~/environment/myeks (master) $ kubectl -n amazon-cloudwatch get daemonsets
 NAME                 DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
-cloudwatch-agent     6         6         6       6            6           <none>          28s
-fluentd-cloudwatch   6         6         5       6            5           <none>          28s
+cloudwatch-agent     12        12        12      12           12          <none>          27s
+fluentd-cloudwatch   12        12        12      12           12          <none>          27s
 ```
 
 CloudWatch 대쉬보드 - Container Insight에 접속해서 각 주요 기능을 살펴 봅니다.
 
-Container Insight - Resource
+Cloudwatch - Container Insight - Resource
 
 ![](../.gitbook/assets/image%20%28110%29.png)
 
