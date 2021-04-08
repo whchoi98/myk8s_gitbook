@@ -22,7 +22,7 @@ description: 'update : 2021-04-06 /1h'
 
 Helm Chart의 구조는 아래와 같습니다.
 
-* values.yaml : 사용자가 원하는 값들을 설정하는 파일
+* values.yaml : 템플릿에 사용될 변수들 정
 * tempates: 설치할 리소스 파일들이 존재하는 디렉토리. 해당 디렉토리 내부에 Deployment , Service 등이 존재.
 
 ## Helm 설치와 간단한 배포
