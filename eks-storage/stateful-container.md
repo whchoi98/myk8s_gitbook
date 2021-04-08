@@ -19,26 +19,28 @@ CSI 드라이버는 Kubernetes Pod 세트로 배포됩니다. 이러한 포드�
 먼저 정책 JSON 문서를 다운로드하고이 문서에서 IAM 정책을 생성하십시오.
 
 * CSI driver를 위한 IAM Policy 샘플 다운로드
-* IAM Policy 생
+* IAM Policy 생성 
 
 ```text
-mkdir ~/environment/ebs_csi_driver
-cd ~/environment/ebs_csi_driver
-curl -sSL -o ebs-cni-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/v0.5.0/docs/example-iam-policy.json
-
+export EBS_CSI_POLICY_NAME="Amazon_EBS_CSI_Driver"
+mkdir ${HOME}/environment/ebs_statefulset
+cd ${HOME}/environment/ebs_statefulset
+curl -sSL -o ebs-csi-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/master/docs/example-iam-policy.json
 export EBS_CNI_POLICY_NAME="Amazon_EBS_CSI_Driver"
 
 aws iam create-policy \
   --region ${AWS_REGION} \
   --policy-name ${EBS_CNI_POLICY_NAME} \
-  --policy-document file://ebs-cni-policy.json
-  
+  --policy-document file://${HOME}/environment/ebs_statefulset/ebs-csi-policy.json
+    
   export EBS_CNI_POLICY_ARN=$(aws --region ${AWS_REGION} iam list-policies --query 'Policies[?PolicyName==`'$EBS_CNI_POLICY_NAME'`].Arn' --output text)
   echo $EBS_CNI_POLICY_ARN
   
 ```
 
 ### 2. Kubernetes 서비스 계정에 대한 IAM 역할 구성
+
+IAM 역할을 Kubernetes 서비스 계정과 연결할 수 있습니다. 그러면 이 서비스 계정은 해당 서비스 계정을 사용하는 모든 포드의 컨테이너에 AWS 권한을 제공 할 수 있습니다. 이 기능을 사용하면 해당 노드의 포드가 AWS API를 호출 할 수 있도록 더 이상 Amazon EKS 노드 IAM 역할에 대한 확장 권한을 제공 할 필요가 없습니다.
 
 `eksctl`가 만든 IAM 정책이 포함 된 IAM 역할을 생성하고, 이를 `ebs-csi-controller-irsa`CSI 드라이버가 사용할 Kubernetes 서비스 계정과 연결합니다 .
 
@@ -59,24 +61,32 @@ eksctl create iamserviceaccount --cluster eksworkshop \
 
 ![](../.gitbook/assets/image%20%28114%29.png)
 
-### 3. EBS CSI 드라이버 구성
+### 3. EBS CSI 드라이버 구성 및 배
 
-아래 파일을 먼저 다운로드 받습니다.
+Helm을 통해서 EBS CSI 드라이버를 다운로드 받습니다.
 
 ```text
-cd ~/environment/ebs_csi_driver
-wget https://raw.githubusercontent.com/aws-samples/eks-workshop/main/content/beginner/170_statefulset/ebs_csi_driver.files/kustomization.yml
-wget https://raw.githubusercontent.com/aws-samples/eks-workshop/main/content/beginner/170_statefulset/ebs_csi_driver.files/deployment.yml
-wget https://raw.githubusercontent.com/aws-samples/eks-workshop/main/content/beginner/170_statefulset/ebs_csi_driver.files/attacher-binding.yml
-wget https://raw.githubusercontent.com/aws-samples/eks-workshop/main/content/beginner/170_statefulset/ebs_csi_driver.files/provisioner-binding.yml
+# add the aws-ebs-csi-driver as a helm repo
+helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+
+# search for the driver
+helm search  repo aws-ebs-csi-driver
 
 ```
 
 배포를 합니다.
 
 ```text
-kubectl apply -k ~/environment/ebs_csi_driver
-
+helm upgrade --install aws-ebs-csi-driver \
+  --namespace kube-system \
+  --set serviceAccount.controller.create=false \
+  --set serviceAccount.snapshot.create=false \
+  --set enableVolumeScheduling=true \
+  --set enableVolumeResizing=true \
+  --set enableVolumeSnapshot=true \
+  --set serviceAccount.snapshot.name=ebs-csi-controller-irsa \
+  --set serviceAccount.controller.name=ebs-csi-controller-irsa \
+  aws-ebs-csi-driver/aws-ebs-csi-driver
 ```
 
 ##  스토리지 클래스 생성. 
@@ -85,18 +95,10 @@ kubectl apply -k ~/environment/ebs_csi_driver
 
 ![](../.gitbook/assets/image%20%2893%29.png)
 
-새로운 디렉토리를 만들고 파일을 복제합니다.
+스토리지 클래스를 정의합니다.
 
 ```text
-mkdir ~/environment/templates
-cd ~/environment/templates
-cp ~/environment/myeks/storage-class/mysql-storageclass.yml ./
-
-```
-
-아래와 같은 파일을 확인 할 수 있습니다. \(mysql-storageclass.yml\)
-
-```text
+cat << EoF > ${HOME}/environment/ebs_statefulset/mysql-storageclass.yaml
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
@@ -108,13 +110,14 @@ parameters:
 reclaimPolicy: Delete
 mountOptions:
 - debug
+EoF
 
 ```
 
 Storage Class를 생성합니다.
 
 ```text
-kubectl create -f mysql-storageclass.yml 
+kubectl create -f ${HOME}/environment/ebs_statefulset/mysql-storageclass.yaml
 
 ```
 
@@ -128,7 +131,7 @@ kubectl describe storageclass mysql-gp2
 출력 결과를 확인합니다.
 
 ```text
-whchoi98:~/environment/templates $ kubectl describe storageclass mysql-gp2
+whchoi:~/environment/ebs_statefulset $ kubectl describe storageclass mysql-gp2
 Name:                  mysql-gp2
 IsDefaultClass:        No
 Annotations:           <none>
@@ -142,6 +145,20 @@ VolumeBindingMode:  Immediate
 Events:             <none>
 ```
 
+mysql-gp2 를 storageClassName으로 선언합니다.
+
+```text
+volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: mysql-gp2
+      resources:
+        requests:
+          storage: 10Gi
+```
+
 ## ConfigMap 생성
 
 컨피그맵은 key-vlaue Pair로 기밀이 아닌 데이터를 저장하는 데 사용하는 API 오브젝트입니. [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)는 [볼륨](https://kubernetes.io/ko/docs/concepts/storage/volumes/) 내에서 환경 변수, 커맨드-라인 인수 또는 구성 파일로 컨피그맵을 사용할 수 있습니다.
@@ -150,26 +167,19 @@ Events:             <none>
 
 ### 1.namespace /configmap 생성
 
-Stateful이 필요한 DB를 생성할 것입니다. 새로운 namespace를 생성합니다.
+Stateful DB를 생성할 것입니다. 새로운 namespace를 생성합니다.
 
 ```text
 kubectl create namespace mysql
 
 ```
 
-Configmap을 생성합니다. mysql구성을 위한 샘플 configmap을 다운받습니다.
+Configmap을 생성합니다. 
 
 ```text
-cd ~/environment/templates
-cp ~/environment/myeks/configmap/mysql-configmap.yml ./
+cd ${HOME}/environment/ebs_statefulset
 
-```
-
-mysql-configmap.yml을 확인합니다.
-
-ConfigMap은 master.cnf, slave.cnf를 저장하고 StatefulSet에 정의 된 리더 및 팔로어 포드를 초기화 할 때 전달합니다.  __master.cnf는 바이너 로그 옵션 \(log-bin\)이 있고,팔로어 서버로 데이터 변경 부분을 전송합니다. 또한 slave.cnf는 팔로어 서버로 super-read-only로 구동됩니다.
-
-```text
+cat << EoF > ${HOME}/environment/ebs_statefulset/mysql-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -186,27 +196,23 @@ data:
     # Apply this config only on followers.
     [mysqld]
     super-read-only
+EoF
+
 ```
 
 Configmap을 생성합니다.
 
 ```text
-kubectl create -f ~/environment/templates/mysql-configmap.yml
+kubectl create -f ${HOME}/environment/ebs_statefulset/mysql-configmap.yaml
 
 ```
 
 ## MySql을 위한 Service 생성
 
-Staetefulset 멤버를 위한 Headless service 구성과 Client 접속을 위한 구성의 서비스 매니페스트를 구성합니다.
+Staetefulset 멤버를 위한 Headless service 구성과 Client 접속을 위한 구성의 Service 매니페스트를 구성합니다.
 
 ```text
-cd ~/environment/templates
-cp ~/environment/myeks/configmap/mysql-servies.yml ./
-```
-
-mysql-service.yml을 확인합니다.
-
-```text
+cat << EoF > ${HOME}/environment/ebs_statefulset/mysql-services.yaml
 # Headless service for stable DNS entries of StatefulSet members.
 apiVersion: v1
 kind: Service
@@ -238,24 +244,25 @@ spec:
     port: 3306
   selector:
     app: mysql
+EoF
+
 ```
 
-mysql-service를 생성합니다.
-
-## StatefuleSet 구성
-
-StatefuleSet을 생성합니다. StatefulSet구성을 위한 샘플 statefuleset 매니페스트 파을 다운받습니다.
+mysql, mysql-read를 생성합니다.
 
 ```text
-cd ~/environment/templates
-cp ~/environment/myeks/configmap/mysql-statefulset.yml ./
+kubectl create -f ${HOME}/environment/ebs_statefulset/mysql-services.yaml
 
 ```
+
+## StatefuleSet 구성
 
 mysql-statefulset.yml을 기반으로 StatefuleSet을 구성합니다.
 
 ```text
-kubectl create -f ~/environment/templates/mysql-statefulset.yml
+cd ${HOME}/environment/ebs_statefulset
+wget https://eksworkshop.com/beginner/170_statefulset/statefulset.files/mysql-statefulset.yaml
+kubectl apply -f ${HOME}/environment/ebs_statefulset/mysql-statefulset.yaml
 
 ```
 
@@ -267,23 +274,23 @@ kubectl create -f ~/environment/templates/mysql-statefulset.yml
 
 ```text
 kubectl -n mysql rollout status statefulset mysql
-kubectl -n mysql get pods -l app=mysql
+
+```
+
+동적 생성된 PVC를 확인합니다.
+
+```text
+kubectl -n mysql get pvc -l app=mysql
+
 ```
 
 아래와 같은 결과를 확인할 수 있습니다.
 
 ```text
-whchoi98:~/environment/myeks (master) $ kubectl -n mysql rollout status statefulset mysql
-Waiting for 3 pods to be ready...
-Waiting for 2 pods to be ready...
-Waiting for 1 pods to be ready...
-partitioned roll out complete: 3 new pods have been updated...
-
-whchoi98:~/environment/myeks (master) $ kubectl -n mysql get pods -l app=mysql --watch
-NAME      READY   STATUS    RESTARTS   AGE
-mysql-0   2/2     Running   0          3m59s
-mysql-1   2/2     Running   0          3m12s
-mysql-2   2/2     Running   0          2m17s
+whchoi:~/environment/ebs_statefulset $ kubectl -n mysql get pvc -l app=mysql
+NAME           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+data-mysql-0   Bound    pvc-82184a36-d4c4-4371-8deb-a426836af336   10Gi       RWO            mysql-gp2      2m41s
+data-mysql-1   Bound    pvc-b492e2aa-1539-447f-a79e-f2316a80dea3   10Gi       RWO            mysql-gp2      116s
 ```
 
 PVC를 아래 명령을 통해 확인합니다.
@@ -305,11 +312,164 @@ data-mysql-2   Bound    pvc-8057ab7e-ffd8-41af-a6cd-72eb178d3e4e   10Gi       RW
 
 EC2 대시보드의 볼륨에서도 동일한 결과를 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2899%29.png)
+![](../.gitbook/assets/image%20%28199%29.png)
 
-SQL Test 
+## SQL Test 
 
+### 1.SQL 테스팅.
 
+다음 명령을 실행하여 **mysql-client** 를 통 일부 데이터를 **mysql-0.mysql** 에 보낼 수 있습니다 .
+
+```text
+kubectl -n mysql run mysql-client --image=mysql:5.7 -i --rm --restart=Never --\
+  mysql -h mysql-0.mysql <<EOF
+CREATE DATABASE test;
+CREATE TABLE test.messages (message VARCHAR(250));
+INSERT INTO test.messages VALUES ('hello, from mysql-client');
+EOF
+
+```
+
+정상적으로 read되는 지 확인해 봅니다.
+
+```text
+kubectl -n mysql run mysql-client --image=mysql:5.7 -it --rm --restart=Never --\
+>   mysql -h mysql-read -e "SELECT * FROM test.messages"
+
+```
+
+아래와 같이 출력됩니다.
+
+```text
+whchoi:~/environment/ebs_statefulset $ kubectl -n mysql run mysql-client --image=mysql:5.7 -it --rm --restart=Never --\
+>   mysql -h mysql-read -e "SELECT * FROM test.messages"
++--------------------------+
+| message                  |
++--------------------------+
+| hello, from mysql-client |
++--------------------------+
+```
+
+상호간 분산 테스트를 위해서 아래 명령을 통해 확인 해 봅니다.
+
+```text
+kubectl -n mysql run mysql-client-loop --image=mysql:5.7 -i -t --rm --restart=Never --\
+   bash -ic "while sleep 1; do mysql -h mysql-read -e 'SELECT @@server_id,NOW()'; done"
+
+```
+
+### 2. Container 장애 시험
+
+새로운 Cloud9창에서 아래 명령을 통해 MySQL을 응답하지 않는 상태로 만듭니다.
+
+```text
+kubectl -n mysql exec mysql-1 -c mysql -- mv /usr/bin/mysql /usr/bin/mysql.off
+
+```
+
+앞서 상호 분산테스트 하였던 Cloud9창에서 어떤 변화가 일어나는지 확인해 봅니다. 아래 명령을 통해 mysql 상태를 확인해 봅니다.
+
+```text
+kubectl -n mysql get pod mysql-1
+
+```
+
+아래와 같은 출력결과를 확인할 수 있습니다.
+
+```text
+whchoi:~/environment $ kubectl -n mysql get pod mysql-1
+NAME      READY   STATUS    RESTARTS   AGE
+mysql-1   1/2     Running   0          15m
+```
+
+다시 정상으로 복귀 시키고, 확인해 봅니다.
+
+```text
+kubectl -n mysql exec mysql-1 -c mysql -- mv /usr/bin/mysql.off /usr/bin/mysql
+kubectl -n mysql get pod mysql-1
+
+```
+
+아래와 같은 결과를 확인할 수 있습니다.
+
+```text
+whchoi:~/environment $ kubectl -n mysql get pod mysql-1
+NAME      READY   STATUS    RESTARTS   AGE
+mysql-1   2/2     Running   0          17m
+```
+
+### 3.Pod 삭제 시험
+
+실패한 포드를 시뮬레이션하려면 다음 명령을 사용하여 mysql-1 포드를 삭제합니다.
+
+```text
+kubectl -n mysql delete pod mysql-1
+
+```
+
+앞서 Cloud9 창에서 다시 100에서만 응답되는 것을 확인할 수 있습니다.
+
+StatefulSet 컨트롤러는 실패한 포드를 인식하고 동일한 이름과 링크를 가진 복제본 수를 유지하기 위해 새 포드를 만듭니다.
+
+```text
+kubectl -n mysql get pod mysql-1 -w
+
+```
+
+```text
+whchoi:~/environment $ kubectl -n mysql get pod mysql-1 -w
+NAME      READY   STATUS    RESTARTS   AGE
+mysql-1   2/2     Running   0          40s
+```
+
+### 4.Scaling 시험
+
+이제 스케일링을 시험해 봅니다. replica를 3개까지 확장합니다.
+
+```text
+kubectl -n mysql scale statefulset mysql --replicas=3
+
+```
+
+아래 명령을 통해 확장되는 것을 확인합니다.
+
+```text
+kubectl -n mysql rollout status statefulset mysql
+
+```
+
+다시 앞서 Cloud9 창에서 다시 100,101,102에서 분산해 Read가 일어나는 것을 확인 할 수 있습니다.
+
+새로 배포 된 팔로워 \(mysql-2\)가 다음 명령으로 동일한 데이터 세트를 가지고 있는지 확인합니다. 동일한 메세지가 출력됩니다.
+
+```text
+kubectl -n mysql run mysql-client --image=mysql:5.7 -i -t --rm --restart=Never --\
+ mysql -h mysql-2.mysql -e "SELECT * FROM test.messages"
+ 
+```
+
+이제 다시 축소해 봅니다. 하지만 데이터 또는 PVC를 삭제하지는 않습니다. 수동삭제 해야 합니다.
+
+```text
+kubectl -n mysql  scale statefulset mysql --replicas=2
+kubectl -n mysql get pods -l app=mysql
+
+```
+
+여전히 PVC가 존재하는 지 확인해 봅니다.
+
+```text
+kubectl -n mysql  get pvc -l app=mysql
+
+```
+
+```text
+whchoi:~/environment $ kubectl -n mysql  get pvc -l app=mysql
+NAME           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+data-mysql-0   Bound    pvc-82184a36-d4c4-4371-8deb-a426836af336   10Gi       RWO            mysql-gp2      31m
+data-mysql-1   Bound    pvc-b492e2aa-1539-447f-a79e-f2316a80dea3   10Gi       RWO            mysql-gp2      31m
+data-mysql-2   Bound    pvc-ba84a117-2dc0-455b-ae2a-206466191114   10Gi       RWO            mysql-gp2      8m35s
+```
 
 
 
