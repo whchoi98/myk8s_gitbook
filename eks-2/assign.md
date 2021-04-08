@@ -105,7 +105,7 @@ kubectl get nodes -l nodegroup-type=frontend-workloads
 아래와 같은 출력 결과를 볼 수 있습니다.
 
 ```text
-whchoi98:~ $ kubectl get nodes -l nodegroup-type=frontend-workloads
+whchoi98:~ $ kubectl get nodes -l nodegroup-type=backend-workloads
 NAME                                              STATUS   ROLES    AGE   VERSION
 ip-10-11-16-31.ap-northeast-2.compute.internal    Ready    <none>   90m   v1.16.12-eks-904af05
 ip-10-11-55-30.ap-northeast-2.compute.internal    Ready    <none>   88m   v1.16.12-eks-904af05
