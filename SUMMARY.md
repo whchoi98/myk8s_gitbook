@@ -69,7 +69,6 @@
   * [KMS 기반 암호화](eks-security/kms_security.md)
   * [Calico 네트워크 정책](eks-security/calico-networking.md)
   * [인증 및 보안](eks-security/undefined.md)
-  * [Kube-bench 기반 CIS EKS 벤치마크](eks-security/kube-bench-cis.md)
 * [10.EKS CI/CD](eks-cicd/README.md)
   * [Jenkins 배포](eks-cicd/jenkins-deploy.md)
   * [Code Pipeline기반 CI/CD](eks-cicd/cicd-w-codepipeline.md)
