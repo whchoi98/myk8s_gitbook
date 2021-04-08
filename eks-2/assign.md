@@ -26,7 +26,7 @@ NodeSelector는 가장 간단한 노드 선택 방법입니다. NodeSelector는 
 이미 yaml로 정의된 EKS LAB을 eksctl로 배포시에, 각 Worker Node들에 Lable이 정의 되어 있었습니다.
 
 ```text
-cat ~/environment/myeks/eksworkshop-cluster.yaml
+cat ~/environment/myeks/eksworkshop-cluster-3az.yaml
 ```
 
 whchoi-cluster.yaml의 내용을 살펴 봅니다.
