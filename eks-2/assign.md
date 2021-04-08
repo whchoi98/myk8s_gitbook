@@ -180,7 +180,7 @@ nginx   1/1     Running   0          4m18s   10.11.28.19   ip-10-11-16-31.ap-nor
 
 ### 1.소개.
 
-`nodeSelector` 는 파드를 특정 label이 있는 노드로 배하는 매우 간단한 방법을 제공합니. 하지만 Affinity/Anti-Affinity 기능은 조금 더 유연하게 파드를 노드에 배치하는 방법을 제공합니다. 주요 개선 사항은 다음과 같습니.
+`nodeSelector` 는 파드를 특정 label이 있는 노드로 배하는 매우 간단한 방법을 제공합니. 하지만 Affinity/Anti-Affinity 기능은 조금 더 유연하게 파드를 노드에 배치하는 방법을 제공합니다. 주요 개선 사항은 다음과 같습니다 .
 
 1. Affinity/Anti-Affinity 언어가 더 다양하게 표현할 수 있습니다 . 언어는 논리 연산자인 AND 연산으로 작성된 정확한 매칭 항목 이외에 더 많은 매칭 규칙을 제공합니다 .
 2. 규칙이 엄격한 요구 사항이 아니라 "required-hard affinity / preferred - soft affinity" 규칙을 나타낼 수 있기에 스케줄러가 규칙을 만족할 수 없더라도, 파드가 계속 유연하게 스케줄 되도록 합니다.
@@ -292,9 +292,9 @@ with-node-affinity   1/1     Running   0          2m10s   10.11.24.52   ip-10-11
 
 
 
-### 3.Affinity 활용 사례
+### 3.Pod Affinity 
 
-AntiAffinity를 활용하면 ReplicaSets, StatefulSets, Deployments 등과 함께 좀 더 상세하고 유용하게 사용할 수 있습니다. 예를 들면 동일 노드에 목적에 따라 함께 사용될 Pod들을 함께 배치 할 수 있습니다.
+PodAffinity를 활용하면 ReplicaSets, StatefulSets, Deployments 등과 함께 좀 더 상세하고 유용하게 사용할 수 있습니다. 예를 들면 동일 노드에 목적에 따라 함께 사용될 Pod들을 함께 배치 할 수 있습니다.
 
 이번 랩에서는 아래에서 처럼 Pod를 배포하려고 합니다.
 
