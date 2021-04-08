@@ -53,7 +53,11 @@ aws iam create-access-key --user-name rbac-user | tee /tmp/create_output.json
 
 ```
 
-Cluster를 생성한 Admin\(Cloud9 EC2\)과 새로운 rback-user 간에 쉽게 전환할 수 있도록 아래 처럼 shell을 작성해 둡니다.
+생성한 사용자를 IAM 콘솔에서 확인해 봅니다.
+
+![](../.gitbook/assets/image%20%28199%29.png)
+
+Cluster를 생성한 Admin\(Cloud9 EC2\)과 새로운 rbac-user 간에 쉽게 전환할 수 있도록 아래 처럼 shell을 작성해 둡니다.
 
 ```text
 cat << EoF > rbacuser_creds.sh
@@ -67,9 +71,10 @@ EoF
 
 ### 2. IAM 사용자 Mapping
 
-rbac-user라는 k8s 사용자를 정의하고 해당 IAM 사용자에 매핑합니다. 다음을 실행하여 기존 ConfigMap을 가져오고 aws-auth.yaml 이라는 파일에 저장합니다.
+rbac-user라는 k8s 사용자를 정의하고 해당 IAM 사용자에 매핑합니다. 다음을 실행하여 기존 ConfigMap을 가져오고 aws-auth.yaml 이라는 파일에 저장합니다. 기본 configmap도 저장해 둡니다.
 
 ```text
+kubectl get configmap -n kube-system aws-auth -o yaml > backup-aws-auth.yaml
 kubectl get configmap -n kube-system aws-auth -o yaml > aws-auth.yaml
 
 ```
@@ -100,8 +105,6 @@ kubectl apply -f aws-auth.yaml
 
 ```
 
-### 
-
 ### 3. 신규 사용자 테스트
 
 지금까지 EKS Cluster 운영은 관리자로 클러스터에 액세스했습니다. 이제 새로 생성 된 rbac-user로 클러스터에 액세스하면 어떻게되는지 살펴 보겠습니다.
@@ -128,7 +131,16 @@ user를 생성하는 것만으로는 해당 사용자에게 클러스터의 리�
 
 ### 1.Role/RoleBinding 
 
-새 사용자 rbac-user가 있지만 아직 어떤 역할에도 바인딩되지 않았습니다. 그렇게하려면 기본 관리자 사용자로 다시 전환해야합니다.
+새 사용자 rbac-user가 있지만 아직 어떤 역할에도 바인딩되지 않았습니다. 그렇게하려면 기본 관리자 사용자로 다시 전환해야합니다. 아래에서 처럼 kubectl API 조회가 되지 않습니다.
+
+```text
+kubectl -n rbac-test get pods
+```
+
+```text
+whchoi:~/environment $ kubectl get all
+Error from server (Forbidden): pods is forbidden: User "rbac-user" cannot list resource "pods" in API group "" in the namespace "default"
+```
 
 rbac-user로 정의하는 환경 변수를 설정 해제하려면 아래 명령을 실행합니.
 
@@ -146,6 +158,12 @@ aws sts get-caller-identity
 ```
 
 이제 다시 관리자 모드로 전환되었으므로 모든 kubectl 조회가 가능하지만, "rbac-user"에게  해당 네임 스페이스에 대해서만 pod-reader라는 Role을 만들어 봅니다.  pod-reader의 Role은 rbac-test namespace에 대한 조회와 deploy등의 권한을 가지게 됩니다.
+
+```text
+kubectl -n rbac-test get pods
+```
+
+아래에서 Role을 생성합다.
 
 ```text
 cat << EoF > rbacuser-role.yaml
@@ -213,6 +231,12 @@ kubectl get pods -n rbac-test
 
 ```
 
+```text
+whchoi:~/environment $ kubectl get pods -n rbac-test
+NAME                     READY   STATUS    RESTARTS   AGE
+nginx-6799fc88d8-lt6kc   1/1     Running   0          15m
+```
+
 rbac-user로 다음을 실행해서 권한이 제대로 바인딩되었는지 확인해 봅니다.
 
 ```text
@@ -220,7 +244,16 @@ kubectl get pods -n kube-system
 
 ```
 
+```text
+whchoi:~/environment $ kubectl get pods -n kube-system
+Error from server (Forbidden): pods is forbidden: User "rbac-user" cannot list resource "pods" in API group "" in the namespace "kube-system"
+```
 
+{% hint style="info" %}
+ rbac-user 에게는 pod-reader 권한만 주었기 때문에 get all은 에러가 발생합니다.
+{% endhint %}
+
+다시 master 권한으로 복귀합니다.
 
 ```text
 unset AWS_SECRET_ACCESS_KEY
@@ -229,7 +262,7 @@ kubectl delete namespace rbac-test
 
 ```
 
-rback-user 에 대한 모든 정보와 configMap을 삭제하려면 아래를 수행합니다.
+rbac-user 에 대한 모든 정보와 configMap을 삭제하려면 아래를 수행합니다.삭제 하지 않더라도 랩 수행에는 이슈가 없습니다.
 
 ```text
 rm rbacuser_creds.sh

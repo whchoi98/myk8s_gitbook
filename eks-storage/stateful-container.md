@@ -312,7 +312,7 @@ data-mysql-2   Bound    pvc-8057ab7e-ffd8-41af-a6cd-72eb178d3e4e   10Gi       RW
 
 EC2 대시보드의 볼륨에서도 동일한 결과를 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28199%29.png)
+![](../.gitbook/assets/image%20%28200%29.png)
 
 ## SQL Test 
 
