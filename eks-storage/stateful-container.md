@@ -61,7 +61,7 @@ eksctl create iamserviceaccount --cluster eksworkshop \
 
 ![](../.gitbook/assets/image%20%28114%29.png)
 
-### 3. EBS CSI 드라이버 구성 및 배
+### 3. EBS CSI 드라이버 구성 및 배치. 
 
 Helm을 통해서 EBS CSI 드라이버를 다운로드 받습니다.
 
@@ -145,7 +145,7 @@ VolumeBindingMode:  Immediate
 Events:             <none>
 ```
 
-mysql-gp2 를 storageClassName으로 선언합니다.
+mysql-gp2 를 storageClassName으로 선언할 것입니다.
 
 ```text
 volumeClaimTemplates:
