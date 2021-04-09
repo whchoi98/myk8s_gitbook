@@ -1,10 +1,6 @@
----
-description: 'Update : 2021-04-09'
----
-
 # IAM 그룹 기반 관리
 
-EKS에서 아래와 같은 역할을 규정하고 , IAM에서 역할을 구성해 봅니다.
+
 
 * k8sAdmin role - EKS Cluster 관리자 역할 . 
 * k8sDev role - Developer Namespace에 대한 액세스 권한.
@@ -41,17 +37,11 @@ aws iam create-role \
 
 ```
 
-IAM에서 아래와 같이 생성되었습니다.
-
-![](../.gitbook/assets/image%20%28202%29.png)
-
 ## **IAM Group 생성** 
 
 ### **1.k8sAdmin IAM 그룹 생성**
 
-#### **k8sAdmin 그룹은 k8sAdmin IAM Role을 위임 받게 됩니다.**
-
-IAM에 새로운 그룹을 생성하고 IAM Assume Role을 부여합니다.
+**k8sAdmin 그룹은 k8sAdmin IAM Role을 위임 받게 됩니다.**
 
 ```text
 aws iam create-group --group-name k8sAdmin
@@ -81,14 +71,14 @@ aws iam put-group-policy \
 
 ### **2.k8sDev IAM 그룹 생성**
 
-#### **k8sDev 그룹은 k8sDev IAM Role을 위임 받게 됩니다.**
-
-IAM에 새로운 그룹을 생성하고 IAM Assume Role을 부여합니다.
+\*\*\*\*
 
 ```text
 aws iam create-group --group-name k8sDev
 
 ```
+
+
 
 ```text
 DEV_GROUP_POLICY=$(echo -n '{
@@ -113,14 +103,12 @@ aws iam put-group-policy \
 
 ### **3. k8sInteg IAM 그룹 생성**
 
-#### **k8sInteg 그룹은 k8sInteg IAM Role을 위임 받게 됩니다.**
-
-IAM에 새로운 그룹을 생성하고 IAM Assume Role을 부여합니다.
-
 ```text
 aws iam create-group --group-name k8sInteg
 
 ```
+
+
 
 ```text
 INTEG_GROUP_POLICY=$(echo -n '{
@@ -143,14 +131,12 @@ aws iam put-group-policy \
 
 ```
 
-생성된 3개의 그룹을 확인해 봅니다.
+t생성된 3개의 그룹을 확인해 봅니다.
 
 ```text
 aws iam list-groups
 
 ```
-
-![](../.gitbook/assets/image%20%28201%29.png)
 
 ## IAM User 생성
 
@@ -163,7 +149,7 @@ aws iam create-user --user-name IntUser
 
 ```
 
-연결된 그룹에 생성한 사용자를 추가합니다.
+연결된 그룹에 사용자를 추가합니다.
 
 ```text
 aws iam add-user-to-group --group-name k8sAdmin --user-name AdminUser
@@ -181,22 +167,14 @@ aws iam get-group --group-name k8sInteg
 
 ```
 
-Access Key를 생성하고 복사해 둡니다. 
-
-{% hint style="danger" %}
-LAB에서만 사용하는 방식으로, access-key등을 별도의 파일로 저장하는 것은 권장하는 방법이 아닙니다.
-{% endhint %}
+Access Key에 대한 
 
 ```text
-aws iam create-access-key --user-name AdminUser | tee /tmp/AdminUser.json
-aws iam create-access-key --user-name DevUser | tee /tmp/DevUser.json
-aws iam create-access-key --user-name IntUser | tee /tmp/IntUser.json
+aws iam create-access-key --user-name PaulAdmin | tee /tmp/AdminUser.json
+aws iam create-access-key --user-name JeanDev | tee /tmp/DevUser.json
+aws iam create-access-key --user-name PierreInteg | tee /tmp/IntUser.json
 
 ```
-
-각 IAM 콘솔에서 확인해 봅니다.
-
-![](../.gitbook/assets/image%20%28203%29.png)
 
 ## RBAC 구성
 
@@ -267,7 +245,7 @@ EOF
 
 ```
 
-kubernetes 사용자 InteUser 에게 development namespace 전체 액세스 권한을 제공 하는 kubernetes `role`및 `rolebinding`을 만듭니다.
+
 
 ```text
 cat << EOF | kubectl apply -f - -n integration
@@ -329,19 +307,19 @@ arn 그룹을 허용하거나 삭제하려면 kube-system 네임 스페이스 �
 
 ```text
 eksctl create iamidentitymapping \
-  --cluster eksworkshop \
+  --cluster eksworkshop-eksctl \
   --arn arn:aws:iam::${ACCOUNT_ID}:role/k8sDev \
-  --username DevUser
+  --username dev-user
 
 eksctl create iamidentitymapping \
-  --cluster eksworkshop \
+  --cluster eksworkshop-eksctl \
   --arn arn:aws:iam::${ACCOUNT_ID}:role/k8sInteg \
-  --username IntUser
+  --username integ-user
 
 eksctl create iamidentitymapping \
-  --cluster eksworkshop \
+  --cluster eksworkshop-eksctl \
   --arn arn:aws:iam::${ACCOUNT_ID}:role/k8sAdmin \
-  --username AdminUser \
+  --username admin \
   --group system:masters
 
 ```
@@ -365,7 +343,7 @@ kubectl get cm -n kube-system aws-auth -o yaml
 eksctl을 활용하여 클러스터에서 관리되는 모든 ID 목록을 가져올 수 있습니다.
 
 ```text
-eksctl get iamidentitymapping --cluster eksworkshop
+eksctl get iamidentitymapping --cluster eksworkshop-eksctl
 
 ```
 
@@ -395,43 +373,31 @@ EoF
 
 ```
 
-~/.aws/credentials에 AccessKey,SecretAccessKey를 구성합니다.
+~/.aws/credentials
 
 ```text
 cat << EoF >> ~/.aws/credentials
 
 [eksAdmin]
-aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/AdminUser.json)
-aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/AdminUser.json)
+aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/PaulAdmin.json)
+aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/PaulAdmin.json)
 
 [eksDev]
-aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/DevUser.json)
-aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/DevUser.json)
+aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/JeanDev.json)
+aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/JeanDev.json)
 
 [eksInteg]
-aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/IntUser.json)
-aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/IntUser.json)
+aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/PierreInteg.json)
+aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/PierreInteg.json)
 
 EoF
-```
-
-이제 만들어진 계정으로 전환하면서, 계정, 권한 ,역할 등을 점검해 봅니다.
-
-```text
-export KUBECONFIG=/tmp/kubeconfig-dev && eksctl utils write-kubeconfig eksworkshop
-cat $KUBECONFIG | yq e '.users.[].user.exec.args += ["--profile", "dev"]' - -- | sed 's/eksworkshop./eksworkshop-dev./g' | sponge $KUBECONFIG
 
 ```
+
+
 
 ```text
 aws sts get-caller-identity --profile dev
-kubectl run --generator=run-pod/v1 nginx-dev --image=nginx -n development
-kubectl get pods -n development
-
-```
-
-```text
-aws sts get-caller-identity --profile integ
 
 ```
 

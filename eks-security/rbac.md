@@ -9,7 +9,7 @@ description: 'Update : 2021-04-09'
 {% hint style="info" %}
 AWS 보안인증과 역할 ,정책 관리등과 K8s는 매우 유사합니다. 아래 AWS IAM 에 대해 참조합니다.
 
-[https://app.gitbook.com/@whchoi98/s/aws-iam/](https://whchoi98.gitbook.io/aws-iam/)
+[https://whchoi98.gitbook.io/aws-iam/iam-role](https://whchoi98.gitbook.io/aws-iam/iam-role)
 {% endhint %}
 
 Role-based access control \(RBAC\)은 기업 내에서 개별 사용자의 역할에 따라 컴퓨터 또는 네트워크 리소스에 대한 액세스를 규제하는 방법입니다.
