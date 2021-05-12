@@ -131,13 +131,13 @@ managed Node type으로 설치한 경우에는 Configuration Compute에서 추�
 이제 아래와 같은 EKS Cluster가 완성되었습니다. kubectl 명령을 통해 확인해 봅니다.
 
 ```text
-#kube-system namespace에 생성된 자원 확
+#kube-system namespace에 생성된 자원 확인 
 kubectl -n kube-system get all
 
-#주요 Pod의 상세 정보 확
+#주요 Pod의 상세 정보 확인 
 kubectl -n kube-system pods <pod-name> -o wide
 
-# node 상세 정보 확
+# node 상세 정보 확인 
 kubectl get nodes -o wide
 
 ```
