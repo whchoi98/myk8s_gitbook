@@ -25,11 +25,19 @@ NodePort 타입의 서비스 구성을 위해서 LAB에서 사용할 App을 복�
 
 ```text
 cd ~/environment
-git clone https://github.com/brentley/ecsdemo-frontend.git
-git clone https://github.com/brentley/ecsdemo-nodejs.git
-git clone https://github.com/brentley/ecsdemo-crystal.git
+git clone https://github.com/whchoi98/eksdemo-frontend.git
+git clone https://github.com/whchoi98/eksdemo-nodejs.git
+git clone https://github.com/whchoi98/ecsdemo-crystal.git
 
 ```
+
+{% hint style="info" %}
+아래 git reop를 참조해서 수정했습니다.
+
+git clone [https://github.com/whchoi98/eksdemo-frontend.git](https://github.com/whchoi98/eksdemo-frontend.git)   
+git clone [https://github.com/whchoi98/eksdemo-nodejs.git](https://github.com/whchoi98/eksdemo-nodejs.git)   
+git clone [https://github.com/brentley/ecsdemo-crystal.git](https://github.com/brentley/ecsdemo-crystal.git)
+{% endhint %}
 
 정상적으로 복제 이후 Cloud9에서 아래와 같이 확인됩니다.
 

@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2021-05-22'
+description: 'Update: 2021-04-05'
 ---
 
 # Cluster IP 기반 배포
@@ -84,7 +84,7 @@ options ndots:5
 한개의 Pod에 더 연결해 보고 동일하게 비교해 봅니다.
 
 ```text
-kubectl -n network-test exec -it alpine-app-6d8d6bb647-mwzbp -- /bin/sh
+kubectl -n network-test exec -it alpine-app-6d8d6bb647-mwzbp -- bash
 
 ```
 
