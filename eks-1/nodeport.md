@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2021-04-04 / 30min'
+description: 'Update: 2021-05-21 / 30min'
 ---
 
 # NodePort 기반 배포
@@ -27,15 +27,15 @@ NodePort 타입의 서비스 구성을 위해서 LAB에서 사용할 App을 복�
 cd ~/environment
 git clone https://github.com/whchoi98/eksdemo-frontend.git
 git clone https://github.com/whchoi98/eksdemo-nodejs.git
-git clone https://github.com/whchoi98/ecsdemo-crystal.git
+git clone https://github.com/whchoi98/eksdemo-crystal.git
 
 ```
 
 {% hint style="info" %}
 아래 git reop를 참조해서 수정했습니다.
 
-git clone [https://github.com/whchoi98/eksdemo-frontend.git](https://github.com/whchoi98/eksdemo-frontend.git)   
-git clone [https://github.com/whchoi98/eksdemo-nodejs.git](https://github.com/whchoi98/eksdemo-nodejs.git)   
+git clone [https://github.com/whchoi98/ecsdemo-frontend.git](https://github.com/whchoi98/eksdemo-frontend.git)   
+git clone [https://github.com/whchoi98/ecsdemo-nodejs.git](https://github.com/whchoi98/eksdemo-nodejs.git)   
 git clone [https://github.com/brentley/ecsdemo-crystal.git](https://github.com/brentley/ecsdemo-crystal.git)
 {% endhint %}
 
@@ -47,12 +47,12 @@ git clone [https://github.com/brentley/ecsdemo-crystal.git](https://github.com/b
 
 ```text
  cd ~/environment/
- cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/nodeport_deployment.yaml
- cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/nodeport_service.yaml
- cp ./ecsdemo-crystal/kubernetes/deployment.yaml ./ecsdemo-crystal/kubernetes/nodeport_deployment.yaml
- cp ./ecsdemo-crystal/kubernetes/service.yaml ./ecsdemo-crystal/kubernetes/nodeport_service.yaml
- cp ./ecsdemo-nodejs/kubernetes/deployment.yaml ./ecsdemo-nodejs/kubernetes/nodeport_deployment.yaml
- cp ./ecsdemo-nodejs/kubernetes/service.yaml ./ecsdemo-nodejs/kubernetes/nodeport_service.yaml
+ cp ./eksdemo-frontend/kubernetes/deployment.yaml ./eksdemo-frontend/kubernetes/nodeport_deployment.yaml
+ cp ./eksdemo-frontend/kubernetes/service.yaml ./eksdemo-frontend/kubernetes/nodeport_service.yaml
+ cp ./eksdemo-crystal/kubernetes/deployment.yaml ./eksdemo-crystal/kubernetes/nodeport_deployment.yaml
+ cp ./eksdemo-crystal/kubernetes/service.yaml ./eksdemo-crystal/kubernetes/nodeport_service.yaml
+ cp ./eksdemo-nodejs/kubernetes/deployment.yaml ./eksdemo-nodejs/kubernetes/nodeport_deployment.yaml
+ cp ./eksdemo-nodejs/kubernetes/service.yaml ./eksdemo-nodejs/kubernetes/nodeport_service.yaml
  
 ```
 
