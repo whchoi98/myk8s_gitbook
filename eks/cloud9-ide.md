@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-04-01 /15min'
+description: 'update : 2021-09-24 /15min'
 ---
 
 # Cloud9 IDE 환경 구성
@@ -117,6 +117,14 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.9/bin/l
 ```text
 cd ~
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.6/bin/linux/amd64/kubectl
+
+```
+
+EKS 1.20.4 기반 설치
+
+```text
+cd ~
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.20.4/2021-04-12/bin/darwin/amd64/kubectl
 
 ```
 
