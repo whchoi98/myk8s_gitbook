@@ -26,7 +26,18 @@ Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC3AZ.yml 파일을 로컬
 
 ![](../.gitbook/assets/image%20%28198%29.png)
 
-Cloud9에서 직접 
+Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다.
+
+```text
+#S3 Bucket 생
+#Bucket name은 고유해야 합니다.
+aws s3 mb s3://{bucket-name}
+#생성한 S3 Bucket으로 파일을 모두 복사해 둡니다.
+cd ./myeks/
+aws s3 cp ./ s3://20210923-eksworkshop --recursive
+# Cloud9에서 변경되는 파일을 S3와 동기화 합니다.
+aws s3 sync ./ s3://20210923-eksworkshop
+```
 
 AWS 서비스 - Cloudformation 을 선택합니다. 
 
