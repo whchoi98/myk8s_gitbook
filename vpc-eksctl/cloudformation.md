@@ -26,6 +26,8 @@ Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC3AZ.yml 파일을 로컬
 
 ![](../.gitbook/assets/image%20%28198%29.png)
 
+Cloud9에서 직접 
+
 AWS 서비스 - Cloudformation 을 선택합니다. 
 
 "스택생성" - "새 리소스 사용"을 선택합니다.
