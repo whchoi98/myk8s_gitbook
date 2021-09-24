@@ -266,7 +266,7 @@ kubectx는 다중의 Kubecluster 가 존재할 때 전환이 쉽도록 도와주
 
 ```text
 kubectl krew install ctx
-
+brew install kubectx
 ```
 
 ### 6.Kubens 설치 \(Option\)
