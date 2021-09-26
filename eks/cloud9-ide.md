@@ -124,7 +124,8 @@ EKS 1.20.4 기반 설치
 
 ```text
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.4/bin/darwin/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.4/bin/linux/amd64/kubectl
+
 ```
 
 #### 🎯 추가 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/install-kubectl.html)
