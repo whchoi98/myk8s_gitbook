@@ -96,35 +96,35 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.15/bin/
 
 ```
 
-#### EKS 1.17.12 기반 설치 
+#### EKS 1.17.17 기반 설치 
 
 ```text
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.12/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.17/bin/linux/amd64/kubectl
 
 ```
 
-**EKS 1.18.9 기반 설치** 
+**EKS 1.18.20 기반 설치** 
 
 ```text
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.9/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.20/bin/linux/amd64/kubectl
 
 ```
 
-**EKS 1.19.6 기반 설치**
+**EKS 1.19.13 기반 설치**
 
 ```text
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.6/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.13/bin/linux/amd64/kubectl
 
 ```
 
-EKS 1.20.4 기반 설치
+EKS 1.20.7 기반 설치
 
 ```text
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.4/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/linux/amd64/kubectl
 
 ```
 
