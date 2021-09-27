@@ -31,7 +31,7 @@ Cloud9 의 이름과 Description을 설정합니다.
 
 ![](../.gitbook/assets/image%20%28208%29.png)
 
-Task2. SSH Key 구성 및 패키지 설치
+### Task2. SSH Key 구성 및 패키지 설치
 
 [EKS 환경구성](../eks/)에서 적용한 방식과 동일하게 적용합니다. 먼저 Cloud9 IDE 터미널에서 ssh key를 생성합니다.
 
