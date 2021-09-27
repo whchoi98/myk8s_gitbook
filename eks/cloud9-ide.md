@@ -128,6 +128,14 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/l
 
 ```
 
+**EKS 1.21.2 기반 설치**
+
+```text
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.2/bin/linux/amd64/kubectl
+
+```
+
 #### 🎯 추가 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/install-kubectl.html)
 
 ### 2. 실행권한을 적용 및 구성 
@@ -147,10 +155,10 @@ kubectl version --short --client
 
 ```
 
-출력결과 예제 \(1.19.6 예시\)
+출력결과 예제 \(1.19.13 예시\)
 
 ```text
-Client Version: v1.19.6
+Client Version: v1.19.13
 ```
 
 ### 5.kubectl 자동완성 설치 
