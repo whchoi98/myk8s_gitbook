@@ -22,14 +22,14 @@ AWS 서비스에서 Cloud9을 선택하고, `"Environments"`를 설정합니다.
 
 Cloud9 의 이름과 Description을 설정합니다.
 
-![](../.gitbook/assets/image%20%28209%29.png)
+![](../.gitbook/assets/image%20%28211%29.png)
 
 인스턴스 타입과 운영체제, 그리고 절전모드 환경을 선택합니다. 절전모드 환경은 기본 30분입니다. 아래와 같이 변경합니다.
 
 * Instance type : m5.large
 * cost-saving : Never
 
-![](../.gitbook/assets/image%20%28208%29.png)
+![](../.gitbook/assets/image%20%28210%29.png)
 
 ### Task2. SSH Key 구성 및 패키지 설치
 
@@ -107,23 +107,65 @@ aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/infra/eks-in
 aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/nodegroup/eks-nodegroup-multus.yaml --acl public-read
 ```
 
-Cloudfomration 기반 배포
+## Cloudfomration 기반 배포
+
+### Task4. EKS Infra 배포
+
+
 
 ![](../.gitbook/assets/image%20%28205%29.png)
 
-![](../.gitbook/assets/image%20%28204%29.png)
+**`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
-![](../.gitbook/assets/image%20%28207%29.png)
+![](../.gitbook/assets/image%20%28208%29.png)
 
 * Stack Name : eks-multus-cluster
 * Availability Zone : us-west-2a, us-west-2b
 * Bastion Keyname : eksworkshop
 
-Task4. EKS Infra 배포
+### Task5. EKS multus nodegroup 배포
 
+EKS nodegroup을 배포하기 위해 , Lambda function을 S3에 업로드합니다. Lambda function은 앞서 multus git에서 다운로드 하였습니다.
 
+```text
+# US-WEST-2에 S3 Bucket을 생성합니다. Bucket Name은 고유해야 합니다.
+aws s3 mb s3://{bucket name} --region us-west-2
 
-Task5. EKS multus nodegroup 배포
+# 생성된 Bucket에 lambda function을 업로드 합니다.
+cd ~/envvironment
+aws s3 cp  ~/environment/eks-install-guide-for-multus/cfn/templates/nodegroup/lambda_function.zip s3://whchoi-multus-lambda  
+
+# object가 외부에서 접근할 수 있도록 , Read 권한을 부여합니다.
+aws s3api put-object-acl --bucket {bucket name} --key lambda_function.zip --acl public-read  
+
+```
+
+S3에 업로드한 EKS Nodegroup용 Cloudformation Stack yaml 파일의 Object URL을 복사해 둡니다.
+
+![](../.gitbook/assets/image%20%28207%29.png)
+
+Cloudformation 에서 새로운 Stack을 배포합니다.
+
+**`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-nodegroup-multus.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
+
+![](../.gitbook/assets/image%20%28209%29.png)
+
+![](../.gitbook/assets/image%20%28212%29.png)
+
+* Stack Name : ng1
+* Cluster Name : eks-multus-cluster
+* ClusterControlPlaneSecurityGroup - eks-multus-cluster-EksControlSecurityGroup-xxxx
+* NodeGroupName : ng1
+* Min/Desired/MaxSize : 1 
+* KeyName : eksworkshop
+* VpcId : vpc-eks-multus-cluster
+* Subnets : privateAz1-eks-multus-cluster \(main primary K8s networking network 입니다.\)
+* MultusSubnets : multus1Az1 , Multus2Az1
+* MultusSecurityGroups : multus-Sg-eks-multus-cluster
+* LambdaS3Bucket : 앞서 생성한 Bucket Name \(예. whchoi-multus-lambda\)
+* LambdaS3Key : lambda\_function.zip 
+
+\_\_
 
 Multus 
 
