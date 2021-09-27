@@ -10,6 +10,8 @@ description: 'Update : 2021-09-27'
 
 Multus는 CNI 명세를 구현하는 모든 [레퍼런스 플러그인](https://github.com/containernetworking/plugins) 및 3rd Party 플러그인을 지원합니. 또한, Multus는 쿠버네티스의 클라우드 네이티브 애플리케이션과 NFV 기반 애플리케이션을 통해 쿠버네티스의 [SRIOV](https://github.com/hustcat/sriov-cni), [DPDK](https://github.com/Intel-Corp/sriov-cni), [OVS-DPDK 및 VPP](https://github.com/intel/vhost-user-net-plugin) 워크로드를 지원합니다.
 
+랩에서는 아래와 같이 US-WEST-2 \(오레곤\) 리전에서 EKS 기반으로  Multus를 적용하는 방안을 소개 합니다. 
+
 
 
   
