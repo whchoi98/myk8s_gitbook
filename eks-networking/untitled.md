@@ -14,7 +14,105 @@ Multus는 Pod에 멀 네트워크 인터페이스를 첨부할 수 있는 Kubern
 
 랩에서는 아래와 같이 US-WEST-2 \(오레곤\) 리전에서 EKS 기반으로  Multus를 적용하는 방안을 소개 합니다. 
 
+Multus 구성을 위한 사전 준비
 
+Task1. Cloud9 구성
+
+![](../.gitbook/assets/image%20%28209%29.png)
+
+![](../.gitbook/assets/image%20%28208%29.png)
+
+Task2. SSH Key 구성 및 패키지 설치
+
+[EKS 환경구성](../eks/)에서 적용한 방식과 동일하게 적용합니다. 먼저 Cloud9 IDE 터미널에서 ssh key를 생성합니다.
+
+```text
+#ssh key를 생성합니다.
+cd ~/envvironment
+ssh-keygen
+
+```
+
+key는 "eksworkshop"으로 구성합니다.
+
+```text
+eksworkshop
+
+```
+
+pem 을 설정하고, 권한을 부여합니다.
+
+```text
+cd ~/envvironment
+mv ./eksworkshop ./eksworkshop.pem
+chmod 400 ./eksworkshop.pem
+
+```
+
+아래와 같이 aws cli v2.x 로 업그레이드 하고, kubelet 을 설치합니다.
+
+```text
+#AWS CLI를 2.0으로 업그레이드합니다.
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+#AWS CLI 자동완성을 설치합니다.
+which aws_completer
+export PATH=/usr/local/bin:$PATH
+source ~/.bash_profile
+complete -C '/usr/local/bin/aws_completer' aws
+
+# EKS 1.19.6 기반 설치
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.2/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+
+# Kubectl 자동완성 설치
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+
+```
+
+Task3. Multus Git Clone
+
+```text
+#multus 구성을 위한 git clone을 실행합니다.
+cd ~/envvironment
+git clone https://github.com/aws-samples/eks-install-guide-for-multus.git
+
+# US-WEST-2에 S3 Bucket을 생성합니다. Bucket Name은 고유해야 합니다.
+cd ~/envvironment
+aws s3 mb s3://{bucket name} --region us-west-2
+
+# 생성된 Bucket에 git을 업로드 합니다.
+cd ~/envvironment
+aws s3 sync ./eks-install-guide-for-multus s3://{bucket name}
+aws s3 ls s3://{bucket name}/cfn/templates/infra/
+aws s3 ls s3://{bucket name}/cfn/templates/nodegroup/
+
+# object가 외부에서 접근할 수 있도록 , Read 권한을 부여합니다.
+aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/infra/eks-infra.yaml --acl public-read  
+aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/nodegroup/eks-nodegroup-multus.yaml --acl public-read
+```
+
+Cloudfomration 기반 배포
+
+![](../.gitbook/assets/image%20%28205%29.png)
+
+![](../.gitbook/assets/image%20%28204%29.png)
+
+![](../.gitbook/assets/image%20%28207%29.png)
+
+
+
+Task4. EKS Infra 배포
+
+Task5. EKS multus nodegroup 배포
+
+Multus 
 
 
 
