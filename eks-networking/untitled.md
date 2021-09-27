@@ -14,11 +14,20 @@ Multus는 Pod에 멀 네트워크 인터페이스를 첨부할 수 있는 Kubern
 
 랩에서는 아래와 같이 US-WEST-2 \(오레곤\) 리전에서 EKS 기반으로  Multus를 적용하는 방안을 소개 합니다. 
 
-Multus 구성을 위한 사전 준비
+## Multus 구성을 위한 사전 준비
 
-Task1. Cloud9 구성
+### Task1. Cloud9 구성
+
+AWS 서비스에서 Cloud9을 선택하고, `"Environments"`를 설정합니다.
+
+Cloud9 의 이름과 Description을 설정합니다.
 
 ![](../.gitbook/assets/image%20%28209%29.png)
+
+인스턴스 타입과 운영체제, 그리고 절전모드 환경을 선택합니다. 절전모드 환경은 기본 30분입니다. 아래와 같이 변경합니다.
+
+* Instance type : m5.large
+* cost-saving : Never
 
 ![](../.gitbook/assets/image%20%28208%29.png)
 
@@ -106,9 +115,13 @@ Cloudfomration 기반 배포
 
 ![](../.gitbook/assets/image%20%28207%29.png)
 
-
+* Stack Name : eks-multus-cluster
+* Availability Zone : us-west-2a, us-west-2b
+* Bastion Keyname : eksworkshop
 
 Task4. EKS Infra 배포
+
+
 
 Task5. EKS multus nodegroup 배포
 
