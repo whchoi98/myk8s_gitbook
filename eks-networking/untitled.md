@@ -72,7 +72,7 @@ export PATH=/usr/local/bin:$PATH
 source ~/.bash_profile
 complete -C '/usr/local/bin/aws_completer' aws
 
-# EKS 1.19.6 기반 설치
+# EKS 1.21.2 기반 설치
 cd ~
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.2/bin/linux/amd64/kubectl
 chmod +x ./kubectl
