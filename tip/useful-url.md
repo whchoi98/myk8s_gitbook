@@ -6,8 +6,6 @@
 * \*\*\*\*[**aws eks feature**](https://aws.amazon.com/ko/eks/features/)\*\*\*\*
 * \*\*\*\*[**aws eks price**](https://aws.amazon.com/ko/eks/pricing/)\*\*\*\*
 * \*\*\*\*[**aws eks menual**](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/getting-started.html)\*\*\*\*
-* \*\*\*\*[**eksctl**](https://eksctl.io/)\*\*\*\*
-* \*\*\*\*[**eksctl github sample config file**](https://github.com/weaveworks/eksctl/tree/main/examples)\*\*\*\*
 
 ## kubernetes-sigs
 
@@ -23,7 +21,6 @@
 * \*\*\*\*[**K9s** ](https://github.com/derailed/k9s)\*\*\*\*
 * \*\*\*\*[**Kube krew**](https://github.com/kubernetes-sigs/krew)\*\*\*\*
 * \*\*\*\*[**Kube ctx**](https://github.com/kubernetes-sigs/krew-index/blob/master/plugins.md)\*\*\*\*
-* \*\*\*\*[**Kube ops view**](https://codeberg.org/hjacobs/kube-ops-view)\*\*\*\*
 
 
 

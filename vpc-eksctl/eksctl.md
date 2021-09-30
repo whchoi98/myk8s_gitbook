@@ -14,7 +14,7 @@ description: 'update : 2020-04-04 / 30min'
 
 ### 1.eksctl 설치
 
-아래와 같이 eksctl을 Cloud9에 설치하고 버전을 확인합니다.
+아래와 같이 eksctl을 설치하고 버전을 확인합니다.
 
 ```text
 # eksctl 설정 

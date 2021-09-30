@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-09-24 / 20min'
+description: 'update : 2020-04-04 / 20min'
 ---
 
 # Cloudformation 구성
@@ -25,19 +25,6 @@ git clone https://github.com/whchoi98/myeks
 Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC3AZ.yml 파일을 로컬 PC에 다운로드 합니다. EKS 환경 구성을 위한 VPC 구성용 Cloudformation 입니다.
 
 ![](../.gitbook/assets/image%20%28198%29.png)
-
-Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다.
-
-```text
-#S3 Bucket 생성합니다. 
-#Bucket name은 고유해야 합니다.
-aws s3 mb s3://{bucket-name}
-#생성한 S3 Bucket으로 파일을 모두 복사해 둡니다.
-cd ./myeks/
-aws s3 cp ./ s3://{bucket-name} --recursive
-# Cloud9에서 변경되는 파일을 S3와 동기화 합니다. 
-aws s3 sync ./ s3://{bucket-name}
-```
 
 AWS 서비스 - Cloudformation 을 선택합니다. 
 

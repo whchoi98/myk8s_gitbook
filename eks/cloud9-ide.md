@@ -136,6 +136,14 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.2/bin/l
 
 ```
 
+#### 기버전 다운로드 \(Linux 기준\)
+
+```text
+# 최신버전 다운로
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+# 특정 버전을 다운로드하려면, $(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) 명령 부분을 특정 버전으로 바꾼다.
+```
+
 #### 🎯 추가 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/install-kubectl.html)
 
 ### 2. 실행권한을 적용 및 구성 
