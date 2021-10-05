@@ -77,7 +77,8 @@ rm -vf ${HOME}/.aws/credentials
 
 ### 5. Cloud9 IDE 역할 점검
 
-Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다.
+Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다.   
+\(앞서 선언한 IAM Role 이름을 "eksworkshop-admin"으로 선언하지 않은 경우에는 다른 이름으로 변경합니다.\)
 
 ```text
 aws sts get-caller-identity --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
@@ -134,7 +135,7 @@ eksworkshop에서 사용될 키를 생성합니다.
 Cloud9에서 ssh key를 생성합니다.
 
 ```text
-cd ~
+cd ~/environment/
 ssh-keygen
 ```
 
@@ -164,23 +165,33 @@ The key's randomart image is:
 +----[SHA256]——+
 ```
 
+Cloud9 IDE Terminal 에서 이후 생성된 Workernode 또는 EC2에 접속하기 위해 pem key의 권한 설정을 해 둡니다.
+
+```text
+cd ~/environment/
+mv ./eksworkshop ./eksworkshop.pem
+chmod 400 ./eksworkshop.pem
+```
+
 ### 2.ssh key 전송
 
-생성된 SSH key를  Key 페어로 전송합니다. 앞서 eksworkshop.pub 로 public key가 생성되었습니다.
+생성된 SSH key를  Key 페어로 전송합니다. 앞서 eksworkshop.pub 로 public key가 생성되었습니다.   
+\(AWS CLI Version 2.0\)
 
 ```text
 aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://~/eksworkshop.pub
 
 ```
 
-OpenSSH public key format 에러가 발생할 경우 아래와 같은 명령으로 Key 전송합니다.
+OpenSSH public key format 에러가 발생할 경우 아래와 같은 명령으로 Key 전송합니다.   
+\(AWS CLI version 1.x\)
 
 ```text
 aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
 
 ```
 
-오류가 발생할 경우에는 다음과 같은 방법으로 key 페어를 등록합니다.아래 명령의 Public key값을 복사합니다.
+AWS  콘솔에서 다음과 같은 방법으로 key 페어를 등록합니다.아래 명령의 Public key값을 복사합니다.
 
 ```text
 cat ~/eksworkshop.pub 
@@ -231,6 +242,7 @@ export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyM
 MASTER\_ARN에 입력된 값을 조회하고, 홈디렉토리에 **`master_arn.txt`** 파일을 저장합니다. master\_arn 의 값은 계속 사용되는 값입니다.
 
 ```text
+ cd ~/environment
  echo $MASTER_ARN
  echo $MASTER_ARN > master_arn.txt
  cat master_arn.txt

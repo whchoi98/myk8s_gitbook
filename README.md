@@ -1,5 +1,5 @@
 ---
-description: 'Last Update : 2021-10-05'
+description: 'Last Update : 2020-11-11'
 ---
 
 # Kubernetes
@@ -28,7 +28,7 @@ AWS EKS에 대한 설치와 구성 및 관리, 네트워크, 스토리지 ,보�
 
 ### [EKS CI/CD](eks-cicd/) \(3h\)
 
-### [EKS Service Mesh](eks-security/eks-service-mesh/) \(1h\)
+### [EKS Service Mesh](eks-service-mesh/) \(1h\)
 
 
 
