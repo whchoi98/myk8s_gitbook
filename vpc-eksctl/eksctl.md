@@ -85,19 +85,19 @@ vpc:
   id: vpc-0239e84f8661afd68
   subnets:
     public:
-       PublicSubnet01:
-         id: subnet-034ec07d22456d9b9
-       PublicSubnet02:
-         id: subnet-013b3cc048e33329c
-       PublicSubnet03:
+      PublicSubnet01:
+        id: subnet-034ec07d22456d9b9
+      PublicSubnet02:
+        id: subnet-013b3cc048e33329c
+      PublicSubnet03:
          id: subnet-0f5ae309c6f9c7930
     private:
-       PrivateSubnet01:
-         id: subnet-0c3971dcd36fd14d2
-       PrivateSubnet02:
-         id: subnet-0143da95702fe21b6
-       PrivateSubnet03:
-         id: subnet-015f0684336d83519
+      PrivateSubnet01:
+        id: subnet-0c3971dcd36fd14d2
+      PrivateSubnet02:
+        id: subnet-0143da95702fe21b6
+      PrivateSubnet03:
+        id: subnet-015f0684336d83519
 
 #KMS Key ARN을 수정합니다.
 secretsEncryption:
