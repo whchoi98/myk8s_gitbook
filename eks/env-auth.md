@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-04-01 / 15min'
+description: 'update : 2021-10-01 / 15min'
 ---
 
 # 인증/자격증명 및 환경 구성
@@ -179,7 +179,8 @@ chmod 400 ./eksworkshop.pem
 \(AWS CLI Version 2.0\)
 
 ```text
-aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://~/eksworkshop.pub
+cd ~/environment/
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://./eksworkshop.pub
 
 ```
 
@@ -187,14 +188,19 @@ OpenSSH public key format 에러가 발생할 경우 아래와 같은 명령으�
 \(AWS CLI version 1.x\)
 
 ```text
-aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
+cd ~/environment/
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://./environment/eksworkshop.pub
 
 ```
+
+AWS 콘솔에서 직접 복사할 수도 있습니다.
 
 AWS  콘솔에서 다음과 같은 방법으로 key 페어를 등록합니다.아래 명령의 Public key값을 복사합니다.
 
 ```text
-cat ~/eksworkshop.pub 
+cd ~/environment/
+cat eksworkshop.pub
+
 ```
 
 아래 ec2 대쉬보드에서 키를 등록합니다.
