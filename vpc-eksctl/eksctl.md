@@ -14,7 +14,7 @@ description: 'update : 2020-04-04 / 30min'
 
 ### 1.eksctl 설치
 
-아래와 같이 eksctl을 설치하고 버전을 확인합니다.
+아래와 같이 eksctl을 Cloud9에 설치하고 버전을 확인합니다.
 
 ```text
 # eksctl 설정 
@@ -77,28 +77,33 @@ VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포�
 
 Cloud9 IDE 편집기에서 아래와 같이 수정합니다. 수정내용은 현재 생성된 VPC, Subnet ID , key 위치 입니다.
 
-![](../.gitbook/assets/image%20%28164%29.png)
-
 수정할 블록의 예시입니다.
 
 ```text
+## vpc id와 publicsubnet01,02,03 , privatesubnet01,02,03 id를 수정합니다.
 vpc: 
-  id: vpc-04a7f563ebe750a92
+  id: vpc-0239e84f8661afd68
   subnets:
-    private:
-      ap-northeast-2a: { id: subnet-0914eefaede7a14c9}
-      ap-northeast-2b: { id: subnet-0e49bdf1a4b2a0f6a}
-      ap-northeast-2c: { id: subnet-01db4b6773a94e6a2}
-      ap-northeast-2d: { id: subnet-034369344c2f8e598}
     public:
-      ap-northeast-2a: { id: subnet-0396e3d1dfe08d224}
-      ap-northeast-2b: { id: subnet-0db014e6a52f7b002}
-      ap-northeast-2c: { id: subnet-01a18de77c71a9d8d}
-      ap-northeast-2d: { id: subnet-0786a534253c21a1e}
+       PublicSubnet01:
+         id: subnet-034ec07d22456d9b9
+       PublicSubnet02:
+         id: subnet-013b3cc048e33329c
+       PublicSubnet03:
+         id: subnet-0f5ae309c6f9c7930
+    private:
+       PrivateSubnet01:
+         id: subnet-0c3971dcd36fd14d2
+       PrivateSubnet02:
+         id: subnet-0143da95702fe21b6
+       PrivateSubnet03:
+         id: subnet-015f0684336d83519
 
+#KMS Key ARN을 수정합니다.
 secretsEncryption:
   keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/25a2f579-9f22-4d79-ad6f-1a468d06244b
 
+## ssh key 위치를 확인합니다.
 nodeGroups:
   - name: ng-public-01
 중략 
@@ -132,7 +137,7 @@ Cluster를 생성하기 위해 20분 정도 시간이 소요됩니다.
 
 ```text
 eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster-4az.yaml
-2021-04-02 16:34:31 [ℹ]  eksctl version 0.43.0
+2021-04-02 16:34:31 [ℹ]  eksctl version 0.68.0
 2021-04-02 16:34:31 [ℹ]  using region ap-northeast-2
 2021-04-02 16:34:31 [✔]  using existing VPC (vpc-0872d2a79110e4289) and subnets (private:map[ap-northeast-2a:{subnet-0074fd1438d35d4ef ap-northeast-2a 10.11.64.0/20} ap-northeast-2b:{subnet-0c82a7e8f40fa4268 ap-northeast-2b 10.11.80.0/20} ap-northeast-2c:{subnet-083b57160bcdc8320 ap-northeast-2c 10.11.96.0/20} ap-northeast-2d:{subnet-0693a31f5373e153b ap-northeast-2d 10.11.112.0/20}] public:map[ap-northeast-2a:{subnet-07b001f1937567fb7 ap-northeast-2a 10.11.0.0/20} ap-northeast-2b:{subnet-03811b74f76270aed ap-northeast-2b 10.11.16.0/20} ap-northeast-2c:{subnet-02ce8af3b04458b8f ap-northeast-2c 10.11.32.0/20} ap-northeast-2d:{subnet-0c23440ad2800c0ef ap-northeast-2d 10.11.48.0/20}])
 2021-04-02 16:34:31 [!]  custom VPC/subnets will be used; if resulting cluster doesn't function as expected, make sure to review the configuration of VPC/subnets
