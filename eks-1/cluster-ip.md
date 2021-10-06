@@ -6,7 +6,7 @@ description: 'Update: 2021-05-22'
 
 ## 개요 
 
-Kubernetes에서는 Pod의 전면에서 Pod로 트래픽이 들어오는 트래픽을 전달하는 service 자원이 제공됩니다. 해당 Service 자원은 Pod의 IP 주소와 관계 없이 Pod의 Label Selector를 보고 트래픽을 전달하는 역할을 담당합니다.
+Kubernetes에서는 Pod의 전면에서 Pod로 들어오는 트래픽을 전달하는 service 자원이 제공됩니다. 해당 Service 자원은 Pod의 IP 주소와 관계 없이 Pod의 Label Selector를 보고 트래픽을 전달하는 역할을 담당합니다.
 
 Service의 종류는 아래와 같습니다.
 
