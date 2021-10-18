@@ -22,6 +22,49 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 
 ![](<../.gitbook/assets/image (219).png>)
 
+아래와 같이 새로운 Namespace와 Pod를 생성합니다.
+
+```
+cd ~/environment/myeks/network-test
+kubectl create namespace node-test-01
+kubectl -n node-test-01 apply -f node-test-01.yaml
+kubectl -n node-test-01 get pods
+kubectl -n node-test-01 get pods -o wide
+
+```
+
+생성한 pod를 확인합니다. 
+
+```
+kubectl -n node-test-01 get pods -o wide
+NAME                            READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
+node-test-01-869b8d5f87-4w5g5   0/1     Running   0          7s    10.11.33.224   ip-10-11-35-116.ap-northeast-2.compute.internal   <none>           <none>
+node-test-01-869b8d5f87-6rbhz   0/1     Running   0          7s    10.11.16.91    ip-10-11-21-111.ap-northeast-2.compute.internal   <none>           <none>
+node-test-01-869b8d5f87-rbwqz   0/1     Running   0          7s    10.11.11.5     ip-10-11-3-68.ap-northeast-2.compute.internal     <none>           <none>
+```
+
+shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
+
+```
+echo "export NodeTestPod03=node-test-01-869b8d5f87-4w5g5" | tee -a ~/.bash_profile
+echo "export NodeTestPod02=node-test-01-869b8d5f87-6rbhz" | tee -a ~/.bash_profile
+echo "export NodeTestPod01=node-test-01-869b8d5f87-rbwqz" | tee -a ~/.bash_profile
+source ~/.bash_profile
+
+```
+
+### **NodePort Service 시험 **
+
+****
+
+```
+kubectl -n node-test-01 exec -it $NodeTestPod01 -- /bin/sh
+```
+
+
+
+
+
 ## Nodeport 기반 Service 구성 
 
 ![Cluster IP 타입 기반 서비스](<../.gitbook/assets/image (179).png>)
