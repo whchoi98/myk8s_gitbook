@@ -146,6 +146,8 @@ ClusterIP 타입은 내부에서 사용하도록 노출되며 , 외부에 노출
 
 ![](<../.gitbook/assets/image (221).png>)
 
+### ClusterIP Server 시험  
+
 아래와 같이 ClusterIP 서비스를 배포합니다.
 
 ```
@@ -153,7 +155,7 @@ cd ~/environment/myeks/network-test/
 kubectl -n cluster-test-01 apply -f cluster-test-01-service.yaml
 ```
 
-
+ClusterIP Service에 대한 yaml 파일은 아래와 같습니다. 
 
 ```
 apiVersion: v1
@@ -170,16 +172,45 @@ spec:
       targetPort: 80
 ```
 
+ClusterIP Service가 정상적으로 배포되었는지 확인합니다.
 
+```
+kubectl -n cluster-test-01 get services -o wide
+NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE     SELECTOR
+cluster-test-01-svc   ClusterIP   172.20.4.192   <none>        8080/TCP   3h26m   app=cluster-test-01
+```
+
+ClusterIP service의 A Record는
+
+ **`"ClusterIP Metadata.name"."namesapce".svc.cluster.local.`** 의 형식을 사용하게 됩니다.
 
 ![](<../.gitbook/assets/image (217).png>)
 
+ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. clur을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
+
 ```
+kubectl -n cluster-test-01 exec -it $ClusterTestPod01 -- /bin/sh
+nslookup 
+```
+
+```
+## ClusterTest01에서 ClusterIP Service A Record 확인.
 #ClusterTestPod01
 # nslookup 172.20.4.192
 192.4.20.172.in-addr.arpa       name = cluster-test-01-svc.cluster-test-01.svc.cluster.local.
 
-curl cluster-test-01-svc.cluster-test-01.svc.cluster.local.:8080
+/ # curl cluster-test-01-svc.cluster-test-01.svc.cluster.local.:8080
+Praqma Network MultiTool (with NGINX) - cluster-test-01-6f4dddc749-tq8jj - 10.11.1.72
+/ # curl cluster-test-01-svc.cluster-test-01.svc.cluster.local.:8080
 Praqma Network MultiTool (with NGINX) - cluster-test-01-6f4dddc749-s8hkp - 10.11.29.107
+/ # curl cluster-test-01-svc.cluster-test-01.svc.cluster.local.:8080
+Praqma Network MultiTool (with NGINX) - cluster-test-01-6f4dddc749-pfq77 - 10.11.107.227
+```
+
+iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
+
+```
+iptables -t nat -L --line-number | more
+
 ```
 
