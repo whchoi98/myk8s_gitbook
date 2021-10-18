@@ -24,7 +24,7 @@ Service의 종류는 아래와 같습니다.
 
 ![](<../.gitbook/assets/image (219).png>)
 
-### 1.CoreDNS와 Service 역할 확인을 위한 App배포 
+### CoreDNS와 Service 역할 확인을 위한 App배포 
 
 아래와 같이 새로운 Namespace와 Pod를 생성합니다.
 
