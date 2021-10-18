@@ -76,6 +76,16 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ```
 
+2\. AWS Session Manager Plugin 설치
+
+Cloud9 Terminal에 Session Manager 를 통해 EKS Worker Node 접속을 위해 아래와 같이 설치합니다.
+
+```
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+sudo sudo yum install -y session-manager-plugin.rpm
+ ㅅ
+```
+
 ## Kubectl 설치
 
 ### Kubectl 소개
