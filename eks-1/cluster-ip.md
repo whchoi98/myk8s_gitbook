@@ -136,7 +136,7 @@ PING 10.11.29.107 (10.11.29.107) 56(84) bytes of data.
 
 ## ClusterIP Type
 
-### ClusterType 소
+### ClusterType 소개  
 
 Kubernetes 에서 Service는 Pod들이 실행 중인 애플리케이션을 네트워크 서비스로 노출하는 추상적인 방법입니다. 다양한 Service 들 중에서 ClusterIP는 Service - Type의 기본 값입니다.
 
