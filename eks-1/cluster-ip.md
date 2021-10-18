@@ -16,7 +16,7 @@ Service의 종류는 아래와 같습니다.
 
 아래 그림에서 처럼 Service의 기본은 CLUSTER-IP 방식입니다. 외부로 노출되지 않으며, Service에는  Pod Container의 포트를 기술해 줍니다.
 
-![Cluster IP 타입 기반 서비스](<../.gitbook/assets/image (179).png>)
+![](<../.gitbook/assets/image (222).png>)
 
 ## CoreDNS와 Service
 
@@ -80,6 +80,7 @@ cat /etc/resolv.conf
 다음과 같이 출력됩니다.
 
 ```
+## ClusterTestPod01##
 # ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -107,6 +108,7 @@ kubectl -n cluster-test-01 exec -it $ClusterTestPod02 -- /bin/sh
 ```
 
 ```
+## ClusterTestPod02
 # ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -134,34 +136,52 @@ PING 10.11.29.107 (10.11.29.107) 56(84) bytes of data.
 
 ```
 
-이제 Service를 배포합니다.
+## ClusterIP Type
+
+### ClusterType 소
+
+Kubernetes 에서 Service는 Pod들이 실행 중인 애플리케이션을 네트워크 서비스로 노출하는 추상적인 방법입니다. 다양한 Service 들 중에서 ClusterIP는 Service - Type의 기본 값입니다.
+
+ClusterIP 타입은 내부에서 사용하도록 노출되며 , 외부에 노출되지 않습니다.
+
+* ClusterIP 타입 종류 - UserSpace Proxy 모드 , iptables Proxy 모드, IPVS Proxy 모드.
+
+![](<../.gitbook/assets/image (221).png>)
+
+아래와 같이 ClusterIP 서비스를 배포합니다.
 
 ```
-kubectl apply -f ~/environment/myeks/network-test/test-service-01.yaml
+cd ~/environment/myeks/network-test/
+kubectl -n cluster-test-01 apply -f cluster-test-01-service.yaml
 ```
 
-다시 앞서 생성한 Container에서 service의 nameservice를 조회해 봅니다.
+
 
 ```
-nslookup
-alpine-app-svc-01
-
+apiVersion: v1
+kind: Service
+metadata:
+  name: cluster-test-01-svc
+  namespace: cluster-test-01
+spec:
+  selector:
+    app: cluster-test-01
+  ports:
+   -  protocol: TCP
+      port: 8080
+      targetPort: 80
 ```
 
-이제 한개의 cluster 서비스를 더 배포해 봅니다.
+
+
+![](<../.gitbook/assets/image (217).png>)
 
 ```
-cd ~/environment/myeks/network-test
-kubectl apply -f test-deployment-02.yaml 
-kubectl apply -f test-service-02.yaml
+#ClusterTestPod01
+# nslookup 172.20.4.192
+192.4.20.172.in-addr.arpa       name = cluster-test-01-svc.cluster-test-01.svc.cluster.local.
 
-```
-
-Container 에서 curl 을 통해 자신이 속한 service와 다른 service로 연결해 봅니다.
-
-```
-curl alpine-app-svc-02:8080
-curl alpine-app-svc-01:8080
-
+curl cluster-test-01-svc.cluster-test-01.svc.cluster.local.:8080
+Praqma Network MultiTool (with NGINX) - cluster-test-01-6f4dddc749-s8hkp - 10.11.29.107
 ```
 
