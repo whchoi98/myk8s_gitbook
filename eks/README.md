@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2020-04-01 / 30min'
+description: 'Update : 2021-10-01 / 30min'
 ---
 
 # 2.EKS 환경 구성
@@ -9,4 +9,3 @@ description: 'Update : 2020-04-01 / 30min'
 #### 인증 강화를 위해 KMS기반의 Key를 구성하여, 인증과 역할에 대한 보안을 강화합니다.
 
 #### 이 랩의 구성 완료를 위해 대략 40분이 필요합니다.
-
