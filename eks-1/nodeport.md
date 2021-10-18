@@ -55,15 +55,70 @@ source ~/.bash_profile
 
 ### **NodePort Service 시험 **
 
-****
+Nodeport service를 배포합니다.
+
+```
+kubectl -n node-test-01 apply -f node-test-01-service.yaml
+kubectl -n node-test-01 get services -o wide
+```
+
+Nodeport service yaml은 아래와 같이 구성되어 있습니다.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-test-01-svc
+  namespace: node-test-01
+spec:
+  selector:
+    app: node-test-01
+  ports:
+  type: NodePort
+  ports:
+   -  protocol: TCP
+      nodePort: 30080
+      port: 8080
+      targetPort: 80
+```
+
+nodePort Service가 정상적으로 배포되었는지 확인합니다.
+
+```
+kubectl -n node-test-01 get services -o wide
+NAME               TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE   SELECTOR
+node-test-01-svc   NodePort   172.20.138.254   <none>        8080:30080/TCP   37s   app=node-test-01
+```
+
+아래와 같은 구성이 배포되었습니다. 외부에 Node IP:30080 으로 노출되어 있으며, Cluster 8080으로 Forwarding됩니다. 이후 Iptable에 의해 Pod들로 80 Port로 로드밸런싱됩니다.
+
+![](<../.gitbook/assets/image (221).png>)
+
+pod shell로 접속해서 Service A Record를 확인해 봅니다.
 
 ```
 kubectl -n node-test-01 exec -it $NodeTestPod01 -- /bin/sh
+/# nslookup 172.20.138.254
 ```
 
+Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니다. 해당 EC2 대시보드에서 인스턴스를 선택합니다.
 
+Public-SG 라는 Security Group을 생성하고, 해당 인스턴스에 적용합니다.
 
+![](<../.gitbook/assets/image (223).png>)
 
+Public-SG 라는 이름으로 Security Group을 생성합니다. 
+
+* TCP 30080-30090 허용
+* HTTP, HTTPS, ICMP, SSH 허
+
+![](<../.gitbook/assets/image (225).png>)
+
+아래와 같이 Security Group이 생성됩니다.
+
+![](<../.gitbook/assets/image (217).png>)
+
+![](<../.gitbook/assets/image (218).png>)
 
 ## Nodeport 기반 Service 구성 
 

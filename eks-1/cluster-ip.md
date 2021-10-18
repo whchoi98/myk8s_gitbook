@@ -144,7 +144,7 @@ ClusterIP 타입은 내부에서 사용하도록 노출되며 , 외부에 노출
 
 * ClusterIP 타입 종류 - UserSpace Proxy 모드 , iptables Proxy 모드, IPVS Proxy 모드.
 
-![](<../.gitbook/assets/image (221).png>)
+![](<../.gitbook/assets/image (221) (1).png>)
 
 ### ClusterIP Server 시험  
 
@@ -184,7 +184,7 @@ ClusterIP service의 A Record는
 
  **`"ClusterIP Metadata.name"."namesapce".svc.cluster.local.`** 의 형식을 사용하게 됩니다.
 
-![](<../.gitbook/assets/image (217).png>)
+![](<../.gitbook/assets/image (217) (1).png>)
 
 ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. clur을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
 
