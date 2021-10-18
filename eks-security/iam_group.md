@@ -12,7 +12,7 @@ EKS에서 아래와 같은 역할을 규정하고 , IAM에서 역할을 구성�
 
 아래 역할은 EKS 클러스터 내에서 인증하는 데만 사용되기 때문에 AWS 권한이 필요하지 않습니다. EKS 클러스터에 액세스하기 위해 일부 IAM 그룹이 , 이러 역할을 맡도록 허용하는 데만 사용합니다.
 
-```text
+```
 POLICY=$(echo -n '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::'; echo -n "$ACCOUNT_ID"; echo -n ':root"},"Action":"sts:AssumeRole","Condition":{}}]}')
 
 echo ACCOUNT_ID=$ACCOUNT_ID
@@ -43,9 +43,9 @@ aws iam create-role \
 
 IAM에서 아래와 같이 생성되었습니다.
 
-![](../.gitbook/assets/image%20%28202%29.png)
+![](<../.gitbook/assets/image (202).png>)
 
-## **IAM Group 생성** 
+## **IAM Group 생성 **
 
 ### **1.k8sAdmin IAM 그룹 생성**
 
@@ -53,12 +53,12 @@ IAM에서 아래와 같이 생성되었습니다.
 
 IAM에 새로운 그룹을 생성하고 IAM Assume Role을 부여합니다.
 
-```text
+```
 aws iam create-group --group-name k8sAdmin
 
 ```
 
-```text
+```
 ADMIN_GROUP_POLICY=$(echo -n '{
   "Version": "2012-10-17",
   "Statement": [
@@ -85,12 +85,12 @@ aws iam put-group-policy \
 
 IAM에 새로운 그룹을 생성하고 IAM Assume Role을 부여합니다.
 
-```text
+```
 aws iam create-group --group-name k8sDev
 
 ```
 
-```text
+```
 DEV_GROUP_POLICY=$(echo -n '{
   "Version": "2012-10-17",
   "Statement": [
@@ -117,12 +117,12 @@ aws iam put-group-policy \
 
 IAM에 새로운 그룹을 생성하고 IAM Assume Role을 부여합니다.
 
-```text
+```
 aws iam create-group --group-name k8sInteg
 
 ```
 
-```text
+```
 INTEG_GROUP_POLICY=$(echo -n '{
   "Version": "2012-10-17",
   "Statement": [
@@ -145,18 +145,18 @@ aws iam put-group-policy \
 
 생성된 3개의 그룹을 확인해 봅니다.
 
-```text
+```
 aws iam list-groups
 
 ```
 
-![](../.gitbook/assets/image%20%28201%29.png)
+![](<../.gitbook/assets/image (201).png>)
 
 ## IAM User 생성
 
 시나리오를 테스트하기 위해 생성 한 각 그룹에 대해 각각 하나씩 3 명의 User를 생성합니다.
 
-```text
+```
 aws iam create-user --user-name AdminUser
 aws iam create-user --user-name DevUser
 aws iam create-user --user-name IntUser
@@ -165,7 +165,7 @@ aws iam create-user --user-name IntUser
 
 연결된 그룹에 생성한 사용자를 추가합니다.
 
-```text
+```
 aws iam add-user-to-group --group-name k8sAdmin --user-name AdminUser
 aws iam add-user-to-group --group-name k8sDev --user-name DevUser
 aws iam add-user-to-group --group-name k8sInteg --user-name IntUser
@@ -174,7 +174,7 @@ aws iam add-user-to-group --group-name k8sInteg --user-name IntUser
 
 사용자가 그룹에 올바르게 추가되었는지 확인해 봅니다.
 
-```text
+```
 aws iam get-group --group-name k8sAdmin
 aws iam get-group --group-name k8sDev
 aws iam get-group --group-name k8sInteg
@@ -187,7 +187,7 @@ Access Key를 생성하고 복사해 둡니다.
 LAB에서만 사용하는 방식으로, access-key등을 별도의 파일로 저장하는 것은 권장하는 방법이 아닙니다.
 {% endhint %}
 
-```text
+```
 aws iam create-access-key --user-name AdminUser | tee /tmp/AdminUser.json
 aws iam create-access-key --user-name DevUser | tee /tmp/DevUser.json
 aws iam create-access-key --user-name IntUser | tee /tmp/IntUser.json
@@ -196,7 +196,7 @@ aws iam create-access-key --user-name IntUser | tee /tmp/IntUser.json
 
 각 IAM 콘솔에서 확인해 봅니다.
 
-![](../.gitbook/assets/image%20%28203%29.png)
+![](<../.gitbook/assets/image (203).png>)
 
 ## RBAC 구성
 
@@ -207,7 +207,7 @@ aws iam create-access-key --user-name IntUser | tee /tmp/IntUser.json
 * k8sDev group - namespace development
 * k8sInteg - namespace integration
 
-```text
+```
 kubectl create namespace integration
 kubectl create namespace development
 
@@ -217,7 +217,7 @@ kubectl create namespace development
 
 kubernetes 사용자 DevUser 에게 development namespace 전체 액세스 권한을 제공 하는 kubernetes `role`및 `rolebinding`을 만듭니다.
 
-```text
+```
 cat << EOF | kubectl apply -f - -n development
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -269,7 +269,7 @@ EOF
 
 kubernetes 사용자 InteUser 에게 development namespace 전체 액세스 권한을 제공 하는 kubernetes `role`및 `rolebinding`을 만듭니다.
 
-```text
+```
 cat << EOF | kubectl apply -f - -n integration
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -323,11 +323,11 @@ EOF
 
 이전에 정의한 IAM 역할에 대한 액세스 권한을 EKS 클러스터에 **부여** 하려면 특정 **mapRoles** 를 `aws-auth`ConfigMap에 추가해야합니다. IAM 사용자를 직접 지정하는 대신 Role을 사용하여 클러스터에 액세스 할 때의 장점은 관리가 더 쉽다는 것입니다. 사용자를 추가하거나 제거 할 때마다 ConfigMap을 업데이트 할 필요가 없습니. IAM 그룹에서 사용자를 제거하고 IAM 그룹에 연결된 IAM 역할을 허용하도록 ConfigMap을 구성하기 만 하면 됩니다.
 
-#### IAM 역할을 허용하도록 aws-auth ConfigMap 업데이트 <a id="update-the-aws-auth-configmap-to-allow-our-iam-roles"></a>
+#### IAM 역할을 허용하도록 aws-auth ConfigMap 업데이트 <a href="update-the-aws-auth-configmap-to-allow-our-iam-roles" id="update-the-aws-auth-configmap-to-allow-our-iam-roles"></a>
 
 arn 그룹을 허용하거나 삭제하려면 kube-system 네임 스페이스 의 **aws-auth** ConfigMap을 편집해야합니다. 이 파일은 IAM 역할과 k8S RBAC 권한을 매핑합니다. 수동으로 편집 할 수 있습니다.
 
-```text
+```
 eksctl create iamidentitymapping \
   --cluster eksworkshop \
   --arn arn:aws:iam::${ACCOUNT_ID}:role/k8sDev \
@@ -348,7 +348,7 @@ eksctl create iamidentitymapping \
 
 삭제 할 때도 사용할 수 있습니다.
 
-```text
+```
 eksctl delete iamidentitymapping --cluster eksworkshop-eksctlv --arn arn:aws:iam::xxxxxxxxxx:role/k8sDev --username dev-user
 
 ```
@@ -357,23 +357,23 @@ eksctl delete iamidentitymapping --cluster eksworkshop-eksctlv --arn arn:aws:iam
 
 구성된 confimap을 확인해 봅니다.
 
-```text
+```
 kubectl get cm -n kube-system aws-auth -o yaml
 
 ```
 
 eksctl을 활용하여 클러스터에서 관리되는 모든 ID 목록을 가져올 수 있습니다.
 
-```text
+```
 eksctl get iamidentitymapping --cluster eksworkshop
 
 ```
 
 ## EKS 액세스 시험
 
-~/.aws/config를 통해서 전환이 가능합니다.
+\~/.aws/config를 통해서 전환이 가능합니다.
 
-```text
+```
 if [ ! -d ~/.aws ]; then
   mkdir ~/.aws
 fi
@@ -395,9 +395,9 @@ EoF
 
 ```
 
-~/.aws/credentials에 AccessKey,SecretAccessKey를 구성합니다.
+\~/.aws/credentials에 AccessKey,SecretAccessKey를 구성합니다.
 
-```text
+```
 cat << EoF >> ~/.aws/credentials
 
 [eksAdmin]
@@ -417,21 +417,20 @@ EoF
 
 이제 만들어진 계정으로 전환하면서, 계정, 권한 ,역할 등을 점검해 봅니다.
 
-```text
+```
 export KUBECONFIG=/tmp/kubeconfig-dev && eksctl utils write-kubeconfig eksworkshop
 cat $KUBECONFIG | yq e '.users.[].user.exec.args += ["--profile", "dev"]' - -- | sed 's/eksworkshop./eksworkshop-dev./g' | sponge $KUBECONFIG
 
 ```
 
-```text
+```
 aws sts get-caller-identity --profile dev
 kubectl run --generator=run-pod/v1 nginx-dev --image=nginx -n development
 kubectl get pods -n development
 
 ```
 
-```text
+```
 aws sts get-caller-identity --profile integ
 
 ```
-

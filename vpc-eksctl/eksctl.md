@@ -6,7 +6,7 @@ description: 'update : 2021-10-01 / 30min'
 
 ## eksctl 소개
 
-`eksctl`은 관리형 Kubernetes 서비스 인 EKS에서 클러스터를 생성하기위한 간단한 CLI 도구입니다. Go로 작성되었으며 CloudFormation을 사용하며 [Weaveworks](https://www.weave.works/) 가 작성했으며 단 하나의 명령으로 몇 분 안에 기본 클러스터를 만듭니다.
+`eksctl`은 관리형 Kubernetes 서비스 인 EKS에서 클러스터를 생성하기위한 간단한 CLI 도구입니다. Go로 작성되었으며 CloudFormation을 사용하며 [Weaveworks](https://www.weave.works) 가 작성했으며 단 하나의 명령으로 몇 분 안에 기본 클러스터를 만듭니다.
 
 이것은 EKS를 구성하기 위한 도구 이며,  AWS 관리콘솔에서 제공하는 EKS UI, CDK, Terraform, Rancher 등 다양한 도구로도 구성이 가능합니다.
 
@@ -16,7 +16,7 @@ description: 'update : 2021-10-01 / 30min'
 
 아래와 같이 eksctl을 Cloud9에 설치하고 버전을 확인합니다.
 
-```text
+```
 # eksctl 설정 
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/local/bin
@@ -32,7 +32,7 @@ eksctl version
 
 다음 aws cli 명령을 통해서 확인 할 수 있습니다. 결과값은 홈디렉토리 **`vpc_subnet.txt`** 에 저장합니다. 아래 명령을 실행하면 자동으로 저장됩니다.
 
-```text
+```
 cd ~/environment/
 #VPC ID export
 export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
@@ -46,9 +46,9 @@ cat vpc_subnet.txt
 
 ```
 
-아래는 **`vpc_subnet.txt`** 에 저장된 예제입니다.
+아래는 **`vpc_subnet.txt `**에 저장된 예제입니다.
 
-```text
+```
 vpc-04a7f563ebe750a92
 subnet-0db014e6a52f7b002 10.11.16.0/20 eksworkshop-PublicSubnet02
 subnet-01a18de77c71a9d8d 10.11.32.0/20 eksworkshop-PublicSubnet03
@@ -59,9 +59,9 @@ subnet-01db4b6773a94e6a2 10.11.96.0/20 eksworkshop-PrivateSubnet03
 
 ```
 
-저장해둔 Region 정보와 master\_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
+저장해둔 Region 정보와 master_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
 
-```text
+```
 #사용자 AWS Region
 echo $AWS_REGION
 
@@ -79,7 +79,7 @@ Cloud9 IDE 편집기에서 아래와 같이 수정합니다. 수정내용은 현
 
 수정할 블록의 예시입니다.
 
-```text
+```
 ## vpc id와 publicsubnet01,02,03 , privatesubnet01,02,03 id를 수정합니다.
 vpc: 
   id: vpc-0239e84f8661afd68
@@ -124,7 +124,7 @@ nodeGroups:
 
 eksctl을 통해 EKS Cluster를 생성합니다. git을 통해 다운 받은 eksctl 용 yaml파일에 eks 1.20 설치가 선언되어 있습니다.
 
-```text
+```
 eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster-3az.yaml
  
 ```
@@ -135,7 +135,7 @@ Cluster를 생성하기 위해 20분 정도 시간이 소요됩니다.
 
 출력 결과 예시
 
-```text
+```
 whchoi:~/environment $ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster-3az.yaml
 2021-10-05 13:09:15 [ℹ]  eksctl version 0.68.0
 2021-10-05 13:09:15 [ℹ]  using region ap-northeast-2
@@ -207,14 +207,14 @@ whchoi:~/environment $ eksctl create cluster --config-file=/home/ec2-user/enviro
 
 정상적으로 Cluster가 생성되었는지 확인합니다.
 
-```text
+```
 kubectl get nodes
 
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi:~/environment $ kubectl get nodes
 NAME                                               STATUS   ROLES    AGE   VERSION
 ip-10-11-104-129.ap-northeast-2.compute.internal   Ready    <none>   28m   v1.20.7-eks-135321
@@ -237,13 +237,13 @@ ip-10-11-99-248.ap-northeast-2.compute.internal    Ready    <none>   26m   v1.20
 
 다음과 같은 구성도가 완성되었습니다.
 
-![](../.gitbook/assets/image%20%28166%29.png)
+![](<../.gitbook/assets/image (166).png>)
 
-### 6.eksctl yaml code 참조 \(option\)
+### 6.eksctl yaml code 참조 (option)
 
 eksctl 배포를 위한 EKS Cluster yaml 파일은 다음과 같습니다. 각자의 Cloud9 콘솔에서 파일을 확인해 봅니다.
 
-```text
+```
 # A simple example of ClusterConfig object:
 ---
 apiVersion: eksctl.io/v1alpha5
@@ -394,6 +394,4 @@ cloudWatch:
 
 
 ```
-
-
 

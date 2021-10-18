@@ -6,19 +6,19 @@ description: 'update : 2021-04-06 /1h'
 
 ## Helm 소개
 
-헬름은 [쿠버네티스](https://kubernetes.io/)용 소프트웨어를 검색하거나, 공유하고 사용하기에 가장 좋은 방법입니다. 쿠버네티스 차트를 관리하기 위한 도구이며, 차트는 사전 구성된 쿠버네티스 리소스의 패키지입니다. \(리눅스의 apt, yum, pip 등과 같은 플랫폼 패키지 입니다.\)
+헬름은 [쿠버네티스](https://kubernetes.io)용 소프트웨어를 검색하거나, 공유하고 사용하기에 가장 좋은 방법입니다. 쿠버네티스 차트를 관리하기 위한 도구이며, 차트는 사전 구성된 쿠버네티스 리소스의 패키지입니다. (리눅스의 apt, yum, pip 등과 같은 플랫폼 패키지 입니다.)
 
 주요 3가지의 개념이 있습니다.
 
 **차트**는 헬름 패키지입니. 이 패키지에는 쿠버네티스 클러스터 내에서 애플리게이션, 도구, 서비스를 구동하는데 필요한 모들 리소스 정의가 포함되어 있습니다. 쿠버네티스에서의 Homebrew 포뮬러, Apt dpkg, YUM RPM 파일과 같은 것으로 생각할 수 있습니다.
 
-**저장소**는 차트를 모아두고 공유하는 장소입다. 이것은 마치 Perl의 [CPAN 아카이브](https://www.cpan.org/)나 [페도라 패키지 데이터베이스](https://admin.fedoraproject.org/pkgdb/)와 같은데, 쿠버네티스 패키지용이라고 보면 됩니다.
+**저장소**는 차트를 모아두고 공유하는 장소입다. 이것은 마치 Perl의 [CPAN 아카이브](https://www.cpan.org)나 [페도라 패키지 데이터베이스](https://admin.fedoraproject.org/pkgdb/)와 같은데, 쿠버네티스 패키지용이라고 보면 됩니다.
 
 **릴리스**는 쿠버네티스 클러스터에서 구동되는 차트의 인스턴스입다. 일반적으로 하나의 차트는 동일한 클러스터내에 여러 번 설치될 수 있다. 설치될 때마다, 새로운 _release_ 가 생성됩니다.
 
 헬름은 쿠버네티스 내부에  charts를 설치하고, 각 설치에 대해 새로운 release를 생성하고, 새로운 차트를 찾기 위해 헬름 차트 repositories를 검색할 수 있습니다.
 
-![&#xCC38;&#xC870; - https://devopscube.com/install-configure-helm-kubernetes/](../.gitbook/assets/image%20%2847%29.png)
+![참조 - https://devopscube.com/install-configure-helm-kubernetes/](<../.gitbook/assets/image (47).png>)
 
 Helm Chart의 구조는 아래와 같습니다.
 
@@ -29,7 +29,7 @@ Helm Chart의 구조는 아래와 같습니다.
 
 아래와 같은 구성으로 LAB을 진행합니다.
 
-![Helm LAB &#xBAA9;&#xD45C; &#xAD6C;&#xC131;&#xB3C4;](../.gitbook/assets/image%20%28191%29.png)
+![Helm LAB 목표 구성도](<../.gitbook/assets/image (191).png>)
 
 아래와 같은 순서대로 구성합니다.
 
@@ -43,7 +43,7 @@ Helm Chart의 구조는 아래와 같습니다.
 
 헬름은 헬름 최신 버전을 자동으로 가져와서 [로컬에 설치](https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)하는 인스톨러 스크립트를 제공합니다. 이 스크립트를 받아서 로컬에서 실행할 수 있습니다.
 
-```text
+```
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 chmod 700 get_helm.sh
 ./get_helm.sh
@@ -52,14 +52,14 @@ chmod 700 get_helm.sh
 
 정상적으로 설치되었는지 확인합니다.
 
-```text
+```
 helm version --short
 
 ```
 
  출력 결과 예시
 
-```text
+```
 whchoi98:~ $ helm version --short
 v3.5.3+g041ce5a
 ```
@@ -68,7 +68,7 @@ v3.5.3+g041ce5a
 
 Stable한 저장소를 다운로드하여 아래와 같이 구성합니다.
 
-```text
+```
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
 
@@ -76,7 +76,7 @@ helm repo update
 
 설치 한 이후에는 설치 가능한 차트를 아래와 같은 명령으로 검색할 수 있습니다.
 
-```text
+```
 helm search repo stable
 
 ```
@@ -85,7 +85,7 @@ helm search repo stable
 
 Helm 명령에 대한 Bash 자동완성을 구성합니다.
 
-```text
+```
 helm completion bash >> ~/.bash_completion
 . /etc/profile.d/bash_completion.sh
 . ~/.bash_completion
@@ -97,14 +97,14 @@ source <(helm completion bash)
 
 Helm Chart를 통한 간단한 nginx 배포를 위해 repo에서 nginx를 검색합니다.
 
-```text
+```
 helm search repo nginx
 
 ```
 
 출력 결과 예시
 
-```text
+```
 ~/environment $ helm search repo nginx
 NAME                            CHART VERSION   APP VERSION     DESCRIPTION                                       
 stable/nginx-ingress            1.41.3          v0.34.1         DEPRECATED! An nginx Ingress controller that us...
@@ -115,20 +115,20 @@ stable/gcloud-endpoints         0.1.2           1               DEPRECATED Devel
 
 간단한 웹서비스 배포를 위해 nginx를 추가해서 구동해 봅니다. 배포도구로 인기 있는 bitnami repo를 추가해서 nginx를 설치해 봅니다.
 
-```text
+```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 
 ```
 
 다시 nginx를 검색해 봅니다.
 
-```text
+```
 helm search repo bitnami/nginx
 ```
 
 출력결과 예시
 
-```text
+```
 ~/environment $ helm search repo bitnami/nginx
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                           
 bitnami/nginx                           7.1.6           1.19.4          Chart for the nginx server            
@@ -137,7 +137,7 @@ bitnami/nginx-ingress-controller        5.6.15          0.40.2          Chart fo
 
 helm install 명령을 통해 nginx를 설치해 봅니다.
 
-```text
+```
 kubectl create namespace helm-test
 helm install helm-nginx bitnami/nginx --namespace helm-test
 
@@ -145,7 +145,7 @@ helm install helm-nginx bitnami/nginx --namespace helm-test
 
 아래와 같은 결과를 얻을 수 있습니다.
 
-```text
+```
 whchoi98:~ $ helm install helm-nginx bitnami/nginx --namespace helm-test                                                                 
 NAME: helm-nginx
 LAST DEPLOYED: Mon Apr  5 18:23:06 2021
@@ -174,7 +174,7 @@ To access NGINX from outside the cluster, follow the steps below:
 
 Pod와 서비스 배포를 확인합니다.
 
-```text
+```
 whchoi98:~ $ kubectl -n helm-test get service 
 NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP                                                                   PORT(S)        AGE
 eksworkshop-nginix-nginx   LoadBalancer   172.20.58.93   ac0c5778fc7814b3586e670d9cc150d6-876194346.ap-northeast-2.elb.amazonaws.com   80:30760/TCP   107s
@@ -182,7 +182,7 @@ eksworkshop-nginix-nginx   LoadBalancer   172.20.58.93   ac0c5778fc7814b3586e670
 
 ELB 주소를 확인합니다.
 
-```text
+```
 export SERVICE_IP=$(kubectl get svc --namespace helm-test helm-nginx --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
 echo "NGINX URL: http://$SERVICE_IP/"
 
@@ -190,22 +190,22 @@ echo "NGINX URL: http://$SERVICE_IP/"
 
 해당 주소로 접속해 봅니다.
 
-![](../.gitbook/assets/image%20%2846%29.png)
+![](<../.gitbook/assets/image (46).png>)
 
 EC2 대시보드에서 ELB가 정상적으로 생성된 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2845%29.png)
+![](<../.gitbook/assets/image (45).png>)
 
 설치된 helm list를 확인합니다.
 
-```text
+```
 helm list -n helm-test
 
 ```
 
 출력 예시
 
-```text
+```
 whchoi98:~ $ helm list -n helm-test 
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
 helm-nginx      helm-test       1               2021-04-05 18:23:06.961632762 +0000 UTC deployed        nginx-8.8.1     1.19.9   
@@ -213,14 +213,14 @@ helm-nginx      helm-test       1               2021-04-05 18:23:06.961632762 +0
 
 아래 명령을 통해 배포된 내용을 확인합니다.
 
-```text
+```
 kubectl describe deployments.apps helm-nginx -n helm-test
 
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi98:~ $ kubectl describe deployments.apps helm-nginx -n helm-test
 Name:                   helm-nginx
 Namespace:              helm-test
@@ -276,14 +276,14 @@ Events:
 
 아래 명령을 통해 생성된 Helm을 삭제합니다.
 
-```text
+```
 helm uninstall helm-nginx -n helm-test
 
 ```
 
 정상적으로 삭제되었는지 확인합니다.
 
-```text
+```
 helm list -n helm-test
 kubectl -n helm-test get service 
 
@@ -297,13 +297,13 @@ ELB 삭제 시간으로 3분 정도 소요됩니다.
 
 아래와 같은 구성으로 LAB을 진행합니다.
 
-![ Helm Chart &#xAE30;&#xBC18;&#xC758; App&#xBC30;&#xD3EC;](../.gitbook/assets/image%20%28188%29.png)
+![ Helm Chart 기반의 App배포](<../.gitbook/assets/image (188).png>)
 
 ### 1.Chart 만들기
 
 helmdemo 라는 Chart를 생성합니다.
 
-```text
+```
 cd ~/environment/
 helm create helm-chart-demo
 sudo yum -y install tree
@@ -312,7 +312,7 @@ sudo yum -y install tree
 
 Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성되어 있습니다. 
 
-```text
+```
 cd ~/environment/helm-chart-demo
 ~/environment/helm-chart-demo $ sudo yum -y install tree
 ~/environment/helm-chart-demo $ tree 
@@ -344,7 +344,7 @@ cd ~/environment/helm-chart-demo
 
 새로운 Chart구성을 위해 기본 생성된 파일들을 삭제합니다.
 
-```text
+```
 rm -rf ~/environment/helm-chart-demo/templates/
 rm ~/environment/helm-chart-demo/Chart.yaml
 rm ~/environment/helm-chart-demo/values.yaml
@@ -353,7 +353,7 @@ rm ~/environment/helm-chart-demo/values.yaml
 
 다음 코드 블록을 실행하여 새로운 chart.yaml 파일을 생성합니다.
 
-```text
+```
 cat <<EoF > ~/environment/helm-chart-demo/Chart.yaml
 apiVersion: v2
 name: helm-chart-demo
@@ -366,7 +366,7 @@ EoF
 
 앞서 git에서 복제한 파일들 중에서 helm-chart-demo 폴더의 파일을 복사합니다.
 
-```text
+```
 # 각 템플릿 타입을 위한 서브 폴더 생성 
 mkdir -p ~/environment/helm-chart-demo/templates/deployment
 mkdir -p ~/environment/helm-chart-demo/templates/service
@@ -384,9 +384,9 @@ cp ./myeks/helm-chart-demo/ecsdemo-nodejs-service.yaml ~/environment/helm-chart-
 
 ```
 
-아래 deploy용 yaml manifest 파일은 replica와 image 값이 helm chart의 value를 참조하도록 선언되어 있습니다. 각 파일에서 확인해 봅니다. \(ecsdemo-frontend-deployment.yaml, ecsdemo-crystal-deployment.yaml, ecsdemo-nodejs-deployment.yaml\)
+아래 deploy용 yaml manifest 파일은 replica와 image 값이 helm chart의 value를 참조하도록 선언되어 있습니다. 각 파일에서 확인해 봅니다. (ecsdemo-frontend-deployment.yaml, ecsdemo-crystal-deployment.yaml, ecsdemo-nodejs-deployment.yaml)
 
-```text
+```
 metadata:
   name: ecsdemo-xxxx
   labels:
@@ -401,7 +401,7 @@ replicas: {{ .Values.replicas }}
 
 이제 values.yaml을 생성하고, Values 들에 대한 값을 정의합니다.
 
-```text
+```
 cat <<EoF > ~/environment/helm-chart-demo/values.yaml
 # Default values for eksdemo.
 # This is a YAML-formatted file.
@@ -424,7 +424,7 @@ EoF
 
 helmdemo에 사용할 namespace를 생성합니다.
 
-```text
+```
 kubectl create namespace helm-chart-demo
 
 ```
@@ -433,14 +433,14 @@ kubectl create namespace helm-chart-demo
 
 Helm chart는 실제 배포하지 않고 **"--dry-run"** 플래그를 사용하여, 랜더링 된 템플릿을 빌드하고 출력할 수 있습니다.
 
-```text
+```
 helm install --debug --dry-run workshop ~/environment/helm-chart-demo
 
 ```
 
 출력 결과 예제
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ helm install --debug --dry-run workshop ~/environment/helm-chart-demoinstall.go:173: [debug] Original chart version: ""
 install.go:190: [debug] CHART PATH: /home/ec2-user/environment/helm-chart-demo
 
@@ -628,14 +628,14 @@ spec:
 
 템플릿이 정상적으로 렌더링되고, 빌드 출력이 이뤄졌으므로 차트를 배포합니다.
 
-```text
+```
 helm -n helm-chart-demo install rollingback-app ~/environment/helm-chart-demo/
 
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi98:~/environment $ helm install helmdemo ~/environment/helm-chart-demo
 NAME: helmdemo
 LAST DEPLOYED: Mon Apr  5 18:43:07 2021
@@ -647,14 +647,14 @@ TEST SUITE: None
 
 정상적으로 배포되었는 지 확인해 봅니다.
 
-```text
+```
 kubectl -n helm-chart-demo get svc,pod,deploy -o wide
 
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get svc,pod,deploy -o wide
 NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP                                                                   PORT(S)        AGE   SELECTOR
 service/ecsdemo-crystal    ClusterIP      172.20.10.161   <none>                                                                        80/TCP         47s   app=ecsdemo-crystal
@@ -680,16 +680,16 @@ deployment.apps/ecsdemo-nodejs     3/3     3            3           47s   ecsdem
 
 ### 4. 서비스 확인
 
-아래 명령을 통해 service loadbalancer\(ELB\) 의 DNS name을 확인합니다.
+아래 명령을 통해 service loadbalancer(ELB) 의 DNS name을 확인합니다.
 
-```text
+```
 kubectl -n helm-chart-demo get svc ecsdemo-frontend
 
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get svc ecsdemo-frontend
 NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                                                                   PORT(S)        AGE
 ecsdemo-frontend   LoadBalancer   172.20.150.76   ae565da1db5d44788a5624a017779ca9-295728451.ap-northeast-2.elb.amazonaws.com   80:31329/TCP   82s
@@ -697,18 +697,18 @@ ecsdemo-frontend   LoadBalancer   172.20.150.76   ae565da1db5d44788a5624a017779c
 
 정상적으로 서비스에 접속되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%2852%29.png)
+![](<../.gitbook/assets/image (52).png>)
 
 helm list에도 정상적으로 등록되어 있는지 확인합니다.
 
-```text
+```
 helm list -n helm-chart-demo
 
 ```
 
 출력 결과 예
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ helm list -n helm-chart-demo
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                        APP VERSION
 rollingback-app helm-chart-demo 1               2021-04-06 07:33:42.225551074 +0000 UTC deployed        helm-chart-demo-0.1.0        1    
@@ -720,27 +720,27 @@ rollingback-app helm-chart-demo 1               2021-04-06 07:33:42.225551074 +0
 
 먼저 Helm Chart로 배포한 내용을 확인합니다. REVISON:1 으로 구성된 것을 확인 할 수 있습니다.
 
-```text
+```
 helm history -n helm-chart-demo rollingback-app
 
 ```
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ helm history -n helm-chart-demo rollingback-app
 REVISION        UPDATED                         STATUS          CHART                   APP VERSION     DESCRIPTION     
 1               Tue Apr  6 07:33:42 2021        deployed        helm-chart-demo-0.1.0   1               Install complete
 ```
 
-Rolling Back 시험을 위해, 먼저 helm Chart의 Value를 변경합니다. ~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 replicat의 값을 아래와 같이 수정합니다.
+Rolling Back 시험을 위해, 먼저 helm Chart의 Value를 변경합니다. \~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 replicat의 값을 아래와 같이 수정합니다.
 
-```text
+```
 replicas: 1
 
 ```
 
-변경 후 File 내용 확인 \(values.yaml\)
+변경 후 File 내용 확인 (values.yaml)
 
-```text
+```
 # Default values for eksdemo.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -755,14 +755,14 @@ version: 'latest'
 
 "values.yaml" 파일이 모두 수정되었으면, helm을 upgrade 합니다.
 
-```text
+```
 helm upgrade -n helm-chart-demo rollingback-app ~/environment/helm-chart-demo/
 
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ helm upgrade -n helm-chart-demo rollingback-app ~/environment/helm-chart-demo
 Release "rollingback-app" has been upgraded. Happy Helming!
 NAME: rollingback-app
@@ -779,14 +779,14 @@ helm chart로 배포한 Revision이 "2"로 변경되었습니다.
 
 정상적으로 배포되었는 지 확인합니다.
 
-```text
+```
 kubectl -n helm-chart-demo get pods
 
 ```
 
 아래와 같이 pod 의 숫자가 1개로 줄었습니다.
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get pods
 NAME                                READY   STATUS    RESTARTS   AGE
 ecsdemo-crystal-86b65cdbfd-cczt4    1/1     Running   0          111s
@@ -798,14 +798,14 @@ ecsdemo-nodejs-64c4fd7579-dp9vc     1/1     Running   0          111s
 
 먼저 현재 helm Chart를 통해 배포된 상태를 확인합니다.
 
-```text
+```
 helm status -n helm-chart-demo rollingback-app 
 
 ```
 
 아래와 같은 결과를 확인 할 수 있습니다.최종 배포시간과 Revision 값을 확인합니다.
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ helm status -n helm-chart-demo rollingback-app 
 NAME: rollingback-app
 LAST DEPLOYED: Tue Apr  6 07:44:58 2021
@@ -817,14 +817,14 @@ TEST SUITE: None
 
 helm 배포 히스토리를 확인합니다.
 
-```text
+```
 helm history -n helm-chart-demo rollingback-app
 
 ```
 
 아래와 같은 결과를 확인 할 수 있습니다. Revison을 확인하고, 정상적으로 수행되었던 Revision 값으로 Rollback 할 것입니다.
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ helm history -n helm-chart-demo rollingback-app
 REVISION        UPDATED                         STATUS          CHART                   APP VERSION     DESCRIPTION     
 1               Tue Apr  6 07:44:21 2021        superseded      helm-chart-demo-0.1.0   1               Install complete
@@ -833,21 +833,21 @@ REVISION        UPDATED                         STATUS          CHART           
 
 Rollback 명령을 통해 정상 배포 버전으로 Rolling Back  합니다.
 
-```text
+```
 helm rollback -n helm-chart-demo rollingback-app 1
 
 ```
 
 이제 pod들이 다시 3개로 확장되었는지 확인해 봅니다.
 
-```text
+```
 kubectl -n helm-chart-demo get pods
 
 ```
 
 아래와 같이 정상적으로 Pod가 배포됩니다.
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get pods
 NAME                                READY   STATUS    RESTARTS   AGE
 ecsdemo-crystal-86b65cdbfd-bjdc6    1/1     Running   0          46s
@@ -863,14 +863,14 @@ ecsdemo-nodejs-64c4fd7579-hkgc2     1/1     Running   0          46s
 
 helm history를 통해 Revision을 확인해 봅니다.
 
-```text
+```
 helm history -n helm-chart-demo rollingback-app
 
 ```
 
 d아래와 같이 REVISON 3은 DESCRIPTION 에 자동으로 Rollback 되었고, REVISION 1번으로 복귀하였음을 알려줍니다.
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ helm history -n helm-chart-demo rollingback-app
 REVISION        UPDATED                         STATUS          CHART                   APP VERSION     DESCRIPTION     
 1               Tue Apr  6 07:44:21 2021        superseded      helm-chart-demo-0.1.0   1               Install complete
@@ -878,23 +878,23 @@ REVISION        UPDATED                         STATUS          CHART           
 3               Tue Apr  6 07:48:37 2021        deployed        helm-chart-demo-0.1.0   1               Rollback to 1   
 ```
 
-~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 replicat의 값을 아래와 같이 수정합니다.해 value.yaml 파일 다시 정상적으로 수정합니다.
+\~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 replicat의 값을 아래와 같이 수정합니다.해 value.yaml 파일 다시 정상적으로 수정합니다.
 
-```text
+```
 replicas: 3
 
 ```
 
 생성했던 helmdemo를 삭제합니다. 아래 ChartMuseum 구성과 배포를 위해서 반드시 삭제합니다.
 
-```text
+```
 helm uninstall -n helm-chart-demo rollingback-app
 
 ```
 
 ## ChartMuseum 구성과 배포.
 
-ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, Alibaba Cloud OSS Storage, Openstack Object Storage, Oracle Cloud Infrastructure Object를 포함한 클라우드 스토리지 백엔드를 지원하는 Go \(Golang\)로 작성된 오픈 소스 Helm Chart Repository 서버입니다. 
+ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, Alibaba Cloud OSS Storage, Openstack Object Storage, Oracle Cloud Infrastructure Object를 포함한 클라우드 스토리지 백엔드를 지원하는 Go (Golang)로 작성된 오픈 소스 Helm Chart Repository 서버입니다. 
 
 이 랩에서는 ChartMuseum을 구성하여, S3에 Helm Chart를 위한 로컬 레포지토리를 만들어 보겠습니다.
 
@@ -902,39 +902,39 @@ ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, A
 
 먼저 ChartMuseum을 설치합니다.
 
-```text
+```
 cd ~/environment
 curl -LO https://s3.amazonaws.com/chartmuseum/release/latest/bin/linux/amd64/chartmuseum
 chmod +x ./chartmuseum
 
 ```
 
-Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장소는 S3를 사용합니다.  
+Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장소는 S3를 사용합니다.\
 사전에 s3 bucket을 생성합니다.
 
 AWS 서비스 - S3 
 
-![](../.gitbook/assets/image%20%28190%29.png)
+![](<../.gitbook/assets/image (190).png>)
 
 버킷이름은 고유해야 합니다.
 
-![](../.gitbook/assets/image%20%28189%29.png)
+![](<../.gitbook/assets/image (189).png>)
 
 정상적으로 생성되었는지 확인합니다.
 
-```text
+```
 aws s3 ls | grep 'chartmuseum'
 
 ```
 
-```text
+```
 whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
 2021-04-06 08:14:49 whchoi-chartmuseum-2021-04-06
 ```
 
-아래 명령어를 통해서 debug하고 정상적으로 동작하는지 확인합니다. **`--storage-amazon-bucket="생성한 버킷 이름"`** 을 입력합니다.
+아래 명령어를 통해서 debug하고 정상적으로 동작하는지 확인합니다. **`--storage-amazon-bucket="생성한 버킷 이름" `**을 입력합니다.
 
-```text
+```
 ./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum-2021-04-06 --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2" &
 ```
 
@@ -942,33 +942,33 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 
 * TCP 8888
 
-![](../.gitbook/assets/image%20%2850%29.png)
+![](<../.gitbook/assets/image (50).png>)
 
-![](../.gitbook/assets/image%20%2853%29.png)
+![](<../.gitbook/assets/image (53).png>)
 
 helm repo list에 정상적으로 등록되었는지 확인합니다.
 
-```text
+```
 helm repo list
 
 ```
 
 이제 외부에서 정상적으로 서비스가 접속되는 지 확인해 봅니다.
 
-![](../.gitbook/assets/image%20%2848%29.png)
+![](<../.gitbook/assets/image (48).png>)
 
 ### 2. Chart 패키징 및 업로드.
 
-Helm Client \(Cloud9 IDE\)에 저장소를 추가해 봅니다.
+Helm Client (Cloud9 IDE)에 저장소를 추가해 봅니다.
 
-```text
+```
 helm repo add chartmuseum http://localhost:8888
 
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
 2021-04-06T08:19:36.368Z        DEBUG   [3] Incoming request: /index.yaml       {"reqID": "572624a5-6e8e-4566-a071-1828c7aafeb7"}
 2021-04-06T08:19:36.368Z        DEBUG   [3] Entry found in cache store  {"repo": "", "reqID": "572624a5-6e8e-4566-a071-1828c7aafeb7"}
@@ -980,7 +980,7 @@ whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
 
 이제 앞서 생성한 eksdemo helm chart 패키징 합니다. 
 
-```text
+```
 cd ~/environment/helm-chart-demo/
 helm package ./ 
 
@@ -988,14 +988,14 @@ helm package ./
 
 출력 결과 예시
 
-```text
+```
 ~/environment/helm-chart-demo $ helm package ./ 
 Successfully packaged chart and saved it to: /home/ec2-user/environment/helm-chart-demo/eksdemo-0.1.0.tgz
 ```
 
 eksdemo heml chart가 정상적으로 패키징 되었는지 확인합니다.
 
-```text
+```
 ~/environment/helm-chart-demo $ tree
 .
 ├── charts
@@ -1017,14 +1017,14 @@ eksdemo heml chart가 정상적으로 패키징 되었는지 확인합니다.
 
 Chartmuseum에 패키징을 업로드 합니다.
 
-```text
+```
 curl --data-binary "@helm-chart-demo-0.1.0.tgz" http://localhost:8888/api/charts
 
 ```
 
 출력결과 예제
 
-```text
+```
 whchoi98:~/environment/helm-chart-demo $ curl --data-binary "@helm-chart-demo-0.1.0.tgz" http://localhost:8888/api/charts
 2021-04-06T08:44:51.077Z        DEBUG   [16] Incoming request: /api/charts      {"reqID": "7d175c21-50e7-43b2-9e81-5922ede8982d"}
 2021-04-06T08:44:51.108Z        DEBUG   [16] Adding package to storage  {"package": "helm-chart-demo-0.1.0.tgz", "reqID": "7d175c21-50e7-43b2-9e81-5922ede8982d"}
@@ -1034,21 +1034,21 @@ whchoi98:~/environment/helm-chart-demo $ curl --data-binary "@helm-chart-demo-0.
 
 S3에 정상적으로 Chartmuseum이 배포되었는지 확인합니다.
 
-```text
+```
 aws s3 ls s3://whchoi-chartmuseum-2021-04-06
 
 ```
 
 출력 결과 예제
 
-```text
+```
 whchoi98:~/environment/helm-chart-demo $ aws s3 ls s3://whchoi-chartmuseum-2021-04-06
 2021-04-06 08:44:52       1400 helm-chart-demo-0.1.0.tgz
 ```
 
 이제 등록된 Repo를 업데이트하고, Chartmuseum 로컬 레포지토리를 검색해 봅니다.
 
-```text
+```
 helm repo update
 helm search repo chartmuseum
 
@@ -1056,7 +1056,7 @@ helm search repo chartmuseum
 
 출력결과 예제
 
-```text
+```
 whchoi98:~/environment/helm-chart-demo $ helm search repo chartmuseum
 NAME                            CHART VERSION   APP VERSION     DESCRIPTION                                       
 stable/chartmuseum              2.14.2          0.12.0          DEPRECATED Host your own Helm Chart Repository    
@@ -1065,14 +1065,14 @@ chartmuseum/helm-chart-demo     0.1.0           1               A Helm chart for
 
 등록된 Chartmuseum 로컬 레포지토리에서 패키지를 배포합니다.
 
-```text
+```
 helm install chartmuseum/helm-chart-demo --generate-name
 
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi98:~/environment/helm-chart-demo $ helm install chartmuseum/helm-chart-demo --generate-name
 2021-04-06T08:48:11.597Z        DEBUG   [18] Incoming request: /charts/helm-chart-demo-0.1.0.tgz        {"reqID": "5091a3ad-ddaf-4489-be01-0422eafdb57c"}
 2021-04-06T08:48:11.629Z        INFO    [18] Request served     {"path": "/charts/helm-chart-demo-0.1.0.tgz", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "31.778266ms", "reqID": "5091a3ad-ddaf-4489-be01-0422eafdb57c"}
@@ -1086,13 +1086,13 @@ TEST SUITE: None
 
 정상적으로 배포되었는지 확인합니다.
 
-```text
+```
 kubectl -n helm-chart-demo get svc
 ```
 
 출력 결과 예시
 
-```text
+```
 whchoi98:~/environment/helm-chart-demo $ kubectl -n helm-chart-demo get svc
 NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)        AGE
 ecsdemo-crystal    ClusterIP      172.20.249.215   <none>                                                                         80/TCP         29s
@@ -1102,11 +1102,9 @@ ecsdemo-nodejs     ClusterIP      172.20.60.44     <none>                       
 
 ELB DNS 레코드로 접속해 봅니다.
 
-![](../.gitbook/assets/image%20%2851%29.png)
+![](<../.gitbook/assets/image (51).png>)
 
 {% hint style="info" %}
-Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/ko_kr/AmazonECR/latest/userguide/push-oci-artifact.html)
+Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/ko_kr/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/ko_kr/AmazonECR/latest/userguide/push-oci-artifact.html)
 {% endhint %}
-
-
 

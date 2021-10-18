@@ -6,7 +6,7 @@ description: 'Update : 2020-11-11'
 
 ## 컨테이너 프로브 소개
 
-[프로브](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#probe-v1-core)는 컨테이너에서 [kubelet](https://kubernetes.io/docs/admin/kubelet/)에 의해 주기적으로 수행되는 진단\(diagnostic\) 도구입니. 진단을 수행하기 위해서, kubelet은 컨테이너에 의해서 구현된 [핸들러](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#handler-v1-core)를 호출합니다.
+[프로브](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#probe-v1-core)는 컨테이너에서 [kubelet](https://kubernetes.io/docs/admin/kubelet/)에 의해 주기적으로 수행되는 진단(diagnostic) 도구입니. 진단을 수행하기 위해서, kubelet은 컨테이너에 의해서 구현된 [핸들러](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#handler-v1-core)를 호출합니다.
 
 핸들러는 다음과 같이 세가지 타입이 있습니다.
 
@@ -22,31 +22,32 @@ description: 'Update : 2020-11-11'
 
 kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지 종류의 프로브를 수행하고 그에 반응할 수 있습니다 .
 
-* `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니다. 만약 활성 프로브\(liveness probe\)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니다.  컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`입니다.
-* `readinessProbe`: 컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타냅니다.   
-  `readinessProbe`실패한다면, 엔드포인트 컨트롤러는 파드에 연관된 모든 서비스들의 엔드포인트에서 파드의 IP주소를 제거합니다. 
+* `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니다. 만약 활성 프로브(liveness probe)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니다. \
+  컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`입니다.
+*   `readinessProbe`: 컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타냅니다. \
+    `readinessProbe`실패한다면, 엔드포인트 컨트롤러는 파드에 연관된 모든 서비스들의 엔드포인트에서 파드의 IP주소를 제거합니다. 
 
-  `readinessProbe`의 초기 지연 이전의 기본 상태는 `Failure`입니다. 컨테이너가 `readinessProbe`를 지원하지 않는다면, 기본 상태는 `Success`입니다.
-
-* `startupProbe`: 컨테이너 내의 애플리케이션이 시작되었는지를 나타냅니다. `startupProbe`가 주어진 경우, 성공할 때 까지 다른 나머지 프로브는 활성화 되지 않습니다.  `startupProbe`실패하면, kubelet이 컨테이너를 죽이고, 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)에 따라 처리됩니. 컨테이너에 스타트업 프로브가 없는 경우, 기본 상태는 `Success`입니다.
+    `readinessProbe`의 초기 지연 이전의 기본 상태는 `Failure`입니다. 컨테이너가 `readinessProbe`를 지원하지 않는다면, 기본 상태는 `Success`입니다.
+* `startupProbe`: 컨테이너 내의 애플리케이션이 시작되었는지를 나타냅니다. `startupProbe`가 주어진 경우, 성공할 때 까지 다른 나머지 프로브는 활성화 되지 않습니다. \
+  `startupProbe`실패하면, kubelet이 컨테이너를 죽이고, 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)에 따라 처리됩니. 컨테이너에 스타트업 프로브가 없는 경우, 기본 상태는 `Success`입니다.
 
 ## Liveness Probe 구성
 
 아래 그림에서 1번의 구성과 같은 컨셉으로을 이번 LAB에서 구성할 것입니다.
 
-![&#xCC38;&#xC870; - https://kubernetes.io/blog/2018/10/01/health-checking-grpc-servers-on-kubernetes/](../.gitbook/assets/image%20%2865%29.png)
+![참조 - https://kubernetes.io/blog/2018/10/01/health-checking-grpc-servers-on-kubernetes/](<../.gitbook/assets/image (65).png>)
 
 ### 1.Liveness Probe 구성을 포함한 App 배포
 
 Liveness Probe와 Readiness Probe 구성을 위한 디렉토리를 생성합니다.
 
-```text
+```
 mkdir -p ~/environment/healthchecks
 ```
 
 kubelet은 periodSeconds 필드를 사용하여 컨테이너를 상태를 확인합니다. 이 경우 kubelet은 5 초마다 liveness probe를 통해 확인합니다. initialDelaySeconds 필드는 첫 번째 Probe를 수행하기 전에 5 초 동안 기다려야한다는 것을 kubelet에 알리는 데 사용됩니다. 프로브를 수행하기 위해 kubelet은 이 포드를 호스팅 하는 서버에 HTTP GET 요청을 전송하고 서버 / health의 핸들러가 성공 코드를 반환하면 컨테이너가 정상으로 간주됩니다. 핸들러가 실패 코드를 반환하면 kubelet은 컨테이너를 종료하고 다시 시작합니다. 
 
-```text
+```
 cat <<EoF > ~/environment/healthchecks/liveness-app.yaml
 apiVersion: v1
 kind: Pod
@@ -68,7 +69,7 @@ EoF
 
 생성된 매니페스트를 사용하여 포드를 생성합니다.
 
-```text
+```
 kubectl create namespace healthchecks
 kubectl apply -f ~/environment/healthchecks/liveness-app.yaml
 kubectl -n healthchecks get pod liveness-app
@@ -76,7 +77,7 @@ kubectl -n healthchecks get pod liveness-app
 
 출력 결과 예제
 
-```text
+```
 whchoi98:~ $ kubectl -n healthchecks get pod liveness-app
 NAME           READY   STATUS    RESTARTS   AGE
 liveness-app   1/1     Running   0          14s
@@ -84,7 +85,7 @@ liveness-app   1/1     Running   0          14s
 
 아래 명령을 통해서 liveness-app의 이벤트를 확인 할 수 있습니다.
 
-```text
+```
 kubectl -n healthchecks describe pods liveness-app
 ```
 
@@ -94,7 +95,7 @@ kubectl -n healthchecks describe pods liveness-app
 Event 출력항목을 확인해 봅니다.
 {% endhint %}
 
-```text
+```
 whchoi98:~ $ kubectl -n healthchecks describe pods liveness-app
 Name:         liveness-app
 Namespace:    healthchecks
@@ -153,19 +154,19 @@ Events:
 
 이제 Docker 런타임에서 nodejs 애플리케이션 프로그램에 대한 kill 신호를 보내서 장애를 발생시킵니다.
 
-```text
+```
 kubectl -n healthchecks exec -it liveness-app -- /bin/kill -s SIGUSR1 1
 ```
 
 아래 명령을 통해서 liveness-app의 이벤트의 변화를 확인해 봅니다.
 
-```text
+```
 kubectl -n healthchecks describe pods liveness-app
 ```
 
 출력 결과 예시
 
-```text
+```
 생략
 Events:
   Type     Reason     Age                    From                                                      Message
@@ -181,7 +182,7 @@ Events:
 
 5초 간격으로 지속적으로 Probe를 체크하고 있기 때문에, 로그에서도 확인 할 수 있습니다.
 
-```text
+```
 kubectl -n healthchecks logs liveness-app --tail 10
 ```
 
@@ -191,7 +192,7 @@ kubectl -n healthchecks logs liveness-app --tail 10
 5초 마다 Probe를 시도하는 것을 로그에서 확인할 수 있습니다.
 {% endhint %}
 
-```text
+```
 whchoi98:~ $ kubectl -n healthchecks logs liveness-app --tail 10
 ::ffff:10.11.189.67 - - [22/Jul/2020:03:17:41 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
 ::ffff:10.11.189.67 - - [22/Jul/2020:03:17:46 +0000] "GET /health HTTP/1.1" 200 17 "-" "kube-probe/1.16+"
@@ -211,7 +212,7 @@ whchoi98:~ $ kubectl -n healthchecks logs liveness-app --tail 10
 
 kubelet은 periodSeconds 필드를 사용하여 컨테이너를 상태를 확인합니다. 이 경우 kubelet은 3 초마다 readiness probe를 통해 확인합니다. initialDelaySeconds 필드는 첫 번째 Probe를 수행하기 전에 5 초 동안 기다려야한다는 것을 kubelet에 알리는 데 사용됩니다. 프로브를 수행하기 위해 kubelet은 /tmp/health 디렉토리가 존재하는 지를 확인합니다. 만약 없다면 해당 Pod에는 App을 배포하지 않습니다.
 
-```text
+```
 cat <<EoF > ~/environment/healthchecks/readiness-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -244,23 +245,23 @@ EoF
 
 생성된 매니페스트를 사용하여 포드를 생성합니다.
 
-```text
+```
 kubectl -n healthchecks apply -f ~/environment/healthchecks/readiness-deployment.yaml
 ```
 
 아래 명령을 통해 App배포와 Replica 상태를 확인해 봅니다.
 
-```text
+```
 kubectl -n healthchecks get pods -l app=readiness-deployment
 ```
 
-```text
+```
 kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
 ```
 
 아래와 같이 모두 정상적으로 수행되는 것을 확인할 수 있습니다.
 
-```text
+```
 whchoi98:~/environment/healthchecks $ kubectl -n healthchecks get pods -l app=readiness-deployment
 NAME                                   READY   STATUS    RESTARTS   AGE
 readiness-deployment-589b548d5-qhw6k   1/1     Running   0          103s
@@ -274,23 +275,23 @@ Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavai
 
 앞서 매니페스트 파일 내부에 포함된 Readiness Probe에는 반드시 `tmp/healthy` 디렉토리가 존재해야 Readiness Probe가 구동되도록 되어 있습니다. 해당 디렉토리를 삭제 시켜서 Readiness Fail을 발생시킵니다.
 
-```text
+```
 kubectl -n healthchecks exec -it readiness-deployment-589b548d5-xnmcm -- rm /tmp/healthy
 ```
 
 아래 명령을 통해 App배포와 Replica 상태를 확인해 봅니다.
 
-```text
+```
 kubectl -n healthchecks get pods -l app=readiness-deployment
 ```
 
-```text
+```
 kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
 ```
 
 아래와 같이 출력 결과를 확인 할 수 있습니다.
 
-```text
+```
 # pod readiness-deployment-589b548d5-xnmcm가 정상작동하지 않습니다.
 ~/environment/healthchecks $ kubectl -n healthchecks get pods -l app=readiness-deployment
 NAME                                   READY   STATUS    RESTARTS   AGE
@@ -311,20 +312,20 @@ Replicas:               3 desired | 3 updated | 3 total | 2 available | 1 unavai
 
 앞서 Pod에서 삭제한 디렉토리를 다시 생성합니다.
 
-```text
+```
 kubectl -n healthchecks exec -it readiness-deployment-589b548d5-xnmcm -- touch /tmp/healthy
 ```
 
 디렉토리를 생성한 후 Pod의 상태와 Replica 가용 숫자를 확인해 봅니다.
 
-```text
+```
 kubectl -n healthchecks get pods -l app=readiness-deployment
 kubectl -n healthchecks describe deployment readiness-deployment | grep Replicas:
 ```
 
 아래와 같은 결과를 얻을 수 있습니다.
 
-```text
+```
 whchoi98:~/environment/healthchecks $ kubectl -n healthchecks get pods -l app=readiness-deployment
 NAME                                   READY   STATUS    RESTARTS   AGE
 readiness-deployment-589b548d5-qhw6k   1/1     Running   0          21m
@@ -342,6 +343,4 @@ Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavai
 
 
 
-  
-
-
+\
