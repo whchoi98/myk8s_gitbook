@@ -6,13 +6,11 @@ description: 'Update : 2020-04-04 / 50min'
 
 아래와 같은 구성을 Cloudformation과 eksctl기반으로 설치합니다.
 
-![](../.gitbook/assets/image%20%28169%29.png)
+![](<../.gitbook/assets/image (220).png>)
 
 Cloudformation으로 VPC, AZ, Subnet, Routing Table등을 구성합니다.
 
 eksctl로 사전에 정의된 yaml을 통해서 각 Public Node Group과 Private Node Group을 구성합니다.
 
 이 랩을 완료하는데 1시간 정도 소요됩니다. 
-
-
 
