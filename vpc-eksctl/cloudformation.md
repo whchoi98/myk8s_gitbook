@@ -14,7 +14,7 @@ AWS CloudFormation에서는 클라우드 환경에서 AWS 및 타사 애플리�
 
 eksworkshop에서 사용할 다양한 yaml file을 git에서 내려받습니다. Cloud9에서 아래와 같이 실행합니다.
 
-```text
+```
 cd ~/environment
 git clone https://github.com/whchoi98/myeks
 
@@ -24,11 +24,11 @@ git clone https://github.com/whchoi98/myeks
 
 Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC3AZ.yml 파일을 로컬 PC에 다운로드 합니다. EKS 환경 구성을 위한 VPC 구성용 Cloudformation 입니다.
 
-![](../.gitbook/assets/image%20%28198%29.png)
+![](<../.gitbook/assets/image (198).png>)
 
 Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다.
 
-```text
+```
 #S3 Bucket 생성합니다. 
 #Bucket name은 고유해야 합니다.
 aws s3 mb s3://{bucket-name}
@@ -49,29 +49,39 @@ AWS 서비스 - Cloudformation 을 선택합니다.
 
 "스택생성" - "새 리소스 사용"을 선택합니다.
 
-![](../.gitbook/assets/image%20%2841%29.png)
+![](<../.gitbook/assets/image (41).png>)
 
-앞서 다운로드 받은 "**EKSVPC3AZ.yml**" 파일을 업로드 합니다. \(2개 AZ는 EKSVPC2AZ.yml , 3개 AZ는 EKSVPC3AZ.yml, 4개 AZ는 EKSVPC4AZ.yml을 선택합니다.\)
+앞서 다운로드 받은 "**EKSVPC3AZ.yml**" 파일을 업로드 합니다.
 
-![](../.gitbook/assets/image%20%28162%29.png)
+![](<../.gitbook/assets/image (221).png>)
 
 {% hint style="info" %}
 yml 파일을 로컬 PC에서 업로드 불가능한 경우에는 , S3 URL을 선택하고 업로드 합니다.
 {% endhint %}
 
+S3 URL은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있습니다.
+
+```
+https://{bucket_name}.s3.ap-northeast-2.amazonaws.com/EKSVPC3AZ.yml
+```
+
+![](<../.gitbook/assets/image (220).png>)
+
+
+
 ### 3. Stack 상세 정보 구성
 
 Cloudformation Stack 상세 정보 구성을 합니다.
 
-![](../.gitbook/assets/image%20%28163%29.png)
+![](<../.gitbook/assets/image (163).png>)
 
-![](../.gitbook/assets/image%20%2823%29.png)
+![](<../.gitbook/assets/image (23).png>)
 
-![](../.gitbook/assets/image%20%287%29.png)
+![](<../.gitbook/assets/image (7).png>)
 
 생성이 완료되었는지 확인합니다.
 
-![](../.gitbook/assets/image%20%2832%29.png)
+![](<../.gitbook/assets/image (32).png>)
 
 ### 4.Output 정보 확인
 
@@ -79,19 +89,19 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 이때 필요한 것이, VPC id, Subnet id 입니다. 출력이 되면 subnet id는 public subnet 01,02,03, private subnet 01,02,03으로 출력됩니다. 
 
-이 값을 확인해 봅니다. \(다음 단원에서 aws cli 통해서 Cloud9 인스턴스 홈 디렉토리에 결과값을 txt 파일로 저장할 것입니다.\)
+이 값을 확인해 봅니다. (다음 단원에서 aws cli 통해서 Cloud9 인스턴스 홈 디렉토리에 결과값을 txt 파일로 저장할 것입니다.)
 
-![](../.gitbook/assets/image%20%28160%29.png)
+![](<../.gitbook/assets/image (160).png>)
 
 구성이 완료되면 다음과 같은 VPC가 구성됩니다.
 
-![](../.gitbook/assets/image%20%28167%29.png)
+![](<../.gitbook/assets/image (167).png>)
 
 ## Cloudformation 기반 VPC 구성 요약
 
 #### 1.EKS workshop을 위한 File Download
 
-```text
+```
 cd ~/environment
 git clone https://github.com/whchoi98/myeks
 
@@ -108,4 +118,3 @@ git clone https://github.com/whchoi98/myeks
 **`파일선택 - EKSVPCxAZ.yml 선택`**
 
 **`출력정보 확인`**
-
