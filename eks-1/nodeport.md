@@ -6,15 +6,29 @@ description: 'Update: 2021-05-21 / 30min'
 
 ## Overview
 
-nodeport 타입의 service는 Node\(EC2인스턴스\)의 포트를 통해서 서비스로 전달하는 방식입니다. 특정 노드로 유입 시킨 이후에 Service에서 로드밸런싱을 사용할 수 있습니다.하지만 최초 모든 트래픽이 하나의 노드로 집중되기 때문에 이에 대한 설계 고려가 필요합니다.
+nodeport 타입의 service는 Node(EC2인스턴스)의 포트를 통해서 서비스로 전달하는 방식입니다. 특정 노드로 유입 시킨 이후에 Service에서 로드밸런싱을 사용할 수 있습니다.하지만 최초 모든 트래픽이 하나의 노드로 집중되기 때문에 이에 대한 설계 고려가 필요합니다.
+
+## Nodeport 이해
+
+nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의 포트를 외부에 노출 시켜서 사용하는 방식입니다. NodePort로 노드그룹의 각 워커 노드의 공인 IP(ENI)에서 서비스를 노출 시키게 됩니다.
+
+이 NodeIP:NodePort는 30000\~32767번 포트를 사용하게 되며, NodePort 서비스가 라우팅 되는 ClusterIP 서비스가 자동 생성됩니다.
+
+### Nodeport 동작 방식 
+
+* 외부 사용자는 Node(EC2)의 공인 IP/Port로 접근하게 됩니다. 
+* Node(EC2)는 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다. 
+* IPTable 규칙에 의해 PoD 분산하게 됩니다.
+
+![](<../.gitbook/assets/image (219).png>)
 
 ## Nodeport 기반 Service 구성 
 
-![Cluster IP &#xD0C0;&#xC785; &#xAE30;&#xBC18; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28179%29.png)
+![Cluster IP 타입 기반 서비스](<../.gitbook/assets/image (179).png>)
 
 NodePort 타입기반의 Service는 Node에서 Port를 외부에 노출 시키고 , 해당 포트로 유입되는 트래픽을 Service로 전달하고  Pod Container의 포트로 전달합니다.
 
-![NodePort &#xD0C0;&#xC785; &#xAE30;&#xBC18;&#xC758; &#xC11C;&#xBE44;&#xC2A4;](../.gitbook/assets/image%20%28174%29.png)
+![NodePort 타입 기반의 서비스](<../.gitbook/assets/image (174).png>)
 
 * namespace : nodeport-test
 * ecsdemo-frontend service type : nodePort
@@ -23,7 +37,7 @@ NodePort 타입기반의 Service는 Node에서 Port를 외부에 노출 시키�
 
 NodePort 타입의 서비스 구성을 위해서 LAB에서 사용할 App을 복제합니다.
 
-```text
+```
 cd ~/environment
 git clone https://github.com/whchoi98/eksdemo-frontend.git
 git clone https://github.com/whchoi98/eksdemo-nodejs.git
@@ -34,18 +48,18 @@ git clone https://github.com/whchoi98/eksdemo-crystal.git
 {% hint style="info" %}
 아래 git reop를 참조해서 수정했습니다.
 
-git clone [https://github.com/whchoi98/ecsdemo-frontend.git](https://github.com/whchoi98/eksdemo-frontend.git)   
-git clone [https://github.com/whchoi98/ecsdemo-nodejs.git](https://github.com/whchoi98/eksdemo-nodejs.git)   
+git clone [https://github.com/whchoi98/ecsdemo-frontend.git](https://github.com/whchoi98/eksdemo-frontend.git) \
+git clone [https://github.com/whchoi98/ecsdemo-nodejs.git](https://github.com/whchoi98/eksdemo-nodejs.git) \
 git clone [https://github.com/brentley/ecsdemo-crystal.git](https://github.com/brentley/ecsdemo-crystal.git)
 {% endhint %}
 
 정상적으로 복제 이후 Cloud9에서 아래와 같이 확인됩니다.
 
-![](../.gitbook/assets/image%20%2818%29.png)
+![](<../.gitbook/assets/image (18).png>)
 
 아래와 같이 새로운 deployment, service를 복사합니다.
 
-```text
+```
  cd ~/environment/
  cp ./eksdemo-frontend/kubernetes/deployment.yaml ./eksdemo-frontend/kubernetes/nodeport_deployment.yaml
  cp ./eksdemo-frontend/kubernetes/service.yaml ./eksdemo-frontend/kubernetes/nodeport_service.yaml
@@ -58,9 +72,9 @@ git clone [https://github.com/brentley/ecsdemo-crystal.git](https://github.com/b
 
 ### 2. Yaml 변경
 
-~/environment/ecsdemo-frontend/kubernetes/ecsdemo-frontend/nodeport\_deployment.yaml 파일은은 다음과 같이 변경합니다.
+\~/environment/ecsdemo-frontend/kubernetes/ecsdemo-frontend/nodeport_deployment.yaml 파일은은 다음과 같이 변경합니다.
 
-```text
+```
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -102,9 +116,9 @@ spec:
         nodegroup-type: "frontend-workloads"
 ```
 
-~/environment/ecsdemo-frontend/kubernetes/ecsdemo-frontend/nodeport\_service.yaml은 다음과 같이 변경합니다.
+\~/environment/ecsdemo-frontend/kubernetes/ecsdemo-frontend/nodeport_service.yaml은 다음과 같이 변경합니다.
 
-```text
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -129,7 +143,7 @@ spec:
 
 이제 Namespace를 먼저 생성합니다.
 
-```text
+```
 kubectl create namespace nodeport-test
 
 ```
@@ -138,7 +152,7 @@ kubectl create namespace nodeport-test
 
 nodeport 용 어플리케이션과 서비스를 배포합니다.
 
-```text
+```
 cd ~/environment/ecsdemo-frontend/kubernetes/
 kubectl apply -f nodeport_deployment.yaml
 kubectl apply -f nodeport_service.yaml
@@ -147,14 +161,14 @@ kubectl apply -f nodeport_service.yaml
 
 정상적으로 배포되었는지 확인해 봅니다.
 
-```text
+```
 kubectl -n nodeport-test get service
 
 ```
 
 아래와 같은 결과를 볼 수 있습니다.
 
-```text
+```
 whchoi98:~/environment/ecsdemo-frontend/kubernetes (main) $ kubectl -n nodeport-test get service
 NAME               TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
 ecsdemo-frontend   NodePort   172.20.164.40   <none>        80:30080/TCP   20h
@@ -164,12 +178,12 @@ ecsdemo-frontend   NodePort   172.20.164.40   <none>        80:30080/TCP   20h
 
 정상적으로 배포되었는지 확인합니다.
 
-```text
+```
 kubectl -n nodeport-test get pods
 
 ```
 
-```text
+```
 whchoi98:~/environment/ecsdemo-frontend/kubernetes (main) $ kubectl -n nodeport-test get pods 
 NAME                              READY   STATUS    RESTARTS   AGE
 ecsdemo-frontend-746f9ff7-bpffv   1/1     Running   0          86s
@@ -177,14 +191,14 @@ ecsdemo-frontend-746f9ff7-bpffv   1/1     Running   0          86s
 
 Output wide 옵션을 통해서 실제 Pod가 배포된 Node를 확인합니다.
 
-```text
+```
 kubectl -n nodeport-test get pods ecsdemo-frontend-746f9ff7-bpffv -o wide
 
 ```
 
 아래 Node 이름을 확인 할 수 있습니다.
 
-```text
+```
 whchoi98:~/environment/ecsdemo-frontend/kubernetes (main) $ kubectl -n nodeport-test get pods ecsdemo-frontend-746f9ff7-bpffv -o wide
 NAME                              READY   STATUS    RESTARTS   AGE     IP             NODE                                             NOMINATED NODE   READINESS GATES
 ecsdemo-frontend-746f9ff7-bpffv   1/1     Running   0          2m26s   10.11.18.181   ip-10-11-22-15.ap-northeast-2.compute.internal   <none>           <none>
@@ -192,7 +206,7 @@ ecsdemo-frontend-746f9ff7-bpffv   1/1     Running   0          2m26s   10.11.18.
 
 Node 이름을 아래와 같이 상세하게 확인 할 수 있습니다.
 
-```text
+```
 kubectl -n nodeport-test get pods ecsdemo-frontend-746f9ff7-bpffv -o wide
 kubectl get nodes -o wide
 
@@ -202,33 +216,32 @@ Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니�
 
 Public-SG 라는 Security Group을 생성하고, 해당 인스턴스에 적용합니다.
 
-![](../.gitbook/assets/image%20%28177%29.png)
+![](<../.gitbook/assets/image (177).png>)
 
 Security Group에서 TCP 30080를 허용합니다.
 
-![](../.gitbook/assets/image%20%28184%29.png)
+![](<../.gitbook/assets/image (184).png>)
 
 이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다.
 
-```text
+```
 node공인ip주소:30080
 ```
 
 아래와 같은 결과를 확인할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28178%29.png)
+![](<../.gitbook/assets/image (178).png>)
 
 이제 Pod를 3개로 늘려서 서비스를 확인해 봅니다.
 
-```text
+```
 kubectl -n nodeport-test scale deployment ecsdemo-frontend --replicas=3
 kubectl -n nodeport-test get pods
 
 ```
 
-![](../.gitbook/assets/image%20%28182%29.png)
+![](<../.gitbook/assets/image (182).png>)
 
 {% hint style="info" %}
 NodePort 30080을 하나의 노드에서만 Security Group으로 허용했는데도, 서비스 분산이 이뤄집니다. 이것은 특정 Node로 Nodeport로 트래픽이 인입하고, 내부에서는 Service를 통해서 Label Selector를 통해서 부하 분산이 이뤄지고 있는 것입니다.
 {% endhint %}
-
