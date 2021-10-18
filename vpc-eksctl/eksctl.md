@@ -237,7 +237,7 @@ ip-10-11-99-248.ap-northeast-2.compute.internal    Ready    <none>   26m   v1.20
 
 다음과 같은 구성도가 완성되었습니다.
 
-![](<../.gitbook/assets/image (166).png>)
+![](<../.gitbook/assets/image (221).png>)
 
 ### 6.eksctl yaml code 참조 (option)
 
