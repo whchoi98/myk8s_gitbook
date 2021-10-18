@@ -144,7 +144,7 @@ ClusterIP 타입은 내부에서 사용하도록 노출되며 , 외부에 노출
 
 * ClusterIP 타입 종류 - UserSpace Proxy 모드 , iptables Proxy 모드, IPVS Proxy 모드.
 
-![](<../.gitbook/assets/image (221) (1).png>)
+![](<../.gitbook/assets/image (221) (1) (1).png>)
 
 ### ClusterIP Server 시험  
 
