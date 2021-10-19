@@ -124,9 +124,12 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 ![](<../.gitbook/assets/image (221) (1).png>)
 
-iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
+Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
 
 ```
+
+aws ssm start-session --target $NGPublic01
+sudo -s
 iptables -t nat -L --line-number | more
 
 ```

@@ -80,12 +80,36 @@ ClbTestPod01에 접속해서 아래와 같이 확인해 봅니다
 ```
 kubectl -n clb-test-01 exec -it $ClbTestPod01 -- /bin/sh
 nslookup {cluster-ip}
+tcpdump -i eth0 dst port 80
 
 ```
 
-다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
+Cloud9 IDE Terminal에서 CLB External IP:8080 으로 접속합니다
+
+```
+kubectl -n clb-test-01 get service
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)          AGE
+clb-test-01-svc   LoadBalancer   172.20.214.188   a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com   8080:32139/TCP   3h16m
+
+curl a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com:8080
+```
+
+Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
+
+```
+
+aws ssm start-session --target $NGPublic01
+sudo -s
+iptables -t nat -L --line-number | more
+```
+
+## CLB Application 배포
+
+ㅁㅁ다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
 
 ![CLB 기반 LAB 구성도](<../.gitbook/assets/image (172).png>)
+
+
 
 * namespace : clb-test
 * ecsdemo-frontend service type : LoadbBlancer
