@@ -499,7 +499,7 @@ k9s -A
 우리 LAB에서는 NLB의 Internal과 External을 어떻게 변경했는지 yaml 파일을 다시 확인해 봅니다.
 {% endhint %}
 
-### 4.BackEnd 어플리케이션 배포
+### 10.BackEnd 어플리케이션 배포
 
 Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어플리케이션들은 Private Subnet에 배포할 것입니다. 이 구성은 앞서 이미 Yaml 파일의 Deployment에서 nodeSelector로 지정하였습니다.
 
@@ -509,7 +509,8 @@ kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_deploy
 kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_service.yaml
 
 #crystal nlb depolyment,service apply
- 
+kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_deployment.yaml
+kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_service.yaml
 
 ```
 
