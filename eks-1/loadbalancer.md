@@ -110,204 +110,11 @@ iptables -t nat -L --line-number | more
 ![](<../.gitbook/assets/image (221).png>)
 
 * namespace : clb-test
-* ecsdemo-frontend service type : LoadbBlancer
-* ecsdemo-crystal service type: Cluster-IP (Default)
-* ecsdemo-nodejs service type: Cluster-IP (Default)
+* eksdemo-frontend service type : LoadbBlancer
+* eksdemo-crystal service type: Cluster-IP&#x20;
+* eksdemo-nodejs service type: Cluster-IP&#x20;
 
-아래와 같이 새로운 deployment, service를 복사합니다.
-
-```
- cd ~/environment/
- cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
- cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/clb_service.yaml
- cp ./ecsdemo-crystal/kubernetes/deployment.yaml ./ecsdemo-crystal/kubernetes/clb_deployment.yaml
- cp ./ecsdemo-crystal/kubernetes/service.yaml ./ecsdemo-crystal/kubernetes/clb_service.yaml
- cp ./ecsdemo-nodejs/kubernetes/deployment.yaml ./ecsdemo-nodejs/kubernetes/clb_deployment.yaml
- cp ./ecsdemo-nodejs/kubernetes/service.yaml ./ecsdemo-nodejs/kubernetes/clb_service.yaml
- 
-```
-
-### 2. Yaml 변경
-
-\~/environment/ecsdemo-frontend/kubernetes/ecsdemo-frontend/clb\_deployment.yaml 파일은은 다음과 같이 변경합니다.
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ecsdemo-frontend
-  labels:
-    app: ecsdemo-frontend
-#name space change 
-  namespace: clb-test
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ecsdemo-frontend
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: ecsdemo-frontend
-    spec:
-      containers:
-      - image: brentley/ecsdemo-frontend:latest
-        imagePullPolicy: Always
-        name: ecsdemo-frontend
-        ports:
-        - containerPort: 3000
-          protocol: TCP
-        env:
-#Container URL change.
-        - name: CRYSTAL_URL
-          value: "http://ecsdemo-crystal.clb-test.svc.cluster.local/crystal"
-        - name: NODEJS_URL
-          value: "http://ecsdemo-nodejs.clb-test.svc.cluster.local/"
-#add nodeSelector
-      nodeSelector:
-        nodegroup-type: "frontend-workloads"
-```
-
-\~/environment/ecsdemo-frontend/kubernetes/ecsdemo-frontend/clb\_service.yaml은 다음과 같이 변경합니다.
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: ecsdemo-frontend
-#name space change 
-  namespace: clb-test
-spec:
-  selector:
-    app: ecsdemo-frontend
-#Service Type change
-  type: LoadBalancer
-  ports:
-   -  protocol: TCP
-      port: 80
-      targetPort: 3000
-```
-
-\~/environment/ecsdemo-frontend/kubernetes/ecsdemo-crystal/clb\_deployment.yaml은 다음과 같이 변경합니다.
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ecsdemo-crystal
-  labels:
-    app: ecsdemo-crystal
-#name space change 
-  namespace: clb-test
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ecsdemo-crystal
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: ecsdemo-crystal
-    spec:
-      containers:
-      - image: brentley/ecsdemo-crystal:latest
-        imagePullPolicy: Always
-        name: ecsdemo-crystal
-        ports:
-        - containerPort: 3000
-          protocol: TCP
-#add nodeSelector
-      nodeSelector:
-        nodegroup-type: "backend-workloads"
-
-```
-
-\~/environment/ecsdemo-frontend/kubernetes/ecsdemo-crystal/clb\_service.yaml은 다음과 같이 변경합니다.
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: ecsdemo-crystal
-#name space change 
-  namespace: clb-test
-spec:
-  selector:
-    app: ecsdemo-crystal
-  ports:
-   -  protocol: TCP
-      port: 80
-      targetPort: 3000
-```
-
-\~/environment/ecsdemo-frontend/kubernetes/ecsdemo-nodejs/clb\_deployment.yaml은 다음과 같이 변경합니다.
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ecsdemo-nodejs
-  labels:
-    app: ecsdemo-nodejs
-#name space change 
-  namespace: clb-test
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ecsdemo-nodejs
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: ecsdemo-nodejs
-    spec:
-      containers:
-      - image: brentley/ecsdemo-nodejs:latest
-        imagePullPolicy: Always
-        name: ecsdemo-nodejs
-        ports:
-        - containerPort: 3000
-          protocol: TCP
-#add nodeSelector
-      nodeSelector:
-        nodegroup-type: "backend-workloads"
-```
-
-\~/environment/ecsdemo-frontend/kubernetes/ecsdemo-nodejs/clb\_service.yaml은 다음과 같이 변경합니다.
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: ecsdemo-nodejs
-#name space change 
-  namespace: clb-test
-spec:
-  selector:
-    app: ecsdemo-nodejs
-  ports:
-   -  protocol: TCP
-      port: 80
-      targetPort: 3000
-
-```
-
-### 3. FrontEnd 어플리케이션 배포와 서비스 구성.
+### 4. FrontEnd 어플리케이션 배포와 서비스 구성.
 
 기본 Loadbalacer 구성을 위해 새로운 Namespace를 생성합니다.
 
@@ -319,10 +126,10 @@ kubectl create namespace clb-test
 어플리케이션을 배포하고, service를 구성합니다.
 
 ```
-#ecsdemo frontend clb depolyment apply
-kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_deployment.yaml
-#ecsdemo frontend clb service apply
-kubectl apply -f ./ecsdemo-frontend/kubernetes/clb_service.yaml
+#eksdemo frontend clb depolyment apply
+kubectl -n clb-test apply -f ~/environment/eksdemo-frontend/kubernetes/clb_deployment.yaml
+#eksdemo frontend clb service apply
+kubectl -n clb-test apply -f ~/environment/eksdemo-frontend/kubernetes/clb_service.yaml
 
 ```
 
@@ -338,13 +145,13 @@ Replica를 3개로 늘려서 LB가 FrontEnd에서 정상적으로 이뤄지는 �
 
 ```
 kubectl -n clb-test scale deployment ecsdemo-frontend --replicas=3
-
+kubectl -n clb-test get pod -o wide
 ```
 
 아래 출력되는 결과의 EXTERNAL-IP를 복사해서 브라우져 창에서 실행해 봅니다.
 
 ```
-kubectl -n clb-test get service ecsdemo-frontend -o wide                                                           
+kubectl -n clb-test get service -o wide                                                           
 NAME               TYPE           CLUSTER-IP     EXTERNAL-IP                                                                   PORT(S)        AGE     SELECTOR
 ecsdemo-frontend   LoadBalancer   172.20.37.78   afd75bf8c69c04c3aacf6cfbdefe1c4f-884593752.ap-northeast-2.elb.amazonaws.com   80:31380/TCP   5m45s   app=ecsdemo-frontend
 ```
@@ -365,15 +172,15 @@ k9s -A
 Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어플리케이션들은 Private Subnet에 배포할 것입니다. 이 구성은 앞서 이미 Yaml 파일의 Deployment에서 nodeSelector로 지정하였습니다.
 
 ```
-#ecsdemo nodejs clb depolyment apply
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/clb_deployment.yaml
-#ecsdemo nodejs clb service apply
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/clb_service.yaml
+#eksdemo nodejs clb depolyment apply
+#eksdemo nodejs clb service apply
+kubectl -n clb-test apply -f ~/environment/eksdemo-crystal/kubernetes/clb_deployment.yaml
+kubectl -n clb-test apply -f ~/environment/eksdemo-crystal/kubernetes/clb_service.yaml
 
-#ecsdemo crystal clb depolyment apply
-kubectl apply -f ./ecsdemo-crystal/kubernetes/clb_deployment.yaml
+#eksdemo crystal clb depolyment apply
 #ecsdemo crystal clb service apply
-kubectl apply -f ./ecsdemo-crystal/kubernetes/clb_service.yaml 
+kubectl -n clb-test apply -f ~/environment/eksdemo-nodejs/kubernetes/clb_deployment.yaml
+kubectl -n clb-test apply -f ~/environment/eksdemo-nodejs/kubernetes/clb_service.yaml
 
 ```
 
@@ -390,8 +197,8 @@ kubectl -n clb-test get service ecsdemo-crystal -o wide
 Replica를 3개로 늘려서 Service Type이 없는 경우, BackEnd에서 정상적으로 이뤄지는 지 확인합니다.
 
 ```
-kubectl -n clb-test scale deployment ecsdemo-nodejs --replicas=3
-kubectl -n clb-test scale deployment ecsdemo-crystal --replicas=3
+kubectl -n clb-test scale deployment eksdemo-nodejs --replicas=3
+kubectl -n clb-test scale deployment eksdemo-crystal --replicas=3
 
 ```
 
@@ -431,7 +238,19 @@ ecsdemo-frontend   LoadBalancer   172.20.213.219   a6531bc45d323472d869946b9bfac
 ecsdemo-nodejs     ClusterIP      172.20.181.252   <none>                                                                       80/TCP         22m    app=ecsdemo-nodejs
 ```
 
-## NLB기반 Loadbalancer 서비스 구성.
+## NLB Loadbalancer 서비스 기반 구성
+
+1.NLB 기반 Service Type
+
+
+
+2.NLB Service Type 트래픽 흐름
+
+
+
+3\. NLB Service 시험
+
+## NLB기반 Loadbalancer 배포
 
 다음과 같은 구성을 통해서 NLB 서비스를 구현해 봅니다.&#x20;
 
