@@ -116,7 +116,7 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 아래와 같이 Security Group이 생성됩니다.
 
-![](<../.gitbook/assets/image (217) (1).png>)
+![](<../.gitbook/assets/image (217) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (218).png>)
 

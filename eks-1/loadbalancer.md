@@ -4,7 +4,7 @@ description: 'update : 2021-10-18 / 2h'
 
 # Loadbalancer 기반 배포
 
-## Loadbalancer 서비스 타입 소개.
+## ![](<../.gitbook/assets/image (226).png>)Loadbalancer 서비스 타입 소개.
 
 Loadbalancer 기반의 서비스 타입은 현재 CLB (Classic Load Balancer)와 NLB(Network Load Balancer) 2가지 타입을 지원하고 있습니다. 모두 Port 기반의 LB를 제공하고 있으며, Kubernetes 의 Node와 Service 전면에서 서비스를 제공합니다.
 
@@ -25,6 +25,63 @@ Traffic 흐름은 다음과 같습니다.
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
 ![](<../.gitbook/assets/image (222).png>)
+
+3\. CLB Service 시험
+
+CLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다
+
+```
+## clb-test-01 namespace를 생성하고, pod, service를 배포 
+kubectl create namespace clb-test-01
+kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01.yaml
+kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01-service.yaml
+
+```
+
+정상적으로 배포되었는지 아래 Command로 확인합니다
+
+```
+## clb-test-01 namespace의 pod 확인 
+kubectl -n clb-test-01 get pod -o wide
+
+## clb-test-01 namespace의 service 확인
+kubectl -n clb-test-01 get service -o wide
+
+```
+
+다음과 같은 결과를 얻을 수 있습니다
+
+```
+$ kubectl -n clb-test-01 get pod -o wide
+NAME                           READY   STATUS    RESTARTS   AGE     IP             NODE                                              NOMINATED NODE   READINESS GATES
+clb-test-01-66f4b975ff-4ljrm   1/1     Running   0          2m55s   10.11.45.100   ip-10-11-35-116.ap-northeast-2.compute.internal   <none>           <none>
+clb-test-01-66f4b975ff-ldttb   1/1     Running   0          2m55s   10.11.29.252   ip-10-11-21-111.ap-northeast-2.compute.internal   <none>           <none>
+clb-test-01-66f4b975ff-xb2rs   1/1     Running   0          2m55s   10.11.7.225    ip-10-11-3-68.ap-northeast-2.compute.internal     <none>           <none>
+$ kubectl -n clb-test-01 get service -o wide
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)          AGE    SELECTOR
+clb-test-01-svc   LoadBalancer   172.20.214.188   a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com   8080:32139/TCP   3m8s   app=clb-test-01
+```
+
+아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다
+
+![](<../.gitbook/assets/image (217).png>)
+
+아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
+
+```
+echo "export ClbTestPod03=clb-test-01-66f4b975ff-4ljrm" | tee -a ~/.bash_profile
+echo "export ClbTestPod02=clb-test-01-66f4b975ff-ldttb" | tee -a ~/.bash_profile
+echo "export ClbTestPod01=clb-test-01-66f4b975ff-xb2rs" | tee -a ~/.bash_profile
+source ~/.bash_profile
+```
+
+ClbTestPod01에 접속해서 아래와 같이 확인해 봅니다
+
+```
+kubectl -n clb-test-01 exec -it $ClbTestPod01 -- /bin/sh
+nslookup {cluster-ip}
+
+```
 
 다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
 
