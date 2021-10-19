@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2021-05-22'
+description: 'Update: 2021-10-01 / 30min'
 ---
 
 # Cluster IP 기반 배포
@@ -24,7 +24,7 @@ Service의 종류는 아래와 같습니다.
 
 ![](<../.gitbook/assets/image (219) (1).png>)
 
-### CoreDNS와 Service 역할 확인을 위한 App배포&#x20;
+### 1.CoreDNS와 Service 역할 확인을 위한 App배포&#x20;
 
 아래와 같이 새로운 Namespace와 Pod를 생성합니다.
 
@@ -136,7 +136,7 @@ PING 10.11.29.107 (10.11.29.107) 56(84) bytes of data.
 
 ## ClusterIP Type
 
-### ClusterType 소개 &#x20;
+### 2.ClusterType 소개 &#x20;
 
 Kubernetes 에서 Service는 Pod들이 실행 중인 애플리케이션을 네트워크 서비스로 노출하는 추상적인 방법입니다. 다양한 Service 들 중에서 ClusterIP는 Service - Type의 기본 값입니다.
 
@@ -146,7 +146,7 @@ ClusterIP 타입은 내부에서 사용하도록 노출되며 , 외부에 노출
 
 ![](<../.gitbook/assets/image (221) (1) (1).png>)
 
-### ClusterIP Server 시험 &#x20;
+### 3.ClusterIP Server 시험 &#x20;
 
 아래와 같이 ClusterIP 서비스를 배포합니다.
 
