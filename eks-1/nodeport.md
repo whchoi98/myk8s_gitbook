@@ -14,7 +14,7 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 
 이 NodeIP:NodePort는 30000\~32767번 포트를 사용하게 되며, NodePort 서비스가 라우팅 되는 ClusterIP 서비스가 자동 생성됩니다.
 
-### Nodeport 동작 방식&#x20;
+### 1.Nodeport 동작 방식&#x20;
 
 * 외부 사용자는 Node(EC2)의 공인 IP/Port로 접근하게 됩니다.&#x20;
 * Node(EC2)는 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
@@ -53,7 +53,7 @@ source ~/.bash_profile
 
 ```
 
-### **NodePort Service 시험 **
+### **2.NodePort Service 시험 **
 
 Nodeport service를 배포합니다.
 
@@ -138,7 +138,7 @@ iptables -t nat -L --line-number | more
 * namespace : nodeport-test
 * ecsdemo-frontend service type : nodePort
 
-### 배포용 yaml 복제.
+### 3.배포용 yaml 복제.
 
 NodePort 타입의 서비스 구성을 위해서 LAB에서 사용할 App을 Cloud9에서 복제합니다.
 
@@ -152,7 +152,7 @@ git clone https://github.com/whchoi98/eksdemo-crystal.git
 
 ## Application 배포&#x20;
 
-### 1.namespace 생성&#x20;
+### 4.namespace 생성&#x20;
 
 이제 Namespace를 먼저 생성합니다.
 
@@ -161,7 +161,7 @@ kubectl create namespace nodeport-test
 
 ```
 
-### 2. Application , Service 배포
+### 5. Application , Service 배포
 
 nodeport 용 어플리케이션과 서비스를 배포합니다.
 
@@ -187,7 +187,7 @@ NAME               TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
 ecsdemo-frontend   NodePort   172.20.210.120   <none>        80:30081/TCP   10s
 ```
 
-### 3. 서비스 확인
+### 6. 서비스 확인
 
 정상적으로 배포되었는지 확인합니다.
 
