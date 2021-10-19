@@ -29,16 +29,17 @@ Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC3AZ.yml 파일을 로컬
 Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다.
 
 ```
-#S3 Bucket 생성합니다. 
-#Bucket name은 고유해야 합니다.
+##S3 Bucket 생성합니다. 
+##Bucket name은 고유해야 합니다.
 aws s3 mb s3://{bucket-name}
+
 #생성한 S3 Bucket으로 파일을 모두 복사해 둡니다.
 cd ./myeks/
 
 # Cloud9에서 변경되는 파일을 S3와 동기화 합니다. 
 aws s3 sync ./ s3://{bucket-name}
 
-##option - copy를 통해 사용해도 가능합니다.
+## option - copy를 통해 사용해도 가능합니다.
 aws s3 cp ./ s3://{bucket-name} --recursive
 
 ## LAB에서 사용할 Object접근을 허용합니다.
@@ -56,10 +57,10 @@ AWS 서비스 - Cloudformation 을 선택합니다.&#x20;
 ![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1).png>)
 
 {% hint style="info" %}
-yml 파일을 로컬 PC에서 업로드 불가능한 경우에는 , S3 URL을 선택하고 업로드 합니다.
+yml 파일을 로컬 PC에서 업로드 불가능한 경우에는 , 앞서 S3로 업로드한 S3 URL을 선택합니다.
 {% endhint %}
 
-S3 URL은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있습니다.
+S3 URL 형식은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있습니다.
 
 ```
 https://{bucket_name}.s3.ap-northeast-2.amazonaws.com/EKSVPC3AZ.yml
