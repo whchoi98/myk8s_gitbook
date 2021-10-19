@@ -16,7 +16,15 @@ Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. Cl
 
 ![](<../.gitbook/assets/image (221).png>)
 
+### 2. CLB Service Type 트래픽 흐름
 
+Traffic 흐름은 다음과 같습니다.
+
+* 외부 사용자는 CLB DNS A Record:Port로 접근
+* CLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
+* NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
+
+![](<../.gitbook/assets/image (222).png>)
 
 다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
 
