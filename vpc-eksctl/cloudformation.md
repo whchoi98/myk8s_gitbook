@@ -45,7 +45,7 @@ aws s3 cp ./ s3://{bucket-name} --recursive
 aws s3api put-object-acl --bucket {bucket name} --key EKSVPC3AZ.yml --acl public-read  
 ```
 
-AWS 서비스 - Cloudformation 을 선택합니다. 
+AWS 서비스 - Cloudformation 을 선택합니다.&#x20;
 
 "스택생성" - "새 리소스 사용"을 선택합니다.
 
@@ -65,7 +65,7 @@ S3 URL은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있�
 https://{bucket_name}.s3.ap-northeast-2.amazonaws.com/EKSVPC3AZ.yml
 ```
 
-![](<../.gitbook/assets/image (220) (1) (1).png>)
+![](<../.gitbook/assets/image (220) (1) (1) (1).png>)
 
 
 
@@ -87,7 +87,7 @@ Cloudformation Stack 상세 정보 구성을 합니다.
 
 Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 사용해서 EKS Cluster를 사용할 것입니다.
 
-이때 필요한 것이, VPC id, Subnet id 입니다. 출력이 되면 subnet id는 public subnet 01,02,03, private subnet 01,02,03으로 출력됩니다. 
+이때 필요한 것이, VPC id, Subnet id 입니다. 출력이 되면 subnet id는 public subnet 01,02,03, private subnet 01,02,03으로 출력됩니다.&#x20;
 
 이 값을 확인해 봅니다. (다음 단원에서 aws cli 통해서 Cloud9 인스턴스 홈 디렉토리에 결과값을 txt 파일로 저장할 것입니다.)
 

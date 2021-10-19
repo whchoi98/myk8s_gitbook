@@ -14,10 +14,10 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 
 이 NodeIP:NodePort는 30000\~32767번 포트를 사용하게 되며, NodePort 서비스가 라우팅 되는 ClusterIP 서비스가 자동 생성됩니다.
 
-### Nodeport 동작 방식 
+### Nodeport 동작 방식&#x20;
 
-* 외부 사용자는 Node(EC2)의 공인 IP/Port로 접근하게 됩니다. 
-* Node(EC2)는 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다. 
+* 외부 사용자는 Node(EC2)의 공인 IP/Port로 접근하게 됩니다.&#x20;
+* Node(EC2)는 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
 * IPTable 규칙에 의해 PoD 분산하게 됩니다.
 
 ![](<../.gitbook/assets/image (219).png>)
@@ -33,7 +33,7 @@ kubectl -n node-test-01 get pods -o wide
 
 ```
 
-생성한 pod를 확인합니다. 
+생성한 pod를 확인합니다.&#x20;
 
 ```
 kubectl -n node-test-01 get pods -o wide
@@ -107,16 +107,16 @@ Public-SG 라는 Security Group을 생성하고, 해당 인스턴스에 적용�
 
 ![](<../.gitbook/assets/image (223).png>)
 
-Public-SG 라는 이름으로 Security Group을 생성합니다. 
+Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 * TCP 30080-30090 허용
-* HTTP, HTTPS, ICMP, SSH 허용 
+* HTTP, HTTPS, ICMP, SSH 허용&#x20;
 
 ![](<../.gitbook/assets/image (225) (1).png>)
 
 아래와 같이 Security Group이 생성됩니다.
 
-![](<../.gitbook/assets/image (217).png>)
+![](<../.gitbook/assets/image (217) (1).png>)
 
 ![](<../.gitbook/assets/image (218).png>)
 
@@ -124,7 +124,14 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.
 
 ![](<../.gitbook/assets/image (221).png>)
 
-## Nodeport 기반 Service 구성 
+iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
+
+```
+iptables -t nat -L --line-number | more
+
+```
+
+## Nodeport 기반 Service 구성&#x20;
 
 이제 실제 웹서비스를 배포해 봅니다.
 
@@ -143,9 +150,9 @@ git clone https://github.com/whchoi98/eksdemo-crystal.git
 
 ```
 
-## Application 배포 
+## Application 배포&#x20;
 
-### 1.namespace 생성 
+### 1.namespace 생성&#x20;
 
 이제 Namespace를 먼저 생성합니다.
 
@@ -218,13 +225,17 @@ kubectl get nodes -o wide
 
 ```
 
-이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다.
+이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다. Node의 IP 주소는 EC2 서비스 대시 보드에서 확인 할 수 있습니다.
+
+![](<../.gitbook/assets/image (220).png>)
+
+eksworkshop-ng-public-01-Node 의 IP 주소를 확인하고 , 브라우저에서 아래와 같이 주소를 입력합니다.
 
 ```
 node공인ip주소:30081
 ```
 
-아래와 같은 결과를 확인할 수 있습니다.
+아래와 같은 결과를 확인할 수 있습니다. Pod를 1개 배포했기 때문에 1개의 Pod로 라우팅 되는 것을 확인할 수 있습니다.
 
 ![](<../.gitbook/assets/image (225).png>)
 
@@ -235,6 +246,8 @@ kubectl -n nodeport-test scale deployment ecsdemo-frontend --replicas=3
 kubectl -n nodeport-test get pods
 
 ```
+
+Pod 3개로 브라우저에서 정상적으로 서비스 되는지 확인해 봅니다.
 
 {% hint style="info" %}
 NodePort 30080을 하나의 노드에서만 Security Group으로 허용했는데도, 서비스 분산이 이뤄집니다. 이것은 특정 Node로 Nodeport로 트래픽이 인입하고, 내부에서는 Service를 통해서 부하 분산이 이뤄지고 있는 것입니다.

@@ -4,13 +4,13 @@ description: 'Update: 2021-05-22'
 
 # Cluster IP 기반 배포
 
-## 개요 
+## 개요&#x20;
 
 Kubernetes에서는 Pod의 전면에서 Pod로 들어오는 트래픽을 전달하는 service 자원이 제공됩니다. 해당 Service 자원은 Pod의 IP 주소와 관계 없이 Pod의 Label Selector를 보고 트래픽을 전달하는 역할을 담당합니다.
 
 Service의 종류는 아래와 같습니다.
 
-* Cluster IP - Service 자원의 기본 타입이며 Kubernetes 내부에서만 접근 가능 
+* Cluster IP - Service 자원의 기본 타입이며 Kubernetes 내부에서만 접근 가능&#x20;
 * NodePort - 로컬 호스트의 특정 포트를 Serivce의 특정 포트와 연결
 * Loadbalancer - AWS CLB, NLB 등과 같은 로드밸런서가 노드 전면에서 처리하는 방식
 
@@ -24,7 +24,7 @@ Service의 종류는 아래와 같습니다.
 
 ![](<../.gitbook/assets/image (219) (1).png>)
 
-### CoreDNS와 Service 역할 확인을 위한 App배포 
+### CoreDNS와 Service 역할 확인을 위한 App배포&#x20;
 
 아래와 같이 새로운 Namespace와 Pod를 생성합니다.
 
@@ -136,7 +136,7 @@ PING 10.11.29.107 (10.11.29.107) 56(84) bytes of data.
 
 ## ClusterIP Type
 
-### ClusterType 소개  
+### ClusterType 소개 &#x20;
 
 Kubernetes 에서 Service는 Pod들이 실행 중인 애플리케이션을 네트워크 서비스로 노출하는 추상적인 방법입니다. 다양한 Service 들 중에서 ClusterIP는 Service - Type의 기본 값입니다.
 
@@ -146,7 +146,7 @@ ClusterIP 타입은 내부에서 사용하도록 노출되며 , 외부에 노출
 
 ![](<../.gitbook/assets/image (221) (1) (1).png>)
 
-### ClusterIP Server 시험  
+### ClusterIP Server 시험 &#x20;
 
 아래와 같이 ClusterIP 서비스를 배포합니다.
 
@@ -155,7 +155,7 @@ cd ~/environment/myeks/network-test/
 kubectl -n cluster-test-01 apply -f cluster-test-01-service.yaml
 ```
 
-ClusterIP Service에 대한 yaml 파일은 아래와 같습니다. 
+ClusterIP Service에 대한 yaml 파일은 아래와 같습니다.&#x20;
 
 ```
 apiVersion: v1
@@ -182,9 +182,9 @@ cluster-test-01-svc   ClusterIP   172.20.4.192   <none>        8080/TCP   3h26m 
 
 ClusterIP service의 A Record는
 
- **`"ClusterIP Metadata.name"."namesapce".svc.cluster.local.`** 의 형식을 사용하게 됩니다.
+&#x20;**`"ClusterIP Metadata.name"."namesapce".svc.cluster.local.`** 의 형식을 사용하게 됩니다.
 
-![](<../.gitbook/assets/image (217) (1).png>)
+![](<../.gitbook/assets/image (217) (1) (1).png>)
 
 ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. clur을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
 
