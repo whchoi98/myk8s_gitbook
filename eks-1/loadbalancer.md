@@ -4,7 +4,7 @@ description: 'update : 2021-10-18 / 2h'
 
 # Loadbalancer 기반 배포
 
-## ![](<../.gitbook/assets/image (226).png>)Loadbalancer 서비스 타입 소개.
+## Loadbalancer 서비스 타입 소개.
 
 Loadbalancer 기반의 서비스 타입은 현재 CLB (Classic Load Balancer)와 NLB(Network Load Balancer) 2가지 타입을 지원하고 있습니다. 모두 Port 기반의 LB를 제공하고 있으며, Kubernetes 의 Node와 Service 전면에서 서비스를 제공합니다.
 
@@ -14,7 +14,7 @@ Loadbalancer 기반의 서비스 타입은 현재 CLB (Classic Load Balancer)와
 
 Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. Cloud Service Provider의 기본 로드밸런서 타입을 사용하게 되며, AWS의 경우에는 CLB를 사용합니다. CLB는 내부 또는 외부 로드밸런서로 지정이 가능합니다.
 
-![](<../.gitbook/assets/image (221).png>)
+![](<../.gitbook/assets/image (221) (1).png>)
 
 ### 2. CLB Service Type 트래픽 흐름
 
@@ -26,7 +26,7 @@ Traffic 흐름은 다음과 같습니다.
 
 ![](<../.gitbook/assets/image (222).png>)
 
-3\. CLB Service 시험
+### 3. CLB Service 시험
 
 CLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다
 
@@ -105,32 +105,14 @@ iptables -t nat -L --line-number | more
 
 ## CLB Application 배포
 
-ㅁㅁ다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
+다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
 
-![CLB 기반 LAB 구성도](<../.gitbook/assets/image (172).png>)
-
-
+![](<../.gitbook/assets/image (221).png>)
 
 * namespace : clb-test
 * ecsdemo-frontend service type : LoadbBlancer
 * ecsdemo-crystal service type: Cluster-IP (Default)
 * ecsdemo-nodejs service type: Cluster-IP (Default)
-
-### 1.배포용 yaml 복제.
-
-LAB에서 사용할 App을 복제합니다.
-
-```
-cd ~/environment
-git clone https://github.com/brentley/ecsdemo-frontend.git
-git clone https://github.com/brentley/ecsdemo-nodejs.git
-git clone https://github.com/brentley/ecsdemo-crystal.git
-
-```
-
-정상적으로 복제 이후 Cloud9에서 아래와 같이 확인됩니다.
-
-![](<../.gitbook/assets/image (18).png>)
 
 아래와 같이 새로운 deployment, service를 복사합니다.
 
