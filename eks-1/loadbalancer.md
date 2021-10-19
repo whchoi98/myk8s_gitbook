@@ -103,6 +103,58 @@ sudo -s
 iptables -t nat -L --line-number | more
 ```
 
+CLB에서는 아래와 같은 다양한 Annotation을 추가하여 CLB의 속성 또는 AWS 자원을 연결해서 사용할 수 있습니다
+
+```
+metadata:
+      name: my-service
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "60"
+        # 로드 밸런서가 연결을 닫기 전에, 유휴 상태(연결을 통해 전송 된 데이터가 없음)의 연결을 허용하는 초단위 시간
+
+        service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+        # 로드 밸런서에 교차-영역(cross-zone) 로드 밸런싱을 사용할 지 여부를 지정
+
+        service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "environment=prod,owner=devops"
+        # 쉼표로 구분된 key-value 목록은 ELB에
+        # 추가 태그로 기록됨
+
+        service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: ""
+        # 백엔드가 정상인 것으로 간주되는데 필요한 연속적인
+        # 헬스 체크 성공 횟수이다. 기본값은 2이며, 2와 10 사이여야 한다.
+
+        service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "3"
+        # 백엔드가 비정상인 것으로 간주되는데 필요한
+        # 헬스 체크 실패 횟수이다. 기본값은 6이며, 2와 10 사이여야 한다.
+
+        service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "20"
+        # 개별 인스턴스의 상태 점검 사이의
+        # 대략적인 간격 (초 단위). 기본값은 10이며, 5와 300 사이여야 한다.
+
+        service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout: "5"
+        # 헬스 체크 실패를 의미하는 무 응답의 총 시간 (초 단위)
+        # 이 값은 service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval
+        # 값 보다 작아야한다. 기본값은 5이며, 2와 60 사이여야 한다.
+
+        service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-53fae93f"
+        # 생성된 ELB에 설정할 기존 보안 그룹(security group) 목록.
+        # service.beta.kubernetes.io/aws-load-balancer-extra-security-groups 어노테이션과 달리, 이는 이전에 ELB에 할당된 다른 모든 보안 그룹을 대체하며,
+        # '해당 ELB를 위한 고유 보안 그룹 생성'을 오버라이드한다.
+        # 목록의 첫 번째 보안 그룹 ID는 인바운드 트래픽(서비스 트래픽과 헬스 체크)이 워커 노드로 향하도록 하는 규칙으로 사용된다.
+        # 여러 ELB가 하나의 보안 그룹 ID와 연결되면, 1줄의 허가 규칙만이 워커 노드 보안 그룹에 추가된다.
+        # 즉, 만약 여러 ELB 중 하나를 지우면, 1줄의 허가 규칙이 삭제되어, 같은 보안 그룹 ID와 연결된 모든 ELB에 대한 접속이 막힌다.
+        # 적절하게 사용되지 않으면 이는 다수의 서비스가 중단되는 상황을 유발할 수 있다.
+
+        service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: "sg-53fae93f,sg-42efd82e"
+        # 생성된 ELB에 추가할 추가 보안 그룹 목록
+        # 이 방법을 사용하면 이전에 생성된 고유 보안 그룹이 그대로 유지되므로, 각 ELB가 고유 보안 그룹 ID와 그에 매칭되는 허가 규칙 라인을 소유하여
+        # 트래픽(서비스 트래픽과 헬스 체크)이 워커 노드로 향할 수 있도록 한다. 여기에 기재되는 보안 그룹은 여러 서비스 간 공유될 수 있다.
+
+        service.beta.kubernetes.io/aws-load-balancer-target-node-labels: "ingress-gw,gw-name=public-api"
+        # 로드 밸런서의 대상 노드를 선택하는 데
+        # 사용되는 키-값 쌍의 쉼표로 구분된 목록
+```
+
 ## CLB Application 배포
 
 다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
@@ -167,7 +219,7 @@ k9s -A
 
 ```
 
-### 4. BackEnd 어플리케이션 배포
+### 5. BackEnd 어플리케이션 배포
 
 Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어플리케이션들은 Private Subnet에 배포할 것입니다. 이 구성은 앞서 이미 Yaml 파일의 Deployment에서 nodeSelector로 지정하였습니다.
 
@@ -212,7 +264,7 @@ LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위�
 
 ![](<../.gitbook/assets/image (155).png>)
 
-### 5. Loadbalancer 확인.
+### 6. Loadbalancer 확인.
 
 이제 서비스 타입을 확인하기 위해서 EC2 대시보드에서 Loadbalancer를 확인합니다.
 
@@ -240,15 +292,28 @@ ecsdemo-nodejs     ClusterIP      172.20.181.252   <none>                       
 
 ## NLB Loadbalancer 서비스 기반 구성
 
-1.NLB 기반 Service Type
+### 7.NLB 기반 Service Type
+
+Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. CLB와 다르게 반드시 annotation을 통해 NLB를 지정해야 합니다. NLB도 내부 또는 외부 로드밸런서로 지정이 가능합니다. 또한 NLB는 외부의 IP를 PoD까지 그대로 전달 할 수 있습니다
+
+* NLB Annotation&#x20;
+
+```
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+```
+
+### 8.NLB Service Type 트래픽 흐름
 
 
 
-2.NLB Service Type 트래픽 흐름
-
-
-
-3\. NLB Service 시험
+### 9. NLB Service 시험
 
 ## NLB기반 Loadbalancer 배포
 
