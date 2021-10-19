@@ -311,9 +311,98 @@ Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. CL
 
 ### 8.NLB Service Type 트래픽 흐름
 
+Traffic 흐름은 다음과 같습니다.
 
+* 외부 사용자는 NLB DNS A Record:Port로 접근합니다.&#x20;
+* NLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
+* NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
+
+![](<../.gitbook/assets/image (225).png>)
 
 ### 9. NLB Service 시험
+
+NLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
+
+```
+## nlb-test-01 namespace를 생성하고, pod, service를 배포
+kubectl create namespace nlb-test-01
+kubectl -n nlb-test-01 apply -f ~/environment/myeks/network-test/nlb-test-01.yaml
+kubectl -n nlb-test-01 apply -f ~/environment/myeks/network-test/nlb-test-01-service.yaml
+
+```
+
+정상적으로 배포되었는지 아래 Command로 확인합니다.&#x20;
+
+```
+kubectl -n nlb-test-01 get pod -o wide
+kubectl -n nlb-test-01 get service -o wide
+```
+
+다음과 같은 결과를 얻을 수 있습니다.&#x20;
+
+```
+kubectl -n nlb-test-01 get pod -o wide
+NAME                          READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
+nlb-test-01-7c5cf9bd5-chpdb   1/1     Running   0          50s   10.11.10.19    ip-10-11-3-68.ap-northeast-2.compute.internal     <none>           <none>
+nlb-test-01-7c5cf9bd5-dfdjm   1/1     Running   0          50s   10.11.32.190   ip-10-11-35-116.ap-northeast-2.compute.internal   <none>           <none>
+nlb-test-01-7c5cf9bd5-zp494   1/1     Running   0          50s   10.11.20.119   ip-10-11-21-111.ap-northeast-2.compute.internal   <none>           <none>
+
+kubectl -n nlb-test-01 get service -o wide
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
+nlb-test-01-svc   LoadBalancer   172.20.167.205   aee3bccea7e554a008b3257942202ee1-89daeb3e502cc5fc.elb.ap-northeast-2.amazonaws.com   8080:30360/TCP   19s   app=nlb-test-01
+```
+
+아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.
+
+![](<../.gitbook/assets/image (223).png>)
+
+아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
+
+```
+echo "export NlbTestPod03=nlb-test-01-7c5cf9bd5-dfdjm" | tee -a ~/.bash_profile
+echo "export NlbTestPod02=nlb-test-01-7c5cf9bd5-zp494" | tee -a ~/.bash_profile
+echo "export NlbTestPod01=nlb-test-01-7c5cf9bd5-chpdb" | tee -a ~/.bash_profile
+source ~/.bash_profile
+```
+
+NlbTestPod01에 접속해서 아래와 같이 확인해 봅니다.&#x20;
+
+```
+kubectl -n clb-test-01 exec -it $ClbTestPod01 -- /bin/sh
+nslookup {cluster-ip}
+tcpdump -i eth0 dst port 80
+```
+
+Cloud9 IDE Terminal에서 CLB External IP:8080 으로 접속합니다.&#x20;
+
+```
+$ kubectl -n nlb-test-01 get service -o wide
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
+nlb-test-01-svc   LoadBalancer   172.20.167.205   aee3bccea7e554a008b3257942202ee1-89daeb3e502cc5fc.elb.ap-northeast-2.amazonaws.com   8080:30360/TCP   19s   app=nlb-test-01
+
+curl aee3bccea7e554a008b3257942202ee1-89daeb3e502cc5fc.elb.ap-northeast-2.amazonaws.com:8080
+```
+
+Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
+
+```
+aws ssm start-session --target $NGPublic01
+sudo -s
+iptables -t nat -L --line-number | more
+
+```
+
+NLB Service를 삭제하고, 새롭게 배포해 봅니다. nlb-test-01-service.yaml 파일에서 "externalTrafficPolicy: Local"을 활성화 해 봅니다
+
+```
+## nlb-test-01-service 삭제
+kubectl -n nlb-test-01 delete -f ~/environment/myeks/network-test/nlb-test-01-service.yaml
+
+##  ~/environment/myeks/network-test/nlb-test-01-service.yaml 파일에서 아래 line의 주석처리를 제거 합니다
+  externalTrafficPolicy: Local
+```
+
+NlbTestPod01에 접속해서 Client IP가 보이는지 확인해 봅니다
 
 ## NLB기반 Loadbalancer 배포
 
@@ -326,219 +415,7 @@ Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. CL
 * ecsdemo-crystal service type: nlb(internal)
 * ecsdemo-nodejs service type: nlb(internal)
 
-### 1.배포용 yaml 복제
-
-아래와 같이 NLB-service.yaml 를 각 App별로 생성하여 구성합니다.
-
-```
-  cd ~/environment/
-  cp ./ecsdemo-frontend/kubernetes/deployment.yaml ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
-  cp ./ecsdemo-crystal/kubernetes/deployment.yaml ./ecsdemo-crystal/kubernetes/nlb_deployment.yaml
-  cp ./ecsdemo-nodejs/kubernetes/deployment.yaml ./ecsdemo-nodejs/kubernetes/nlb_deployment.yaml
-  cp ./ecsdemo-frontend/kubernetes/service.yaml ./ecsdemo-frontend/kubernetes/nlb_service.yaml
-  cp ./ecsdemo-crystal/kubernetes/service.yaml ./ecsdemo-crystal/kubernetes/nlb_service.yaml
-  cp ./ecsdemo-nodejs/kubernetes/service.yaml ./ecsdemo-nodejs/kubernetes/nlb_service.yaml
-  
-```
-
-### 2.Yaml 변경
-
-NLB 구성을 위해 복사한 Yaml 파일을 다음과 같이 변경합니다.
-
-ecsdemo-frontend nlb\_deployment.yaml
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ecsdemo-frontend
-  labels:
-    app: ecsdemo-frontend
-#name space change 
-  namespace: nlb-test
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ecsdemo-frontend
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: ecsdemo-frontend
-    spec:
-      containers:
-      - image: brentley/ecsdemo-frontend:latest
-        imagePullPolicy: Always
-        name: ecsdemo-frontend
-        ports:
-        - containerPort: 3000
-          protocol: TCP
-#Container URL change.
-        env:
-        - name: CRYSTAL_URL
-          value: "http://ecsdemo-crystal.nlb-test.svc.cluster.local/crystal"
-        - name: NODEJS_URL
-          value: "http://ecsdemo-nodejs.nlb-test.svc.cluster.local/"
-#add nodeSelector
-      nodeSelector:
-        nodegroup-type: "backend-workloads"
-```
-
-ecsdemo-frontend nlb\_service.yaml
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: ecsdemo-frontend
-#name space change 
-  namespace: nlb-test
-#add annotations for External nlb
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-spec:
-  selector:
-    app: ecsdemo-frontend
-  type: LoadBalancer
-  ports:
-   -  protocol: TCP
-      port: 80
-      targetPort: 3000
-```
-
-ecsdemo-nodejs nlb\_deployment.yaml
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ecsdemo-nodejs
-  labels:
-    app: ecsdemo-nodejs
-#name space change 
-  namespace: nlb-test
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ecsdemo-nodejs
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: ecsdemo-nodejs
-    spec:
-      containers:
-      - image: brentley/ecsdemo-nodejs:latest
-        imagePullPolicy: Always
-        name: ecsdemo-nodejs
-        ports:
-        - containerPort: 3000
-          protocol: TCP
-#add nodeSelector
-      nodeSelector:
-        nodegroup-type: "backend-workloads"
-```
-
-ecsdemo-nodejs nlb\_service.yaml
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: ecsdemo-nodejs
-#name space change 
-  namespace: nlb-test
-#add annotations for Internal nlb
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
-spec:
-  selector:
-    app: ecsdemo-nodejs
-#type LoadBalancer
-  type: LoadBalancer
-  ports:
-   -  protocol: TCP
-      port: 80
-      targetPort: 3000
-
-
-```
-
-ecsdemo-crystal nlb\_deployment.yaml
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ecsdemo-crystal
-  labels:
-    app: ecsdemo-crystal
-#name space change 
-  namespace: nlb-test
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ecsdemo-crystal
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: ecsdemo-crystal
-    spec:
-      containers:
-      - image: brentley/ecsdemo-crystal:latest
-        imagePullPolicy: Always
-        name: ecsdemo-crystal
-        ports:
-        - containerPort: 3000
-          protocol: TCP
-#add nodeSelector
-      nodeSelector:
-        nodegroup-type: "backend-workloads"
-```
-
-ecsdemo-crystal nlb\_service.yaml
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: ecsdemo-crystal
-#name space change 
-  namespace: nlb-test
-#add annotations for Internal nlb
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
-spec:
-  selector:
-    app: ecsdemo-crystal
-#type LoadBalancer
-  type: LoadBalancer
-  ports:
-   -  protocol: TCP
-      port: 80
-      targetPort: 3000
-
-```
-
-### 3.FrontEnd 어플리케이션 배포
+### 10.FrontEnd 어플리케이션 배포
 
 새로운 namespace를 구성합니다.
 
@@ -549,18 +426,18 @@ kubectl create namespace nlb-test
 어플리케이션을 배포하고, service를 구성합니다.
 
 ```
-#ecsdemo frontend nlb depolyment apply
-kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_deployment.yaml
-#ecsdemo frontend nlb service apply
-kubectl apply -f ./ecsdemo-frontend/kubernetes/nlb_service.yaml
+## nlb-test-01 namespace를 생성하고, pod, service를 배포
+kubectl create namespace nlb-test
+kubectl -n nlb-test apply -f ~/environment/eksdemo-frontend/kubernetes/nlb_deployment.yaml
+kubectl -n nlb-test apply -f ~/environment/eksdemo-frontend/kubernetes/nlb_service.yaml
 
 ```
 
 정상적으로 Pod가 배포되었는지 아래 명령을 통해서 확인해 봅니다.
 
 ```
-kubectl -n nlb-test get deployments ecsdemo-frontend -o wide
-kubectl -n nlb-test get service ecsdemo-frontend -o wide 
+kubectl -n nlb-test-01 get pod -o wide
+kubectl -n nlb-test-01 get service -o wide
 
 ```
 
@@ -571,7 +448,7 @@ kubectl -n nlb-test scale deployment ecsdemo-frontend --replicas=3
 ```
 
 {% hint style="info" %}
-NLB를 구성하기 위해서는 annotation을 통한 Labeling이 필요합니다. 아래 내용을 확인하고 목적에 맞게 설정합니다.&#x20;
+NLB를 구성하기 위해서는 annotation을 통한 Labeling이 필요합니다. 아래 내용을 확인하고 목적에 맞게 설정합니다. 배포 파일에 이미 설정되어 있습니다
 {% endhint %}
 
 ```
@@ -627,15 +504,12 @@ k9s -A
 Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어플리케이션들은 Private Subnet에 배포할 것입니다. 이 구성은 앞서 이미 Yaml 파일의 Deployment에서 nodeSelector로 지정하였습니다.
 
 ```
-#ecsdemo nodejs nlb depolyment apply
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_deployment.yaml
-#ecsdemo nodejs nlb service apply
-kubectl apply -f ./ecsdemo-nodejs/kubernetes/nlb_service.yaml
+#nodejs nlb depolyment,service apply
+kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_deployment.yaml
+kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_service.yaml
 
-#ecsdemo crystal nlb depolyment apply
-kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_deployment.yaml
-#ecsdemo crystal nlb service apply
-kubectl apply -f ./ecsdemo-crystal/kubernetes/nlb_service.yaml 
+#crystal nlb depolyment,service apply
+ 
 
 ```
 
