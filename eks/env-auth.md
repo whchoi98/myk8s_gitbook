@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-10-01 / 15min'
+description: 'update : 2021-10-18 / 15min'
 ---
 
 # 인증/자격증명 및 환경 구성
@@ -46,7 +46,7 @@ EC2 대쉬보드의 인스턴스에는 이미 생성된 Cloud9 EC2 인스턴스�
 
 "작업"-"보"-"IAM 역할 연결/바꾸기"를 선택합니다.
 
-![](../.gitbook/assets/eks_cloud9\_iam_role_change.png)
+![](../.gitbook/assets/eks\_cloud9\_iam\_role\_change.png)
 
 앞서 생성한 IAM 역할 **"eksworkshop-admin"**을 선택합니다.
 
@@ -104,7 +104,7 @@ echo $AWS_REGION
 
 ```
 
-bash_profile에 저장합니다.
+bash\_profile에 저장합니다.
 
 ```
 echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
@@ -130,7 +130,7 @@ secret_key     ****************sDz7         iam-role
 
 eksworkshop에서 사용될 키를 생성합니다.
 
-### 1.SSH Key 생성
+### 7.SSH Key 생성
 
 Cloud9에서 ssh key를 생성합니다.
 
@@ -173,7 +173,7 @@ mv ./eksworkshop ./eksworkshop.pem
 chmod 400 ./eksworkshop.pem
 ```
 
-### 2.ssh key 전송
+### 8.ssh key 전송
 
 생성된 SSH key를  Key 페어로 전송합니다. 앞서 eksworkshop.pub 로 public key가 생성되었습니다. \
 (AWS CLI Version 2.0)
@@ -215,15 +215,15 @@ cat eksworkshop.pub
 
 ## CMK  생성
 
-### KMS 소개
+### 9.KMS 소개
 
-AWS KMS(Key Management Service)를 사용하면 손쉽게 암호화 키를 생성 및 관리하고 다양한 AWS 서비스와 애플리케이션에서의 사용을 제어할 수 있습니다. AWS KMS는 FIPS 140-2에 따라 검증되었거나 검증 과정에 있는 하드웨어 보안 모듈을 사용하여 키를 보호하는 안전하고 복원력 있는 서비스입니다. 또한, AWS KMS는 AWS CloudTrail과도 통합되어 모든 키 사용에 관한 로그를 제공함으로써 각종 규제 및 규정 준수 요구 사항을 충족할 수 있게 지원합니다. 
+AWS KMS(Key Management Service)를 사용하면 손쉽게 암호화 키를 생성 및 관리하고 다양한 AWS 서비스와 애플리케이션에서의 사용을 제어할 수 있습니다. AWS KMS는 FIPS 140-2에 따라 검증되었거나 검증 과정에 있는 하드웨어 보안 모듈을 사용하여 키를 보호하는 안전하고 복원력 있는 서비스입니다. 또한, AWS KMS는 AWS CloudTrail과도 통합되어 모든 키 사용에 관한 로그를 제공함으로써 각종 규제 및 규정 준수 요구 사항을 충족할 수 있게 지원합니다.&#x20;
 
 ![](<../.gitbook/assets/image (1).png>)
 
 EKS에서는 K8s와 Key를 통한 인증이 많이 일어납니다. 안전한 관리를 위해 Option으로 구성할 수 있습니다.
 
-### 1.CMK 생성
+### 10.CMK 생성
 
 K8s Secret 암호화를 할 때, EKS 클러스터에서 사용할 CMK(Cusomter Management Key : 사용자 관리형 키)를 생성합니다.
 
@@ -236,16 +236,16 @@ aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms cr
 
 ![](<../.gitbook/assets/image (142).png>)
 
-### 2. CMK ARN 변수 저장
+### 11. CMK ARN 변수 저장
 
-CMK의 ARN을 $MASTER_ARN에 입력해 둡니다. 
+CMK의 ARN을 $MASTER\_ARN에 입력해 둡니다.&#x20;
 
 ```
 export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
 
 ```
 
-MASTER_ARN에 입력된 값을 조회하고, 홈디렉토리에 **`master_arn.txt`** 파일을 저장합니다. master_arn 의 값은 계속 사용되는 값입니다.
+MASTER\_ARN에 입력된 값을 조회하고, 홈디렉토리에 **`master_arn.txt`** 파일을 저장합니다. master\_arn 의 값은 계속 사용되는 값입니다.
 
 ```
  cd ~/environment
@@ -255,13 +255,13 @@ MASTER_ARN에 입력된 값을 조회하고, 홈디렉토리에 **`master_arn.tx
  
 ```
 
-출력 결과 예제 
+출력 결과 예제&#x20;
 
 ```
 arn:aws:kms:ap-northeast-2:xxxxxxx:key/xxxxxxx
 ```
 
-이 랩에서 KMS Key를 쉽게 참조 할 수 있도록 MASTER 환경변수를 bash_profile에 저장합니다.
+이 랩에서 KMS Key를 쉽게 참조 할 수 있도록 MASTER 환경변수를 bash\_profile에 저장합니다.
 
 ```
 echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
