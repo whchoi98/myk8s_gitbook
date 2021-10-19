@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2021-05-21 / 30min'
+description: 'Update: 2021-10-01 / 40min'
 ---
 
 # NodePort 기반 배포
