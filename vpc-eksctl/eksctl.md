@@ -59,7 +59,7 @@ subnet-01db4b6773a94e6a2 10.11.96.0/20 eksworkshop-PrivateSubnet03
 
 ```
 
-저장해둔 Region 정보와 master_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
+저장해둔 Region 정보와 master\_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
 
 ```
 #사용자 AWS Region
@@ -130,7 +130,7 @@ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop
 ```
 
 {% hint style="info" %}
-Cluster를 생성하기 위해 20분 정도 시간이 소요됩니다. 
+Cluster를 생성하기 위해 20분 정도 시간이 소요됩니다.&#x20;
 {% endhint %}
 
 출력 결과 예시
@@ -237,7 +237,7 @@ ip-10-11-99-248.ap-northeast-2.compute.internal    Ready    <none>   26m   v1.20
 
 다음과 같은 구성도가 완성되었습니다.
 
-![](<../.gitbook/assets/image (221) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (221) (1) (1) (1) (1).png>)
 
 ### 6.eksctl yaml code 참조 (option)
 
