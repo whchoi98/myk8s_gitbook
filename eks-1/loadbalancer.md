@@ -1,5 +1,5 @@
 ---
-description: 'update : 2020-04-04 / 1h 30min'
+description: 'update : 2021-10-18 / 2h'
 ---
 
 # Loadbalancer 기반 배포
