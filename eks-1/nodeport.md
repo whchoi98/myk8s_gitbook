@@ -17,7 +17,7 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 ### 1.Nodeport 동작 방식&#x20;
 
 * 외부 사용자는 Node(EC2)의 공인 IP/Port로 접근하게 됩니다.&#x20;
-* Node(EC2)는 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
+* 공인 IP/Port로 접근한 트래픽은 Node(EC2)의 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
 * IPTable 규칙에 의해 PoD 분산하게 됩니다.
 
 ![](<../.gitbook/assets/image (219).png>)
