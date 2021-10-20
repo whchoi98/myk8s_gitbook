@@ -203,7 +203,7 @@ kubectl apply -f v2_1_3_full.yaml
 
 ## ALB Ingress Controller 기반 ALB 확인
 
-아래와 같이 새로운 manifest 파일을 생성합니다.
+아래와 같이 새로운 manifest 파일을 생성합니다. (이미 git을 통해 해당 폴더에 다운로드 받았습니다. 생략 할 수 있습니다. )
 
 ```
 cat <<EoF > ~/environment/myeks/alb-controller/alb_front_full.yaml
