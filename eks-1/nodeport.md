@@ -118,7 +118,7 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 ![](<../.gitbook/assets/image (217) (1) (1).png>)
 
-![](<../.gitbook/assets/image (218).png>)
+![](<../.gitbook/assets/image (218) (1).png>)
 
 아래와 같이 EC2 Public IP 주소와 Nodeport로 웹 브라우져에서 접속해 봅니다.
 

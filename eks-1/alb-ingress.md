@@ -4,23 +4,35 @@ description: 'update : 2021-10-20 / 30min'
 
 # ALB Ingress 배포
 
-## Ingress
+## Ingress 아키텍쳐&#x20;
 
-### 소개
+### 1.소개
 
 Ingress는 앞서 소개된 Loadbalancer 방식과 다르게 URL 패스에 대한 설정을 담당하는 자원입니다. 외부에서 요청하는 HTTP에 대한 트래픽 처리를 지원하게 됩니다. (eg. 도메인 기반 라우팅) 사용자들이 외부에서 접근이 가능한 URL을 제공하여 , 사용자의 접근성을 편리하게 제공합니다.
 
 Ingress는 Ingress Controller가 존재하고, Ingress 에 정의된 트래픽 라우팅 규칙에 따라 라우팅을 처리합니다.
 
-### Ingress Controller
+### 2. Ingress Controller
 
 Ingress 는 반드시 Ingress Controller가 존재해야하며, 외부에서 내부로 요청되는 트래픽을 읽고 서비스로 전달하는 역할을 합니다. 다른 컨트롤러와 다르게 목적에 맞게 수동으로 설치해야 합니다.
 
+AWS Ingress Controller를 별도로 설치하고, AWS Ingress는 ALB를 통해 구성됩니다
+
 * NGINX Ingress Controller
 * HA Proxy
-* AWS ALB Ingress Controller
+* **AWS ALB Ingress Controller**
 * Kong
 * traefik
+
+![](<../.gitbook/assets/image (218).png>)
+
+### 3. ALB Ingress & Ingress Controller 트래픽 흐름
+
+* 외부 사용자는 ALB DNS A Record:Port 번호로 접근합니다
+* ALB는 각 노드로 로드밸런싱 합니다
+* Kube-API에 의해 업데이트 된 정보를 가지고 ALB에서 Loadbalancing 처리를 합니다.&#x20;
+
+![](<../.gitbook/assets/image (222).png>)
 
 ## AWS ALB Ingress 개요.
 
@@ -43,7 +55,7 @@ Ingress 는 반드시 Ingress Controller가 존재해야하며, 외부에서 내
 Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases),\
 [https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
 
-### 1.IAM OIDC Provider 생성
+### 4.IAM OIDC Provider 생성
 
 IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을 사용하여 IAM OIDC Provider를 생성합니다.
 
@@ -59,7 +71,7 @@ eksctl utils associate-iam-oidc-provider \
 
 ![](<../.gitbook/assets/image (197).png>)
 
-### 2. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드&#x20;
+### 5. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드&#x20;
 
 ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다. (이미 앞서 git에서 받은 폴더에 포함되어 있습니다.)
 
@@ -68,7 +80,7 @@ curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-lo
 
 ```
 
-### 3. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
+### 6. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
 
 AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 
@@ -102,7 +114,7 @@ aws iam create-policy \
 
 ![](<../.gitbook/assets/image (196).png>)
 
-### 4. AWS Ingress Controller IAM 역할 및 Service Account 생성
+### 7. AWS Ingress Controller IAM 역할 및 Service Account 생성
 
 이 단계에서는 AWS Ingress Controller 에 대한 IAM Roel , Service Account를 생성하고, 3번 단계에서 출력되었던 AWS Account ID를 복사해서 사용해아합니다. 앞서 "${ACCOUNT\_ID}에 저장해 두었습니다.
 
@@ -176,7 +188,7 @@ secrets:
 >
 > 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 (RDS, MQ, STS, DynamoDB) , AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
 
-### 5. 인증서 관리자 설치
+### 8. 인증서 관리자 설치
 
 아래와 같이 Cert Manager (인증서 관리자)를 설치합니다.
 
@@ -185,7 +197,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 
 ```
 
-### 6. AWS ALB Loadbalancer Controller Pod 설치
+### 9. AWS ALB Loadbalancer Controller Pod 설치
 
 Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다.
 
@@ -201,7 +213,20 @@ cd ~/environment/myeks/alb-controller
 kubectl apply -f v2_1_3_full.yaml
 ```
 
-## ALB Ingress Controller 기반 ALB 확인
+## ALB Ingress 시험
+
+10.ALB Ingress를 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
+
+```
+## alb-test-01 namespace를 생성하고, pod, service를 배포 
+kubectl create namespace alb-test-01
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-test-01.yaml
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-test-01-ingress.yaml
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-test-01-service.yaml
+
+```
+
+## ALB Ingress Controller 기반 Application 배포
 
 아래와 같이 새로운 manifest 파일을 생성합니다. (이미 git을 통해 해당 폴더에 다운로드 받았습니다. 생략 할 수 있습니다. )
 

@@ -16,7 +16,7 @@ Service의 종류는 아래와 같습니다.
 
 아래 그림에서 처럼 Service의 기본은 CLUSTER-IP 방식입니다. 외부로 노출되지 않으며, Service에는  Pod Container의 포트를 기술해 줍니다.
 
-![](<../.gitbook/assets/image (222) (1).png>)
+![](<../.gitbook/assets/image (222) (1) (1).png>)
 
 ## CoreDNS와 Service
 
