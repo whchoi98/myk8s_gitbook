@@ -375,16 +375,16 @@ EoF
 mkdir -p ~/environment/helm-chart-demo/templates/deployment
 mkdir -p ~/environment/helm-chart-demo/templates/service
 
-# helm chart pod deploy용 manifest 파일 복사 
+# helm chart pod deploy용 manifest 파일 복
 
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-frontend-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/frontend.yaml
-cp ~/environment/helm-chart-demo/ecsdemo-crystal-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/crystal.yaml
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-nodejs-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-frontend-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/frontend.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-crystal-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/crystal.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-nodejs-deployment.yaml ~/environment/helm-chart-demo/templates/deployment/nodejs.yaml
 
-# helm chart pod service용 manifest 파일 복사 
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-frontend-service.yaml ~/environment/helm-chart-demo/templates/service/frontend.yaml
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-crystal-service.yaml ~/environment/helm-chart-demo/templates/service/crystal.yaml
-cp ~/environment/myeks/helm-chart-demo/ecsdemo-nodejs-service.yaml ~/environment/helm-chart-demo/templates/service/nodejs.yaml
+# helm chart pod service용 manifest 파일 복
+cp ./myeks/helm-chart-demo/ecsdemo-frontend-service.yaml ~/environment/helm-chart-demo/templates/service/frontend.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-crystal-service.yaml ~/environment/helm-chart-demo/templates/service/crystal.yaml
+cp ./myeks/helm-chart-demo/ecsdemo-nodejs-service.yaml ~/environment/helm-chart-demo/templates/service/nodejs.yaml
 
 ```
 
