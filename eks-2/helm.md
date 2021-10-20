@@ -303,7 +303,7 @@ ELB 삭제 시간으로 3분 정도 소요됩니다.
 
 ![ Helm Chart 기반의 App배포](<../.gitbook/assets/image (188).png>)
 
-### 1.Chart 만들기
+### 6.Chart 만들기
 
 helmdemo 라는 Chart를 생성합니다.
 
@@ -344,7 +344,7 @@ cd ~/environment/helm-chart-demo
 * `service.yaml`: Depolyment 를 위한 서비스 엔드 포인트 작성을 기본 목록
 * `tests/`: 차트 테스트가 포함 된 폴더
 
-### 2. Chart 사용자 정의
+### 7. Chart 사용자 정의
 
 새로운 Chart구성을 위해 기본 생성된 파일들을 삭제합니다.
 
@@ -433,7 +433,7 @@ kubectl create namespace helm-chart-demo
 
 ```
 
-### 3. Chart 배포
+### 8. Chart 배포
 
 Helm chart는 실제 배포하지 않고 **"--dry-run"** 플래그를 사용하여, 랜더링 된 템플릿을 빌드하고 출력할 수 있습니다.
 
@@ -683,7 +683,7 @@ deployment.apps/ecsdemo-frontend   3/3     3            3           11s   ecsdem
 deployment.apps/ecsdemo-nodejs     3/3     3            3           11s   ecsdemo-nodejs     brentley/ecsdemo-nodejs:latest     app=ecsdemo-nodejs
 ```
 
-### 4. 서비스 확인
+### 9. 서비스 확인
 
 아래 명령을 통해 service loadbalancer(ELB) 의 DNS name을 확인합니다.
 
@@ -719,7 +719,7 @@ NAME            NAMESPACE       REVISION        UPDATED                         
 rollingback-app helm-chart-demo 1               2021-10-20 13:36:51.965888237 +0000 UTC deployed        helm-chart-demo-0.1.0   1          
 ```
 
-### 5. Rolling Back 구성
+### 10. Rolling Back 구성
 
 배포 중에 이슈가 발생하더라도, Helm을 사용하면 손쉽게 이전 배포 버전으로 Rolling back 할 수 있습니다. 앞서 출력결과에서 "Revision" 값이 "1"인 것을 확인했습니다. 이제 helm Chart를 변경하고 업데이트 한 이후 , 다시 Rollback 하는 과정을 수행하겠습니다.
 
@@ -924,6 +924,8 @@ AWS 서비스 - S3&#x20;
 버킷이름은 고유해야 합니다.
 
 ![](<../.gitbook/assets/image (189).png>)
+
+dkfo아래와 같이 Cloud9  IDE에서 aws cli로 실행하여, S3 버킷을&#x20;
 
 정상적으로 생성되었는지 확인합니다.
 
