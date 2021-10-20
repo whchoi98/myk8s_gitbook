@@ -1080,11 +1080,11 @@ helm install chartmuseum/helm-chart-demo --generate-name
 출력 결과 예시
 
 ```
-whchoi98:~/environment/helm-chart-demo $ helm install chartmuseum/helm-chart-demo --generate-name
-2021-04-06T08:48:11.597Z        DEBUG   [18] Incoming request: /charts/helm-chart-demo-0.1.0.tgz        {"reqID": "5091a3ad-ddaf-4489-be01-0422eafdb57c"}
-2021-04-06T08:48:11.629Z        INFO    [18] Request served     {"path": "/charts/helm-chart-demo-0.1.0.tgz", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "31.778266ms", "reqID": "5091a3ad-ddaf-4489-be01-0422eafdb57c"}
-NAME: helm-chart-demo-1617698891
-LAST DEPLOYED: Tue Apr  6 08:48:12 2021
+helm install chartmuseum/helm-chart-demo --generate-name
+2021-10-20T14:07:42.333Z        DEBUG   [6] Incoming request: /charts/helm-chart-demo-0.1.0.tgz {"reqID": "bf9836df-470a-4894-998c-a8b37b3ae8e9"}
+2021-10-20T14:07:42.372Z        INFO    [6] Request served      {"path": "/charts/helm-chart-demo-0.1.0.tgz", "comment": "", "clientIP": "127.0.0.1", "method": "GET", "statusCode": 200, "latency": "39.261297ms", "reqID": "bf9836df-470a-4894-998c-a8b37b3ae8e9"}
+NAME: helm-chart-demo-1634738862
+LAST DEPLOYED: Wed Oct 20 14:07:43 2021
 NAMESPACE: default
 STATUS: deployed
 REVISION: 1
@@ -1100,11 +1100,11 @@ kubectl -n helm-chart-demo get svc
 출력 결과 예시
 
 ```
-whchoi98:~/environment/helm-chart-demo $ kubectl -n helm-chart-demo get svc
-NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)        AGE
-ecsdemo-crystal    ClusterIP      172.20.249.215   <none>                                                                         80/TCP         29s
-ecsdemo-frontend   LoadBalancer   172.20.157.65    aa398e00e767f432ca8ead4754008e86-1747267288.ap-northeast-2.elb.amazonaws.com   80:31303/TCP   29s
-ecsdemo-nodejs     ClusterIP      172.20.60.44     <none>                                                                         80/TCP         29s                                                                     80/TCP         102s
+$ kubectl -n helm-chart-demo get svc
+NAME               TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)        AGE
+ecsdemo-crystal    ClusterIP      172.20.60.158    <none>                                                                        80/TCP         116s
+ecsdemo-frontend   LoadBalancer   172.20.169.42    a738ceddaa67142e9af23d09bd39df2e-322542006.ap-northeast-2.elb.amazonaws.com   80:31103/TCP   116s
+ecsdemo-nodejs     ClusterIP      172.20.238.125   <none>                                                                           80/TCP         29s                                                                     80/TCP         102s
 ```
 
 ELB DNS 레코드로 접속해 봅니다.
