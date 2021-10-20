@@ -215,7 +215,7 @@ kubectl apply -f v2_1_3_full.yaml
 
 ## ALB Ingress 시험
 
-10.ALB Ingress를 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
+ALB Ingress를 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
 
 ```
 ## alb-test-01 namespace를 생성하고, pod, service를 배포 
@@ -225,6 +225,78 @@ kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-test-01-ing
 kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-test-01-service.yaml
 
 ```
+
+아래와 같은 명령으로 결과를 확인 할 수 있습니다.
+
+```
+kubectl -n alb-test-01 get pod -o wide
+kubectl -n alb-test-01 get service -o wide 
+kubectl -n alb-test-01 get ingress -o wide 
+
+```
+
+dk아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다. 해당 A Record를 Cloud9 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다
+
+```
+$ kubectl -n alb-test-01 get pod -o wide
+NAME                          READY   STATUS    RESTARTS   AGE     IP              NODE                                               NOMINATED NODE   READINESS GATES
+alb-test-01-ffd85d89f-5s66x   1/1     Running   0          6m15s   10.11.92.148    ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
+alb-test-01-ffd85d89f-sl5bd   1/1     Running   0          6m14s   10.11.88.200    ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
+alb-test-01-ffd85d89f-td4tv   1/1     Running   0          6m14s   10.11.107.214   ip-10-11-108-153.ap-northeast-2.compute.internal   <none>           <none>
+$ kubectl -n alb-test-01 get service -o wide
+NAME          TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE   SELECTOR
+alb-test-01   NodePort   172.20.121.174   <none>        8080:30299/TCP   12m   app=alb-test-01
+$ kubectl -n alb-test-01 get ingress -o wide
+NAME          CLASS    HOSTS   ADDRESS                                                                      PORTS   AGE
+alb-test-01   <none>   *       k8s-albtest0-albtest0-1aa7c83247-45114489.ap-northeast-2.elb.amazonaws.com   80      13m
+```
+
+아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
+
+```
+echo "export AlbTestPod03=alb-test-01-ffd85d89f-td4tv" | tee -a ~/.bash_profile
+echo "export AlbTestPod02=alb-test-01-ffd85d89f-5s66x" | tee -a ~/.bash_profile
+echo "export AlbTestPod01=alb-test-01-ffd85d89f-sl5bd" | tee -a ~/.bash_profile
+source ~/.bash_profile
+
+```
+
+AlbTestPod01에 접속해서 아래와 같이 확인해 봅니다.
+
+```
+kubectl -n alb-test-01 exec -it $ClbTestPod01 -- /bin/sh
+tcpdump -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
+
+```
+
+Pod에서 TCPDump로 확인하면 정상적으로 Pakcet이 덤프되고 X-Forwarded를 통해 Source IP를 확인할 수 있습니다
+
+```
+tcpdump -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
+
+11:23:59.800248 IP ip-10-11-29-154.ap-northeast-2.compute.internal.62078 > alb-test-01-ffd85d89f-sl5bd.80: Flags [P.], seq 638:1276, ack 180, win 110, options [nop,nop,TS val 355718059 ecr 1502835583], length 638: HTTP: GET / HTTP/1.1
+E...j.@.....
+...
+.X..~.Pj>...x{....nY......
+.3..Y.s.GET / HTTP/1.1
+X-Forwarded-For: 122.40.8.88
+X-Forwarded-Proto: http
+X-Forwarded-Port: 80
+Host: k8s-albtest0-albtest0-1aa7c83247-45114489.ap-northeast-2.elb.amazonaws.com
+X-Amzn-Trace-Id: Root=1-616ffc4f-26f121442cec9b1b3ac7fdbb
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:92.0) Gecko/20100101 Firefox/92.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: ko-KR,ko;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Upgrade-Insecure-Requests: 1
+If-Modified-Since: Wed, 20 Oct 2021 11:07:33 GMT
+If-None-Match: "616ff875-53"
+Cache-Control: max-age=0
+```
+
+아래와 같이 ALB Ingress가 구성되었습니다.&#x20;
+
+![](<../.gitbook/assets/image (226).png>)
 
 ## ALB Ingress Controller 기반 Application 배포
 
