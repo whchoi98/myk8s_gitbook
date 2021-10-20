@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-04-06 /1h'
+description: 'update : 2021-10-20 /1h'
 ---
 
 # 패키지 관리 - Helm
@@ -57,11 +57,12 @@ helm version --short
 
 ```
 
- 출력 결과 예시
+&#x20;출력 결과 예시
 
 ```
-whchoi98:~ $ helm version --short
-v3.5.3+g041ce5a
+$ helm version --short
+v3.7.1+g1d11fcb
+
 ```
 
 ### 2. 차트 Repository 구성
@@ -105,10 +106,10 @@ helm search repo nginx
 출력 결과 예시
 
 ```
-~/environment $ helm search repo nginx
+helm search repo nginx
 NAME                            CHART VERSION   APP VERSION     DESCRIPTION                                       
 stable/nginx-ingress            1.41.3          v0.34.1         DEPRECATED! An nginx Ingress controller that us...
-stable/nginx-ldapauth-proxy     0.1.4           1.13.5          nginx proxy with ldapauth                         
+stable/nginx-ldapauth-proxy     0.1.6           1.13.5          DEPRECATED - nginx proxy with ldapauth            
 stable/nginx-lego               0.3.1                           Chart for nginx-ingress-controller and kube-lego  
 stable/gcloud-endpoints         0.1.2           1               DEPRECATED Develop, deploy, protect and monitor...
 ```
@@ -129,10 +130,10 @@ helm search repo bitnami/nginx
 출력결과 예시
 
 ```
-~/environment $ helm search repo bitnami/nginx
+helm search repo bitnami/nginx
 NAME                                    CHART VERSION   APP VERSION     DESCRIPTION                           
-bitnami/nginx                           7.1.6           1.19.4          Chart for the nginx server            
-bitnami/nginx-ingress-controller        5.6.15          0.40.2          Chart for the nginx Ingress controller
+bitnami/nginx                           9.5.8           1.21.3          Chart for the nginx server            
+bitnami/nginx-ingress-controller        8.0.9           1.0.4           Chart for the nginx Ingress controller
 ```
 
 helm install 명령을 통해 nginx를 설치해 봅니다.
@@ -146,9 +147,9 @@ helm install helm-nginx bitnami/nginx --namespace helm-test
 아래와 같은 결과를 얻을 수 있습니다.
 
 ```
-whchoi98:~ $ helm install helm-nginx bitnami/nginx --namespace helm-test                                                                 
+$ helm install helm-nginx bitnami/nginx --namespace helm-test
 NAME: helm-nginx
-LAST DEPLOYED: Mon Apr  5 18:23:06 2021
+LAST DEPLOYED: Wed Oct 20 11:37:15 2021
 NAMESPACE: helm-test
 STATUS: deployed
 REVISION: 1
@@ -175,9 +176,13 @@ To access NGINX from outside the cluster, follow the steps below:
 Pod와 서비스 배포를 확인합니다.
 
 ```
-whchoi98:~ $ kubectl -n helm-test get service 
-NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP                                                                   PORT(S)        AGE
-eksworkshop-nginix-nginx   LoadBalancer   172.20.58.93   ac0c5778fc7814b3586e670d9cc150d6-876194346.ap-northeast-2.elb.amazonaws.com   80:30760/TCP   107s
+kubectl -n helm-test get service
+```
+
+```
+$ kubectl -n helm-test get service
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                                                                   PORT(S)        AGE
+helm-nginx   LoadBalancer   172.20.141.34   adeb84a799b4046689bec6ed2b120c51-272707121.ap-northeast-2.elb.amazonaws.com   80:32303/TCP   50s
 ```
 
 ELB 주소를 확인합니다.
@@ -206,9 +211,9 @@ helm list -n helm-test
 출력 예시
 
 ```
-whchoi98:~ $ helm list -n helm-test 
+$ helm list -n helm-test
 NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-helm-nginx      helm-test       1               2021-04-05 18:23:06.961632762 +0000 UTC deployed        nginx-8.8.1     1.19.9   
+helm-nginx      helm-test       1               2021-10-20 11:37:15.991941399 +0000 UTC deployed        nginx-9.5.8     1.21.3   
 ```
 
 아래 명령을 통해 배포된 내용을 확인합니다.
@@ -221,14 +226,14 @@ kubectl describe deployments.apps helm-nginx -n helm-test
 출력 결과 예시
 
 ```
-whchoi98:~ $ kubectl describe deployments.apps helm-nginx -n helm-test
+$ kubectl describe deployments.apps helm-nginx -n helm-test
 Name:                   helm-nginx
 Namespace:              helm-test
-CreationTimestamp:      Mon, 05 Apr 2021 18:23:07 +0000
+CreationTimestamp:      Wed, 20 Oct 2021 11:37:16 +0000
 Labels:                 app.kubernetes.io/instance=helm-nginx
                         app.kubernetes.io/managed-by=Helm
                         app.kubernetes.io/name=nginx
-                        helm.sh/chart=nginx-8.8.1
+                        helm.sh/chart=nginx-9.5.8
 Annotations:            deployment.kubernetes.io/revision: 1
                         meta.helm.sh/release-name: helm-nginx
                         meta.helm.sh/release-namespace: helm-test
@@ -241,19 +246,18 @@ Pod Template:
   Labels:           app.kubernetes.io/instance=helm-nginx
                     app.kubernetes.io/managed-by=Helm
                     app.kubernetes.io/name=nginx
-                    helm.sh/chart=nginx-8.8.1
+                    helm.sh/chart=nginx-9.5.8
   Service Account:  default
   Containers:
    nginx:
-    Image:      docker.io/bitnami/nginx:1.19.9-debian-10-r0
+    Image:      docker.io/bitnami/nginx:1.21.3-debian-10-r29
     Port:       8080/TCP
     Host Port:  0/TCP
     Liveness:   tcp-socket :http delay=0s timeout=5s period=10s #success=1 #failure=6
     Readiness:  tcp-socket :http delay=5s timeout=3s period=5s #success=1 #failure=3
     Environment:
       BITNAMI_DEBUG:  false
-    Mounts:
-      /opt/bitnami/nginx/conf/server_blocks from nginx-server-block-paths (rw)
+    Mounts:           <none>
   Volumes:
    nginx-server-block-paths:
     Type:      ConfigMap (a volume populated by a ConfigMap)
@@ -265,11 +269,11 @@ Conditions:
   Available      True    MinimumReplicasAvailable
   Progressing    True    NewReplicaSetAvailable
 OldReplicaSets:  <none>
-NewReplicaSet:   helm-nginx-85869fb5bd (1/1 replicas created)
+NewReplicaSet:   helm-nginx-6c4788c7cf (1/1 replicas created)
 Events:
   Type    Reason             Age    From                   Message
   ----    ------             ----   ----                   -------
-  Normal  ScalingReplicaSet  3m11s  deployment-controller  Scaled up replica set helm-nginx-85869fb5bd to 1
+  Normal  ScalingReplicaSet  2m49s  deployment-controller  Scaled up replica set helm-nginx-6c4788c7cf to 1
 ```
 
 ### 5. Helm을 통한 nginx 삭제
@@ -310,7 +314,7 @@ sudo yum -y install tree
 
 ```
 
-Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성되어 있습니다. 
+Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성되어 있습니다.&#x20;
 
 ```
 cd ~/environment/helm-chart-demo
@@ -894,7 +898,7 @@ helm uninstall -n helm-chart-demo rollingback-app
 
 ## ChartMuseum 구성과 배포.
 
-ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, Alibaba Cloud OSS Storage, Openstack Object Storage, Oracle Cloud Infrastructure Object를 포함한 클라우드 스토리지 백엔드를 지원하는 Go (Golang)로 작성된 오픈 소스 Helm Chart Repository 서버입니다. 
+ChartMuseum은 Amazon S3,Google Cloud Storage, , Microsoft Azure Blob Storage, Alibaba Cloud OSS Storage, Openstack Object Storage, Oracle Cloud Infrastructure Object를 포함한 클라우드 스토리지 백엔드를 지원하는 Go (Golang)로 작성된 오픈 소스 Helm Chart Repository 서버입니다.&#x20;
 
 이 랩에서는 ChartMuseum을 구성하여, S3에 Helm Chart를 위한 로컬 레포지토리를 만들어 보겠습니다.
 
@@ -912,7 +916,7 @@ chmod +x ./chartmuseum
 Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장소는 S3를 사용합니다.\
 사전에 s3 bucket을 생성합니다.
 
-AWS 서비스 - S3 
+AWS 서비스 - S3&#x20;
 
 ![](<../.gitbook/assets/image (190).png>)
 
@@ -978,7 +982,7 @@ whchoi98:~/environment $ helm repo add chartmuseum http://localhost:8888
 "chartmuseum" has been added to your repositories
 ```
 
-이제 앞서 생성한 eksdemo helm chart 패키징 합니다. 
+이제 앞서 생성한 eksdemo helm chart 패키징 합니다.&#x20;
 
 ```
 cd ~/environment/helm-chart-demo/
@@ -1105,6 +1109,6 @@ ELB DNS 레코드로 접속해 봅니다.
 ![](<../.gitbook/assets/image (51).png>)
 
 {% hint style="info" %}
-Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/ko_kr/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/ko_kr/AmazonECR/latest/userguide/push-oci-artifact.html)
+Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html)
 {% endhint %}
 
