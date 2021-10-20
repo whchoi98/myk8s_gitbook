@@ -445,11 +445,12 @@ helm install --debug --dry-run workshop ~/environment/helm-chart-demo
 출력 결과 예제
 
 ```
-whchoi98:~/environment/myeks (master) $ helm install --debug --dry-run workshop ~/environment/helm-chart-demoinstall.go:173: [debug] Original chart version: ""
-install.go:190: [debug] CHART PATH: /home/ec2-user/environment/helm-chart-demo
+$ helm install --debug --dry-run workshop ~/environment/helm-chart-demo
+install.go:178: [debug] Original chart version: ""
+install.go:199: [debug] CHART PATH: /home/ec2-user/environment/helm-chart-demo
 
 NAME: workshop
-LAST DEPLOYED: Tue Apr  6 07:32:08 2021
+LAST DEPLOYED: Wed Oct 20 13:36:24 2021
 NAMESPACE: default
 STATUS: pending-install
 REVISION: 1
@@ -640,10 +641,10 @@ helm -n helm-chart-demo install rollingback-app ~/environment/helm-chart-demo/
 출력 결과 예시
 
 ```
-whchoi98:~/environment $ helm install helmdemo ~/environment/helm-chart-demo
-NAME: helmdemo
-LAST DEPLOYED: Mon Apr  5 18:43:07 2021
-NAMESPACE: default
+$ helm -n helm-chart-demo install rollingback-app ~/environment/helm-chart-demo/
+NAME: rollingback-app
+LAST DEPLOYED: Wed Oct 20 13:36:51 2021
+NAMESPACE: helm-chart-demo
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
@@ -659,27 +660,27 @@ kubectl -n helm-chart-demo get svc,pod,deploy -o wide
 출력 결과 예시
 
 ```
-whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get svc,pod,deploy -o wide
-NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP                                                                   PORT(S)        AGE   SELECTOR
-service/ecsdemo-crystal    ClusterIP      172.20.10.161   <none>                                                                        80/TCP         47s   app=ecsdemo-crystal
-service/ecsdemo-frontend   LoadBalancer   172.20.150.76   ae565da1db5d44788a5624a017779ca9-295728451.ap-northeast-2.elb.amazonaws.com   80:31329/TCP   47s   app=ecsdemo-frontend
-service/ecsdemo-nodejs     ClusterIP      172.20.48.190   <none>                                                                        80/TCP         47s   app=ecsdemo-nodejs
+$ kubectl -n helm-chart-demo get svc,pod,deploy -o wide
+NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)        AGE   SELECTOR
+service/ecsdemo-crystal    ClusterIP      172.20.24.250    <none>                                                                         80/TCP         11s   app=ecsdemo-crystal
+service/ecsdemo-frontend   LoadBalancer   172.20.185.71    a79963b6877134227a0c6e5760d57bd5-1823214377.ap-northeast-2.elb.amazonaws.com   80:31678/TCP   11s   app=ecsdemo-frontend
+service/ecsdemo-nodejs     ClusterIP      172.20.254.165   <none>                                                                         80/TCP         11s   app=ecsdemo-nodejs
 
 NAME                                    READY   STATUS    RESTARTS   AGE   IP              NODE                                               NOMINATED NODE   READINESS GATES
-pod/ecsdemo-crystal-86b65cdbfd-8hwg2    1/1     Running   0          47s   10.11.79.10     ip-10-11-70-192.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-crystal-86b65cdbfd-rjg52    1/1     Running   0          47s   10.11.93.202    ip-10-11-92-125.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-crystal-86b65cdbfd-wxdp8    1/1     Running   0          47s   10.11.109.232   ip-10-11-110-116.ap-northeast-2.compute.internal   <none>           <none>
-pod/ecsdemo-frontend-576d7899b5-d8mmk   1/1     Running   0          47s   10.11.66.14     ip-10-11-70-192.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-frontend-576d7899b5-lh62s   1/1     Running   0          47s   10.11.107.29    ip-10-11-110-116.ap-northeast-2.compute.internal   <none>           <none>
-pod/ecsdemo-frontend-576d7899b5-t7csz   1/1     Running   0          47s   10.11.82.59     ip-10-11-92-125.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-nodejs-64c4fd7579-75dwq     1/1     Running   0          47s   10.11.65.68     ip-10-11-70-192.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-nodejs-64c4fd7579-7fmmt     1/1     Running   0          47s   10.11.84.78     ip-10-11-92-125.ap-northeast-2.compute.internal    <none>           <none>
-pod/ecsdemo-nodejs-64c4fd7579-qr5xd     1/1     Running   0          47s   10.11.103.47    ip-10-11-110-116.ap-northeast-2.compute.internal   <none>           <none>
+pod/ecsdemo-crystal-86b65cdbfd-dsh8j    1/1     Running   0          11s   10.11.94.60     ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
+pod/ecsdemo-crystal-86b65cdbfd-szx4f    1/1     Running   0          11s   10.11.106.164   ip-10-11-108-153.ap-northeast-2.compute.internal   <none>           <none>
+pod/ecsdemo-crystal-86b65cdbfd-tw9b6    1/1     Running   0          11s   10.11.72.5      ip-10-11-64-123.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-frontend-576d7899b5-5pkjm   1/1     Running   0          11s   10.11.104.156   ip-10-11-108-153.ap-northeast-2.compute.internal   <none>           <none>
+pod/ecsdemo-frontend-576d7899b5-98tf6   1/1     Running   0          11s   10.11.83.133    ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
+pod/ecsdemo-frontend-576d7899b5-trqbh   1/1     Running   0          11s   10.11.77.146    ip-10-11-64-123.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-nodejs-64c4fd7579-2hdr7     1/1     Running   0          11s   10.11.78.121    ip-10-11-64-123.ap-northeast-2.compute.internal    <none>           <none>
+pod/ecsdemo-nodejs-64c4fd7579-jmktc     1/1     Running   0          11s   10.11.83.38     ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
+pod/ecsdemo-nodejs-64c4fd7579-vqdsd     1/1     Running   0          11s   10.11.98.185    ip-10-11-108-153.ap-northeast-2.compute.internal   <none>           <none>
 
 NAME                               READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS         IMAGES                             SELECTOR
-deployment.apps/ecsdemo-crystal    3/3     3            3           47s   ecsdemo-crystal    brentley/ecsdemo-crystal:latest    app=ecsdemo-crystal
-deployment.apps/ecsdemo-frontend   3/3     3            3           47s   ecsdemo-frontend   brentley/ecsdemo-frontend:latest   app=ecsdemo-frontend
-deployment.apps/ecsdemo-nodejs     3/3     3            3           47s   ecsdemo-nodejs     brentley/ecsdemo-nodejs:latest     app=ecsdemo-nodejs
+deployment.apps/ecsdemo-crystal    3/3     3            3           11s   ecsdemo-crystal    brentley/ecsdemo-crystal:latest    app=ecsdemo-crystal
+deployment.apps/ecsdemo-frontend   3/3     3            3           11s   ecsdemo-frontend   brentley/ecsdemo-frontend:latest   app=ecsdemo-frontend
+deployment.apps/ecsdemo-nodejs     3/3     3            3           11s   ecsdemo-nodejs     brentley/ecsdemo-nodejs:latest     app=ecsdemo-nodejs
 ```
 
 ### 4. 서비스 확인
@@ -694,9 +695,9 @@ kubectl -n helm-chart-demo get svc ecsdemo-frontend
 출력 결과 예시
 
 ```
-whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get svc ecsdemo-frontend
-NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                                                                   PORT(S)        AGE
-ecsdemo-frontend   LoadBalancer   172.20.150.76   ae565da1db5d44788a5624a017779ca9-295728451.ap-northeast-2.elb.amazonaws.com   80:31329/TCP   82s
+$ kubectl -n helm-chart-demo get svc ecsdemo-frontend
+NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                                                                    PORT(S)        AGE
+ecsdemo-frontend   LoadBalancer   172.20.185.71   a79963b6877134227a0c6e5760d57bd5-1823214377.ap-northeast-2.elb.amazonaws.com   80:31678/TCP   3m30s
 ```
 
 정상적으로 서비스에 접속되는 것을 확인 할 수 있습니다.
@@ -713,9 +714,9 @@ helm list -n helm-chart-demo
 출력 결과 예
 
 ```
-whchoi98:~/environment/myeks (master) $ helm list -n helm-chart-demo
-NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                        APP VERSION
-rollingback-app helm-chart-demo 1               2021-04-06 07:33:42.225551074 +0000 UTC deployed        helm-chart-demo-0.1.0        1    
+$ helm list -n helm-chart-demo
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+rollingback-app helm-chart-demo 1               2021-10-20 13:36:51.965888237 +0000 UTC deployed        helm-chart-demo-0.1.0   1          
 ```
 
 ### 5. Rolling Back 구성
@@ -730,9 +731,9 @@ helm history -n helm-chart-demo rollingback-app
 ```
 
 ```
-whchoi98:~/environment/myeks (master) $ helm history -n helm-chart-demo rollingback-app
+$ helm history -n helm-chart-demo rollingback-app
 REVISION        UPDATED                         STATUS          CHART                   APP VERSION     DESCRIPTION     
-1               Tue Apr  6 07:33:42 2021        deployed        helm-chart-demo-0.1.0   1               Install complete
+1               Wed Oct 20 13:36:51 2021        deployed        helm-chart-demo-0.1.0   1               Install complete
 ```
 
 Rolling Back 시험을 위해, 먼저 helm Chart의 Value를 변경합니다. \~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 replicat의 값을 아래와 같이 수정합니다.
@@ -751,7 +752,7 @@ replicas: 1
 
 # Release-wide Values
 namespace: 'helm-chart-demo'
-## 변경 부
+## replicas를 3에서 1로 변경합니다
 replicas: 1
 version: 'latest'
 
@@ -767,10 +768,10 @@ helm upgrade -n helm-chart-demo rollingback-app ~/environment/helm-chart-demo/
 출력 결과 예시
 
 ```
-whchoi98:~/environment/myeks (master) $ helm upgrade -n helm-chart-demo rollingback-app ~/environment/helm-chart-demo
+$ helm upgrade -n helm-chart-demo rollingback-app ~/environment/helm-chart-demo/
 Release "rollingback-app" has been upgraded. Happy Helming!
 NAME: rollingback-app
-LAST DEPLOYED: Tue Apr  6 07:44:58 2021
+LAST DEPLOYED: Wed Oct 20 13:45:18 2021
 NAMESPACE: helm-chart-demo
 STATUS: deployed
 REVISION: 2
@@ -791,11 +792,11 @@ kubectl -n helm-chart-demo get pods
 아래와 같이 pod 의 숫자가 1개로 줄었습니다.
 
 ```
-whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get pods
+$ kubectl -n helm-chart-demo get pods
 NAME                                READY   STATUS    RESTARTS   AGE
-ecsdemo-crystal-86b65cdbfd-cczt4    1/1     Running   0          111s
-ecsdemo-frontend-576d7899b5-w9s56   1/1     Running   0          111s
-ecsdemo-nodejs-64c4fd7579-dp9vc     1/1     Running   0          111s
+ecsdemo-crystal-86b65cdbfd-szx4f    1/1     Running   0          9m10s
+ecsdemo-frontend-576d7899b5-5pkjm   1/1     Running   0          9m10s
+ecsdemo-nodejs-64c4fd7579-jmktc     1/1     Running   0          9m10s
 ```
 
 문제 해결을 위해 Rollback을 수행합니다.
@@ -810,9 +811,9 @@ helm status -n helm-chart-demo rollingback-app
 아래와 같은 결과를 확인 할 수 있습니다.최종 배포시간과 Revision 값을 확인합니다.
 
 ```
-whchoi98:~/environment/myeks (master) $ helm status -n helm-chart-demo rollingback-app 
+$ helm status -n helm-chart-demo rollingback-app 
 NAME: rollingback-app
-LAST DEPLOYED: Tue Apr  6 07:44:58 2021
+LAST DEPLOYED: Wed Oct 20 13:45:18 2021
 NAMESPACE: helm-chart-demo
 STATUS: deployed
 REVISION: 2
@@ -829,10 +830,10 @@ helm history -n helm-chart-demo rollingback-app
 아래와 같은 결과를 확인 할 수 있습니다. Revison을 확인하고, 정상적으로 수행되었던 Revision 값으로 Rollback 할 것입니다.
 
 ```
-whchoi98:~/environment/myeks (master) $ helm history -n helm-chart-demo rollingback-app
+$ helm history -n helm-chart-demo rollingback-app
 REVISION        UPDATED                         STATUS          CHART                   APP VERSION     DESCRIPTION     
-1               Tue Apr  6 07:44:21 2021        superseded      helm-chart-demo-0.1.0   1               Install complete
-2               Tue Apr  6 07:44:58 2021        deployed        helm-chart-demo-0.1.0   1               Upgrade complete
+1               Wed Oct 20 13:36:51 2021        superseded      helm-chart-demo-0.1.0   1               Install complete
+2               Wed Oct 20 13:45:18 2021        deployed        helm-chart-demo-0.1.0   1               Upgrade complete
 ```
 
 Rollback 명령을 통해 정상 배포 버전으로 Rolling Back  합니다.
@@ -852,17 +853,17 @@ kubectl -n helm-chart-demo get pods
 아래와 같이 정상적으로 Pod가 배포됩니다.
 
 ```
-whchoi98:~/environment/myeks (master) $ kubectl -n helm-chart-demo get pods
+$ kubectl -n helm-chart-demo get pods
 NAME                                READY   STATUS    RESTARTS   AGE
-ecsdemo-crystal-86b65cdbfd-bjdc6    1/1     Running   0          46s
-ecsdemo-crystal-86b65cdbfd-cczt4    1/1     Running   0          5m1s
-ecsdemo-crystal-86b65cdbfd-cp7jz    1/1     Running   0          46s
-ecsdemo-frontend-576d7899b5-qq4sf   1/1     Running   0          46s
-ecsdemo-frontend-576d7899b5-tbvvh   1/1     Running   0          46s
-ecsdemo-frontend-576d7899b5-w9s56   1/1     Running   0          5m1s
-ecsdemo-nodejs-64c4fd7579-64pkm     1/1     Running   0          46s
-ecsdemo-nodejs-64c4fd7579-dp9vc     1/1     Running   0          5m1s
-ecsdemo-nodejs-64c4fd7579-hkgc2     1/1     Running   0          46s
+ecsdemo-crystal-86b65cdbfd-bfskh    1/1     Running   0          25s
+ecsdemo-crystal-86b65cdbfd-hm796    1/1     Running   0          25s
+ecsdemo-crystal-86b65cdbfd-szx4f    1/1     Running   0          11m
+ecsdemo-frontend-576d7899b5-5pkjm   1/1     Running   0          11m
+ecsdemo-frontend-576d7899b5-db7jq   1/1     Running   0          25s
+ecsdemo-frontend-576d7899b5-j7gqf   1/1     Running   0          25s
+ecsdemo-nodejs-64c4fd7579-8jgpr     1/1     Running   0          25s
+ecsdemo-nodejs-64c4fd7579-jmktc     1/1     Running   0          11m
+ecsdemo-nodejs-64c4fd7579-pznvw     1/1     Running   0          25s
 ```
 
 helm history를 통해 Revision을 확인해 봅니다.
@@ -875,11 +876,11 @@ helm history -n helm-chart-demo rollingback-app
 d아래와 같이 REVISON 3은 DESCRIPTION 에 자동으로 Rollback 되었고, REVISION 1번으로 복귀하였음을 알려줍니다.
 
 ```
-whchoi98:~/environment/myeks (master) $ helm history -n helm-chart-demo rollingback-app
+$ helm history -n helm-chart-demo rollingback-app
 REVISION        UPDATED                         STATUS          CHART                   APP VERSION     DESCRIPTION     
-1               Tue Apr  6 07:44:21 2021        superseded      helm-chart-demo-0.1.0   1               Install complete
-2               Tue Apr  6 07:44:58 2021        superseded      helm-chart-demo-0.1.0   1               Upgrade complete
-3               Tue Apr  6 07:48:37 2021        deployed        helm-chart-demo-0.1.0   1               Rollback to 1   
+1               Wed Oct 20 13:36:51 2021        superseded      helm-chart-demo-0.1.0   1               Install complete
+2               Wed Oct 20 13:45:18 2021        superseded      helm-chart-demo-0.1.0   1               Upgrade complete
+3               Wed Oct 20 13:47:51 2021        deployed        helm-chart-demo-0.1.0   1               Rollback to 1   
 ```
 
 \~/environment/helm-chart-demo/values.yaml 파을 다시 열고, Cloud9 IDE 편집기에서 replicat의 값을 아래와 같이 수정합니다.해 value.yaml 파일 다시 정상적으로 수정합니다.
