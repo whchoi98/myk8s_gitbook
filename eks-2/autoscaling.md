@@ -327,6 +327,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-to-scaleout
+  namespace: autoscaler
 spec:
   replicas: 1
   selector:
@@ -351,14 +352,15 @@ spec:
       nodeSelector:
         nodegroup-type: "frontend-workloads"
 EoF
-kubectl apply -f ~/environment/cluster-autoscaler/nginx.yaml
+kubectl create namespace autoscaler
+kubectl -n autoscaler apply -f ~/environment/cluster-autoscaler/nginx.yaml
 
 ```
 
 정상적으로 배포되었는지 확인해 봅니다.
 
 ```
-kubectl get deployment/nginx-to-scaleout nodegroup-type=frontend-workloads
+kubectl get deployment/nginx-to-scaleout
 ```
 
 아래와 같은 출력 결과를 확인 해 볼 수 있습니다.
@@ -369,17 +371,17 @@ NAME                READY   UP-TO-DATE   AVAILABLE   AGE
 nginx-to-scaleout   1/1     1            1           11s
 ```
 
-아래 명령을 통해 Replicaset을 50개로 변경합니다.
+아래 명령을 통해 Replicaset을 200개로 변경합니다.
 
 ```
-kubectl scale --replicas=50 deployment/nginx-to-scaleout
+kubectl -n autoscaler scale deployment nginx-to-scaleout --replicas=200 
 
 ```
 
 포드가 증가하는 것을 아래 명령을 통해 확인합니다. 또는 k9s 명령이 실행되고 있는 터미널에서 확인합니다.
 
 ```
-kubectl get pods -o wide --watch
+kubectl -n autoscaler get pods -o wide --watch
 
 ```
 
