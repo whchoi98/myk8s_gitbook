@@ -249,8 +249,8 @@ kubectl -n clb-test get service ecsdemo-crystal -o wide
 Replica를 3개로 늘려서 Service Type이 없는 경우, BackEnd에서 정상적으로 이뤄지는 지 확인합니다.
 
 ```
-kubectl -n clb-test scale deployment eksdemo-nodejs --replicas=3
-kubectl -n clb-test scale deployment eksdemo-crystal --replicas=3
+kubectl -n clb-test scale deployment ecsdemo-nodejs --replicas=3
+kubectl -n clb-test scale deployment ecsdemo-crystal --replicas=3
 
 ```
 
