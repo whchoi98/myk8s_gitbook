@@ -529,8 +529,8 @@ Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어
 
 ```
 #nodejs nlb depolyment,service apply
-kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_deployment.yaml
-kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_service.yaml
+kubectl -n nlb-test apply -f ~/environment/eksdemo-nodejs/kubernetes/nlb_deployment.yaml
+kubectl -n nlb-test apply -f ~/environment/eksdemo-nodejs/kubernetes/nlb_service.yaml
 
 #crystal nlb depolyment,service apply
 kubectl -n nlb-test apply -f ~/environment/eksdemo-crystal/kubernetes/nlb_deployment.yaml
