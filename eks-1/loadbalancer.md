@@ -412,7 +412,20 @@ NlbTestPod0에 접속해서 외부의 Client IP가 보이는지 확인해 봅니
 kubectl -n nlb-test-01 exec -it {nlb-test-pod name} -- /bin/sh
 
 ##접속 예##
+$ kubectl -n nlb-test-02 get pod -o wide                                                                       
+NAME                          READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
+nlb-test-02-789d59867-9s828   1/1     Running   0          10m   10.11.2.137    ip-10-11-4-27.ap-northeast-2.compute.internal     <none>           <none>
+nlb-test-02-789d59867-k4nm7   1/1     Running   0          10m   10.11.22.207   ip-10-11-19-243.ap-northeast-2.compute.internal   <none>           <none>
+nlb-test-02-789d59867-sct5g   1/1     Running   0          10m   10.11.40.77    ip-10-11-33-178.ap-northeast-2.compute.internal   <none>           <none>
 
+$ kubectl -n nlb-test-02 exec -it nlb-test-02-789d59867-k4nm7 -- /bin/sh                                       
+
+/ # tcpdump -i eth0 src 122.40.8.88 and dst port 80
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+14:10:34.507508 IP 122.40.8.88.54875 > nlb-test-02-789d59867-k4nm7.80: Flags [.], ack 2648158888, win 2048, length 0
+14:10:38.069988 IP 122.40.8.88.54875 > nlb-test-02-789d59867-k4nm7.80: Flags [.], ack 2, win 2048, options [nop,nop,TS val 1766089272 ecr 1499094324], length 0
+14:10:38.070005 IP 122.40.8.88.54875 > nlb-test-02-789d59867-k4nm7.80: Flags [F.], seq 1, ack 2, win 2048, options [nop,nop,TS val 1766089272 ecr 1499094324], length 0
 ```
 
 ## NLB기반 Loadbalancer 배포
