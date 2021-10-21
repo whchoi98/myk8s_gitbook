@@ -392,17 +392,28 @@ iptables -t nat -L --line-number | more
 
 ```
 
-NLB Service를 삭제하고, 새롭게 배포해 봅니다. nlb-test-01-service.yaml 파일에서 "externalTrafficPolicy: Local"을 활성화 해 봅니다
+NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다. 아래와 같이 새롭게 서비스와  PoD를 배포하고 확인해 봅니다
 
 ```
-## nlb-test-01-service 삭제
-kubectl -n nlb-test-01 delete -f ~/environment/myeks/network-test/nlb-test-01-service.yaml
+## nlb-test-02 namespace 생성 
+kubectl create namespace nlb-test-02
+## nlb-test-02 namespace에 pod, service 생성 
+kubectl -n nlb-test-02 apply -f ~/environment/myeks/network-test/nlb-test-02.yaml
+kubectl -n nlb-test-02 apply -f ~/environment/myeks/network-test/nlb-test-02-service.yaml
 
-##  ~/environment/myeks/network-test/nlb-test-01-service.yaml 파일에서 아래 line의 주석처리를 제거 합니다
-  externalTrafficPolicy: Local
+## nlb-test-02 pod, service 확인 
+kubectl -n nlb-test-02 get pod -o wide
+kubectl -n nlb-test-02 get service -o wide
 ```
 
-NlbTestPod01에 접속해서 Client IP가 보이는지 확인해 봅니다
+NlbTestPod0에 접속해서 외부의 Client IP가 보이는지 확인해 봅니다
+
+```
+kubectl -n nlb-test-01 exec -it {nlb-test-pod name} -- /bin/sh
+
+##접속 예##
+
+```
 
 ## NLB기반 Loadbalancer 배포
 
