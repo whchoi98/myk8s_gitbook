@@ -412,3 +412,11 @@ Kubernetes / Networking / Pod
 ```
 
 ![](<../.gitbook/assets/image (74).png>)
+
+kubernetes 한국어 대쉬보드
+
+```
+13770
+```
+
+![](<../.gitbook/assets/image (223).png>)
