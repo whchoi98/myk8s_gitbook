@@ -108,40 +108,46 @@ kubectl -n prometheus get all
 앞서 소개한 주요 컴포넌트들이 Pod형태로 배포된 것을 확인 할 수 있습니다. 앞서 아키텍쳐 도식도와 비교해서 확인해 봅니다.
 
 ```
-whchoi98:~ $ kubectl -n prometheus get all 
+$ kubectl -n prometheus get all
 NAME                                                 READY   STATUS    RESTARTS   AGE
-pod/prometheus-alertmanager-6d6469d9bb-mqlk9         2/2     Running   0          6m45s
-pod/prometheus-kube-state-metrics-6df5d44568-66rm8   1/1     Running   0          6m45s
-pod/prometheus-node-exporter-287wp                   1/1     Running   0          6m45s
-pod/prometheus-node-exporter-7t82k                   1/1     Running   0          6m45s
-pod/prometheus-node-exporter-n5gcw                   1/1     Running   0          6m45s
-pod/prometheus-node-exporter-spc56                   1/1     Running   0          6m45s
-pod/prometheus-node-exporter-w5l5d                   1/1     Running   0          6m45s
-pod/prometheus-node-exporter-xcxgj                   1/1     Running   0          6m45s
-pod/prometheus-pushgateway-6d65c95d5-xwvhh           1/1     Running   0          6m45s
-pod/prometheus-server-869d4b999b-6cbtk               2/2     Running   0          6m45s
+pod/prometheus-alertmanager-8784c78d9-fvr2t          2/2     Running   0          89s
+pod/prometheus-kube-state-metrics-569d7854c4-kxx8k   1/1     Running   0          89s
+pod/prometheus-node-exporter-7kt42                   1/1     Running   0          89s
+pod/prometheus-node-exporter-cp8lp                   1/1     Running   0          89s
+pod/prometheus-node-exporter-crsvj                   1/1     Running   0          89s
+pod/prometheus-node-exporter-h9q9c                   1/1     Running   0          89s
+pod/prometheus-node-exporter-j2rjd                   1/1     Running   0          89s
+pod/prometheus-node-exporter-jt6mc                   1/1     Running   0          89s
+pod/prometheus-node-exporter-krtbs                   1/1     Running   0          89s
+pod/prometheus-node-exporter-mlpw6                   1/1     Running   0          89s
+pod/prometheus-node-exporter-pd6pj                   1/1     Running   0          89s
+pod/prometheus-node-exporter-rrd6g                   1/1     Running   0          89s
+pod/prometheus-node-exporter-vqv6b                   1/1     Running   0          89s
+pod/prometheus-node-exporter-zjfb9                   1/1     Running   0          89s
+pod/prometheus-pushgateway-5c79b789d9-n58pk          1/1     Running   0          89s
+pod/prometheus-server-f8d9475d7-4kxth                2/2     Running   0          89s
 
 NAME                                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
-service/prometheus-alertmanager         ClusterIP   172.20.182.229   <none>        80/TCP     6m45s
-service/prometheus-kube-state-metrics   ClusterIP   172.20.121.112   <none>        8080/TCP   6m45s
-service/prometheus-node-exporter        ClusterIP   None             <none>        9100/TCP   6m45s
-service/prometheus-pushgateway          ClusterIP   172.20.197.145   <none>        9091/TCP   6m45s
-service/prometheus-server               ClusterIP   172.20.98.8      <none>        80/TCP     6m45s
+service/prometheus-alertmanager         ClusterIP   172.20.34.60     <none>        80/TCP     89s
+service/prometheus-kube-state-metrics   ClusterIP   172.20.208.234   <none>        8080/TCP   89s
+service/prometheus-node-exporter        ClusterIP   None             <none>        9100/TCP   89s
+service/prometheus-pushgateway          ClusterIP   172.20.170.184   <none>        9091/TCP   89s
+service/prometheus-server               ClusterIP   172.20.210.188   <none>        80/TCP     89s
 
 NAME                                      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
-daemonset.apps/prometheus-node-exporter   6         6         6       6            6           <none>          6m45s
+daemonset.apps/prometheus-node-exporter   12        12        12      12           12          <none>          89s
 
 NAME                                            READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/prometheus-alertmanager         1/1     1            1           6m45s
-deployment.apps/prometheus-kube-state-metrics   1/1     1            1           6m45s
-deployment.apps/prometheus-pushgateway          1/1     1            1           6m45s
-deployment.apps/prometheus-server               1/1     1            1           6m45s
+deployment.apps/prometheus-alertmanager         1/1     1            1           89s
+deployment.apps/prometheus-kube-state-metrics   1/1     1            1           89s
+deployment.apps/prometheus-pushgateway          1/1     1            1           89s
+deployment.apps/prometheus-server               1/1     1            1           89s
 
 NAME                                                       DESIRED   CURRENT   READY   AGE
-replicaset.apps/prometheus-alertmanager-6d6469d9bb         1         1         1       6m45s
-replicaset.apps/prometheus-kube-state-metrics-6df5d44568   1         1         1       6m45s
-replicaset.apps/prometheus-pushgateway-6d65c95d5           1         1         1       6m45s
-replicaset.apps/prometheus-server-869d4b999b               1         1         1       6m45s
+replicaset.apps/prometheus-alertmanager-8784c78d9          1         1         1       89s
+replicaset.apps/prometheus-kube-state-metrics-569d7854c4   1         1         1       89s
+replicaset.apps/prometheus-pushgateway-5c79b789d9          1         1         1       89s
+replicaset.apps/prometheus-server-f8d9475d7                1         1         1       89s
 ```
 
 ### 2.Prometheus 실행 및 접속.&#x20;
