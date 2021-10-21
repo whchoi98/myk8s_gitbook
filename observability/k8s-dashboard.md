@@ -80,7 +80,7 @@ kubernetes-dashboard        ClusterIP   172.20.122.109   <none>        443/TCP  
 기본적으로 Kubernetes 대시보드 사용자의 권한은 제한되어 있습니다. eks-admin 서비스 계정 및 클러스터 역할 바인딩을 생성하고, 이를 사용하여 관리자 수준 권한으로 대시보드에 보안 연결할 수 있습니다.&#x20;
 
 아래 텍스트가 포함된 **"eks-admin-service-account.yaml"** 이라는 파일을 생성합니다. 이 매니페스트는 eks-admin이라는 서비스 계정 및 클러스터 역할 바인딩을 정의합니다. \
-(\~/home/ec2-user/environment/myeks/k8s\_dashboard/eks-admin-service-account.yaml 에 이미 정의되어 있습니다.)
+(\~/home/ec2-user/environment/myeks/k8s\_dashboard/eks-admin-service-account.yaml 에 이미 정의되어 있습니다. 앞서 Chapter에서 git clone을 수행하였다면 생략합니다. )
 
 ```
 cat <<EoF > ~/environment/myeks/k8s_dashboard/eks-admin-service-account.yaml
@@ -108,7 +108,7 @@ EoF
 서비스 계정 및 클러스터 역할 바인딩을 클러스터에 적용합니다.
 
 ```
-kubectl apply -f eks-admin-service-account.yaml
+kubectl apply -f ~/environment/myeks/k8s_dashboard/eks-admin-service-account.yaml
 
 ```
 
