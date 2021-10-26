@@ -330,12 +330,16 @@ export PATH=/usr/local/bin:$PATH
 source ~/.bash_profile
 complete -C '/usr/local/bin/aws_completer' aws
 
+# Session Manager Plugin 설치 
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+sudo sudo yum install -y session-manager-plugin.rpm
+
 ```
 
-3\. Cloud9에 Kubectl 설치 (1.19 기준)
+3\. Cloud9에 Kubectl 설치 (1.20.7기준)
 
 ```
-# EKS 1.19.6 기반 설치
+# EKS 1.20.7 기반 설치
 cd ~
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/linux/amd64/kubectl
 chmod +x ./kubectl
