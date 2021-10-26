@@ -83,7 +83,7 @@ Cloud9 Terminal에 Session Manager 를 통해 EKS Worker Node 접속을 위해 �
 ```
 curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
 sudo sudo yum install -y session-manager-plugin.rpm
- ㅅ
+
 ```
 
 ## Kubectl 설치
@@ -337,7 +337,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 ```
 # EKS 1.19.6 기반 설치
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.6/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
 echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
