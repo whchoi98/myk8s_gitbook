@@ -34,9 +34,46 @@ Cloud9 터미널에 접속하여, EKS Workshop 터미널  IDE 환경을 살펴�
 
 ![](<../.gitbook/assets/image (10).png>)
 
+### 4. Cloud9 Volume 증설
+
+Cloud9은 생성될 때 기본 10GB의 EBS 볼륨이 생성됩니다. 아래 Script를 실행해서 Cloud9의 볼륨을 100GB로 늘려 줍니다.
+
+```
+pip3 install --user --upgrade boto3
+export instance_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+python -c "import boto3
+import os
+from botocore.exceptions import ClientError 
+ec2 = boto3.client('ec2')
+volume_info = ec2.describe_volumes(
+    Filters=[
+        {
+            'Name': 'attachment.instance-id',
+            'Values': [
+                os.getenv('instance_id')
+            ]
+        }
+    ]
+)
+volume_id = volume_info['Volumes'][0]['VolumeId']
+try:
+    resize = ec2.modify_volume(    
+            VolumeId=volume_id,    
+            Size=100
+    )
+    print(resize)
+except ClientError as e:
+    if e.response['Error']['Code'] == 'InvalidParameterValue':
+        print('ERROR MESSAGE: {}'.format(e))"
+if [ $? -eq 0 ]; then
+    sudo reboot
+fi
+
+```
+
 ## AWS CLI 설치
 
-### 4.AWS CLI 버전 확인과 업그레이드
+### 5.AWS CLI 버전 확인과 업그레이드
 
 {% hint style="info" %}
 AWS 명령줄 인터페이스(CLI)는 AWS 서비스를 관리하는 통합 도구입니다. 도구 하나만 다운로드하여 구성하면 여러 AWS 서비스를 명령줄에서 제어하고 스크립트를 통해 자동화할 수 있습니다.
@@ -76,7 +113,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ```
 
-### 5. AWS Session Manager Plugin 설치
+### 6. AWS Session Manager Plugin 설치
 
 Cloud9 Terminal에 Session Manager 를 통해 EKS Worker Node 접속을 위해 아래와 같이 설치합니다.
 
@@ -88,17 +125,17 @@ sudo sudo yum install -y session-manager-plugin.rpm
 
 ## Kubectl 설치
 
-### 6.Kubectl 소개
+### 7.Kubectl 소개
 
 쿠버네티스 커맨드 라인 도구인 [kubectl](https://kubernetes.io/docs/user-guide/kubectl/)을 사용하면, 쿠버네티스 클러스터에 대해 명령을 실행할 수 있습니. kubectl을 사용하여 애플리케이션을 배포하고, 클러스터 리소스를 검사 및 관리하며 로그를 볼 수 있다습니다. kubectl 작업의 전체 목록에 대해서는, [kubectl 개요](https://kubernetes.io/ko/docs/reference/kubectl/overview/)를 참고합니다.
 
-### 7.kubectl 바이너리 다운로드
+### 8.kubectl 바이너리 다운로드
 
 EKS를 위한 kubectl 바이너리를 다운로드합니다. 아래 kubectl version 가운데 1개를 다운로드 받습니다.
 
 kubectl은 Version 1개 정도의 차이 호환성은 가지고 갑니다.
 
-**EKS 1.16.15 기반 설치 **
+**EKS 1.16.15 기반 설치**&#x20;
 
 ```
 cd ~
@@ -114,7 +151,7 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.17/bin/
 
 ```
 
-**EKS 1.18.20 기반 설치 **
+**EKS 1.18.20 기반 설치**&#x20;
 
 ```
 cd ~
@@ -156,7 +193,7 @@ curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s ht
 
 #### :dart: 추가 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html)
 
-### 8. 실행권한을 적용 및 구성&#x20;
+### 9. 실행권한을 적용 및 구성&#x20;
 
 바이너리에 실행권한을 적용합니다.
 
@@ -166,7 +203,7 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 
 ```
 
-### 9. kubectl 설치 확인 &#x20;
+### 10. kubectl 설치 확인 &#x20;
 
 ```
 kubectl version --short --client
@@ -192,16 +229,18 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 ```
 
+
+
 ## 기타 유틸리티 설치
 
-### 10.GNU gettext,jq,bash 자동완성, moreutil 설치
+### 11.GNU gettext,jq,bash 자동완성, moreutil 설치
 
 ```
 sudo yum -y install jq gettext bash-completion moreutils
 
 ```
 
-### 11.jq 구성
+### 12.jq 구성
 
 ```
 for command in kubectl jq envsubst aws
@@ -215,7 +254,7 @@ for command in kubectl jq envsubst aws
 **jq**는 커맨드라인에서 JSON을 조작할 수 있는 도구입니다. 프로그래밍 언어는 아니지만 JSON 데이터를 다루기 위한 다양한 기능들을 제공합니다. kubectl의 결과들 중에서 복잡한 중첩 JSON구조  내에서 키를 찾을 때 유용합니다.
 {% endhint %}
 
-### 12.K9s 설치
+### 13.K9s 설치
 
 K9s는 쿠버네티스 클러스터와 상호작용을 통해 직관적인 UI 터미널을 제공합니다. 이 도구를 통해서 쿠버네티스 자원들을 쉽게 탐색하고 관리할 수 있도록 도움을 줍니다.(참조 - [https://github.com/derailed/k9s](https://github.com/derailed/k9s))
 
@@ -258,7 +297,7 @@ k9s
 
 ```
 
-### 13.Kube krew 설치 (option)
+### 14.Kube krew 설치 (option)
 
 {% hint style="info" %}
 kube krew는 Mac OS brew, CentOS yum, Ubuntu apt 처럼 Kube에 관련된 좋은 유틸리티를 제공하고 있습니다.
@@ -285,7 +324,7 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 ```
 
-### 14.Kubectx 설치 (Option)
+### 15.Kubectx 설치 (Option)
 
 kubectx는 다중의 Kubecluster 가 존재할 때 전환이 쉽도록 도와주는 훌륭한 도구입니다. kubectx를 설치합니다.
 
@@ -294,7 +333,7 @@ kubectl krew install ctx
 brew install kubectx
 ```
 
-### 15.Kubens 설치 (Option)
+### 16.Kubens 설치 (Option)
 
 kubens는 여러개의 namespace를 전환이 쉽도록 도와주는 도구 입니다. kubens를 설치합니다.
 
@@ -303,7 +342,7 @@ kubectl krew install ns
 
 ```
 
-### 16.Kubetree 설치 (Option)
+### 17.Kubetree 설치 (Option)
 
 kubetree는 linux의 tree처럼 kube의  파일구조를 확인하는 데 유용한 도구입니다.
 
