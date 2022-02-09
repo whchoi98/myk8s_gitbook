@@ -354,7 +354,7 @@ nlb-test-01-svc   LoadBalancer   172.20.167.205   aee3bccea7e554a008b3257942202e
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.
 
-![](<../.gitbook/assets/image (223) (1).png>)
+![](<../.gitbook/assets/image (223) (1) (1).png>)
 
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 

@@ -105,7 +105,7 @@ Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니�
 
 Public-SG 라는 Security Group을 생성하고, 해당 인스턴스에 적용합니다.
 
-![](<../.gitbook/assets/image (223) (1) (1).png>)
+![](<../.gitbook/assets/image (223) (1) (1) (1).png>)
 
 Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
