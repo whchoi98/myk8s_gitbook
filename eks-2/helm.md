@@ -939,7 +939,7 @@ whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
 2021-04-06 08:14:49 whchoi-chartmuseum-2021-04-06
 ```
 
-아래 명령어를 통해서 debug하고 정상적으로 동작하는지 확인합니다. **`--storage-amazon-bucket="생성한 버킷 이름" `**을 입력합니다.
+아래 명령어를 통해서 debug하고 정상적으로 동작하는지 확인합니다. **`--storage-amazon-bucket="생성한 버킷 이름"`** 을 입력합니다.
 
 ```
 ./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum-2021-04-06 --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2" &

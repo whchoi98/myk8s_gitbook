@@ -46,7 +46,7 @@ cat vpc_subnet.txt
 
 ```
 
-아래는 **`vpc_subnet.txt `**에 저장된 예제입니다.
+아래는 **`vpc_subnet.txt`** 에 저장된 예제입니다.
 
 ```
 vpc-04a7f563ebe750a92

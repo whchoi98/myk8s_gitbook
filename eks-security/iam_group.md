@@ -6,7 +6,7 @@ description: 'Update : 2021-04-09'
 
 EKS에서 아래와 같은 역할을 규정하고 , IAM에서 역할을 구성해 봅니다.
 
-* k8sAdmin role - EKS Cluster 관리자 역할 . 
+* k8sAdmin role - EKS Cluster 관리자 역할 .&#x20;
 * k8sDev role - Developer Namespace에 대한 액세스 권한.
 * k8sInteg role - integration Namespace에 대한 액세스 권한.
 
@@ -45,7 +45,7 @@ IAM에서 아래와 같이 생성되었습니다.
 
 ![](<../.gitbook/assets/image (202).png>)
 
-## **IAM Group 생성 **
+## **IAM Group 생성**&#x20;
 
 ### **1.k8sAdmin IAM 그룹 생성**
 
@@ -181,7 +181,7 @@ aws iam get-group --group-name k8sInteg
 
 ```
 
-Access Key를 생성하고 복사해 둡니다. 
+Access Key를 생성하고 복사해 둡니다.&#x20;
 
 {% hint style="danger" %}
 LAB에서만 사용하는 방식으로, access-key등을 별도의 파일로 저장하는 것은 권장하는 방법이 아닙니다.
@@ -200,7 +200,7 @@ aws iam create-access-key --user-name IntUser | tee /tmp/IntUser.json
 
 ## RBAC 구성
 
-### 1.Namespace 만들기 
+### 1.Namespace 만들기&#x20;
 
 2개의 네임스페이스를 만듭니다.
 
@@ -323,7 +323,7 @@ EOF
 
 이전에 정의한 IAM 역할에 대한 액세스 권한을 EKS 클러스터에 **부여** 하려면 특정 **mapRoles** 를 `aws-auth`ConfigMap에 추가해야합니다. IAM 사용자를 직접 지정하는 대신 Role을 사용하여 클러스터에 액세스 할 때의 장점은 관리가 더 쉽다는 것입니다. 사용자를 추가하거나 제거 할 때마다 ConfigMap을 업데이트 할 필요가 없습니. IAM 그룹에서 사용자를 제거하고 IAM 그룹에 연결된 IAM 역할을 허용하도록 ConfigMap을 구성하기 만 하면 됩니다.
 
-#### IAM 역할을 허용하도록 aws-auth ConfigMap 업데이트 <a href="update-the-aws-auth-configmap-to-allow-our-iam-roles" id="update-the-aws-auth-configmap-to-allow-our-iam-roles"></a>
+#### IAM 역할을 허용하도록 aws-auth ConfigMap 업데이트 <a href="#update-the-aws-auth-configmap-to-allow-our-iam-roles" id="update-the-aws-auth-configmap-to-allow-our-iam-roles"></a>
 
 arn 그룹을 허용하거나 삭제하려면 kube-system 네임 스페이스 의 **aws-auth** ConfigMap을 편집해야합니다. 이 파일은 IAM 역할과 k8S RBAC 권한을 매핑합니다. 수동으로 편집 할 수 있습니다.
 
@@ -353,7 +353,7 @@ eksctl delete iamidentitymapping --cluster eksworkshop-eksctlv --arn arn:aws:iam
 
 ```
 
-### 구성 확인 
+### 구성 확인&#x20;
 
 구성된 confimap을 확인해 봅니다.
 
