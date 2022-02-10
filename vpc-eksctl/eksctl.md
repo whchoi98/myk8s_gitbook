@@ -44,6 +44,18 @@ echo $vpc_ID > vpc_subnet.txt
 aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> vpc_subnet.txt
 cat vpc_subnet.txt
 
+export PublicSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet01/{print $1}')
+export PublicSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet02/{print $1}')
+export PublicSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet03/{print $1}')
+export PrivateSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet01/{print $1}')
+export PrivateSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet02/{print $1}')
+export PrivateSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet03/{print $1}')
+echo "export PublicSubnet01=${PublicSubnet01}" | tee -a ~/.bash_profile
+echo "export PublicSubnet02=${PublicSubnet02}" | tee -a ~/.bash_profile
+echo "export PublicSubnet03=${PublicSubnet03}" | tee -a ~/.bash_profile
+echo "export PrivateSubnet01=${PrivateSubnet01}" | tee -a ~/.bash_profile
+echo "export PrivateSubnet02=${PrivateSubnet02}" | tee -a ~/.bash_profile
+echo "export PrivateSubnet03=${PrivateSubnet03}" | tee -a ~/.bash_profile
 ```
 
 아래는 **`vpc_subnet.txt`** 에 저장된 예제입니다.
@@ -75,46 +87,7 @@ VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포�
 
 ### 3. eksctl 배포 yaml 수정
 
-Cloud9 IDE 편집기에서 아래와 같이 수정합니다. 수정내용은 현재 생성된 VPC, Subnet ID , key 위치 입니다.
-
-수정할 블록의 예시입니다.
-
-```
-## vpc id와 publicsubnet01,02,03 , privatesubnet01,02,03 id를 수정합니다.
-vpc: 
-  id: vpc-0239e84f8661afd68
-  subnets:
-    public:
-      PublicSubnet01:
-        id: subnet-034ec07d22456d9b9
-      PublicSubnet02:
-        id: subnet-013b3cc048e33329c
-      PublicSubnet03:
-         id: subnet-0f5ae309c6f9c7930
-    private:
-      PrivateSubnet01:
-        id: subnet-0c3971dcd36fd14d2
-      PrivateSubnet02:
-        id: subnet-0143da95702fe21b6
-      PrivateSubnet03:
-        id: subnet-015f0684336d83519
-
-#KMS Key ARN을 수정합니다.
-secretsEncryption:
-  keyARN: arn:aws:kms:ap-northeast-2:584172017494:key/25a2f579-9f22-4d79-ad6f-1a468d06244b
-
-## ssh key 위치를 확인합니다.
-nodeGroups:
-  - name: ng-public-01
-중략 
-    ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
-중략  
-  - name: ng-private-01
-중략  
-    ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
-```
+아래 파일을 생성합니다. 해당 파일의 예제는 앞서 복제한 git의 eksworkshop-cluster-3az.yaml과 동일합니다.
 
 {% hint style="warning" %}
 **vpc/subnet id , KMS CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 또한 Cloud9의 publickeyPath의 경로도 확인하고, 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.**
