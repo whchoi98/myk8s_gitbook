@@ -123,6 +123,21 @@ echo ${private_selfmgmd_node}
 echo ${public_mgmd_node}
 echo ${private_mgmd_node}
 echo ${publicKeyPath}
+
+```
+
+Shell Profile에 등록합니다. &#x20;
+
+```
+echo "export ekscluster_name=${ekscluster_name}" | tee -a ~/.bash_profile
+echo "export eks_version=${eks_version}" | tee -a ~/.bash_profile
+echo "export instance_type=${instance_type}" | tee -a ~/.bash_profile
+echo "export public_selfmgmd_node=${public_selfmgmd_node}" | tee -a ~/.bash_profile
+echo "export private_selfmgmd_node=${private_selfmgmd_node}" | tee -a ~/.bash_profile
+echo "export public_mgmd_node=${public_mgmd_node}" | tee -a ~/.bash_profile
+echo "export private_mgmd_node=${private_mgmd_node}" | tee -a ~/.bash_profile
+echo "export publicKeyPath=${publicKeyPath}" | tee -a ~/.bash_profile
+
 ```
 
 eksctl을 통해 EKS Cluster를 생성합니다.&#x20;
@@ -136,7 +151,7 @@ kind: ClusterConfig
 metadata:
   name: ${ekscluster_name}
   region: ${AWS_REGION}
-  version: ${eks_version}  
+  version: "${eks_version}"  
 
 vpc: 
   id: ${vpc_ID}
@@ -172,9 +187,9 @@ nodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: ${public_selfmgmd_node}
+      nodegroup-type: "${public_selfmgmd_node}"
     ssh: 
-        publicKeyPath: ${publicKeyPath}
+        publicKeyPath: "${publicKeyPath}"
         allow: true
     iam:
       attachPolicyARNs:
@@ -199,9 +214,9 @@ nodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: ${private_selfmgmd_node}
+      nodegroup-type: "${private_selfmgmd_node}"
     ssh: 
-        publicKeyPath: ${publicKeyPath}
+        publicKeyPath: "${publicKeyPath}"
         allow: true
     iam:
       attachPolicyARNs:
@@ -226,9 +241,9 @@ managedNodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: ${public_mgmd_node}
+      nodegroup-type: "${public_mgmd_node}"
     ssh: 
-        publicKeyPath: ${publicKeyPath}
+        publicKeyPath: "${publicKeyPath}"
         allow: true
     iam:
       attachPolicyARNs:
@@ -253,9 +268,9 @@ managedNodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: ${private_mgmd_node}
+      nodegroup-type: "${private_mgmd_node}"
     ssh: 
-        publicKeyPath: ${publicKeyPath}
+        publicKeyPath: "${publicKeyPath}"
         allow: true
     iam:
       attachPolicyARNs:
