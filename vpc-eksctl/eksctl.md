@@ -408,7 +408,6 @@ ip-10-11-99-248.ap-northeast-2.compute.internal    Ready    <none>   26m   v1.20
 eksctl 배포를 위한 EKS Cluster yaml 파일은 다음과 같습니다. 각자의 Cloud9 콘솔에서 파일을 확인해 봅니다.
 
 ```
-# A simple example of ClusterConfig object:
 ---
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
@@ -416,33 +415,27 @@ kind: ClusterConfig
 metadata:
   name: eksworkshop
   region: ap-northeast-2
-  version: "1.20"
+  version: "1.20"  
 
 vpc: 
-  id: vpc-0ec670bcdaf2efa2d
+  id: vpc-0cac82bae42538fd7
   subnets:
     public:
-#      ap-northeast-2a: { id: subnet-0dabdc92b066581ad}
-#      ap-northeast-2b: { id: subnet-0ede38666dec3b35f}
-#      ap-northeast-2c: { id: subnet-01b9091263c4b30fa}
       PublicSubnet01:
-        id: subnet-0a225c208a7c4d1d6
+        id: subnet-0cd13d352f0960e86
       PublicSubnet02:
-        id: subnet-005309b113283f38a
+        id: subnet-065f091e585fea002
       PublicSubnet03:
-        id: subnet-034a4e2a275b9b3ad
+        id: subnet-0d767589be30c617f
     private:
-#      ap-northeast-2a: { id: subnet-0262f5b422602c335}
-#      ap-northeast-2b: { id: subnet-0e858cd46e3bd6cb1}
-#      ap-northeast-2c: { id: subnet-0f1eedd72ed2aa9be}
       PrivateSubnet01:
-        id: subnet-0c6430b44d5c98211
+        id: subnet-056e4159357931f83
       PrivateSubnet02:
-        id: subnet-0f1a181077dcfb1cb
+        id: subnet-02bb9d3ae75d5c333
       PrivateSubnet03:
-        id: subnet-061a967ec3d9c4d8e
+        id: subnet-006b575333b696f4b
 secretsEncryption:
-  keyARN: arn:aws:kms:ap-northeast-2:814158080615:key/01e1d621-9f23-4de7-a4a3-1d4238566c0a
+  keyARN: arn:aws:kms:ap-northeast-2:794454221194:key/e9d049ae-38f1-4f38-b084-02ce197b0894
 
 nodeGroups:
   - name: ng-public-01
@@ -556,6 +549,4 @@ cloudWatch:
     clusterLogging:
         enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
-
 ```
-
