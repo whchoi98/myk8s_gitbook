@@ -40,26 +40,24 @@ kubectl -n cluster-test-01 get pods -o wide
 정상적으로 Pods가 생성되었는지 확인합니다.
 
 ```
-kubectl -n cluster-test-01 get pods
-NAME                               READY   STATUS    RESTARTS   AGE
-cluster-test-01-6f4dddc749-pfq77   1/1     Running   0          36s
-cluster-test-01-6f4dddc749-s8hkp   1/1     Running   0          36s
-cluster-test-01-6f4dddc749-tq8jj   1/1     Running   0          36s
-
 kubectl -n cluster-test-01 get pods -o wide
-NAME                               READY   STATUS    RESTARTS   AGE     IP              NODE                                               NOMINATED NODE   READINESS GATES
-cluster-test-01-6f4dddc749-pfq77   1/1     Running   0          7m35s   10.11.107.227   ip-10-11-108-153.ap-northeast-2.compute.internal   <none>           <none>
-cluster-test-01-6f4dddc749-s8hkp   1/1     Running   0          7m35s   10.11.29.107    ip-10-11-21-111.ap-northeast-2.compute.internal    <none>           <none>
-cluster-test-01-6f4dddc749-tq8jj   1/1     Running   0          7m35s   10.11.1.72      ip-10-11-3-68.ap-northeast-2.compute.internal      <none>           <none>
+NAME                              READY   STATUS    RESTARTS   AGE     IP             NODE                                             NOMINATED NODE   READINESS GATES
+cluster-test-01-b86b9c685-cpbh8   1/1     Running   0          3h28m   10.11.5.202    ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
+cluster-test-01-b86b9c685-hm7v5   1/1     Running   0          3h28m   10.11.26.206   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
+cluster-test-01-b86b9c685-knnkv   1/1     Running   0          3h28m   10.11.40.48    ip-10-11-35-39.ap-northeast-2.compute.internal   <none>           <none>
 ```
 
 shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
 
 ```
-echo "export ClusterTestPod03=cluster-test-01-6f4dddc749-pfq77" | tee -a ~/.bash_profile
-echo "export ClusterTestPod02=cluster-test-01-6f4dddc749-s8hkp" | tee -a ~/.bash_profile
-echo "export ClusterTestPod01=cluster-test-01-6f4dddc749-tq8jj" | tee -a ~/.bash_profile
+export ClusteTestPod01=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.5.202/{print $1}')
+export ClusteTestPod02=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.26.206/{print $1}')
+export ClusteTestPod03=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.40.48/{print $1}') 
+echo "export ClusterTestPod01=${ClusterTestPod01}" | tee -a ~/.bash_profile
+echo "export ClusterTestPod02=${ClusterTestPod02}" | tee -a ~/.bash_profile
+echo "export ClusterTestPod03=${ClusterTestPod03}" | tee -a ~/.bash_profile
 source ~/.bash_profile
+
 ```
 
 각각의 Pod로 접속해 봅니다.
@@ -73,6 +71,7 @@ ip a 와 /etc/resolve.conf를 조회해 봅니다.
 ```
 ip a
 cat /etc/resolv.conf
+
 ```
 
 다음과 같이 출력됩니다.
@@ -87,7 +86,7 @@ cat /etc/resolv.conf
 ##Pod의 IP 주소 입니다.
 3: eth0@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9001 qdisc noqueue state UP group default 
     link/ether ca:63:b0:58:89:81 brd ff:ff:ff:ff:ff:ff link-netnsid 0
-    inet 10.11.1.72/32 scope global eth0
+    inet 10.11.5.202/32 scope global eth0
        valid_lft forever preferred_lft forever
        
 # cat /etc/resolv.conf 
@@ -114,7 +113,7 @@ kubectl -n cluster-test-01 exec -it $ClusterTestPod02 -- /bin/sh
        valid_lft forever preferred_lft forever
 3: eth0@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9001 qdisc noqueue state UP group default 
     link/ether e6:69:08:ca:10:9f brd ff:ff:ff:ff:ff:ff link-netnsid 0
-    inet 10.11.29.107/32 scope global eth0
+    inet 10.11.26.206/32 scope global eth0
        valid_lft forever preferred_lft forever
 # cat /etc/resolv.conf 
 nameserver 172.20.0.10
@@ -127,7 +126,7 @@ AWS VPC CNI 구성은 Pod 생성할 때 마다 ENI를 생성하므로, Pod간 IP
 ```
 ## ClusterTestPod01 컨테이너에서 ClusterTestPod02로 Ping Test
 
-/ # ping 10.11.29.107
+/ # ping 10.11.26.206
 PING 10.11.29.107 (10.11.29.107) 56(84) bytes of data.
 64 bytes from 10.11.29.107: icmp_seq=1 ttl=253 time=0.951 ms
 64 bytes from 10.11.29.107: icmp_seq=2 ttl=253 time=0.655 ms
@@ -214,8 +213,23 @@ iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
 kubectl -n cluster-test-01 get pods -o wide
 
 ## Node instance id 확인 ##
-~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.10.88/{print $1,$2,$3,$7}' 
-aws ssm start-session --target $NGPublic01
+export ng_public01=10.11.10.88
+export ng_public02=10.11.30.67
+export ng_public03=10.11.35.39
+echo "export ng_public01=${ng_public01}" | tee -a ~/.bash_profile
+echo "export ng_public02=${ng_public02}" | tee -a ~/.bash_profile
+echo "export ng_public03=${ng_public03}" | tee -a ~/.bash_profile
+~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.10.88/{print $1,$2,$3,$7}'
+~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.30.67/{print $1,$2,$3,$7}'
+~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.35.39/{print $1,$2,$3,$7}'
+export ng_public01_id=i-086ecc23abd63ce5d
+export ng_public02_id=i-0a50ec9b6a6d892cc
+export ng_public03_id=i-05fdbfad2faef355a
+echo "export ng_public01_id=${ng_public01_id}" | tee -a ~/.bash_profile
+echo "export ng_public02_id=${ng_public02_id}" | tee -a ~/.bash_profile
+echo "export ng_public03_id=${ng_public03_id}" | tee -a ~/.bash_profile
+
+aws ssm start-session --target $ng_public01_id
 sudo -s
 iptables -t nat -L --line-number | more
 iptables -t nat -L --line-number | grep cluster-test-01-svc

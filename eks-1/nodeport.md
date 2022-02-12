@@ -36,19 +36,22 @@ kubectl -n node-test-01 get pods -o wide
 생성한 pod를 확인합니다.&#x20;
 
 ```
-kubectl -n node-test-01 get pods -o wide
-NAME                            READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
-node-test-01-869b8d5f87-4w5g5   0/1     Running   0          7s    10.11.33.224   ip-10-11-35-116.ap-northeast-2.compute.internal   <none>           <none>
-node-test-01-869b8d5f87-6rbhz   0/1     Running   0          7s    10.11.16.91    ip-10-11-21-111.ap-northeast-2.compute.internal   <none>           <none>
-node-test-01-869b8d5f87-rbwqz   0/1     Running   0          7s    10.11.11.5     ip-10-11-3-68.ap-northeast-2.compute.internal     <none>           <none>
+kubectl -n node-test-01 get pod -o wide                                                                                                                                                
+NAME                            READY   STATUS    RESTARTS   AGE    IP            NODE                                             NOMINATED NODE   READINESS GATES
+node-test-01-869b8d5f87-646t7   1/1     Running   0          168m   10.11.11.11   ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
+node-test-01-869b8d5f87-crwm5   1/1     Running   0          168m   10.11.18.11   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
+node-test-01-869b8d5f87-qbskb   1/1     Running   0          168m   10.11.38.70   ip-10-11-35-39.ap-northeast-2.compute.internal   <none>           <none>
 ```
 
 shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
 
 ```
-echo "export NodeTestPod03=node-test-01-869b8d5f87-4w5g5" | tee -a ~/.bash_profile
-echo "export NodeTestPod02=node-test-01-869b8d5f87-6rbhz" | tee -a ~/.bash_profile
-echo "export NodeTestPod01=node-test-01-869b8d5f87-rbwqz" | tee -a ~/.bash_profile
+export NodePort_Test_Pod01=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.11.11/{print $1}')
+export NodePort_Test_Pod02=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.18.11/{print $1}')
+export NodePort_Test_Pod03=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.38.70/{print $1}') 
+echo "export NodePort_Test_Pod01=${NodePort_Test_Pod01}" | tee -a ~/.bash_profile
+echo "export NodePort_Test_Pod02=${NodePort_Test_Pod02}" | tee -a ~/.bash_profile
+echo "export NodePort_Test_Pod03=${NodePort_Test_Pod03}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
@@ -97,7 +100,7 @@ node-test-01-svc   NodePort   172.20.138.254   <none>        8080:30080/TCP   37
 pod shell로 접속해서 Service A Record를 확인해 봅니다.
 
 ```
-kubectl -n node-test-01 exec -it $NodeTestPod01 -- /bin/sh
+kubectl -n node-test-01 exec -it $NodePort_Test_Pod01 -- /bin/sh
 /# nslookup 172.20.138.254
 ```
 
