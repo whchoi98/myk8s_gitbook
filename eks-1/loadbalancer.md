@@ -419,23 +419,23 @@ kubectl -n nlb-test-02 get service -o wide
 
 ```
 
-NlbTestPod0에 접속해서 외부의 Client IP가 보이는지 확인해 봅니다
+NlbTestPod0에 접속해서 외부의 Client IP가 보이는지 확인해 봅니다.&#x20;
 
 ```
-kubectl -n nlb-test-01 exec -it {nlb-test-pod name} -- /bin/sh
+### Cloud9 Terminal IP 를 확인합니다. 
+curl http://169.254.169.254/latest/meta-data/public-ipv4
 
-##접속 예##
-$ kubectl -n nlb-test-01 get service -o wide
-NAME              TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
-nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017-374347eabaa0875f.elb.ap-northeast-2.amazonaws.com   8080:31965/TCP   21m   app=nlb-test-01
-$ kubectl -n nlb-test-02 exec -it nlb-test-02-789d59867-k4nm7 -- /bin/sh                                       
+### Cloud9 에서 NLB External IP로 계속 접속 해 봅니다.
+while true; do curl {NLB External IP:8080}; sleep 1; clear; done
 
-/ # tcpdump -i eth0 src 122.40.8.88 and dst port 80
+### nlb-test-02 namespace의 Pod1로 접속합니다. 
+kubectl -n nlb-test-02 exec -it {nlb-test-pod name} -- /bin/sh                                   
+
+/ # tcpdump -i eth0 src {cloud9_terminal_ip} and dst port 80 | grep "HTTP: GET"
 tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
-14:10:34.507508 IP 122.40.8.88.54875 > nlb-test-02-789d59867-k4nm7.80: Flags [.], ack 2648158888, win 2048, length 0
-14:10:38.069988 IP 122.40.8.88.54875 > nlb-test-02-789d59867-k4nm7.80: Flags [.], ack 2, win 2048, options [nop,nop,TS val 1766089272 ecr 1499094324], length 0
-14:10:38.070005 IP 122.40.8.88.54875 > nlb-test-02-789d59867-k4nm7.80: Flags [F.], seq 1, ack 2, win 2048, options [nop,nop,TS val 1766089272 ecr 1499094324], length 0
+17:03:37.925845 IP ec2-13-125-172-173.ap-northeast-2.compute.amazonaws.com.56206 > nlb-test-02-789d59867-hxnl8.80: Flags [P.], seq 0:151, ack 1, win 211, options [nop,nop,TS val 2984805554 ecr 1007839403], length 151: HTTP: GET / HTTP/1.1
+17:03:38.937357 IP ec2-13-125-172-173.ap-northeast-2.compute.amazonaws.com.49756 > nlb-test-02-789d59867-hxnl8.80: Flags [P.], seq 0:151, ack 1, win 211, options [nop,nop,TS val 1993855085 ecr 1007840414], length 151: HTTP: GET / HTTP/1.1
 ```
 
 ## NLB기반 Loadbalancer 배포
