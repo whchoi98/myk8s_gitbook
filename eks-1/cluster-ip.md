@@ -210,9 +210,15 @@ Praqma Network MultiTool (with NGINX) - cluster-test-01-6f4dddc749-pfq77 - 10.11
 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
 
 ```
+## Node 정보 확인 ##
+kubectl -n cluster-test-01 get pods -o wide
+
+## Node instance id 확인 ##
+~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.10.88/{print $1,$2,$3,$7}' 
 aws ssm start-session --target $NGPublic01
 sudo -s
 iptables -t nat -L --line-number | more
+iptables -t nat -L --line-number | grep cluster-test-01-svc
 
 ```
 
