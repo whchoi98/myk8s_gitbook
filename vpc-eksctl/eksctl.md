@@ -95,10 +95,37 @@ VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포�
 
 ### 4. cluster 생성
 
-eksctl을 통해 EKS Cluster를 생성합니다.&#x20;
+eksctl을 통해 EKS Cluster를 생성하기 위해서, 아래와 같이 Shell 변수에 값을 입력하고, 정상적으로 값이 출력되는 지 확인합니다.&#x20;
 
 ```
+export ekscluster_name="eksworkshop"
+export eks_version="1.20"
+export instance_type="m5.xlarge"
+export public_selfmgmd_node="frontend-workloads"
+export private_selfmgmd_node="backend-workloads"
+export public_mgmd_node="managed-frontend-workloads"
+export private_mgmd_node="managed-backend-workloads"
+export publicKeyPath="/home/ec2-user/environment/eksworkshop.pub"
+
+echo ${ekscluster_name}
+echo ${AWS_REGION}
+echo ${eks_version}
+echo ${PublicSubnet01}
+echo ${PublicSubnet02}
+echo ${PublicSubnet03}
+echo ${PrivateSubnet01}
+echo ${PrivateSubnet02}
+echo ${PrivateSubnet03}
+echo ${MASTER_ARN}
+echo ${instance_type}
+echo ${public_selfmgmd_node}
+echo ${private_selfmgmd_node}
+echo ${public_mgmd_node}
+echo ${private_mgmd_node}
+echo ${publicKeyPath}
 ```
+
+eksctl을 통해 EKS Cluster를 생성합니다.&#x20;
 
 ```
 cat << EOF > ~/environment/myeks/eksworkshop.yaml
