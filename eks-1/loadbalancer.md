@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-10-18 / 2h'
+description: 'update : 2022-02-12 / 2h'
 ---
 
 # Loadbalancer 기반 배포
@@ -52,14 +52,14 @@ kubectl -n clb-test-01 get service -o wide
 다음과 같은 결과를 얻을 수 있습니다
 
 ```
-$ kubectl -n clb-test-01 get pod -o wide
-NAME                           READY   STATUS    RESTARTS   AGE     IP             NODE                                              NOMINATED NODE   READINESS GATES
-clb-test-01-66f4b975ff-4ljrm   1/1     Running   0          2m55s   10.11.45.100   ip-10-11-35-116.ap-northeast-2.compute.internal   <none>           <none>
-clb-test-01-66f4b975ff-ldttb   1/1     Running   0          2m55s   10.11.29.252   ip-10-11-21-111.ap-northeast-2.compute.internal   <none>           <none>
-clb-test-01-66f4b975ff-xb2rs   1/1     Running   0          2m55s   10.11.7.225    ip-10-11-3-68.ap-northeast-2.compute.internal     <none>           <none>
-$ kubectl -n clb-test-01 get service -o wide
-NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)          AGE    SELECTOR
-clb-test-01-svc   LoadBalancer   172.20.214.188   a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com   8080:32139/TCP   3m8s   app=clb-test-01
+kubectl -n clb-test-01 get pod -o wide
+NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE                                             NOMINATED NODE   READINESS GATES
+clb-test-01-66f4b975ff-25mvk   0/1     Running   0          9s    10.11.3.103    ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
+clb-test-01-66f4b975ff-hmm52   1/1     Running   0          9s    10.11.40.163   ip-10-11-35-39.ap-northeast-2.compute.internal   <none>           <none>
+clb-test-01-66f4b975ff-vrmx5   0/1     Running   0          9s    10.11.30.212   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
+kubectl -n clb-test-01 get service -o wide
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)          AGE   SELECTOR
+clb-test-01-svc   LoadBalancer   172.20.238.198   a2bb893008047439ba29a8df77944bcf-1758389191.ap-northeast-2.elb.amazonaws.com   8080:30975/TCP   10s   app=clb-test-01
 ```
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다
@@ -69,18 +69,22 @@ clb-test-01-svc   LoadBalancer   172.20.214.188   a8505cbace07d4e15842c4403e55f2
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 
 ```
-echo "export ClbTestPod03=clb-test-01-66f4b975ff-4ljrm" | tee -a ~/.bash_profile
-echo "export ClbTestPod02=clb-test-01-66f4b975ff-ldttb" | tee -a ~/.bash_profile
-echo "export ClbTestPod01=clb-test-01-66f4b975ff-xb2rs" | tee -a ~/.bash_profile
+export Clb_Test_Pod01=$(kubectl -n clb-test-01 get pod -o wide | awk '/10.11.3.103/{print $1}')
+export Clb_Test_Pod02=$(kubectl -n clb-test-01 get pod -o wide | awk '/10.11.30.212/{print $1}')
+export Clb_Test_Pod03=$(kubectl -n clb-test-01 get pod -o wide | awk '/10.11.40.163/{print $1}') 
+echo "export Clb_Test_Pod01=${Clb_Test_Pod01}" | tee -a ~/.bash_profile
+echo "export Clb_Test_Pod02=${Clb_Test_Pod02}" | tee -a ~/.bash_profile
+echo "export Clb_Test_Pod03=${Clb_Test_Pod03}" | tee -a ~/.bash_profile
 source ~/.bash_profile
+
 ```
 
 ClbTestPod01에 접속해서 아래와 같이 확인해 봅니다
 
 ```
-kubectl -n clb-test-01 exec -it $ClbTestPod01 -- /bin/sh
+kubectl -n clb-test-01 exec -it $Clb_Test_Pod01 -- /bin/sh
 nslookup {cluster-ip}
-tcpdump -i eth0 dst port 80
+tcpdump -i eth0 dst port 80 | grep "HTTP: GET"
 
 ```
 
@@ -97,10 +101,11 @@ curl a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com:
 Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
 
 ```
-
-aws ssm start-session --target $NGPublic01
+aws ssm start-session --target $ng_public01_id
 sudo -s
 iptables -t nat -L --line-number | more
+iptables -t nat -L --line-number | grep clb-test-01-svc
+
 ```
 
 CLB에서는 아래와 같은 다양한 Annotation을 추가하여 CLB의 속성 또는 AWS 자원을 연결해서 사용할 수 있습니다
@@ -198,6 +203,7 @@ Replica를 3개로 늘려서 LB가 FrontEnd에서 정상적으로 이뤄지는 �
 ```
 kubectl -n clb-test scale deployment ecsdemo-frontend --replicas=3
 kubectl -n clb-test get pod -o wide
+
 ```
 
 아래 출력되는 결과의 EXTERNAL-IP를 복사해서 브라우져 창에서 실행해 봅니다.
@@ -336,20 +342,21 @@ kubectl -n nlb-test-01 apply -f ~/environment/myeks/network-test/nlb-test-01-ser
 ```
 kubectl -n nlb-test-01 get pod -o wide
 kubectl -n nlb-test-01 get service -o wide
+
 ```
 
 다음과 같은 결과를 얻을 수 있습니다.&#x20;
 
 ```
 kubectl -n nlb-test-01 get pod -o wide
-NAME                          READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
-nlb-test-01-7c5cf9bd5-chpdb   1/1     Running   0          50s   10.11.10.19    ip-10-11-3-68.ap-northeast-2.compute.internal     <none>           <none>
-nlb-test-01-7c5cf9bd5-dfdjm   1/1     Running   0          50s   10.11.32.190   ip-10-11-35-116.ap-northeast-2.compute.internal   <none>           <none>
-nlb-test-01-7c5cf9bd5-zp494   1/1     Running   0          50s   10.11.20.119   ip-10-11-21-111.ap-northeast-2.compute.internal   <none>           <none>
+NAME                          READY   STATUS    RESTARTS   AGE     IP             NODE                                             NOMINATED NODE   READINESS GATES
+nlb-test-01-7c5cf9bd5-c8qfj   1/1     Running   0          6m15s   10.11.13.246   ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
+nlb-test-01-7c5cf9bd5-d8j76   1/1     Running   0          6m15s   10.11.39.128   ip-10-11-35-39.ap-northeast-2.compute.internal   <none>           <none>
+nlb-test-01-7c5cf9bd5-gsxlk   1/1     Running   0          6m15s   10.11.27.219   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
 
 kubectl -n nlb-test-01 get service -o wide
-NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
-nlb-test-01-svc   LoadBalancer   172.20.167.205   aee3bccea7e554a008b3257942202ee1-89daeb3e502cc5fc.elb.ap-northeast-2.amazonaws.com   8080:30360/TCP   19s   app=nlb-test-01
+NAME              TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
+nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017-374347eabaa0875f.elb.ap-northeast-2.amazonaws.com   8080:31965/TCP   28s   app=nlb-test-01
 ```
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.
@@ -359,26 +366,30 @@ nlb-test-01-svc   LoadBalancer   172.20.167.205   aee3bccea7e554a008b3257942202e
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 
 ```
-echo "export NlbTestPod03=nlb-test-01-7c5cf9bd5-dfdjm" | tee -a ~/.bash_profile
-echo "export NlbTestPod02=nlb-test-01-7c5cf9bd5-zp494" | tee -a ~/.bash_profile
-echo "export NlbTestPod01=nlb-test-01-7c5cf9bd5-chpdb" | tee -a ~/.bash_profile
+export Nlb_Test_Pod01=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.13.246/{print $1}')
+export Nlb_Test_Pod02=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.27.219/{print $1}')
+export Nlb_Test_Pod03=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.39.128/{print $1}') 
+echo "export Clb_Test_Pod01=${Nlb_Test_Pod01}" | tee -a ~/.bash_profile
+echo "export Clb_Test_Pod02=${Nlb_Test_Pod02}" | tee -a ~/.bash_profile
+echo "export Clb_Test_Pod03=${Nlb_Test_Pod03}" | tee -a ~/.bash_profile
 source ~/.bash_profile
+
 ```
 
 NlbTestPod01에 접속해서 아래와 같이 확인해 봅니다.&#x20;
 
 ```
-kubectl -n clb-test-01 exec -it $ClbTestPod01 -- /bin/sh
+kubectl -n nlb-test-01 exec -it $Nlb_Test_Pod01 -- /bin/sh
 nslookup {cluster-ip}
-tcpdump -i eth0 dst port 80
+tcpdump -i eth0 dst port 80 | grep "HTTP: GET"
 ```
 
 Cloud9 IDE Terminal에서 CLB External IP:8080 으로 접속합니다.&#x20;
 
 ```
 $ kubectl -n nlb-test-01 get service -o wide
-NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
-nlb-test-01-svc   LoadBalancer   172.20.167.205   aee3bccea7e554a008b3257942202ee1-89daeb3e502cc5fc.elb.ap-northeast-2.amazonaws.com   8080:30360/TCP   19s   app=nlb-test-01
+NAME              TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
+nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017-374347eabaa0875f.elb.ap-northeast-2.amazonaws.com   8080:31965/TCP   18m   app=nlb-test-01
 
 curl aee3bccea7e554a008b3257942202ee1-89daeb3e502cc5fc.elb.ap-northeast-2.amazonaws.com:8080
 ```
@@ -386,13 +397,14 @@ curl aee3bccea7e554a008b3257942202ee1-89daeb3e502cc5fc.elb.ap-northeast-2.amazon
 Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
 
 ```
-aws ssm start-session --target $NGPublic01
+aws ssm start-session --target $ng_public01_id
 sudo -s
 iptables -t nat -L --line-number | more
+iptables -t nat -L --line-number | grep nlb-test-01-svc
 
 ```
 
-NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다. 아래와 같이 새롭게 서비스와  PoD를 배포하고 확인해 봅니다
+NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다. 아래와 같이 새롭게 서비스와  PoD를 배포하고 확인해 봅니다.&#x20;
 
 ```
 ## nlb-test-02 namespace 생성 
@@ -404,6 +416,7 @@ kubectl -n nlb-test-02 apply -f ~/environment/myeks/network-test/nlb-test-02-ser
 ## nlb-test-02 pod, service 확인 
 kubectl -n nlb-test-02 get pod -o wide
 kubectl -n nlb-test-02 get service -o wide
+
 ```
 
 NlbTestPod0에 접속해서 외부의 Client IP가 보이는지 확인해 봅니다
@@ -412,12 +425,9 @@ NlbTestPod0에 접속해서 외부의 Client IP가 보이는지 확인해 봅니
 kubectl -n nlb-test-01 exec -it {nlb-test-pod name} -- /bin/sh
 
 ##접속 예##
-$ kubectl -n nlb-test-02 get pod -o wide                                                                       
-NAME                          READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
-nlb-test-02-789d59867-9s828   1/1     Running   0          10m   10.11.2.137    ip-10-11-4-27.ap-northeast-2.compute.internal     <none>           <none>
-nlb-test-02-789d59867-k4nm7   1/1     Running   0          10m   10.11.22.207   ip-10-11-19-243.ap-northeast-2.compute.internal   <none>           <none>
-nlb-test-02-789d59867-sct5g   1/1     Running   0          10m   10.11.40.77    ip-10-11-33-178.ap-northeast-2.compute.internal   <none>           <none>
-
+$ kubectl -n nlb-test-01 get service -o wide
+NAME              TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
+nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017-374347eabaa0875f.elb.ap-northeast-2.amazonaws.com   8080:31965/TCP   21m   app=nlb-test-01
 $ kubectl -n nlb-test-02 exec -it nlb-test-02-789d59867-k4nm7 -- /bin/sh                                       
 
 / # tcpdump -i eth0 src 122.40.8.88 and dst port 80

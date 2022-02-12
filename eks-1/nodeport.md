@@ -153,7 +153,6 @@ NodePort로 인입된 후 ClusterIP에서 다시 LB되기 때문입니다.&#x20;
 Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
 
 ```
-
 aws ssm start-session --target $ng_public01_id
 sudo -s
 iptables -t nat -L --line-number | more
@@ -258,6 +257,15 @@ kubectl get nodes -o wide
 이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다. Node의 IP 주소는 EC2 서비스 대시 보드에서 확인 할 수 있습니다.
 
 ![](<../.gitbook/assets/image (220).png>)
+
+eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
+
+```
+~/environment/useful-shell/aws_ec2_text.sh | awk '/eksworkshop-ng-public-01-Node/{print $1,$2,$6,$7,$8}'
+eksworkshop-ng-public-01-Node ap-northeast-2a running 10.11.10.88 52.79.206.201
+eksworkshop-ng-public-01-Node ap-northeast-2b running 10.11.30.67 3.38.195.240
+eksworkshop-ng-public-01-Node ap-northeast-2c running 10.11.35.39 13.125.40.125
+```
 
 eksworkshop-ng-public-01-Node 의 IP 주소를 확인하고 , 브라우저에서 아래와 같이 주소를 입력합니다.
 
