@@ -95,27 +95,26 @@ VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포�
 
 ### 4. cluster 생성
 
-eksctl을 통해 EKS Cluster를 생성합니다. git을 통해 다운 받은 eksctl 용 yaml파일에 eks 1.20 설치가 선언되어 있습니다.
+eksctl을 통해 EKS Cluster를 생성합니다.&#x20;
 
 ```
-cd ~/
-cat << EOF > eksworkshop.yaml
+```
+
+```
+cat << EOF > ~/environment/myeks/eksworkshop.yaml
 ---
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: eksworkshop
-  region: ap-northeast-2
-  version: "1.20"
+  name: ${ekscluster_name}
+  region: ${AWS_REGION}
+  version: ${eks_version}  
 
 vpc: 
-  id: $vpc_ID
+  id: ${vpc_ID}
   subnets:
     public:
-#      ap-northeast-2a: { id: subnet-0dabdc92b066581ad}
-#      ap-northeast-2b: { id: subnet-0ede38666dec3b35f}
-#      ap-northeast-2c: { id: subnet-01b9091263c4b30fa}
       PublicSubnet01:
         id: ${PublicSubnet01}
       PublicSubnet02:
@@ -123,9 +122,6 @@ vpc:
       PublicSubnet03:
         id: ${PublicSubnet03}
     private:
-#      ap-northeast-2a: { id: subnet-0262f5b422602c335}
-#      ap-northeast-2b: { id: subnet-0e858cd46e3bd6cb1}
-#      ap-northeast-2c: { id: subnet-0f1eedd72ed2aa9be}
       PrivateSubnet01:
         id: ${PrivateSubnet01}
       PrivateSubnet02:
@@ -133,11 +129,11 @@ vpc:
       PrivateSubnet03:
         id: ${PrivateSubnet03}
 secretsEncryption:
-  keyARN: $MASTER_ARN
+  keyARN: ${MASTER_ARN}
 
 nodeGroups:
   - name: ng-public-01
-    instanceType: m5.xlarge
+    instanceType: ${instance_type}
     subnets:
       - PublicSubnet01
       - PublicSubnet02
@@ -149,9 +145,9 @@ nodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "frontend-workloads"
+      nodegroup-type: ${public_selfmgmd_node}
     ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
+        publicKeyPath: ${publicKeyPath}
         allow: true
     iam:
       attachPolicyARNs:
@@ -163,7 +159,7 @@ nodeGroups:
         efs: true
 
   - name: ng-private-01
-    instanceType: m5.xlarge
+    instanceType: ${instance_type}
     subnets:
       - PrivateSubnet01
       - PrivateSubnet02
@@ -176,9 +172,9 @@ nodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "backend-workloads"
+      nodegroup-type: ${private_selfmgmd_node}
     ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
+        publicKeyPath: ${publicKeyPath}
         allow: true
     iam:
       attachPolicyARNs:
@@ -191,7 +187,7 @@ nodeGroups:
 
 managedNodeGroups:
   - name: managed-ng-public-01
-    instanceType: m5.xlarge
+    instanceType: ${instance_type}
     subnets:
       - PublicSubnet01
       - PublicSubnet02
@@ -203,9 +199,9 @@ managedNodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "managed-frontend-workloads"
+      nodegroup-type: ${public_mgmd_node}
     ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
+        publicKeyPath: ${publicKeyPath}
         allow: true
     iam:
       attachPolicyARNs:
@@ -217,7 +213,7 @@ managedNodeGroups:
         efs: true
         
   - name: managed-ng-private-01
-    instanceType: m5.xlarge
+    instanceType: ${instance_type}
     subnets:
       - PrivateSubnet01
       - PrivateSubnet02
@@ -230,9 +226,9 @@ managedNodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "managed-backend-workloads"
+      nodegroup-type: ${private_mgmd_node}
     ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
+        publicKeyPath: ${publicKeyPath}
         allow: true
     iam:
       attachPolicyARNs:
@@ -246,10 +242,12 @@ managedNodeGroups:
 cloudWatch:
     clusterLogging:
         enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+EOF
+      
 ```
 
 ```
-eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster-3az.yaml
+eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop.yaml
  
 ```
 
