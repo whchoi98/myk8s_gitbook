@@ -300,71 +300,7 @@ Cluster를 생성하기 위해 20분 정도 시간이 소요됩니다.&#x20;
 출력 결과 예시
 
 ```
-whchoi:~/environment $ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop-cluster-3az.yaml
-2021-10-05 13:09:15 [ℹ]  eksctl version 0.68.0
-2021-10-05 13:09:15 [ℹ]  using region ap-northeast-2
-2021-10-05 13:09:16 [✔]  using existing VPC (vpc-0ec670bcdaf2efa2d) and subnets (private:map[PrivateSubnet01:{subnet-0c6430b44d5c98211 ap-northeast-2a 10.11.64.0/20} PrivateSubnet02:{subnet-0f1a181077dcfb1cb ap-northeast-2b 10.11.80.0/20} PrivateSubnet03:{subnet-061a967ec3d9c4d8e ap-northeast-2c 10.11.96.0/20}] public:map[PublicSubnet01:{subnet-0a225c208a7c4d1d6 ap-northeast-2a 10.11.0.0/20} PublicSubnet02:{subnet-005309b113283f38a ap-northeast-2b 10.11.16.0/20} PublicSubnet03:{subnet-034a4e2a275b9b3ad ap-northeast-2c 10.11.32.0/20}])
-2021-10-05 13:09:16 [!]  custom VPC/subnets will be used; if resulting cluster doesn't function as expected, make sure to review the configuration of VPC/subnets
-2021-10-05 13:09:16 [ℹ]  nodegroup "ng-public-01" will use "ami-086d30b42d304dfc3" [AmazonLinux2/1.20]
-2021-10-05 13:09:16 [ℹ]  using SSH public key "/home/ec2-user/environment/eksworkshop.pub" as "eksctl-eksworkshop-nodegroup-ng-public-01-44:b6:1f:23:20:27:bf:99:aa:65:c0:34:0f:2a:17:fe" 
-2021-10-05 13:09:16 [ℹ]  nodegroup "ng-private-01" will use "ami-086d30b42d304dfc3" [AmazonLinux2/1.20]
-2021-10-05 13:09:16 [ℹ]  using SSH public key "/home/ec2-user/environment/eksworkshop.pub" as "eksctl-eksworkshop-nodegroup-ng-private-01-44:b6:1f:23:20:27:bf:99:aa:65:c0:34:0f:2a:17:fe" 
-2021-10-05 13:09:16 [ℹ]  nodegroup "managed-ng-public-01" will use "" [AmazonLinux2/1.20]
-2021-10-05 13:09:16 [ℹ]  using SSH public key "/home/ec2-user/environment/eksworkshop.pub" as "eksctl-eksworkshop-nodegroup-managed-ng-public-01-44:b6:1f:23:20:27:bf:99:aa:65:c0:34:0f:2a:17:fe" 
-2021-10-05 13:09:16 [ℹ]  nodegroup "managed-ng-private-01" will use "" [AmazonLinux2/1.20]
-2021-10-05 13:09:16 [ℹ]  using SSH public key "/home/ec2-user/environment/eksworkshop.pub" as "eksctl-eksworkshop-nodegroup-managed-ng-private-01-44:b6:1f:23:20:27:bf:99:aa:65:c0:34:0f:2a:17:fe" 
-2021-10-05 13:09:16 [ℹ]  using Kubernetes version 1.20
-2021-10-05 13:09:16 [ℹ]  creating EKS cluster "eksworkshop" in "ap-northeast-2" region with managed nodes and un-managed nodes
-2021-10-05 13:09:16 [ℹ]  4 nodegroups (managed-ng-private-01, managed-ng-public-01, ng-private-01, ng-public-01) were included (based on the include/exclude rules)
-2021-10-05 13:09:16 [ℹ]  will create a CloudFormation stack for cluster itself and 2 nodegroup stack(s)
-2021-10-05 13:09:16 [ℹ]  will create a CloudFormation stack for cluster itself and 2 managed nodegroup stack(s)
-2021-10-05 13:09:16 [ℹ]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=ap-northeast-2 --cluster=eksworkshop'
-2021-10-05 13:09:16 [ℹ]  Kubernetes API endpoint access will use default of {publicAccess=true, privateAccess=false} for cluster "eksworkshop" in "ap-northeast-2"
-2021-10-05 13:09:16 [ℹ]  2 sequential tasks: { create cluster control plane "eksworkshop", 3 sequential sub-tasks: { 2 sequential sub-tasks: { wait for control plane to become ready, update CloudWatch logging configuration }, 1 task: { create addons }, 4 parallel sub-tasks: { create nodegroup "ng-public-01", create nodegroup "ng-private-01", create managed nodegroup "managed-ng-public-01", create managed nodegroup "managed-ng-private-01" } } }
-2021-10-05 13:09:16 [ℹ]  building cluster stack "eksctl-eksworkshop-cluster"
-2021-10-05 13:09:17 [ℹ]  deploying stack "eksctl-eksworkshop-cluster"
-2021-10-05 13:09:47 [ℹ]  waiting for CloudFormation stack "eksctl-eksworkshop-cluster"
-2021-10-05 13:24:20 [ℹ]  waiting for requested "LoggingUpdate" in cluster "eksworkshop" to succeed
-2021-10-05 13:24:37 [✔]  configured CloudWatch logging for cluster "eksworkshop" in "ap-northeast-2" (enabled types: api, audit, authenticator, controllerManager, scheduler & no types disabled)
-2021-10-05 13:26:37 [ℹ]  building managed nodegroup stack "eksctl-eksworkshop-nodegroup-managed-ng-private-01"
-2021-10-05 13:26:37 [ℹ]  building nodegroup stack "eksctl-eksworkshop-nodegroup-ng-public-01"
-2021-10-05 13:26:37 [ℹ]  building nodegroup stack "eksctl-eksworkshop-nodegroup-ng-private-01"
-2021-10-05 13:26:37 [ℹ]  building managed nodegroup stack "eksctl-eksworkshop-nodegroup-managed-ng-public-01"
-2021-10-05 13:26:38 [ℹ]  deploying stack "eksctl-eksworkshop-nodegroup-managed-ng-public-01"
-2021-10-05 13:26:38 [ℹ]  waiting for CloudFormation stack "eksctl-eksworkshop-nodegroup-managed-ng-public-01"
-2021-10-05 13:26:38 [ℹ]  deploying stack "eksctl-eksworkshop-nodegroup-managed-ng-private-01"
-2021-10-05 13:26:38 [ℹ]  waiting for CloudFormation stack "eksctl-eksworkshop-nodegroup-managed-ng-private-01"
-2021-10-05 13:26:38 [ℹ]  deploying stack "eksctl-eksworkshop-nodegroup-ng-public-01"
-2021-10-05 13:26:38 [ℹ]  waiting for CloudFormation stack "eksctl-eksworkshop-nodegroup-ng-public-01"
-2021-10-05 13:26:38 [ℹ]  deploying stack "eksctl-eksworkshop-nodegroup-ng-private-01"
-2021-10-05 13:26:38 [ℹ]  waiting for CloudFormation stack "eksctl-eksworkshop-nodegroup-ng-private-01"
-2021-10-05 13:26:53 [ℹ]  waiting for CloudFormation stack "eksctl-eksworkshop-nodegroup-ng-public-01"
-2021-10-05 13:26:56 [ℹ]  waiting for CloudFormation stack "eksctl-eksworkshop-nodegroup-managed-ng-private-01"
-2021-10-05 13:26:57 [ℹ]  waiting for CloudFormation stack "eksctl-eksworkshop-nodegroup-managed-ng-public-01"
-2021-10-05 13:32:46 [ℹ]  nodegroup "ng-private-01" has 3 node(s)
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-78-241.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-95-61.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-99-248.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  nodegroup "managed-ng-public-01" has 3 node(s)
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-13-217.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-16-169.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-45-25.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  waiting for at least 3 node(s) to become ready in "managed-ng-public-01"
-2021-10-05 13:32:46 [ℹ]  nodegroup "managed-ng-public-01" has 3 node(s)
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-13-217.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-16-169.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-45-25.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  nodegroup "managed-ng-private-01" has 3 node(s)
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-104-129.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-72-242.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-81-97.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  waiting for at least 3 node(s) to become ready in "managed-ng-private-01"
-2021-10-05 13:32:46 [ℹ]  nodegroup "managed-ng-private-01" has 3 node(s)
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-104-129.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-72-242.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:32:46 [ℹ]  node "ip-10-11-81-97.ap-northeast-2.compute.internal" is ready
-2021-10-05 13:34:48 [ℹ]  kubectl command should work with "/home/ec2-user/.kube/config", try 'kubectl get nodes'
-2021-10-05 13:34:48 [✔]  EKS cluster "eksworkshop" in "ap-northeast-2" region is ready
+eady
 ```
 
 ### 5. Cluster 생성 확인
