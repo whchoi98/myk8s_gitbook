@@ -436,6 +436,17 @@ tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 17:03:37.925845 IP ec2-13-125-172-173.ap-northeast-2.compute.amazonaws.com.56206 > nlb-test-02-789d59867-hxnl8.80: Flags [P.], seq 0:151, ack 1, win 211, options [nop,nop,TS val 2984805554 ecr 1007839403], length 151: HTTP: GET / HTTP/1.1
 17:03:38.937357 IP ec2-13-125-172-173.ap-northeast-2.compute.amazonaws.com.49756 > nlb-test-02-789d59867-hxnl8.80: Flags [P.], seq 0:151, ack 1, win 211, options [nop,nop,TS val 1993855085 ecr 1007840414], length 151: HTTP: GET / HTTP/1.1
+
+```
+
+Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
+
+```
+aws ssm start-session --target $ng_public01_id
+sudo -s
+iptables -t nat -L --line-number | more
+iptables -t nat -L --line-number | grep nlb-test-02-svc
+
 ```
 
 ## NLB기반 Loadbalancer 배포
@@ -455,12 +466,13 @@ listening on eth0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
 
 ```
 kubectl create namespace nlb-test
+
 ```
 
 어플리케이션을 배포하고, service를 구성합니다.
 
 ```
-## nlb-test-01 namespace를 생성하고, pod, service를 배포
+## nlb-test namespace를 생성하고, pod, service를 배포
 kubectl create namespace nlb-test
 kubectl -n nlb-test apply -f ~/environment/eksdemo-frontend/kubernetes/nlb_deployment.yaml
 kubectl -n nlb-test apply -f ~/environment/eksdemo-frontend/kubernetes/nlb_service.yaml
@@ -470,8 +482,8 @@ kubectl -n nlb-test apply -f ~/environment/eksdemo-frontend/kubernetes/nlb_servi
 정상적으로 Pod가 배포되었는지 아래 명령을 통해서 확인해 봅니다.
 
 ```
-kubectl -n nlb-test-01 get pod -o wide
-kubectl -n nlb-test-01 get service -o wide
+kubectl -n nlb-test get pod -o wide
+kubectl -n nlb-test get service -o wide
 
 ```
 
@@ -479,6 +491,7 @@ Replica를 3개로 늘려서 LB가 FrontEnd에서 정상적으로 이뤄지는 �
 
 ```
 kubectl -n nlb-test scale deployment ecsdemo-frontend --replicas=3
+
 ```
 
 {% hint style="info" %}
@@ -515,9 +528,9 @@ NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 
 아래 출력되는 결과의 EXTERNAL-IP를 복사해서 브라우져 창에서 실행해 봅니다.
 
 ```
-kubectl -n nlb-test get service ecsdemo-frontend -o wide                                                           
-NAME               TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)        AGE   SELECTOR
-ecsdemo-frontend   LoadBalancer   172.20.42.31   a7400b4751cf74f8e9cf9acb0c22c8b7-674596f9c43ee0e0.elb.ap-northeast-2.amazonaws.com   80:32228/TCP   17m   app=ecsdemo-frontend
+$ kubectl -n nlb-test get service -o wide
+NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                                                                          PORT(S)        AGE   SELECTOR
+ecsdemo-frontend   LoadBalancer   172.20.55.163   a68e1e3f279654af99a680bff29f6685-43ae3919758c9316.elb.ap-northeast-2.amazonaws.com   80:31784/TCP   55s   app=ecsdemo-frontend
 ```
 
 ![](<../.gitbook/assets/image (148).png>)
