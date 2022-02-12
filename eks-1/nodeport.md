@@ -259,15 +259,6 @@ kubectl get nodes -o wide
 
 ![](<../.gitbook/assets/image (220).png>)
 
-eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
-
-```
-~/environment/useful-shell/aws_ec2_text.sh | awk '/eksworkshop-ng-public-01-Node/{print $1,$2,$6,$7,$8}'
-eksworkshop-ng-public-01-Node ap-northeast-2a running 10.11.10.88 52.79.206.201
-eksworkshop-ng-public-01-Node ap-northeast-2b running 10.11.30.67 3.38.195.240
-eksworkshop-ng-public-01-Node ap-northeast-2c running 10.11.35.39 13.125.40.125
-```
-
 eksworkshop-ng-public-01-Node 의 IP 주소를 확인하고 , 브라우저에서 아래와 같이 주소를 입력합니다.
 
 ```
