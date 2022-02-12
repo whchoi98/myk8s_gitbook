@@ -123,17 +123,41 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 ![](<../.gitbook/assets/image (218) (1).png>)
 
-아래와 같이 EC2 Public IP 주소와 Nodeport로 웹 브라우져에서 접속해 봅니다.
+eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
 
-![](<../.gitbook/assets/image (221) (1) (1).png>)
+```
+~/environment/useful-shell/aws_ec2_text.sh | awk '/eksworkshop-ng-public-01-Node/{print $1,$2,$6,$7,$8}'
+eksworkshop-ng-public-01-Node ap-northeast-2a running 10.11.10.88 52.79.206.201
+eksworkshop-ng-public-01-Node ap-northeast-2b running 10.11.30.67 3.38.195.240
+eksworkshop-ng-public-01-Node ap-northeast-2c running 10.11.35.39 13.125.40.125
+```
+
+아래와 같이 EC2 Public IP 주소와 Nodeport로 접속해 봅니다.
+
+```
+curl http://52.79.206.201:30080
+Praqma Network MultiTool (with NGINX) - node-test-01-869b8d5f87-qbskb - 10.11.38.70
+curl http://3.38.195.240:30080
+Praqma Network MultiTool (with NGINX) - node-test-01-869b8d5f87-646t7 - 10.11.11.11
+curl http://13.125.40.125:30080
+Praqma Network MultiTool (with NGINX) - node-test-01-869b8d5f87-qbskb - 10.11.38.70
+
+```
+
+{% hint style="info" %}
+왜 고르게 로드밸런싱이 안될까요?
+
+NodePort로 인입된 후 ClusterIP에서 다시 LB되기 때문입니다.&#x20;
+{% endhint %}
 
 Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
 
 ```
 
-aws ssm start-session --target $NGPublic01
+aws ssm start-session --target $ng_public01_id
 sudo -s
 iptables -t nat -L --line-number | more
+iptables -t nat -L --line-number | grep node-test-01-svc
 
 ```
 
