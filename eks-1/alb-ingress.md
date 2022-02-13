@@ -26,14 +26,6 @@ AWS EKS 환경에서는 AWS Load Balancer Controller 를 별도로 설치하고,
 
 ![](<../.gitbook/assets/image (218).png>)
 
-### 3. ALB Ingress & AWS Load Balancer Controller 트래픽 흐름
-
-* 외부 사용자는 ALB DNS A Record:Port 번호로 접근합니다
-* ALB는 각 노드로 로드밸런싱 합니다
-* Kube-API에 의해 업데이트 된 정보를 가지고 ALB에서 Loadbalancing 처리를 합니다.&#x20;
-
-![](<../.gitbook/assets/image (222).png>)
-
 ## AWS ALB Ingress 개요.
 
 AWS 로드 밸런서 컨트롤러는 Kubernetes 클러스터의 AWS Elastic Load Balancer를 관리합니다. AWS ALB Ingress Controller"로 알려졌으며 "AWS Load Balancer Controller"로 브랜드를 변경했습니다.
@@ -42,7 +34,7 @@ AWS 로드 밸런서 컨트롤러는 Kubernetes 클러스터의 AWS Elastic Load
 
 ## AWS 로드 밸런서 컨트롤러 작동 방식 <a href="#how-aws-load-balancer-controller-works" id="how-aws-load-balancer-controller-works"></a>
 
-### 4. 인그레스 생성
+### 3. Ingress&#x20;
 
 다음 다이어그램은 이 컨트롤러가 생성하는 AWS 구성 요소를 자세히 설명합니다. 또한 수신 트래픽이 ALB에서 Kubernetes 클러스터로 이동하는 경로를 보여줍니다.
 
@@ -59,24 +51,32 @@ AWS 로드 밸런서 컨트롤러는 Kubernetes 클러스터의 AWS Elastic Load
 Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases),\
 [https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
 
-### 5. 인그레스 트래픽
+### 4. Ingress Traffic
 
 AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다.
 
 * 인스턴스 모드
 * IP 모드
 
-기본적으로 Instance Mode가 사용되며 , Annotation `Instance mode`을 통해 모드를 선택할 수 있습니다 .`alb.ingress.kubernetes.io/target-type`
+기본적으로 Instance Mode가 사용되며 , Annotation의  `target-type` 을 통해 모드를 선택할 수 있습니다.
 
 **인스턴스 모드**
 
-수신 트래픽은 ALB에서 시작하여 각 서비스의 NodePort를 통해 Kubernetes 노드에 도달합니다. 이는 수신 리소스에서 참조하는 서비스가 ALB에 도달하기 위해 에서 `type:NodePort`가 있어야함을 의미합니다.
+수신 트래픽은 ALB에서 시작하여 각 서비스의 NodePort를 통해 Kubernetes 노드에 도달합니다. 이는 수신 리소스에서 참조하는 서비스가 ALB에 도달하기 위해 에서 `type:NodePort`가 있어야 함을 의미합니다.
 
 **IP 모드**
 
-수신 트래픽은 ALB에서 시작하여 Kubernetes Pod에 직접 도달합니다. CNI는 ENI의 Secondary IP 주소를 통해 직접 액세스할 수 있는 POD IP를 지원해야 합니다 .
+수신 트래픽은 ALB에서 시작하여 Kubernetes Pod에 직접 도달합니다. CNI는 ENI의 Secondary IP 주소를 통해 직접 액세스할 수 있는 POD IP를 지원해야 합니다.
 
-## AWS 로드밸런서 컨트롤러 구성
+## AWS 로드밸런서 컨트롤러 기반 구성
+
+### 3. ALB Ingress & AWS Load Balancer Controller 트래픽 흐름
+
+* 외부 사용자는 ALB DNS A Record:Port 번호로 접근합니다
+* ALB는 각 노드로 로드밸런싱 합니다
+* Kube-API에 의해 업데이트 된 정보를 가지고 ALB에서 Loadbalancing 처리를 합니다.&#x20;
+
+![](<../.gitbook/assets/image (224).png>)
 
 아래와 같은 구성 단계로 ALB Ingress를 구성합니다.
 

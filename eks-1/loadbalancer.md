@@ -298,7 +298,7 @@ ecsdemo-nodejs     ClusterIP      172.20.181.252   <none>                       
 
 ## NLB Loadbalancer 서비스 기반 구성
 
-### 7.NLB 기반 Service Type
+### 7. NLB 기반 Service Type
 
 Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. CLB와 다르게 반드시 annotation을 통해 NLB를 지정해야 합니다. NLB도 내부 또는 외부 로드밸런서로 지정이 가능합니다. 또한 NLB는 외부의 IP를 PoD까지 그대로 전달 할 수 있습니다
 
