@@ -116,7 +116,7 @@ ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다.
 ```
 ## ALB Load Balancer Controller 의 IAM Policy Download
 cd ~/environment/myeks/alb-controller/
-curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.3.1/docs/install/iam_policy.json
+curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.3.1/docs/install/iam_policy.json
 
 ```
 
@@ -128,7 +128,8 @@ AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 cd ~/environment/myeks/alb-controller
 aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
-    --policy-document file://./iam-policy.json
+    --policy-document file://./iam_policy.json
+
 ```
 
 아래 처럼 결과가 출력됩니다.
@@ -165,6 +166,7 @@ eksctl create iamserviceaccount \
 --name=aws-load-balancer-controller \
 --attach-policy-arn=arn:aws:iam::${ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
 --override-existing-serviceaccounts \
+--region ${AWS_REGION} \
 --approve
 
 ```
@@ -277,23 +279,147 @@ kubectl apply -f v2_3_1_full.yaml
 
 ```
 
-###
+### 12.Ingress Annotation&#x20;
 
-### 12.NLB 기반 Service Type
-
-Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. CLB와 다르게 반드시 annotation을 통해 NLB를 지정해야 합니다. NLB도 내부 또는 외부 로드밸런서로 지정이 가능합니다. 또한 NLB는 외부의 IP를 PoD까지 그대로 전달 할 수 있습니다
+kubernetes Ingress 및 Service Object에 Annotation을 추가하여 동작을 상세하게 지정할 수 있습니다
 
 * [ALB Load Balancer Controller Annotation ](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/guide/ingress/annotations/)
 
 ```
-  annotations:
-    alb.ingress.kubernetes.io/load-balancer-name: "string"
-    alb.ingress.kubernetes.io/group.name: "string"
-    alb.ingress.kubernetes.io/group.order: "
-
+    annotations:
+  ## IngressGroup
+    ### Ingress가 속한 그룹 이름을 지정합니다.
+    alb.ingress.kubernetes.io/group.name: my-team.awesome-group
+    ### IngressGroup 내의 모든 Ingress에 대한 순서를 지정합니다. default 0
+    alb.ingress.kubernetes.io/group.order: '10'
+  ## Traffic Listening   
+    ## ALB가 수신 대기하는 데 사용한 포트를 지정합니다.
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}, {"HTTP": 8080}, {"HTTPS": 8443}]'
+    ## SSLRedirect를 활성화하고 리디렉션할 SSL 포트를 지정합니다.단일 Ingress에 정의되면 IngressGroup 내의 모든 Ingress에 영향을 미칩니다.
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    ## ALB 의 IP 주소 유형 을 지정합니다 .
+    alb.ingress.kubernetes.io/ip-address-type: ipv4
+    ## Outpost의 ALB에 대한 고객 소유 IPv4 주소 풀을 지정합니다.
+    alb.ingress.kubernetes.io/customer-owned-ipv4-pool: ipv4pool-coip-xxxxxxxx
+  ## Traffic Routing
+    ## 로드 밸런서에 사용할 사용자 지정 이름을 지정합니다. 32자보다 긴 이름은 오류로 처리됩니다.    
+    alb.ingress.kubernetes.io/load-balancer-name: custom-name
+    ## 트래픽을 포드로 라우팅하는 방법을 지정합니다.
+    ## instance모드는 서비스에 대해 오픈된 NodePort 의 클러스터 내의 모든 ec2 인스턴스로 트래픽을 라우팅합니다 .
+    ## instance모드 를 사용하려면 서비스 유형이 "NodePort" 또는 "LoadBalancer" 가 되어야 합니다.
+    alb.ingress.kubernetes.io/target-type: instance
+    ## ip모드는 트래픽을 포드 IP로 직접 라우팅합니다.
+    ## CNI가 VPC CNI이어야 합니다. ENI의 Secondary IP, 즉 PoD IP를 사용하기 때문입니다.
+    ## Sticky Session을 사용하려면 이 모드가 필요합니다.
+    alb.ingress.kubernetes.io/target-type: ip
+    ### LB 대상 그룹 등록에 포함할 노드를 지정합니다.
+    alb.ingress.kubernetes.io/target-node-labels: label1=value1, label2=value2
+    ### 트래픽을 포드로 라우팅할 때 사용되는 프로토콜을 지정합니다.
+    alb.ingress.kubernetes.io/backend-protocol: HTTPS
+    ### 트래픽을 포드로 라우팅하는 데 사용되는 애플리케이션 프로토콜을 지정
+    ### HTTP2
+    alb.ingress.kubernetes.io/backend-protocol-version: HTTP2
+    ### GRPC
+    alb.ingress.kubernetes.io/backend-protocol-version: GRPC
+    ### ALB가 트래픽을 라우팅할 가용 영역을 지정
+    alb.ingress.kubernetes.io/subnets: subnet-xxxx, mySubnet
+    ## 리디렉션 작업과 같은 Listener에서 Custom Action 작업을 구성하는 방법을 제공합니다.
+    alb.ingress.kubernetes.io/actions.${action-name}
+    ## Ingress 사양의 원래 호스트/경로 조건 외에 라우팅 조건을 지정하는 방법을 제공합니다.
+    alb.ingress.kubernetes.io/conditions.${conditions-name}
+  ## Access Control
+    ## LoadBalancer가 인터넷에 연결되는지 여부를 지정합니다.
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    ## LoadBalancer에 액세스할 수 있는 CIDR을 지정합니다.
+    ## alb.ingress.kubernetes.io/security-groups지정된 경우 무시됩니다.
+    alb.ingress.kubernetes.io/inbound-cidrs: 10.0.0.0/24
+    ## LoadBalancer에 연결할 securityGroups를 지정합니다.securityGroups의 이름 또는 ID가 모두 지원
+    alb.ingress.kubernetes.io/security-groups: sg-xxxx, nameOfSg1, nameOfSg2
+  ## Authentication
+    ## 인증은 HTTPS 리스너에 대해서만 지원됩니다.
+    ## 대상에 대한 인증 유형을 지정합니다.
+    alb.ingress.kubernetes.io/auth-type: cognito
+    ## oidc idp 구성을 지정합니다.
+    alb.ingress.kubernetes.io/auth-idp-oidc: '{"issuer":"https://example.com","authorizationEndpoint":"https://authorization.example.com","tokenEndpoint":"https://token.example.com","userInfoEndpoint":"https://userinfo.example.com","secretName":"my-k8s-secret"}'
+    ## 사용자가 인증되지 않은 경우 동작을 지정합니다.
+    alb.ingress.kubernetes.io/auth-on-unauthenticated-request: authenticate
+    ## 공백으로 구분된 목록에서 IDP(cognito 또는 oidc)에서 요청할 사용자 클레임 집합을 지정합니다.
+    alb.ingress.kubernetes.io/auth-scope: 'email openid'
+    ## 세션 정보를 유지하는 데 사용되는 쿠키의 이름을 지정합니다.
+    alb.ingress.kubernetes.io/auth-session-cookie: custom-cookie
+    ## 인증 세션의 최대 지속 시간을 초 단위로 지정합니다.
+    alb.ingress.kubernetes.io/auth-session-timeout: '86400'
+  ## Health Check
+    ## Target에서 상태 확인을 수행할 때 사용되는 프로토콜을 지정합니다.
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
+    ## Target에서 상태 확인을 수행할 때 사용되는 포트를 지정합니다.
+    ## 상태 확인 포트를 트래픽 포트로 설정
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    ## 상태 확인 포트를 명명된 포트의 NodePort(target-type=instance일 때) 또는 TargetPort(target-type=ip일 때)로 설정합니다.
+    alb.ingress.kubernetes.io/healthcheck-port: my-port
+    ## 상태 확인 포트를 80/tcp로 설정
+    alb.ingress.kubernetes.io/healthcheck-port: '80'
+    ## 대상에서 상태 확인을 수행할 때 HTTP 경로를 지정합니다.
+    ## HTTP
+    alb.ingress.kubernetes.io/healthcheck-path: /ping
+    ## GRPC
+    alb.ingress.kubernetes.io/healthcheck-path: /package.service/method
+    ## 개별 target 의 상태 확인 간격(초)을 지정합니다. default 15
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '10'
+    ## Target 에서 응답이 없으면 상태 확인이 실패했음을 의미하는 시간 초과(초)를 지정합니다. default 5
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '8'
+    ## 지정된 상태 확인 경로에 대해 상태 확인을 수행할 때 예상해야 하는 HTTP 상태 코드를 지정합니다.
+    alb.ingress.kubernetes.io/success-codes: 200-300
+    ## 비정상 대상을 정상으로 간주하기 전에 필요한 연속적인 상태 확인 성공을 지정합니다. default 2
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'
+    ## 대상을 비정상으로 간주하기 전에 필요한 연속적인 상태 확인 실패를 지정합니다. default 2
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '2'
+  ## SSL
+    ## AWS Certificate Manager 에서 관리하는 하나 이상의 인증서의 ARN을 지정합니다.
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:xxxxx:certificate/xxxxxxx
+    ## 프로토콜과 암호를 제어할 수 있도록 ALB에 할당해야 하는 보안 정책 을 지정합니다 .
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
+  ## Custom attributes
+    ## ALB에 적용해야 하는 로드 밸런서 속성 을 지정합니다.
+    ## s3에 대한 액세스 로그 활성화
+    alb.ingress.kubernetes.io/load-balancer-attributes: access_logs.s3.enabled=true,access_logs.s3.bucket=my-access-log-bucket,access_logs.s3.prefix=my-app
+    ## 삭제 방지 활성화
+    alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=true
+    ## 유효하지 않은 헤더 필드 제거 활성화
+    alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
+    ## http2 지원 활성화
+    alb.ingress.kubernetes.io/load-balancer-attributes: routing.http2.enabled=true
+    ## idle_timeout 지연을 600초로 설정
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=600
+    ## target-group 에 적용해야 하는 속성을 지정합니다 .
+    ## slow start 지속시간을 설정
+    alb.ingress.kubernetes.io/target-group-attributes: slow_start.duration_seconds=30
+    ## 등록 취소 지연 시간 설정
+    alb.ingress.kubernetes.io/target-group-attributes: deregistration_delay.timeout_seconds=30
+    ## Stickiness 세션 활성화, alb.ingress.kubernetes.io/target-type 이 반드시 IP 모드이어야 합니다.
+    alb.ingress.kubernetes.io/target-group-attributes: stickiness.enabled=true,stickiness.lb_cookie.duration_seconds=60
+    alb.ingress.kubernetes.io/target-type: ip
+    ## LB 알고리즘을 least outstanding requests 로 설정.
+    alb.ingress.kubernetes.io/target-group-attributes: load_balancing.algorithm.type=least_outstanding_requests
+  ### Resource Tag
+    ## 생성한 AWS 리소스(ALB/TargetGroups/SecurityGroups/Listener/ListenerRule)에 다음 태그를 자동으로 적용합니다.
+    elbv2.k8s.aws/cluster: ${clusterName}
+    ingress.k8s.aws/stack: ${stackID}
+    ingress.k8s.aws/resource: ${resourceID}
+    ## 생성된 AWS 리소스에 적용할 추가 태그를 지정
+    alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+  ### Add On
+    ## alb.ingress.kubernetes.io/waf-acl-idAmzon WAF 웹 ACL의 식별자를 지정합니다.
+    ## Regional WAF만 지원
+    alb.ingress.kubernetes.io/waf-acl-id: 499e8b99-6671-4614-a86d-adb1810b7fbe
+    ## Regional WAFv2 만 지원
+    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-west-2:xxxxx:regional/webacl/xxxxxxx/3ab78708-85b0-49d3-b4e1-7a9615a6613b
+    ## 로드 밸런서에 대한 AWS Shield Advanced 보호를 켜거나 끕니다.
+    alb.ingress.kubernetes.io/shield-advanced-protection: 'true'
 ```
 
-### 13.ALB 트래픽 흐름
+### 13.ALB Ingress Traffic 흐름 확인
 
 ALB Ingress를 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
 
