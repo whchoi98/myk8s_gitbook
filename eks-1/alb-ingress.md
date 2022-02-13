@@ -2,7 +2,7 @@
 description: 'update : 2021-10-20 / 30min'
 ---
 
-# ALB Ingress 배포
+# AWS Load Balancer Controller
 
 ## Ingress 아키텍쳐&#x20;
 
@@ -14,19 +14,19 @@ Ingress는 Ingress Controller가 존재하고, Ingress 에 정의된 트래픽 �
 
 ### 2. Ingress Controller
 
-Ingress 는 반드시 Ingress Controller가 존재해야하며, 외부에서 내부로 요청되는 트래픽을 읽고 서비스로 전달하는 역할을 합니다. 다른 컨트롤러와 다르게 목적에 맞게 수동으로 설치해야 합니다.
+Ingress 는 반드시 Ingress Controller가 존재 해야하며, 외부에서 내부로 요청되는 트래픽을 읽고 서비스로 전달하는 역할을 합니다. 다른 컨트롤러와 다르게 목적에 맞게 수동으로 설치해야 합니다.
 
-AWS Ingress Controller를 별도로 설치하고, AWS Ingress는 ALB를 통해 구성됩니다
+AWS EKS 환경에서는 AWS Load Balancer Controller 를 별도로 설치하고, Ingress는 ALB를 통해 구성됩니다
 
 * NGINX Ingress Controller
 * HA Proxy
-* **AWS ALB Ingress Controller**
+* **AWS Load Balancer Controller (이전 이름 : ALB Ingress Controller)**
 * Kong
 * traefik
 
 ![](<../.gitbook/assets/image (218).png>)
 
-### 3. ALB Ingress & Ingress Controller 트래픽 흐름
+### 3. ALB Ingress & AWS Load Balancer Controller 트래픽 흐름
 
 * 외부 사용자는 ALB DNS A Record:Port 번호로 접근합니다
 * ALB는 각 노드로 로드밸런싱 합니다
@@ -36,11 +36,30 @@ AWS Ingress Controller를 별도로 설치하고, AWS Ingress는 ALB를 통해 �
 
 ## AWS ALB Ingress 개요.
 
-[Kubernetes용 AWS ALB 수신 컨트롤러](https://github.com/kubernetes-sigs/aws-alb-ingress-controller)는 `kubernetes.io/ingress.class: alb` 주석과 클러스터에 수신 리소스가 생성될 때마다 Application Load Balancer(ALB) 및 필수 지원 AWS 리소스가 생성되도록 트리거하는 컨트롤러입니다.&#x20;
+AWS 로드 밸런서 컨트롤러는 Kubernetes 클러스터의 AWS Elastic Load Balancer를 관리합니다. AWS ALB Ingress Controller"로 알려졌으며 "AWS Load Balancer Controller"로 브랜드를 변경했습니다.
+
+
 
 수신 리소스는 ALB를 구성하여 HTTP 또는 HTTPS 트래픽을 클러스터 내 다른 포드로 라우팅합니다. ALB 수신 컨트롤러는 Amazon EKS 클러스터에서 실행 중인 프로덕션 워크로드에서 지원됩니다.
 
-## AWS ALB Ingress 구성
+## AWS 로드 밸런서 컨트롤러 작동 방식 <a href="#how-aws-load-balancer-controller-works" id="how-aws-load-balancer-controller-works"></a>
+
+다음 다이어그램은 이 컨트롤러가 생성하는 AWS 구성 요소를 자세히 설명합니다. 또한 수신 트래픽이 ALB에서 Kubernetes 클러스터로 이동하는 경로를 보여줍니다.
+
+1. 컨트롤러는 API 서버의 Ingress 이벤트를 모니터링합니다. 요구 사항을 충족하는 수신 리소스를 찾으면 AWS 리소스 생성을 시작합니다.
+2. 새 수신 리소스에 대해 AWS에서 ALB (ELBv2)가 생성됩니다. 이 ALB는 인터넷에 연결되거나 내부에 있을 수 있습니다. Annotation을 사용하여 생성된 서브넷을 지정할 수도 있습니다.
+3. Target Group은 수신 리소스에 설명된 각 고유 Kubernetes 서비스에 대해 AWS에서 생성됩니다.
+4. 수신 리소스 Annotation에 자세히 설명된 모든 포트에 대해 리스너가 생성됩니다.[ ](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html)포트를 지정하지 않으면 적절한 기본값( `80`또는 `443`)이 사용됩니다. Annotation을 통해 인증서를 첨부할 수도 있습니다.
+5. 수신 리소스에 지정된 각 경로에 대해 규칙이 생성됩니다[. ](http://docs.aws.amazon.com/elasticloadbalancing/latest/application/listener-update-rules.html)이렇게 하면 특정 경로에 대한 트래픽이 적절한 Kubernetes 서비스로 라우팅됩니다.
+
+
+
+![참조 - https://aws.amazon.com/ko/blogs/opensource/kubernetes-ingress-aws-alb-ingress-controller/](<../.gitbook/assets/image (21).png>)
+
+Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases),\
+[https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
+
+
 
 아래와 같은 구성 단계로 ALB Ingress를 구성합니다.
 
@@ -49,11 +68,6 @@ AWS Ingress Controller를 별도로 설치하고, AWS Ingress는 ALB를 통해 �
 3. AWSLoadBalancerControllerIAMPolicy 이름의 IAM 정책 생성.
 4. AWS Load Balancer 컨트롤러에 대한 IAM역할 및 ServiceAccount 생성
 5. EKS Cluster에 컨트롤러 추가 &#x20;
-
-![참조 - https://aws.amazon.com/ko/blogs/opensource/kubernetes-ingress-aws-alb-ingress-controller/](<../.gitbook/assets/image (21).png>)
-
-Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases),\
-[https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
 
 ### 4.IAM OIDC Provider 생성
 

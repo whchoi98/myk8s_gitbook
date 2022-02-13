@@ -43,7 +43,7 @@
   * [Cluster IP 기반 배포](eks-1/cluster-ip.md)
   * [NodePort 기반 배포](eks-1/nodeport.md)
   * [Loadbalancer 기반 배포](eks-1/loadbalancer.md)
-  * [ALB Ingress 배포](eks-1/alb-ingress.md)
+  * [AWS Load Balancer Controller](eks-1/alb-ingress.md)
 * [5.EKS 기반 관리](eks-2/README.md)
   * [패키지 관리 - Helm](eks-2/helm.md)
   * [스케쥴링 - AutoScaling 구성](eks-2/autoscaling.md)
