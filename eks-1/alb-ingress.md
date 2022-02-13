@@ -86,7 +86,7 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 4. AWS Load Balancer 컨트롤러에 대한 IAM역할 및 ServiceAccount 생성
 5. EKS Cluster에 컨트롤러 추가 &#x20;
 
-### 4.IAM OIDC Provider 생성
+### 6.IAM OIDC Provider 생성
 
 IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을 사용하여 IAM OIDC Provider를 생성합니다.
 
@@ -102,7 +102,7 @@ eksctl utils associate-iam-oidc-provider \
 
 ![](<../.gitbook/assets/image (197).png>)
 
-### 5. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드&#x20;
+### 7. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드&#x20;
 
 ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다. (이미 앞서 git에서 받은 폴더에 포함되어 있습니다.)
 
@@ -111,7 +111,7 @@ curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-lo
 
 ```
 
-### 6. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
+### 8. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
 
 AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 
@@ -145,7 +145,7 @@ aws iam create-policy \
 
 ![](<../.gitbook/assets/image (196).png>)
 
-### 7. AWS Ingress Controller IAM 역할 및 Service Account 생성
+### 9. AWS Ingress Controller IAM 역할 및 Service Account 생성
 
 이 단계에서는 AWS Ingress Controller 에 대한 IAM Roel , Service Account를 생성하고, 3번 단계에서 출력되었던 AWS Account ID를 복사해서 사용해아합니다. 앞서 "${ACCOUNT\_ID}에 저장해 두었습니다.
 
@@ -219,7 +219,7 @@ secrets:
 >
 > 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 (RDS, MQ, STS, DynamoDB) , AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
 
-### 8. 인증서 관리자 설치
+### 10. 인증서 관리자 설치
 
 아래와 같이 Cert Manager (인증서 관리자)를 설치합니다.
 
@@ -228,7 +228,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 
 ```
 
-### 9. AWS ALB Loadbalancer Controller Pod 설치
+### 11. AWS ALB Loadbalancer Controller Pod 설치
 
 Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다.
 
@@ -244,7 +244,23 @@ cd ~/environment/myeks/alb-controller
 kubectl apply -f v2_1_3_full.yaml
 ```
 
-## ALB Ingress 시험
+## ALB 로드 밸런서 컨트롤러 기반 구성
+
+### 12.NLB 기반 Service Type
+
+Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. CLB와 다르게 반드시 annotation을 통해 NLB를 지정해야 합니다. NLB도 내부 또는 외부 로드밸런서로 지정이 가능합니다. 또한 NLB는 외부의 IP를 PoD까지 그대로 전달 할 수 있습니다
+
+* [ALB Load Balancer Controller Annotation ](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.3/guide/ingress/annotations/)
+
+```
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: "string"
+    alb.ingress.kubernetes.io/group.name: "string"
+    alb.ingress.kubernetes.io/group.order: "
+
+```
+
+### 13.ALB 트래픽 흐름
 
 ALB Ingress를 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
 
@@ -266,7 +282,7 @@ kubectl -n alb-test-01 get ingress -o wide
 
 ```
 
-dk아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다. 해당 A Record를 Cloud9 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다
+아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다. 해당 A Record를 Cloud9 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다
 
 ```
 $ kubectl -n alb-test-01 get pod -o wide
