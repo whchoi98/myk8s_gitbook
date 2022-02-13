@@ -16,9 +16,9 @@ AWS EKS에 대한 설치와 구성 및 관리, 네트워크, 스토리지 ,보�
 
 ### [VPC구성과 eksctl 기반 설치](vpc-eksctl/) (1h)
 
-### [EKS 기반 배포](eks-1/) (2h)
+### [EKS Service 이해 (2h)](./#eks-2h)
 
-### [EKS 기반 관리](eks-2/) (3h)
+### [EKS 기반 관리](eks-2/) (1h 30min)
 
 ### [EKS Networking](eks-networking/) (1h 30min)
 
@@ -32,4 +32,4 @@ AWS EKS에 대한 설치와 구성 및 관리, 네트워크, 스토리지 ,보�
 
 
 
-블로그 관련 문의 내용은 CHOI, WOO HYUNG ([whchoi98@gmail.com](mailto:whchoi98@gmail.com)) 으로 문의하십시요.
+블로그 관련 문의 내용은 CHOI, WOO HYUNG ([whchoi@amazon.com](mailto:whcho@amazon.com), [whchoi98@gmail.com](mailto:whchoi98@gmail.com)) 으로 문의하십시요.
