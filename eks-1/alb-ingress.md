@@ -26,15 +26,15 @@ AWS EKS 환경에서는 AWS Load Balancer Controller 를 별도로 설치하고,
 
 ![](<../.gitbook/assets/image (218).png>)
 
-## AWS ALB Ingress 개요.
+### 3. AWS ALB Ingress 개요.
 
 AWS 로드 밸런서 컨트롤러는 Kubernetes 클러스터의 AWS Elastic Load Balancer를 관리합니다. AWS ALB Ingress Controller"로 알려졌으며 "AWS Load Balancer Controller"로 브랜드를 변경했습니다.
 
 수신 리소스는 ALB를 구성하여 HTTP 또는 HTTPS 트래픽을 클러스터 내 다른 포드로 라우팅합니다. ALB 수신 컨트롤러는 Amazon EKS 클러스터에서 실행 중인 프로덕션 워크로드에서 지원됩니다.
 
-## AWS 로드 밸런서 컨트롤러 작동 방식 <a href="#how-aws-load-balancer-controller-works" id="how-aws-load-balancer-controller-works"></a>
+## AWS 로드 밸런서 컨트롤러 기반 구성 <a href="#how-aws-load-balancer-controller-works" id="how-aws-load-balancer-controller-works"></a>
 
-### 3. Ingress&#x20;
+### 4. Ingress 동작 방식
 
 다음 다이어그램은 이 컨트롤러가 생성하는 AWS 구성 요소를 자세히 설명합니다. 또한 수신 트래픽이 ALB에서 Kubernetes 클러스터로 이동하는 경로를 보여줍니다.
 
@@ -51,7 +51,7 @@ AWS 로드 밸런서 컨트롤러는 Kubernetes 클러스터의 AWS Elastic Load
 Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases),\
 [https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
 
-### 4. Ingress Traffic
+### 5. Ingress Traffic
 
 AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다.
 
@@ -68,9 +68,7 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 
 수신 트래픽은 ALB에서 시작하여 Kubernetes Pod에 직접 도달합니다. CNI는 ENI의 Secondary IP 주소를 통해 직접 액세스할 수 있는 POD IP를 지원해야 합니다.
 
-## AWS 로드밸런서 컨트롤러 기반 구성
-
-### 3. ALB Ingress & AWS Load Balancer Controller 트래픽 흐름
+### 6. ALB Ingress & AWS Load Balancer Controller 트래픽 흐름
 
 * 외부 사용자는 ALB DNS A Record:Port 번호로 접근합니다
 * ALB는 각 노드로 로드밸런싱 합니다
@@ -78,7 +76,7 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 
 ![](<../.gitbook/assets/image (224).png>)
 
-아래와 같은 구성 단계로 ALB Ingress를 구성합니다.
+아래와 같은 구성 단계로 ALB Loadbalancer Controller를 구성합니다.
 
 1. IAM OIDC 공급자 생성
 2. AWS Loadbalancer 컨트롤러에 대한 IAM 정책 다운로드.
@@ -86,7 +84,9 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 4. AWS Load Balancer 컨트롤러에 대한 IAM역할 및 ServiceAccount 생성
 5. EKS Cluster에 컨트롤러 추가 &#x20;
 
-### 6.IAM OIDC Provider 생성
+### 7. IAM OIDC Provider 생성
+
+
 
 IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을 사용하여 IAM OIDC Provider를 생성합니다.
 
@@ -102,7 +102,7 @@ eksctl utils associate-iam-oidc-provider \
 
 ![](<../.gitbook/assets/image (197).png>)
 
-### 7. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드&#x20;
+### 8. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드&#x20;
 
 ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다. (이미 앞서 git에서 받은 폴더에 포함되어 있습니다.)
 
@@ -111,7 +111,7 @@ curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-lo
 
 ```
 
-### 8. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
+### 9. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
 
 AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 
@@ -145,7 +145,7 @@ aws iam create-policy \
 
 ![](<../.gitbook/assets/image (196).png>)
 
-### 9. AWS Ingress Controller IAM 역할 및 Service Account 생성
+### 10. AWS Ingress Controller IAM 역할 및 Service Account 생성
 
 이 단계에서는 AWS Ingress Controller 에 대한 IAM Roel , Service Account를 생성하고, 3번 단계에서 출력되었던 AWS Account ID를 복사해서 사용해아합니다. 앞서 "${ACCOUNT\_ID}에 저장해 두었습니다.
 
@@ -219,7 +219,7 @@ secrets:
 >
 > 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 (RDS, MQ, STS, DynamoDB) , AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
 
-### 10. 인증서 관리자 설치
+### 11. 인증서 관리자 설치
 
 아래와 같이 Cert Manager (인증서 관리자)를 설치합니다.
 
@@ -228,7 +228,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 
 ```
 
-### 11. AWS ALB Loadbalancer Controller Pod 설치
+### 12. AWS ALB Loadbalancer Controller Pod 설치
 
 Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다.
 
@@ -243,8 +243,6 @@ wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-control
 cd ~/environment/myeks/alb-controller
 kubectl apply -f v2_1_3_full.yaml
 ```
-
-## ALB 로드 밸런서 컨트롤러 기반 구성
 
 ### 12.NLB 기반 Service Type
 
