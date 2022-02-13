@@ -86,19 +86,26 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 
 ### 7. IAM OIDC Provider 생성
 
-
+AWS IAM(Identity and Access Management)에서는 OpenID Connect(OIDC)를 사용해 연동 자격 증명을 지원하는 기능을 추가하였습니다. 이 기능을 사용하면 지원되는 자격 증명 공급자를 이용해 AWS API 호출을 인증하고 유효한 OIDC JWT(JSON WebToken)을 수신할 수 있습니다. \
+이 토큰을 AWS STS `AssumeRoleWithWebIdentity` API 작업에 전달하고 IAM 임시 역할 자격 증명을 수신할 수 있습니다. 이 자격 증명을 사용하여 AWS 서비스 자원들을 Kubernetes 자원들이 사용할 수 있습니다.&#x20;
 
 IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을 사용하여 IAM OIDC Provider를 생성합니다.
 
 ```
 eksctl utils associate-iam-oidc-provider \
     --region ${AWS_REGION} \
-    --cluster eksworkshop \
+    --cluster ${ekscluster_name} \
     --approve
     
 ```
 
-다음과 같이 IAM 서비스 메뉴에서 생성된 OIDC를 확인 할 수 있습니다.
+다음과 같이 Cloud9 Console 또는 IAM 서비스 메뉴에서 생성된 OIDC를 확인 할 수 있습니다.
+
+```
+aws eks describe-cluster --name ${ekscluster_name} --query "cluster.identity.oidc.issuer" --output text
+aws iam list-open-id-connect-providers
+
+```
 
 ![](<../.gitbook/assets/image (197).png>)
 
@@ -107,7 +114,9 @@ eksctl utils associate-iam-oidc-provider \
 ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다. (이미 앞서 git에서 받은 폴더에 포함되어 있습니다.)
 
 ```
-curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.1.2/docs/install/iam_policy.json
+## ALB Load Balancer Controller 의 IAM Policy Download
+cd ~/environment/myeks/alb-controller/
+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.3.1/docs/install/iam_policy.json
 
 ```
 
@@ -128,15 +137,15 @@ aws iam create-policy \
 {
     "Policy": {
         "PolicyName": "AWSLoadBalancerControllerIAMPolicy",
-        "PolicyId": "ANPA5MSDOOD6OR6VVGXZ4",
-        "Arn": "arn:aws:iam::920338198780:policy/AWSLoadBalancerControllerIAMPolicy",
+        "PolicyId": "ANPA3R6JJMGFIVJZQINKD",
+        "Arn": "arn:aws:iam::794454221194:policy/AWSLoadBalancerControllerIAMPolicy",
         "Path": "/",
         "DefaultVersionId": "v1",
         "AttachmentCount": 0,
         "PermissionsBoundaryUsageCount": 0,
         "IsAttachable": true,
-        "CreateDate": "2021-04-07T15:58:25+00:00",
-        "UpdateDate": "2021-04-07T15:58:25+00:00"
+        "CreateDate": "2022-02-13T10:28:22+00:00",
+        "UpdateDate": "2022-02-13T10:28:22+00:00"
     }
 }
 ```
@@ -145,13 +154,13 @@ aws iam create-policy \
 
 ![](<../.gitbook/assets/image (196).png>)
 
-### 10. AWS Ingress Controller IAM 역할 및 Service Account 생성
+### 10. AWS LoadBalancer Controller IAM 역할 및 Service Account 생성
 
-이 단계에서는 AWS Ingress Controller 에 대한 IAM Roel , Service Account를 생성하고, 3번 단계에서 출력되었던 AWS Account ID를 복사해서 사용해아합니다. 앞서 "${ACCOUNT\_ID}에 저장해 두었습니다.
+이 단계에서는 AWS LoadBalancer Controller 에 대한 Service Account를 생성하고, 앞서 생성한 IAM Role을 연결합니다.&#x20;
 
 ```
 eksctl create iamserviceaccount \
---cluster=eksworkshop \
+--cluster=${ekscluster_name} \
 --namespace=kube-system \
 --name=aws-load-balancer-controller \
 --attach-policy-arn=arn:aws:iam::${ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
@@ -170,13 +179,12 @@ kubectl get serviceaccounts -n kube-system aws-load-balancer-controller -o yaml
 아래와 같이 출력 예제를 확인해 볼 수 있습니다.
 
 ```
-whchoi:~/environment/myeks/alb-controller (master) $ kubectl get serviceaccounts -n kube-system aws-load-balancer-controller -o yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::920338198780:role/eksctl-eksworkshop-addon-iamserviceaccount-k-Role1-OV9MERC8QPAV
-  creationTimestamp: "2021-04-07T16:17:17Z"
+    eks.amazonaws.com/role-arn: arn:aws:iam::794454221194:role/eksctl-eksworkshop-addon-iamserviceaccount-k-Role1-1C0WKHQ5XNH8Q
+  creationTimestamp: "2022-02-13T10:38:12Z"
   labels:
     app.kubernetes.io/managed-by: eksctl
   managedFields:
@@ -192,39 +200,38 @@ metadata:
           f:app.kubernetes.io/managed-by: {}
     manager: eksctl
     operation: Update
-    time: "2021-04-07T16:17:17Z"
+    time: "2022-02-13T10:38:12Z"
   - apiVersion: v1
     fieldsType: FieldsV1
     fieldsV1:
       f:secrets:
         .: {}
-        k:{"name":"aws-load-balancer-controller-token-hr5rh"}:
+        k:{"name":"aws-load-balancer-controller-token-5jdmj"}:
           .: {}
           f:name: {}
     manager: kube-controller-manager
     operation: Update
-    time: "2021-04-07T16:17:17Z"
+    time: "2022-02-13T10:38:12Z"
   name: aws-load-balancer-controller
   namespace: kube-system
-  resourceVersion: "42507"
-  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/aws-load-balancer-controller
-  uid: 673de39f-a336-4d01-8fd1-8045b410e02a
+  resourceVersion: "278111"
+  uid: c526605c-57c6-469a-901d-c86714a56e25
 secrets:
-- name: aws-load-balancer-controller-token-hr5rh
+- name: aws-load-balancer-controller-token-5jdmj
 ```
 
 > 참조  URL - [https://eksctl.io/usage/iamserviceaccounts/](https://eksctl.io/usage/iamserviceaccounts/)
 >
-> Amazon EKS는 클러스터 운영자가 AWS IAM 역할을 Kubernetes 서비스 계정에 매핑 할 수 있도록하는 [ISA (IAM Roles for Service Accounts)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) 를 지원합니다 .
+> Amazon EKS는 클러스터 운영자가 AWS IAM 역할을 Kubernetes 서비스 계정에 매핑 할 수 있도록하는 IRSA[ (IAM Roles for Service Accounts)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) 를 지원합니다 .
 >
-> 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 (RDS, MQ, STS, DynamoDB) , AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다.IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다.
+> 이를 통해 EKS에서 실행되고 다른 AWS 서비스를 사용하는 앱에 대해 세분화 된 권한 관리를 제공합니다. S3, 다른 데이터 서비스 (RDS, MQ, STS, DynamoDB) , AWS ALB Ingress 컨트롤러 또는 ExternalDNS와 같은 Kubernetes 구성 요소를 사용하는 어플리케이션 들이 대표적입니다. IAM OIDC Provider는 기본적으로 활성화되어 있지 않습니다. 따라서 앞선 과정들을 수행해야 합니다
 
 ### 11. 인증서 관리자 설치
 
 아래와 같이 Cert Manager (인증서 관리자)를 설치합니다.
 
 ```
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml
 
 ```
 
@@ -233,15 +240,16 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다.
 
 ```
-wget https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.1.2/docs/install/v2_1_2_full.yaml
+wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.3.1/v2_3_1_full.yaml
 
 ```
 
-이미 git을 통해 사전에 다운로드 받아 두었습니다. 직접 실행합니다.
+이미 git을 통해 사전에 다운로드 받아 두었습니다. 직접 실행해도 됩니다.
 
 ```
 cd ~/environment/myeks/alb-controller
-kubectl apply -f v2_1_3_full.yaml
+kubectl apply -f v2_3_1_full.yaml
+
 ```
 
 ### 12.NLB 기반 Service Type
