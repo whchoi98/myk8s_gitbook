@@ -235,22 +235,49 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 
 ```
 
-### 12. AWS ALB Loadbalancer Controller Pod 설치
+### 12. AWS Loadbalancer Controller Pod 설치
 
-Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다.
+Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다. 이미 git을 통해서 다운 받았을 경우에는 생략해도 됩니다
 
 ```
 wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.3.1/v2_3_1_full.yaml
 
 ```
 
-이미 git을 통해 사전에 다운로드 받아 두었습니다. 직접 실행해도 됩니다.
+AWS Loadbalancer Controller Pod의 Deployment file에 지정된 <mark style="color:red;background-color:red;">**`cluster-name`**</mark> 값을 , 현재 배포한 Cluster name으로 변경합니다
+
+```
+### cluster name을 eksworkshop 또는 현재 실행 중인 Cluster name으로 변경합니다.
+apiVersion: apps/v1
+kind: Deployment
+. . .
+name: aws-load-balancer-controller
+namespace: kube-system
+spec:
+    . . .
+    template:
+        spec:
+            containers:
+                - args:
+                    - --cluster-name=<INSERT_CLUSTER_NAME>
+```
+
+dkvtjtj 앞서서 Service Account와 IAM Role을 연결하는 작업을 이미 완료했으므로, kind: ServiceAccount 섹션은 삭제하거나 주석처리하는 것이 좋습니다.&#x20;
+
+```
+# apiVersion: v1
+# kind: ServiceAccount
+```
+
+이미 git을 통해 사전에 다운로드 받아 두었습니다. 해당 AWS Loadbalancer Controller Pod의 yaml에는 Cluster Name이 eksworkshop으로 수정되어 있고  kine: ServiceAccount 섹션은 주석처리되어 있습니다.  해당 yaml을 배포합니다.&#x20;
 
 ```
 cd ~/environment/myeks/alb-controller
 kubectl apply -f v2_3_1_full.yaml
 
 ```
+
+###
 
 ### 12.NLB 기반 Service Type
 
