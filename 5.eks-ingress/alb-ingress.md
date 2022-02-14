@@ -470,12 +470,17 @@ source ~/.bash_profile
 AlbTestPod01에 접속해서 아래와 같이 확인해 봅니다.
 
 ```
-kubectl -n alb-test-01 exec -it $ClbTestPod01 -- /bin/sh
+kubectl -n alb-test-01 exec -it $AlbTestPod01 -- /bin/sh
 tcpdump -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
 
 ```
 
-Pod에서 TCPDump로 확인하면 정상적으로 Pakcet이 덤프되고 X-Forwarded를 통해 Source IP를 확인할 수 있습니다
+Pod에서 TCPDump로 확인하면 정상적으로 Pakcet이 덤프되고 X-Forwarded를 통해 Source IP를 확인할 수 있습니다.&#x20;
+
+```
+## Cloud9 IDE
+curl {alb-ingress-address}
+```
 
 ```
 tcpdump -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'

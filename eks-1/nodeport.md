@@ -289,5 +289,5 @@ kubectl -n nodeport-test get pods
 Pod 3개로 브라우저에서 정상적으로 서비스 되는지 확인해 봅니다.
 
 {% hint style="info" %}
-NodePort 30080을 하나의 노드에서만 Security Group으로 허용했는데도, 서비스 분산이 이뤄집니다. 이것은 특정 Node로 Nodeport로 트래픽이 인입하고, 내부에서는 Service를 통해서 부하 분산이 이뤄지고 있는 것입니다.
+NodePort 30080\~30081을 하나의 노드에서만 Security Group으로 허용했는데도, 서비스 분산이 이뤄집니다. 이것은 특정 Node로 Nodeport로 트래픽이 인입하고, 내부에서는 Service를 통해서 부하 분산이 이뤄지고 있는 것입니다.
 {% endhint %}

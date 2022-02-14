@@ -28,7 +28,7 @@ Traffic 흐름은 다음과 같습니다.
 
 ### 3. CLB Service 시험
 
-CLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다
+CLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.&#x20;
 
 ```
 ## clb-test-01 namespace를 생성하고, pod, service를 배포 
@@ -369,9 +369,9 @@ nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017
 export Nlb_Test_Pod01=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.13.246/{print $1}')
 export Nlb_Test_Pod02=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.27.219/{print $1}')
 export Nlb_Test_Pod03=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.39.128/{print $1}') 
-echo "export Clb_Test_Pod01=${Nlb_Test_Pod01}" | tee -a ~/.bash_profile
-echo "export Clb_Test_Pod02=${Nlb_Test_Pod02}" | tee -a ~/.bash_profile
-echo "export Clb_Test_Pod03=${Nlb_Test_Pod03}" | tee -a ~/.bash_profile
+echo "export Nlb_Test_Pod01=${Nlb_Test_Pod01}" | tee -a ~/.bash_profile
+echo "export Nlb_Test_Pod02=${Nlb_Test_Pod02}" | tee -a ~/.bash_profile
+echo "export Nclb_Test_Pod03=${Nlb_Test_Pod03}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
@@ -384,7 +384,7 @@ nslookup {cluster-ip}
 tcpdump -i eth0 dst port 80 | grep "HTTP: GET"
 ```
 
-Cloud9 IDE Terminal에서 CLB External IP:8080 으로 접속합니다.&#x20;
+Cloud9 IDE Terminal에서 NLB External IP:8080 으로 접속합니다.&#x20;
 
 ```
 $ kubectl -n nlb-test-01 get service -o wide
