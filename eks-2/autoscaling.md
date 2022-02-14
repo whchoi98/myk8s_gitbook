@@ -176,16 +176,23 @@ echo "$(envsubst < cluster_autoscaler.yml)" > cluster_autoscaler.yml
 
 ```
 
+cluster\_autoscaler.yml 파일 마지막에 아래 NodeGroup을 선택합니다.
+
+```
+      nodeSelector:
+        nodegroup-type: "managed-frontend-workloads"
+```
+
 ### 5.ASG (Auto Scaling Group) 구성
 
 CA(Cluster Autoscaler)가 제어할 ASG(AutoScaling Group)의 이름을 구성합니다. Worker Node를 찾아서 저장해 둡니다. ([Public Subnet Worker Node Group 링크](https://console.aws.amazon.com/ec2/autoscaling/home?#AutoScalingGroups:id=eksctl-eksworkshop-eksctl-nodegroup-0-NodeGroup-SQG8QDVSR73G;view=details;filter=eksworkshop))&#x20;
 
 **EC2 대시보드 - Auto Scaling**
 
-![](<../.gitbook/assets/image (187).png>)
+![](<../.gitbook/assets/image (224).png>)
 
 ```
-eksctl-eksworkshop-nodegroup-ng-public-01-NodeGroup-ZCRPGHX2NH7Q
+eks-42bf7bee-45b3-9e6a-45e6-177b05b9c042
 
 ```
 
