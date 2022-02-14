@@ -41,18 +41,18 @@ kubectl -n cluster-test-01 get pods -o wide
 
 ```
 kubectl -n cluster-test-01 get pods -o wide
-NAME                              READY   STATUS    RESTARTS   AGE     IP             NODE                                             NOMINATED NODE   READINESS GATES
-cluster-test-01-b86b9c685-cpbh8   1/1     Running   0          3h28m   10.11.5.202    ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
-cluster-test-01-b86b9c685-hm7v5   1/1     Running   0          3h28m   10.11.26.206   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
-cluster-test-01-b86b9c685-knnkv   1/1     Running   0          3h28m   10.11.40.48    ip-10-11-35-39.ap-northeast-2.compute.internal   <none>           <none>
+NAME                              READY   STATUS    RESTARTS   AGE   IP             NODE                                             NOMINATED NODE   READINESS GATES
+cluster-test-01-b86b9c685-8g7rt   1/1     Running   0          94s   10.11.1.103    ip-10-11-3-14.ap-northeast-2.compute.internal    <none>           <none>
+cluster-test-01-b86b9c685-lkm56   1/1     Running   0          95s   10.11.38.204   ip-10-11-40-87.ap-northeast-2.compute.internal   <none>           <none>
+cluster-test-01-b86b9c685-vxgxq   1/1     Running   0          94s   10.11.16.103   ip-10-11-28-53.ap-northeast-2.compute.internal   <none>           <none>
 ```
 
 shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
 
 ```
-export ClusteTestPod01=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.5.202/{print $1}')
-export ClusteTestPod02=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.26.206/{print $1}')
-export ClusteTestPod03=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.40.48/{print $1}') 
+export ClusterTestPod01=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.1.103/{print $1}')
+export ClusterTestPod02=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.38.204/{print $1}')
+export ClusterTestPod03=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.16.103 /{print $1}') 
 echo "export ClusterTestPod01=${ClusterTestPod01}" | tee -a ~/.bash_profile
 echo "export ClusterTestPod02=${ClusterTestPod02}" | tee -a ~/.bash_profile
 echo "export ClusterTestPod03=${ClusterTestPod03}" | tee -a ~/.bash_profile
@@ -152,6 +152,7 @@ ClusterIP 타입은 내부에서 사용하도록 노출되며 , 외부에 노출
 ```
 cd ~/environment/myeks/network-test/
 kubectl -n cluster-test-01 apply -f cluster-test-01-service.yaml
+
 ```
 
 ClusterIP Service에 대한 yaml 파일은 아래와 같습니다.&#x20;
@@ -189,7 +190,7 @@ ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를
 
 ```
 kubectl -n cluster-test-01 exec -it $ClusterTestPod01 -- /bin/sh
-nslookup 
+nslookup {CLUSTER-IP}
 ```
 
 ```
@@ -209,25 +210,30 @@ Praqma Network MultiTool (with NGINX) - cluster-test-01-6f4dddc749-pfq77 - 10.11
 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
 
 ```
+## git clone ###
+cd ~/environment/
+git clone https://github.com/whchoi98/useful-shell
 ## Node 정보 확인 ##
 kubectl -n cluster-test-01 get pods -o wide
 
 ## Node instance id 확인 ##
-export ng_public01=10.11.10.88
-export ng_public02=10.11.30.67
-export ng_public03=10.11.35.39
+export ng_public01=10.11.3.14
+export ng_public02=10.11.28.53
+export ng_public03=10.11.40.87
 echo "export ng_public01=${ng_public01}" | tee -a ~/.bash_profile
 echo "export ng_public02=${ng_public02}" | tee -a ~/.bash_profile
 echo "export ng_public03=${ng_public03}" | tee -a ~/.bash_profile
-~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.10.88/{print $1,$2,$3,$7}'
-~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.30.67/{print $1,$2,$3,$7}'
-~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.35.39/{print $1,$2,$3,$7}'
-export ng_public01_id=i-086ecc23abd63ce5d
-export ng_public02_id=i-0a50ec9b6a6d892cc
-export ng_public03_id=i-05fdbfad2faef355a
+~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.3.14/{print $1,$2,$3,$7}'
+~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.28.53/{print $1,$2,$3,$7}'
+~/environment/useful-shell/aws_ec2_text.sh | awk '/10.11.40.87/{print $1,$2,$3,$7}'
+## 위에서 출력된 instance-id 값을 입력합니다. ##
+export ng_public01_id=i-03ab12d2f4e14f7dd
+export ng_public02_id=i-0879b78d9d79712f0
+export ng_public03_id=i-0fcf7a3a914e6c44b
 echo "export ng_public01_id=${ng_public01_id}" | tee -a ~/.bash_profile
 echo "export ng_public02_id=${ng_public02_id}" | tee -a ~/.bash_profile
 echo "export ng_public03_id=${ng_public03_id}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 
 aws ssm start-session --target $ng_public01_id
 sudo -s
@@ -235,4 +241,3 @@ iptables -t nat -L --line-number | more
 iptables -t nat -L --line-number | grep cluster-test-01-svc
 
 ```
-

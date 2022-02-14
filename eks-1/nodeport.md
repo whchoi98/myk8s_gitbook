@@ -36,19 +36,19 @@ kubectl -n node-test-01 get pods -o wide
 생성한 pod를 확인합니다.&#x20;
 
 ```
-kubectl -n node-test-01 get pod -o wide                                                                                                                                                
-NAME                            READY   STATUS    RESTARTS   AGE    IP            NODE                                             NOMINATED NODE   READINESS GATES
-node-test-01-869b8d5f87-646t7   1/1     Running   0          168m   10.11.11.11   ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
-node-test-01-869b8d5f87-crwm5   1/1     Running   0          168m   10.11.18.11   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
-node-test-01-869b8d5f87-qbskb   1/1     Running   0          168m   10.11.38.70   ip-10-11-35-39.ap-northeast-2.compute.internal   <none>           <none>
+kubectl -n node-test-01 get pods -o wide
+NAME                            READY   STATUS    RESTARTS   AGE   IP            NODE                                             NOMINATED NODE   READINESS GATES
+node-test-01-869b8d5f87-fpww5   1/1     Running   0          19s   10.11.16.79   ip-10-11-28-53.ap-northeast-2.compute.internal   <none>           <none>
+node-test-01-869b8d5f87-pp7p9   1/1     Running   0          19s   10.11.41.25   ip-10-11-40-87.ap-northeast-2.compute.internal   <none>           <none>
+node-test-01-869b8d5f87-x6mf9   1/1     Running   0          19s   10.11.11.70   ip-10-11-3-14.ap-northeast-2.compute.internal    <none>           <none>
 ```
 
 shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
 
 ```
-export NodePort_Test_Pod01=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.11.11/{print $1}')
-export NodePort_Test_Pod02=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.18.11/{print $1}')
-export NodePort_Test_Pod03=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.38.70/{print $1}') 
+export NodePort_Test_Pod01=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.16.79/{print $1}')
+export NodePort_Test_Pod02=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.41.25/{print $1}')
+export NodePort_Test_Pod03=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.11.70/{print $1}') 
 echo "export NodePort_Test_Pod01=${NodePort_Test_Pod01}" | tee -a ~/.bash_profile
 echo "export NodePort_Test_Pod02=${NodePort_Test_Pod02}" | tee -a ~/.bash_profile
 echo "export NodePort_Test_Pod03=${NodePort_Test_Pod03}" | tee -a ~/.bash_profile
@@ -63,6 +63,7 @@ Nodeport service를 배포합니다.
 ```
 kubectl -n node-test-01 apply -f node-test-01-service.yaml
 kubectl -n node-test-01 get services -o wide
+
 ```
 
 Nodeport service yaml은 아래와 같이 구성되어 있습니다.
