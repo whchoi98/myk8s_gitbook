@@ -971,6 +971,13 @@ helm repo list
 
 이제 외부에서 정상적으로 서비스가 접속되는 지 확인해 봅니다.
 
+Cloud9 IDE 콘솔에서 Public IP를 확인해 봅니다
+
+```
+curl http://169.254.169.254/latest/meta-data/public-ipv4
+
+```
+
 ![](<../.gitbook/assets/image (48).png>)
 
 ### 2. Chart 패키징 및 업로드.
@@ -1051,15 +1058,15 @@ whchoi98:~/environment/helm-chart-demo $ curl --data-binary "@helm-chart-demo-0.
 S3에 정상적으로 Chartmuseum이 배포되었는지 확인합니다.
 
 ```
-aws s3 ls s3://whchoi-chartmuseum-2021-04-06
+aws s3 ls s3://${s3chartmuseumt}
 
 ```
 
 출력 결과 예제
 
 ```
-whchoi98:~/environment/helm-chart-demo $ aws s3 ls s3://whchoi-chartmuseum-2021-04-06
-2021-04-06 08:44:52       1400 helm-chart-demo-0.1.0.tgz
+aws s3 ls s3://${s3chartmuseumt}
+2022-02-14 14:28:03       1400 helm-chart-demo-0.1.0.tgz
 ```
 
 이제 등록된 Repo를 업데이트하고, Chartmuseum 로컬 레포지토리를 검색해 봅니다.
