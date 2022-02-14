@@ -57,10 +57,7 @@ kubectl top pod --all-namespaces
 
 ```
 kubectl create namespace metric-test
-kubectl -n metric-test create deployment php-apache --image=us.gcr.io/k8s-artifacts-prod/hpa-example
-kubectl -n metric-test set resources deploy php-apache --requests=cpu=200m
-kubectl -n metric-test expose deploy php-apache --port 80
-kubectl -n metric-test get pods -l app=php-apache
+kubectl -n metric-test apply -f kubectl -n metric-test apply -f ~/environment/myeks/HPA/php-apache.yaml
 
 ```
 
@@ -87,17 +84,13 @@ php-apache   Deployment/php-apache   0%/50%    1         10        1          86
 
 이제 load generator를 생성해서 Trigger Event를 발생해 봅니다. busybox를 배포하고 Shell로 접속합니다.
 
-Cloud9 IDE에서 Terminal을 한개 더 오픈합하고, 아래 명령을 실행합니다.
+Cloud9 IDE에서 Terminal을 한개 더 오픈하고, 아래 명령을 실행합니다.
 
 ```
-kubectl -n metric-test run -i --tty load-generator --image=busybox /bin/sh
-
-```
-
-앞서 생성한 PHP Web 컨테이너로 무한 접속하도록 합니다.
-
-```
-while true; do wget -q -O - http://php-apache; done
+# 부하 생성을 유지하면서 나머지 스텝을 수행할 수 있도록,
+# 다음의 명령을 별도의 터미널에서 실행한다.
+# 앞서 생성한 PHP Web 컨테이너로 무한 접속하도록 합니다.
+kubectl -n metric-test run -i  --tty load-generator --rm --image=busybox --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
 
 ```
 
@@ -111,7 +104,7 @@ kubectl -n metric-test get hpa -w
 아래와 같은 출력 결과를 확인 할 수 있습니다.
 
 ```
-whchoi98:~/environment $ kubectl -n metric-test get hpa -w
+kubectl -n metric-test get hpa -w
 NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
 php-apache   Deployment/php-apache   0%/50%    1         10        1          23m
 php-apache   Deployment/php-apache   483%/50%   1         10        1          23m
@@ -128,7 +121,7 @@ k9s -n metric-test
 
 ![](<../.gitbook/assets/image (55).png>)
 
-앞서 Shell을 실행했던 Cloud9 IDE 창에서 Shell을 종료합니다. 그리고 다시 Replica가 줄어드는지를 확인합니다.
+앞서 Shell을 실행했던 Cloud9 IDE 창에서 Shell을 종료합니다. 그리고 다시 Replica가 줄어드는지를 확인합니다. 수분 이후에 Pod수는 줄어들게 됩니다.&#x20;
 
 ```
 whchoi98:~/environment $ kubectl -n metrics get hpa -w
