@@ -191,6 +191,10 @@ CA(Cluster Autoscaler)가 제어할 ASG(AutoScaling Group)의 이름을 구성�
 
 ![](<../.gitbook/assets/image (224).png>)
 
+AutoScaling Group Name을 선택하면 태그를 확인 할 수 있습니다. 대상 노드 그룹은 "eksworkshop-managed-ng-public-01-Node" 입니다
+
+![](<../.gitbook/assets/image (226).png>)
+
 ```
 eks-42bf7bee-45b3-9e6a-45e6-177b05b9c042
 
@@ -200,7 +204,7 @@ ASG Group의 최소, 최대 사이즈를 확인합니다. (min = 3, max =**6**)
 
 ### 6.CA(Cluster AutoScaler) 구성
 
-Cloud9 IDE에서 다운로드 받은 매니페스트 파일(cluster\_autoscaler.yml)파일에서 앞서 복사 해 둔 Auto Scaling Group 이름을 --node flag 부분에 변경하고 저장합니다.
+Cloud9 IDE에서 다운로드 받은 매니페스트 파일(cluster\_autoscaler.yml)파일에서 앞서 복사 해 둔 Auto Scaling Group 이름을 --node flag 부분에 변경하고 저장합니다. node
 
 ```
           command:
@@ -209,7 +213,9 @@ Cloud9 IDE에서 다운로드 받은 매니페스트 파일(cluster\_autoscaler.
             - --stderrthreshold=info
             - --cloud-provider=aws
             - --skip-nodes-with-local-storage=false
-            - --nodes=3:9:eksctl-eksworkshop-nodegroup-ng1-public-NodeGroup-1OKGC9A5SPGB1
+            - --nodes=3:6:eks-42bf7bee-45b3-9e6a-45e6-177b05b9c042
+      nodeSelector:
+        nodegroup-type: "managed-frontend-workloads"
 ```
 
 인라인 정책을 구성하고 Public Worker Node의 EC2 인스턴스 프로파일에 추가합니다. 아래 그림에서 처럼 설정되어 있어야 합니다.
