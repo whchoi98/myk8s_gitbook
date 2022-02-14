@@ -41,9 +41,10 @@ Helm Chart의 구조는 아래와 같습니다.
 
 ### 1.Helm 설치
 
-헬름은 헬름 최신 버전을 자동으로 가져와서 [로컬에 설치](https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)하는 인스톨러 스크립트를 제공합니다. 이 스크립트를 받아서 로컬에서 실행할 수 있습니다.
+헬름은 헬름 최신 버전을 자동으로 가져와서 [로컬에 설치](https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)하는 인스톨러 스크립트를 제공합니다. 이 스크립트를 받아서 로컬에서 실행할 수 있습니다.&#x20;
 
 ```
+cd ~/environment
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 chmod 700 get_helm.sh
 ./get_helm.sh
@@ -61,7 +62,7 @@ helm version --short
 
 ```
 $ helm version --short
-v3.7.1+g1d11fcb
+Helm v3.8.0 is already latest
 
 ```
 
@@ -915,7 +916,15 @@ chmod +x ./chartmuseum
 ```
 
 Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장소는 S3를 사용합니다.\
-사전에 s3 bucket을 생성합니다.
+사전에 s3 bucket을 AWS CLI 또는 Console 에서 생성합니다.
+
+```
+##S3 Bucket 생성합니다. 
+##Bucket name은 고유해야 합니다.
+export s3chartmuseumt=whchoi-chartmuseum-2022-02-14
+echo "export s3chartmuseumt=${s3-chartmuseumt}" | tee -a ~/.bash_profile
+aws s3 mb s3://${s3chartmuseumt}
+```
 
 AWS 서비스 - S3&#x20;
 
