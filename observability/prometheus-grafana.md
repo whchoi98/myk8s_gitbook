@@ -27,15 +27,13 @@ description: 'Update : 2021-10-21'
 
 Pull 방식으로 지표정보를 읽어올때는 각 서버에 설치된 Exporter를 통해서 정보를 읽어오며, 배치나 스케쥴 작업의 경우에는 필요한 경우에만 떠 있다가 작업이 끝나면 사라지기 때문에 Pull 방식으로 데이터 수집이 어워서, 그럴 경우 Push방식을 사용하는 Push gateway를 통해 지표정보를 받아오는 경우도 있습니다 .
 
-오토스케일링이 많이 사용되는 클라우드 환경이나 쿠버네티스 클러스터에서는 모니터링 대상의 IP가 동적으로 변경되기 때문에 이를 일일이 설정파일에 넣는데 한계가 있기때문에, 이러한 문제를 해결하기 위해 프로메테우스는 DNS나 Consul, etcd와 같은 다양한 서비스 디스커버리 서비스와 연동을 통해 모니터링 목록을 가지고 모니터링을 수행합니다.프로메테우스로부터 alert를 전달받아 이를 적절한 포맷으로 가공하여 notify 해주는 역할을
-
-* \
+오토스케일링이 많이 사용되는 클라우드 환경이나 쿠버네티스 클러스터에서는 모니터링 대상의 IP가 동적으로 변경되기 때문에 이를 일일이 설정파일에 넣는데 한계가 있기때문에, 이러한 문제를 해결하기 위해 프로메테우스는 DNS나 Consul, etcd와 같은 다양한 서비스 디스커버리 서비스와 연동을 통해 모니터링 목록을 가지고 모니터링을 수행합니다.
 
 * [클라이언트 라이브러리](https://prometheus.io/docs/instrumenting/clientlibs/) : 계측용 프로그램 코드
 * [푸쉬 게이트웨이](https://github.com/prometheus/pushgateway) : shot lived job 지원
 * HAProxy, StatsD, Graphite 등과 같은 서비스를위한 특수 목적의 [export](https://prometheus.io/docs/instrumenting/exporters/)
-* [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공.&#x20;
-* 기타 다양한 지원 도구들.
+* [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공. 프로메테우스로부터 alert를 전달받아 이를 적절한 포맷으로 가공하여 notify 해주는 역할 수행.
+* node-exporter : 모니터링 대상이 프로메테우스의 데이터 포맷을 지원하지 않는 경우에는 별도의 에이전트를 설치해야 지표를 얻어올 수 있는데 이 에이전트를 Exporter라고 합니다 . Exporter 종류에는 node-exporter, mysql-exporter, nginx-exporter, redis-exporter 등 여러 종류가 있으며, 각 exporter를 모니터링 대상에 맞게 사용하면 된다. 필자는 서버의 CPU/메모리와 쿠버네티스 컨테이너 모니터링을 진행할 것이기 때문에 node-exporter를 선택하였다. 이와는 별개로 만약 java나 node.js와 같은 사용자 애플리케이션의 경우에는 Exporter를 사용하지 않고, 프로메테우스 클라이언트 라이브러리를 사용하게 되면 바로 지표를 프로메테우스 서버로 보낼 수 있다
 
 
 
