@@ -33,7 +33,7 @@ Pull 방식으로 지표정보를 읽어올때는 각 서버에 설치된 Export
 * [푸쉬 게이트웨이](https://github.com/prometheus/pushgateway) : shot lived job 지원
 * HAProxy, StatsD, Graphite 등과 같은 서비스를위한 특수 목적의 [export](https://prometheus.io/docs/instrumenting/exporters/)
 * [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공. 프로메테우스로부터 alert를 전달받아 이를 적절한 포맷으로 가공하여 notify 해주는 역할 수행.
-* node-exporter : 모니터링 대상이 프로메테우스의 데이터 포맷을 지원하지 않는 경우에는 별도의 에이전트를 설치해야 지표를 얻어올 수 있는데 이 에이전트를 Exporter라고 합니다 . Exporter 종류에는 node-exporter, mysql-exporter, nginx-exporter, redis-exporter 등 여러 종류가 있으며, 각 exporter를 모니터링 대상에 맞게 사용하면 된다. 필자는 서버의 CPU/메모리와 쿠버네티스 컨테이너 모니터링을 진행할 것이기 때문에 node-exporter를 선택하였다. 이와는 별개로 만약 java나 node.js와 같은 사용자 애플리케이션의 경우에는 Exporter를 사용하지 않고, 프로메테우스 클라이언트 라이브러리를 사용하게 되면 바로 지표를 프로메테우스 서버로 보낼 수 있다
+* node-exporter : 모니터링 대상이 프로메테우스의 데이터 포맷을 지원하지 않는 경우에는 별도의 에이전트를 설치해야 지표를 얻어올 수 있는데 이 에이전트를 Exporter라고 합니다 . 쿠버네티스 컨테이너 모니터링을 진행할 경우 node-exporter를 사용합니다ㅏ . 이와는 별개로 만약 java나 node.js와 같은 사용자 애플리케이션의 경우에는 Exporter를 사용하지 않고, 프로메테우스 클라이언트 라이브러리를 사용하게 되면 바로 지표를 프로메테우스 서버로 보낼 수 있다
 
 
 
