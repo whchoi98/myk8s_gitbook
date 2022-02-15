@@ -189,7 +189,7 @@ CA(Cluster Autoscaler)가 제어할 ASG(AutoScaling Group)의 이름을 구성�
 
 **EC2 대시보드 - Auto Scaling**
 
-![](<../.gitbook/assets/image (224).png>)
+![](<../.gitbook/assets/image (224) (1).png>)
 
 AutoScaling Group Name을 선택하면 태그를 확인 할 수 있습니다. 대상 노드 그룹은 "eksworkshop-managed-ng-public-01-Node" 입니다
 
@@ -220,15 +220,11 @@ Cloud9 IDE에서 다운로드 받은 매니페스트 파일(cluster\_autoscaler.
 
 인라인 정책을 구성하고 Public Worker Node의 EC2 인스턴스 프로파일에 추가합니다. 아래 그림에서 처럼 설정되어 있어야 합니다.
 
-![](<../.gitbook/assets/image (192).png>)
+![](<../.gitbook/assets/image (224).png>)
 
-![](<../.gitbook/assets/image (54).png>)
+![](<../.gitbook/assets/image (223).png>)
 
-![](<../.gitbook/assets/image (58).png>)
-
-![](<../.gitbook/assets/image (61).png>)
-
-인라인 정책이 Public Worker Node의 EC2 인스턴스 프로파일에 없다면 아래와 같이 추가합니다. (이미 eksctl을 배포할 때 추가되었기 때문에 아래는 생략해도 됩니다.)
+인라인 정책이 Public Worker Node의 EC2 인스턴스 프로파일에 없다면 아래와 같이 추가합니다. **(이미 eksctl을 배포할 때 추가되었기 때문에 아래는 생략해도 됩니다.)**
 
 먼저 StackName을 확인합니다.
 
@@ -287,7 +283,7 @@ aws iam put-role-policy --role-name eksctl-eksworkshop-nodegroup-ng-p-NodeInstan
 aws cli를 통해서도 확인 할 수 있습니다.
 
 ```
-aws iam get-role-policy --role-name eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG --policy-name ASG-Policy-For-Worker
+aws iam get-role-policy --role-name eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1C6T8HUEESIBK --policy-name ASG-Policy-For-Worker
 
 ```
 
@@ -320,7 +316,9 @@ whchoi98:~/environment/cluster-autoscaler $ aws iam get-role-policy --role-name 
 이제 Cluster Auto Scaler를 배포합니다.
 
 ```
+kubectl create namespace autoscaler
 kubectl apply -f ~/environment/cluster-autoscaler/cluster_autoscaler.yml
+
 ```
 
 ### 7.CA로 Cluster 확장하기.
@@ -356,7 +354,7 @@ spec:
             cpu: 500m
             memory: 512Mi
       nodeSelector:
-        nodegroup-type: "frontend-workloads"
+        nodegroup-type: "managed-frontend-workloads"
 EoF
 kubectl create namespace autoscaler
 kubectl -n autoscaler apply -f ~/environment/cluster-autoscaler/nginx.yaml
@@ -366,13 +364,13 @@ kubectl -n autoscaler apply -f ~/environment/cluster-autoscaler/nginx.yaml
 정상적으로 배포되었는지 확인해 봅니다.
 
 ```
-kubectl get deployment/nginx-to-scaleout
+kubectl -n autoscaler  get deployment/nginx-to-scaleout
 ```
 
 아래와 같은 출력 결과를 확인 해 볼 수 있습니다.
 
 ```
-whchoi98:~/environment/cluster-autoscaler $ kubectl get deployment/nginx-to-scaleout
+kubectl -n autoscaler  get deployment/nginx-to-scaleout
 NAME                READY   UP-TO-DATE   AVAILABLE   AGE
 nginx-to-scaleout   1/1     1            1           11s
 ```
