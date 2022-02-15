@@ -14,7 +14,7 @@ description: 'Update : 2020-11-11'
 * [TCPSocketAction](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#tcpsocketaction-v1-core) 은 지정된 포트에서 컨테이너의 IP주소에 대해 TCP 검사를 수행합니다 . 포트가 활성화되어 있다면 진단이 성공한 것으로 간주합니다.
 * [HTTPGetAction](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#httpgetaction-v1-core) 은 지정한 포트 및 경로에서 컨테이너의 IP주소에 대한 HTTP Get 요청을 수행합니다 . 응답의 상태 코드가 200보다 크고 400보다 작으면 진단이 성공한 것으로 간주합니다.
 
-각 probe는 다음 세 가지 결과 중 하나를 가집니다. 
+각 probe는 다음 세 가지 결과 중 하나를 가집니다.&#x20;
 
 * Success: 컨테이너가 진단을 통과함.
 * Failure: 컨테이너가 진단에 실패함.
@@ -25,7 +25,7 @@ kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지
 * `livenessProbe`: 컨테이너가 동작 중인지 여부를 나타냅니다. 만약 활성 프로브(liveness probe)에 실패한다면, kubelet은 컨테이너를 죽이고, 해당 컨테이너는 [재시작 정책](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-lifecycle/#%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%A0%95%EC%B1%85)의 대상이 됩니다. \
   컨테이너가 활성 프로브를 제공하지 않는 경우, 기본 상태는 `Success`입니다.
 *   `readinessProbe`: 컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타냅니다. \
-    `readinessProbe`실패한다면, 엔드포인트 컨트롤러는 파드에 연관된 모든 서비스들의 엔드포인트에서 파드의 IP주소를 제거합니다. 
+    `readinessProbe`실패한다면, 엔드포인트 컨트롤러는 파드에 연관된 모든 서비스들의 엔드포인트에서 파드의 IP주소를 제거합니다.&#x20;
 
     `readinessProbe`의 초기 지연 이전의 기본 상태는 `Failure`입니다. 컨테이너가 `readinessProbe`를 지원하지 않는다면, 기본 상태는 `Success`입니다.
 * `startupProbe`: 컨테이너 내의 애플리케이션이 시작되었는지를 나타냅니다. `startupProbe`가 주어진 경우, 성공할 때 까지 다른 나머지 프로브는 활성화 되지 않습니다. \
@@ -45,7 +45,7 @@ Liveness Probe와 Readiness Probe 구성을 위한 디렉토리를 생성합니�
 mkdir -p ~/environment/healthchecks
 ```
 
-kubelet은 periodSeconds 필드를 사용하여 컨테이너를 상태를 확인합니다. 이 경우 kubelet은 5 초마다 liveness probe를 통해 확인합니다. initialDelaySeconds 필드는 첫 번째 Probe를 수행하기 전에 5 초 동안 기다려야한다는 것을 kubelet에 알리는 데 사용됩니다. 프로브를 수행하기 위해 kubelet은 이 포드를 호스팅 하는 서버에 HTTP GET 요청을 전송하고 서버 / health의 핸들러가 성공 코드를 반환하면 컨테이너가 정상으로 간주됩니다. 핸들러가 실패 코드를 반환하면 kubelet은 컨테이너를 종료하고 다시 시작합니다. 
+kubelet은 periodSeconds 필드를 사용하여 컨테이너를 상태를 확인합니다. 이 경우 kubelet은 5 초마다 liveness probe를 통해 확인합니다. initialDelaySeconds 필드는 첫 번째 Probe를 수행하기 전에 5 초 동안 기다려야한다는 것을 kubelet에 알리는 데 사용됩니다. 프로브를 수행하기 위해 kubelet은 이 포드를 호스팅 하는 서버에 HTTP GET 요청을 전송하고 서버 / health의 핸들러가 성공 코드를 반환하면 컨테이너가 정상으로 간주됩니다. 핸들러가 실패 코드를 반환하면 kubelet은 컨테이너를 종료하고 다시 시작합니다.&#x20;
 
 ```
 cat <<EoF > ~/environment/healthchecks/liveness-app.yaml
@@ -89,7 +89,7 @@ liveness-app   1/1     Running   0          14s
 kubectl -n healthchecks describe pods liveness-app
 ```
 
-출력 결과 예제 
+출력 결과 예제&#x20;
 
 {% hint style="info" %}
 Event 출력항목을 확인해 봅니다.
@@ -186,7 +186,7 @@ Events:
 kubectl -n healthchecks logs liveness-app --tail 10
 ```
 
-출력 결과 예시 
+출력 결과 예시&#x20;
 
 {% hint style="info" %}
 5초 마다 Probe를 시도하는 것을 로그에서 확인할 수 있습니다.
@@ -276,7 +276,7 @@ Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavai
 앞서 매니페스트 파일 내부에 포함된 Readiness Probe에는 반드시 `tmp/healthy` 디렉토리가 존재해야 Readiness Probe가 구동되도록 되어 있습니다. 해당 디렉토리를 삭제 시켜서 Readiness Fail을 발생시킵니다.
 
 ```
-kubectl -n healthchecks exec -it readiness-deployment-589b548d5-xnmcm -- rm /tmp/healthy
+kubectl -n healthchecks exec -it  {pod-name} -- rm /tmp/healthy
 ```
 
 아래 명령을 통해 App배포와 Replica 상태를 확인해 봅니다.
