@@ -28,9 +28,13 @@ description: 'Update : 2021-10-21'
 * [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공.&#x20;
 * 기타 다양한 지원 도구들.
 
+
+
+![](<../.gitbook/assets/image (225).png>)
+
 ## Prometheus 구성
 
-### 1.Prometheus 설치.&#x20;
+### 3.Prometheus 설치.&#x20;
 
 앞서 [Helm Chart](../eks-2/helm.md#1-helm)를 설치하였습니다. Helm Chart를 활용해서 설치합니다.
 
@@ -150,12 +154,12 @@ replicaset.apps/prometheus-pushgateway-5c79b789d9          1         1         1
 replicaset.apps/prometheus-server-f8d9475d7                1         1         1       89s
 ```
 
-### 2.Prometheus 실행 및 접속.&#x20;
+### 4.Prometheus 실행 및 접속.&#x20;
 
 Cloud9 터미널에서 백그라운드로 실행시킵니다.
 
 ```
-kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090 &
+kubectl port-forward -n prometheus deploy/prometheus-server 8081:9090 &
 
 ```
 
@@ -172,7 +176,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 전체 화면 창에서 아래와 같이 마지막에 URL을 추가합니다.
 
 ```
-/targets
+:8081/targets
 ```
 
 아래와 같은 결과를 브라우져에서 확인할 수 있습니다.Status 메뉴에서 다양한 결과를 확인 할 수 있습니다.
@@ -181,7 +185,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 ## Grafana 구성
 
-### 1.Grafana 설치&#x20;
+### 5.Grafana 설치&#x20;
 
 Grafana를 사용하게 되면 시계열 메트릭 데이터를 질의, 시각화, Alert을 이해하는 데 사용할 수 있습니다.
 
@@ -292,17 +296,17 @@ kubectl -n grafana get all
 
 ```
 $ kubectl -n grafana get all
-NAME                           READY   STATUS     RESTARTS   AGE
-pod/grafana-69f4d986f6-fhffv   0/1     Init:0/1   0          25s
+NAME                           READY   STATUS    RESTARTS   AGE
+pod/grafana-69f4d986f6-j4z4l   1/1     Running   0          48s
 
-NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)        AGE
-service/grafana   LoadBalancer   172.20.224.119   abebac85c18904e5daac3154e39a011e-277816034.ap-northeast-2.elb.amazonaws.com   80:32763/TCP   25s
+NAME              TYPE           CLUSTER-IP      EXTERNAL-IP                                                                   PORT(S)        AGE
+service/grafana   LoadBalancer   172.20.217.27   a66440ff27d1e43e8ba9e8a8f02a6893-192665941.ap-northeast-2.elb.amazonaws.com   80:32297/TCP   48s
 
 NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/grafana   0/1     1            0           25s
+deployment.apps/grafana   1/1     1            1           48s
 
 NAME                                 DESIRED   CURRENT   READY   AGE
-replicaset.apps/grafana-69f4d986f6   1         1         0       25s
+replicaset.apps/grafana-69f4d986f6   1         1         1       48s
 ```
 
 service를 확인합니다.
@@ -311,7 +315,7 @@ service를 확인합니다.
 kubectl get svc -n grafana grafana
 ```
 
-### 2.Grafana 접속 확인.&#x20;
+### 6.Grafana 접속 확인.&#x20;
 
 출력 결과에서 제공되는 Loadbalancer 주소를 브라우져에서 입력합니다.
 
@@ -331,7 +335,7 @@ grafana   LoadBalancer   172.20.23.245   a555fefad0ed8493fb4a9ec240318103-201438
 
 ## DashBoard 구성
 
-### 1.Cluster Monitoring
+### 7.Cluster Monitoring
 
 이제 생성된 Grafana 에서 배포된 Cluster들에 대해서 모니터링을 합니다.
 
@@ -351,7 +355,7 @@ DataSource를 Prometheus를 선택합니다.
 
 ![](<../.gitbook/assets/image (84).png>)
 
-### 2.Pod Monitoring 구성
+### 8.Pod Monitoring 구성
 
 이제 생성된 Grafana 에서 배포된 Pod들에 대해서 모니터링을 합니다.
 
@@ -371,7 +375,7 @@ Pod들 중심으로 모니터링을 할 수 있습니다.
 
 ![](<../.gitbook/assets/image (70).png>)
 
-### 3. Grafana Labs Dashboard 활용하기
+### 9. Grafana Labs Dashboard 활용하기
 
 위에서 활용한 것 처럼, 이미 템플릿으로 생성한 ID를 가져와서 구성해 봅니다.
 
