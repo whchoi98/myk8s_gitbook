@@ -57,7 +57,7 @@ kubectl top pod --all-namespaces
 
 ```
 kubectl create namespace metric-test
-kubectl -n metric-test apply -f kubectl -n metric-test apply -f ~/environment/myeks/HPA/php-apache.yaml
+kubectl -n metric-test apply -f https://k8s.io/examples/application/php-apache.yaml
 
 ```
 
