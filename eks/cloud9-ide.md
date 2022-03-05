@@ -69,6 +69,8 @@ if [ $? -eq 0 ]; then
     sudo reboot
 fi
 
+
+
 ```
 
 ## AWS CLI 설치
