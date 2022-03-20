@@ -20,7 +20,7 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 * 공인 IP/Port로 접근한 트래픽은 Node(EC2)의 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
 * IPTable 규칙에 의해 PoD 분산하게 됩니다.
 
-![](<../.gitbook/assets/image (219) (1).png>)
+![](<../.gitbook/assets/image (219) (1) (1).png>)
 
 아래와 같이 새로운 Namespace와 Pod를 생성합니다.
 
@@ -257,7 +257,7 @@ kubectl get nodes -o wide
 
 이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다. Node의 IP 주소는 EC2 서비스 대시 보드에서 확인 할 수 있습니다.
 
-![](<../.gitbook/assets/image (220).png>)
+![](<../.gitbook/assets/image (220) (1).png>)
 
 eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
 

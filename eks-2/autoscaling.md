@@ -193,7 +193,7 @@ CA(Cluster Autoscaler)가 제어할 ASG(AutoScaling Group)의 이름을 구성�
 
 AutoScaling Group Name을 선택하면 태그를 확인 할 수 있습니다. 대상 노드 그룹은 "eksworkshop-managed-ng-public-01-Node" 입니다
 
-![](<../.gitbook/assets/image (226) (1) (1).png>)
+![](<../.gitbook/assets/image (226) (1) (1) (1).png>)
 
 ```
 eks-42bf7bee-45b3-9e6a-45e6-177b05b9c042

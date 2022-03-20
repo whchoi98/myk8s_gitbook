@@ -116,11 +116,9 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
-![](<../.gitbook/assets/image (226) (1).png>)
+![](<../.gitbook/assets/image (226) (1) (1).png>)
 
-![](<../.gitbook/assets/image (227).png>)
-
-![](<../.gitbook/assets/image (225).png>)
+![](<../.gitbook/assets/image (230).png>)
 
 ![](<../.gitbook/assets/image (219).png>)
 
@@ -163,24 +161,27 @@ Cloudformation 에서 새로운 Stack을 배포합니다.
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-nodegroup-multus.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
+![](<../.gitbook/assets/image (226) (1).png>)
+
 ![](<../.gitbook/assets/image (226).png>)
 
-![](<../.gitbook/assets/image (209).png>)
+![](<../.gitbook/assets/image (228).png>)
 
-![](<../.gitbook/assets/image (212).png>)
+![](<../.gitbook/assets/image (229).png>)
 
 * Stack Name : ng1
 * Cluster Name : eks-multus-cluster
 * ClusterControlPlaneSecurityGroup - eks-multus-cluster-EksControlSecurityGroup-xxxx
 * NodeGroupName : ng1
-* Min/Desired/MaxSize : 1&#x20;
+* Min/Desired/MaxSize : 1 /2/3
 * KeyName : eksworkshop
 * VpcId : vpc-eks-multus-cluster
 * Subnets : privateAz1-eks-multus-cluster (main primary K8s networking network 입니다.)
 * MultusSubnets : multus1Az1 , Multus2Az1
 * MultusSecurityGroups : multus-Sg-eks-multus-cluster
-* LambdaS3Bucket : 앞서 생성한 Bucket Name (예. whchoi-multus-lambda)
+* LambdaS3Bucket : 앞서 생성한 Bucket Name (예. whchoimultus)
 * LambdaS3Key : lambda\_function.zip&#x20;
+* 나머지는 기본값으로 사용합니다.&#x20;
 
 Bastion Host 접
 

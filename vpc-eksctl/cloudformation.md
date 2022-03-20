@@ -71,7 +71,7 @@ yml 파일을 로컬 PC에서 업로드 불가능한 경우에는 , 앞서 S3로
 
 아래는 S3 URL을 통한 업로드 방법입니다.&#x20;
 
-![](<../.gitbook/assets/image (220) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (220) (1) (1) (1) (1).png>)
 
 ### 3. Stack 상세 정보 구성
 
