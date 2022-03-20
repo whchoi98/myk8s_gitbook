@@ -12,8 +12,6 @@ Multus는 CNI 명세를 구현하는 모든 [레퍼런스 플러그인](https://
 
 Multus는 Pod에 멀 네트워크 인터페이스를 첨부할 수 있는 Kubernetes용 오픈 소스 CNI 플러그인입니다. Multus는 메타 플러그인을 기반으로 Pod에 첨부된 다중 네트워크 인터페이스를 작동하는 추가 CNI 플러그인을 지원합니다. 다중 인터페이스를 포함한 Pod가 일반적으로 필요한 사용 사례에는 Kubernetes에 대한 5G 및 스트리밍 네크워크 등이 있습니다. EKS가 지원하는 Multus를 사용하여 이러한 환경에 걸쳐 어드밴스드 네트워킹을 활성화함으로써 사용자에게 고품질 콘텐츠를 전달하는 컨테이너화 네트워크 기능을 실행할 수 있습니다.
 
-랩에서는 아래와 같이 US-WEST-2 (오레곤) 리전에서 EKS 기반으로  Multus를 적용하는 방안을 소개 합니다.&#x20;
-
 ## Multus 구성을 위한 사전 준비
 
 ### Task1. Cloud9 구성
@@ -94,22 +92,27 @@ git clone https://github.com/aws-samples/eks-install-guide-for-multus.git
 
 # US-WEST-2에 S3 Bucket을 생성합니다. Bucket Name은 고유해야 합니다.
 cd ~/envvironment
-aws s3 mb s3://{bucket name} --region us-west-2
+export bucket_name=whchoimultus
+aws s3 mb s3://$bucket_name
 
 # 생성된 Bucket에 git을 업로드 합니다.
 cd ~/envvironment
-aws s3 sync ./eks-install-guide-for-multus s3://{bucket name}
-aws s3 ls s3://{bucket name}/cfn/templates/infra/
-aws s3 ls s3://{bucket name}/cfn/templates/nodegroup/
+aws s3 sync ./eks-install-guide-for-multus s3://$bucket_name
+aws s3 ls s3://$bucket_name/cfn/templates/infra/
+aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 # object가 외부에서 접근할 수 있도록 , Read 권한을 부여합니다.
-aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/infra/eks-infra.yaml --acl public-read  
-aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/nodegroup/eks-nodegroup-multus.yaml --acl public-read
+# aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/infra/eks-infra.yaml --acl public-read  
+# aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/nodegroup/eks-nodegroup-multus.yaml --acl public-read
 ```
 
 ## Cloudfomration 기반 배포
 
 ### Task4. EKS Infra 배포
+
+
+
+![](<../.gitbook/assets/image (227).png>)
 
 
 
