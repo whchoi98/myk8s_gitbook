@@ -189,7 +189,7 @@ CA(Cluster Autoscaler)가 제어할 ASG(AutoScaling Group)의 이름을 구성�
 
 **EC2 대시보드 - Auto Scaling**
 
-![](<../.gitbook/assets/image (224) (1).png>)
+![](<../.gitbook/assets/image (224) (1) (1).png>)
 
 AutoScaling Group Name을 선택하면 태그를 확인 할 수 있습니다. 대상 노드 그룹은 "eksworkshop-managed-ng-public-01-Node" 입니다
 
@@ -220,7 +220,7 @@ Cloud9 IDE에서 다운로드 받은 매니페스트 파일(cluster\_autoscaler.
 
 인라인 정책을 구성하고 Public Worker Node의 EC2 인스턴스 프로파일에 추가합니다. 아래 그림에서 처럼 설정되어 있어야 합니다.
 
-![](<../.gitbook/assets/image (224).png>)
+![](<../.gitbook/assets/image (224) (1).png>)
 
 ![](<../.gitbook/assets/image (223).png>)
 
