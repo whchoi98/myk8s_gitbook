@@ -114,17 +114,26 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 ![](<../.gitbook/assets/image (227).png>)
 
-
-
-![](<../.gitbook/assets/image (205).png>)
-
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
-![](<../.gitbook/assets/image (208).png>)
+![](<../.gitbook/assets/image (226).png>)
+
+![](<../.gitbook/assets/image (225).png>)
+
+![](<../.gitbook/assets/image (219).png>)
 
 * Stack Name : eks-multus-cluster
-* Availability Zone : us-west-2a, us-west-2b
+* Availability Zone : ap-northeast-2a, ap-northeast-2b
+* PublicSubnetAz1Cidr : 10.0.0.0/24
+* PublicSubnetAz2Cidr: 10.0.1.0/24
+* PrivateSubnetAz1Cidr: 10.0.2.0/24
+* PrivateSubnetAz2Cidr: 10.0.3.0/24
+* MultusSubnet1Az1Cidr: 10.0.4.0/24
+* MultusSubnet1Az2Cidr: 10.0.5.0/24
+* MultusSubnet2Az1Cidr: 10.0.6.0/24
+* MultusSubnet2Az2Cidr: 10.0.7.0/24
 * Bastion Keyname : eksworkshop
+*
 
 ### Task5. EKS multus nodegroup 배포
 

@@ -22,7 +22,7 @@ Service의 종류는 아래와 같습니다.
 
 아래와 같은 구성을 만들고, Cluster IP의 동작에 대해 이해할 수 있습니다.
 
-![](<../.gitbook/assets/image (219) (1).png>)
+![](<../.gitbook/assets/image (219) (1) (1).png>)
 
 ### 1.CoreDNS와 Service 역할 확인을 위한 App배포&#x20;
 

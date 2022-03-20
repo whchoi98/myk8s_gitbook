@@ -507,7 +507,7 @@ Cache-Control: max-age=0
 
 아래와 같이 ALB Ingress가 구성되었습니다.&#x20;
 
-![](<../.gitbook/assets/image (226) (1).png>)
+![](<../.gitbook/assets/image (226) (1) (1).png>)
 
 ## ALB Ingress Controller 기반 Application 배포
 

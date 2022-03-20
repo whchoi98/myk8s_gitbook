@@ -323,7 +323,7 @@ Traffic 흐름은 다음과 같습니다.
 * NLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (225) (1).png>)
+![](<../.gitbook/assets/image (225) (1) (1).png>)
 
 ### 9. NLB Service 시험
 
