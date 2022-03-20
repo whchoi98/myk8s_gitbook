@@ -116,7 +116,7 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
-![](<../.gitbook/assets/image (226).png>)
+![](<../.gitbook/assets/image (226) (1).png>)
 
 ![](<../.gitbook/assets/image (225).png>)
 
@@ -133,7 +133,8 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 * MultusSubnet2Az1Cidr: 10.0.6.0/24
 * MultusSubnet2Az2Cidr: 10.0.7.0/24
 * Bastion Keyname : eksworkshop
-*
+
+
 
 ### Task5. EKS multus nodegroup 배포
 
@@ -141,14 +142,14 @@ EKS nodegroup을 배포하기 위해 , Lambda function을 S3에 업로드합니�
 
 ```
 # US-WEST-2에 S3 Bucket을 생성합니다. Bucket Name은 고유해야 합니다.
-aws s3 mb s3://{bucket name} --region us-west-2
+# aws s3 mb s3://{bucket name} --region us-west-2
 
 # 생성된 Bucket에 lambda function을 업로드 합니다.
 cd ~/envvironment
-aws s3 cp  ~/environment/eks-install-guide-for-multus/cfn/templates/nodegroup/lambda_function.zip s3://whchoi-multus-lambda  
+aws s3 cp  ~/environment/eks-install-guide-for-multus/cfn/templates/nodegroup/lambda_function.zip s3://$bucket_name  
 
 # object가 외부에서 접근할 수 있도록 , Read 권한을 부여합니다.
-aws s3api put-object-acl --bucket {bucket name} --key lambda_function.zip --acl public-read  
+# aws s3api put-object-acl --bucket {bucket name} --key lambda_function.zip --acl public-read  
 
 ```
 
@@ -159,6 +160,8 @@ S3에 업로드한 EKS Nodegroup용 Cloudformation Stack yaml 파일의 Object U
 Cloudformation 에서 새로운 Stack을 배포합니다.
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-nodegroup-multus.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
+
+![](<../.gitbook/assets/image (226).png>)
 
 ![](<../.gitbook/assets/image (209).png>)
 
