@@ -112,11 +112,13 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 
 
-![](<../.gitbook/assets/image (227).png>)
+![](<../.gitbook/assets/image (227) (1).png>)
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
 ![](<../.gitbook/assets/image (226) (1).png>)
+
+![](<../.gitbook/assets/image (227).png>)
 
 ![](<../.gitbook/assets/image (225).png>)
 
