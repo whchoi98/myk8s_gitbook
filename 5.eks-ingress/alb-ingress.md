@@ -24,7 +24,7 @@ AWS EKS 환경에서는 AWS Load Balancer Controller 를 별도로 설치하고,
 * Kong
 * traefik
 
-![](<../.gitbook/assets/image (218).png>)
+![](<../.gitbook/assets/image (218) (1).png>)
 
 ### 3. AWS ALB Ingress 개요.
 

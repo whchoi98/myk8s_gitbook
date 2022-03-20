@@ -4,7 +4,7 @@ description: 'Update : 2021-09-27'
 
 # Multus
 
-## Multus 소개 
+## Multus 소개&#x20;
 
 [Multus](https://github.com/Intel-Corp/multus-cni)는 쿠버네티스의 CRD 기반 네트워크 오브젝트를 사용하여 쿠버네티스에서 멀티 네트워킹 기능을 지원하는 멀티 CNI 플러그인입니다.
 
@@ -12,7 +12,7 @@ Multus는 CNI 명세를 구현하는 모든 [레퍼런스 플러그인](https://
 
 Multus는 Pod에 멀 네트워크 인터페이스를 첨부할 수 있는 Kubernetes용 오픈 소스 CNI 플러그인입니다. Multus는 메타 플러그인을 기반으로 Pod에 첨부된 다중 네트워크 인터페이스를 작동하는 추가 CNI 플러그인을 지원합니다. 다중 인터페이스를 포함한 Pod가 일반적으로 필요한 사용 사례에는 Kubernetes에 대한 5G 및 스트리밍 네크워크 등이 있습니다. EKS가 지원하는 Multus를 사용하여 이러한 환경에 걸쳐 어드밴스드 네트워킹을 활성화함으로써 사용자에게 고품질 콘텐츠를 전달하는 컨테이너화 네트워크 기능을 실행할 수 있습니다.
 
-랩에서는 아래와 같이 US-WEST-2 (오레곤) 리전에서 EKS 기반으로  Multus를 적용하는 방안을 소개 합니다. 
+랩에서는 아래와 같이 US-WEST-2 (오레곤) 리전에서 EKS 기반으로  Multus를 적용하는 방안을 소개 합니다.&#x20;
 
 ## Multus 구성을 위한 사전 준비
 
@@ -156,18 +156,22 @@ Cloudformation 에서 새로운 Stack을 배포합니다.
 * Cluster Name : eks-multus-cluster
 * ClusterControlPlaneSecurityGroup - eks-multus-cluster-EksControlSecurityGroup-xxxx
 * NodeGroupName : ng1
-* Min/Desired/MaxSize : 1 
+* Min/Desired/MaxSize : 1&#x20;
 * KeyName : eksworkshop
 * VpcId : vpc-eks-multus-cluster
 * Subnets : privateAz1-eks-multus-cluster (main primary K8s networking network 입니다.)
 * MultusSubnets : multus1Az1 , Multus2Az1
 * MultusSecurityGroups : multus-Sg-eks-multus-cluster
 * LambdaS3Bucket : 앞서 생성한 Bucket Name (예. whchoi-multus-lambda)
-* LambdaS3Key : lambda_function.zip 
+* LambdaS3Key : lambda\_function.zip&#x20;
 
-__
+Bastion Host 접
 
-Multus 
+![](<../.gitbook/assets/image (218).png>)
+
+
+
+Multus&#x20;
 
 
 

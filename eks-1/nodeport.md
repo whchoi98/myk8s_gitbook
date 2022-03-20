@@ -122,7 +122,7 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 ![](<../.gitbook/assets/image (217) (1) (1).png>)
 
-![](<../.gitbook/assets/image (218) (1).png>)
+![](<../.gitbook/assets/image (218) (1) (1).png>)
 
 eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
 
