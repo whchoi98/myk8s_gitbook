@@ -275,18 +275,152 @@ kubectl get nodes
 
 ```
 
-## Multus PlugIn 구성
+## Multus PlugIn / App 구성.
 
-Task7. Multus 구성을 위한 CRD, NAD
+### Task7. Multus 구성을 위한 CRD, NAD
 
-Multus Plugin 구성을 위한 CRD를 아래와 같이 Bastion Host에서 실행합니다.&#x20;
+Multus Plugin 구성을 위한 NAD DaemonSet를 아래와 같이 Bastion Host에서 실행합니다.&#x20;
 
 ```
+### Multus Daemonset 구성
+kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/config/multus/v3.7.2-eksbuild.1/aws-k8s-multus.yaml
+
 ```
 
+Multus Plugin 구성을 위한 NAD CRD를 아래와 같이 Bastion Host에서 실행하고, 2개의 CRD를 구성합니다.&#x20;
+
+```
+cat << EOF > ./ipvlan-conf-1.yaml
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ipvlan-conf-1
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "ipvlan",
+      "master": "eth1",
+      "mode": "l3",
+      "ipam": {
+        "type": "host-local",
+        "subnet": "10.0.4.0/24",
+        "rangeStart": "10.0.4.70",
+        "rangeEnd": "10.0.4.80",
+        "gateway": "10.0.4.1"
+      }
+    }'
+EOF
+
+cat << EOF > ./ipvlan-conf-2.yaml
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ipvlan-conf-2
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "ipvlan",
+      "master": "eth2",
+      "mode": "l3",
+      "ipam": {
+        "type": "host-local",
+        "subnet": "10.0.6.0/24",
+        "rangeStart": "10.0.6.70",
+        "rangeEnd": "10.0.6.80",
+        "gateway": "10.0.6.1"
+      }
+    }'
+EOF
+
+```
+
+ipvlan-config-1
+
+* main plugin - ipvlan
+* eth - eth1
+* mode - L3
+* IPAM - host-local
+
+ipvlan-config-2
+
+* main plugin - ipvlan
+* eth - eth1
+* mode - L3
+* IPAM - host-local
+
+task 8. App 구성
 
 
 
+```
+### 1개 eth 바인딩 
+cat << EOF > ./sampleapp-1.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sampleapp-1
+  annotations:
+      k8s.v1.cni.cncf.io/networks: ipvlan-conf-1
+spec:
+  containers:
+  - name: multitool
+    command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: praqma/network-multitool
+EOF
+
+### 1개 eth 바인딩 
+cat << EOF > ./sampleapp-2.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sampleapp-2
+  annotations:
+      k8s.v1.cni.cncf.io/networks: ipvlan-conf-2
+spec:
+  containers:
+  - name: multitool
+    command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: praqma/network-multitool
+EOF
+
+### 2개 eth 바인딩 
+cat << EOF > ./sampleapp-dual-1.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sampleapp-dual-1
+  annotations:
+      k8s.v1.cni.cncf.io/networks: ipvlan-conf-1, ipvlan-conf-2
+spec:
+  containers:
+  - name: multitool
+    command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: praqma/network-multitool
+EOF
+
+### 2개 eth 바인딩 
+cat << EOF > ./sampleapp-dual-2.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sampleapp-dual-2
+  annotations:
+      k8s.v1.cni.cncf.io/networks: ipvlan-conf-1, ipvlan-conf-2
+spec:
+  containers:
+  - name: multitool
+    command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+    image: praqma/network-multitool
+EOF
+
+
+```
 
 
 
