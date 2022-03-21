@@ -352,7 +352,7 @@ ipvlan-config-2
 
 task 8. App 구성
 
-
+아래와 같이 4개의 App을 구성해 봅니다. sampleapp-1,2는 eth1개가 binding 되고 ,sampleapp-dual1,2는 eth2개가 바인딩 됩니다.&#x20;
 
 ```
 ### 1개 eth 바인딩 
@@ -418,7 +418,6 @@ spec:
     command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
     image: praqma/network-multitool
 EOF
-
 
 ```
 
