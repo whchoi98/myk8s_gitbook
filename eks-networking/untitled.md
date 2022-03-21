@@ -192,7 +192,7 @@ Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니�
 
 ## EKS 관리용 Bastion Host 구성
 
-### Task5. Bastion Host 구성
+### Task6. Bastion Host 구성
 
 Bastion Host 에서 EKS 제어를 위해, 기본 설정을 합니다. EC2 대시보드를 선택하고, "MyBastionHost"를 선택하고, Public IPv4를 복사하고 SSH로 접속합니다
 
@@ -212,9 +212,16 @@ kubectl version —short —client
 
 ```
 
-Bastion Host에 kubeconfig를 업데이트 합니다
+Bastion Host에 사용자의 AccessKey/SecreteKey를 구성하고, Kubeconfig를 업데이트 합니다.&#x20;
 
 ```
+### Access Key/ SecreteKey를 구성합니다. 
+aws configure
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_DEFAULT_REGION=ap-northeast-2
+Default output format=json
+
 ### Kubeconfig update
 aws eks update-kubeconfig --name eks-multus-cluster
 kubectl get svc
@@ -268,7 +275,14 @@ kubectl get nodes
 
 ```
 
-Multus&#x20;
+## Multus PlugIn 구성
+
+Task7. Multus 구성을 위한 CRD, NAD
+
+Multus Plugin 구성을 위한 CRD를 아래와 같이 Bastion Host에서 실행합니다.&#x20;
+
+```
+```
 
 
 
