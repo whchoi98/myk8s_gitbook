@@ -421,6 +421,21 @@ EOF
 
 ```
 
+## Multus 시험
 
+아래와 같이 Container에 접속해서 각 IP 정보들과 같은 서브넷 같의 통신 유무를 확인해 봅니다.
+
+```
+kubectl exec -it sampleapp-dual-1 -- ip r
+kubectl exec -it sampleapp-dual-2 -- ip r
+kubectl exec -it sampleapp-1 -- ip r
+kubectl exec -it sampleapp-2 -- ip r
+
+kubectl exec -it sampleapp-1 -- /bin/sh
+kubectl exec -it sampleapp-2 -- /bin/sh
+kubectl exec -it sampleapp-dual-1 -- /bin/sh
+kubectl exec -it sampleapp-dual-2 -- /bin/sh
+
+```
 
 \
