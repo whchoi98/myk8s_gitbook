@@ -110,7 +110,7 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 ### Task4. EKS Infra 배포
 
-
+ㅇEKS Multus 구성을 위한 VPC를 구성합니다. S3dp
 
 ![](<../.gitbook/assets/image (227) (1).png>)
 
@@ -192,6 +192,10 @@ Bastion Host 접
 ![](<../.gitbook/assets/image (224).png>)
 
 Multus&#x20;
+
+
+
+
 
 
 
