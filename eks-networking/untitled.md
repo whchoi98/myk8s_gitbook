@@ -81,9 +81,15 @@ echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
 source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
 
+# SSM (Session Manager) 설치
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+sudo sudo yum install -y session-manager-plugin.rpm
+
 ```
 
-Task3. Multus Git Clone
+### Task3. Multus 를 위한 Git Clone 및 S3 구성
+
+Multus 구성을 위한 Git Clone을 수행하고, S3 Bucket에 업로드합니다.&#x20;
 
 ```
 #multus 구성을 위한 git clone을 실행합니다.
@@ -102,21 +108,23 @@ aws s3 ls s3://$bucket_name/cfn/templates/infra/
 aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 # object가 외부에서 접근할 수 있도록 , Read 권한을 부여합니다.
-# aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/infra/eks-infra.yaml --acl public-read  
-# aws s3api put-object-acl --bucket {bucket name} --key cfn/templates/nodegroup/eks-nodegroup-multus.yaml --acl public-read
+# aws s3api put-object-acl --bucket $bucket_name --key cfn/templates/infra/eks-infra.yaml --acl public-read  
+# aws s3api put-object-acl --bucket $bucket_name --key cfn/templates/nodegroup/eks-nodegroup-multus.yaml --acl public-read
 ```
 
 ## Cloudfomration 기반 배포
 
 ### Task4. EKS Infra 배포
 
-ㅇEKS Multus 구성을 위한 VPC를 구성합니다. S3에서 앞서 배포되어 있는&#x20;
+EKS Multus 구성을 위한 VPC를 구성합니다. S3에서 앞서 배포되어 있는 eks\_infra.yaml의 Object URL을 복사합니다
 
 ![](<../.gitbook/assets/image (227) (1).png>)
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
 ![](<../.gitbook/assets/image (226) (1) (1).png>)
+
+Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니다.&#x20;
 
 ![](<../.gitbook/assets/image (230).png>)
 
@@ -134,23 +142,18 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 * MultusSubnet2Az2Cidr: 10.0.7.0/24
 * Bastion Keyname : eksworkshop
 
-
-
 ### Task5. EKS multus nodegroup 배포
+
+EKS VPC Infra가 배포가 완료되었으면, EKS WorkerNode를 구성하기 위한 준비를 합니다
 
 EKS nodegroup을 배포하기 위해 , Lambda function을 S3에 업로드합니다. Lambda function은 앞서 multus git에서 다운로드 하였습니다.
 
 ```
-# US-WEST-2에 S3 Bucket을 생성합니다. Bucket Name은 고유해야 합니다.
-# aws s3 mb s3://{bucket name} --region us-west-2
-
-# 생성된 Bucket에 lambda function을 업로드 합니다.
 cd ~/envvironment
 aws s3 cp  ~/environment/eks-install-guide-for-multus/cfn/templates/nodegroup/lambda_function.zip s3://$bucket_name  
 
 # object가 외부에서 접근할 수 있도록 , Read 권한을 부여합니다.
 # aws s3api put-object-acl --bucket {bucket name} --key lambda_function.zip --acl public-read  
-
 ```
 
 S3에 업로드한 EKS Nodegroup용 Cloudformation Stack yaml 파일의 Object URL을 복사해 둡니다.
@@ -159,9 +162,9 @@ S3에 업로드한 EKS Nodegroup용 Cloudformation Stack yaml 파일의 Object U
 
 Cloudformation 에서 새로운 Stack을 배포합니다.
 
-**`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-nodegroup-multus.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
+**`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-nodegroup-multus.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다. (Task3 배포과정과 동일합니다. )&#x20;
 
-![](<../.gitbook/assets/image (226) (1).png>)
+Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니다.&#x20;
 
 ![](<../.gitbook/assets/image (226).png>)
 
@@ -183,13 +186,83 @@ Cloudformation 에서 새로운 Stack을 배포합니다.
 * LambdaS3Key : lambda\_function.zip&#x20;
 * 나머지는 기본값으로 사용합니다.&#x20;
 
-Bastion Host 접
+## EKS 관리용 Bastion Host 구성
+
+### Task5. Bastion Host 구성
+
+Bastion Host 에서 EKS 제어를 위해, 기본 설정을 합니다. EC2 대시보드를 선택하고, "MyBastionHost"를 선택하고, Public IPv4를 복사하고 SSH로 접속합니다
 
 ![](<../.gitbook/assets/image (218).png>)
 
+아래와 같이 접속한 Bastion Host에 Kubectl 을 설치합니다. &#x20;
 
+```
+### Kubelet 설치 
+curl -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+curl -o kubectl.sha256 https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl.sha256
+openssl sha1 -sha256 kubectl
+chmod +x ./kubectl
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+kubectl version —short —client
+
+```
+
+Bastion Host에 kubeconfig를 업데이트 합니다
+
+```
+### Kubeconfig update
+aws eks update-kubeconfig --name eks-multus-cluster
+kubectl get svc
+
+```
+
+kubectl 명령을 통해 정상적으로 출력이 생성되는지 확인합니다.&#x20;
+
+```
+[ec2-user@ip-10-0-0-141 ~]$ kubectl get svc
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   172.20.0.1   <none>        443/TCP   15m
+
+```
+
+Bastion Host에서 Kubernetes ConfigMap을 업데이트 합니다.&#x20;
+
+```
+### aws-auth-cm 다운로드
+curl -o aws-auth-cm.yaml https://s3.us-west-2.amazonaws.com/amazon-eks/cloudformation/2020-10-29/aws-auth-cm.yaml
+
+### 다운 받은 파일을 아래와 같이 수정합니다. file 명 - aws-auth-cm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::045527256907:role/ng1-NodeInstanceRole-NKIZLNU39KA5
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+### rolearn 부분은 Cloudformation의 EKS Nodegroup을 배포한 출력에서 확인 할 수 있습니다. 
+
+```
+
+rolearn 부분을 확인하기 위해서 ,  nodegroup 스택의 출력에서 NodeInstanceRole 의 값을 확인해서 rolearn을 수정합니다.&#x20;
 
 ![](<../.gitbook/assets/image (224).png>)
+
+변경된 aws-auth-cm.yaml 파일을 업데이트 합니다.&#x20;
+
+```
+### configmap 업데이트 
+kubectl apply -f aws-auth-cm.yaml
+
+### node가 정상적으로 출력되는 지 확인합니다. 수분 정도 소요됩니다. 
+kubectl get nodes
+
+```
 
 Multus&#x20;
 
