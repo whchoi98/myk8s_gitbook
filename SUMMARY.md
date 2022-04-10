@@ -50,6 +50,7 @@
   * [스케쥴링 - AutoScaling 구성](eks-2/autoscaling.md)
   * [고가용성 Health Check 구성](eks-2/health-check.md)
   * [Assign](eks-2/assign.md)
+  * [테인트와 톨러레이션](eks-2/taints\_tolerations.md)
 * [7.Observability](observability/README.md)
   * [K8s Dashboard 배포](observability/k8s-dashboard.md)
   * [Prometheus-Grafana](observability/prometheus-grafana.md)
@@ -86,3 +87,4 @@
   * [kubectl Command](tip/kubectl-command.md)
   * [helm command](tip/helm-command.md)
   * [Useful URL](tip/useful-url.md)
+* [Page 1](page-1.md)
