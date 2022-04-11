@@ -99,7 +99,7 @@ eksctl을 통해 EKS Cluster를 생성하기 위해서, 아래와 같이 Shell �
 
 ```
 export ekscluster_name="eksworkshop"
-export eks_version="1.20"
+export eks_version="1.21"
 export instance_type="m5.xlarge"
 export public_selfmgmd_node="frontend-workloads"
 export private_selfmgmd_node="backend-workloads"
