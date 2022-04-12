@@ -14,8 +14,6 @@ Loadbalancer 기반의 서비스 타입은 현재 CLB (Classic Load Balancer)와
 
 Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. Cloud Service Provider의 기본 로드밸런서 타입을 사용하게 되며, AWS의 경우에는 CLB를 사용합니다. CLB는 내부 또는 외부 로드밸런서로 지정이 가능합니다.
 
-![](<../.gitbook/assets/image (221) (1) (1).png>)
-
 ### 2. CLB Service Type 트래픽 흐름
 
 Traffic 흐름은 다음과 같습니다.
@@ -24,7 +22,7 @@ Traffic 흐름은 다음과 같습니다.
 * CLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (222) (1) (1).png>)
+![](<../.gitbook/assets/image (232).png>)
 
 ### 3. CLB Service 시험
 
@@ -62,9 +60,9 @@ NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                   
 clb-test-01-svc   LoadBalancer   172.20.238.198   a2bb893008047439ba29a8df77944bcf-1758389191.ap-northeast-2.elb.amazonaws.com   8080:30975/TCP   10s   app=clb-test-01
 ```
 
-아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다
+아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.&#x20;
 
-![](<../.gitbook/assets/image (217).png>)
+![](<../.gitbook/assets/image (227).png>)
 
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 
@@ -323,7 +321,7 @@ Traffic 흐름은 다음과 같습니다.
 * NLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (225) (1) (1).png>)
+![](<../.gitbook/assets/image (231).png>)
 
 ### 9. NLB Service 시험
 
@@ -361,7 +359,7 @@ nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.
 
-![](<../.gitbook/assets/image (223) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (234).png>)
 
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 
@@ -404,7 +402,13 @@ iptables -t nat -L --line-number | grep nlb-test-01-svc
 
 ```
 
-NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다. 아래와 같이 새롭게 서비스와  PoD를 배포하고 확인해 봅니다.&#x20;
+NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다.&#x20;
+
+![](<../.gitbook/assets/image (228).png>)
+
+![](<../.gitbook/assets/image (233).png>)
+
+아래와 같이 새롭게 서비스와  PoD를 배포하고 확인해 봅니다.&#x20;
 
 ```
 ## nlb-test-02 namespace 생성 

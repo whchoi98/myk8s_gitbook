@@ -96,7 +96,7 @@ node-test-01-svc   NodePort   172.20.138.254   <none>        8080:30080/TCP   37
 
 아래와 같은 구성이 배포되었습니다. 외부에 Node IP:30080 으로 노출되어 있으며, Cluster 8080으로 Forwarding됩니다. 이후 Iptable에 의해 Pod들로 80 Port로 로드밸런싱됩니다.
 
-![](<../.gitbook/assets/image (228).png>)
+![](<../.gitbook/assets/image (228) (1).png>)
 
 pod shell로 접속해서 Service A Record를 확인해 봅니다.
 
@@ -109,7 +109,7 @@ Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니�
 
 Public-SG 라는 Security Group을 생성하고, 해당 인스턴스에 적용합니다.
 
-![](<../.gitbook/assets/image (223) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (223) (1) (1) (1) (1) (1).png>)
 
 Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 

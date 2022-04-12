@@ -556,7 +556,7 @@ nginx-to-scaleout-5c74d46fd6-lprfm   0/1     Pending             0          0s  
 
 **`EC2 - Auto Scaling Group`**&#x20;
 
-![](<../.gitbook/assets/image (231).png>)
+![](<../.gitbook/assets/image (231) (1).png>)
 
 **`EC2 - 인스턴스`**&#x20;
 
