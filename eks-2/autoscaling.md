@@ -143,6 +143,55 @@ AWS를 위한 Cluster Autoscaler는 Auto Scaling Group과 연계하여 제공합
 * 자동 검색
 * 컨트롤 플레인 노드 설정
 
+### Service Account를 위한 IAM Role 구성
+
+
+
+```
+eksctl utils associate-iam-oidc-provider \
+    --cluster $ekscluster_name \
+    --approve
+
+```
+
+
+
+클러스터의 서비스 계정에 대한 IAM 역할 활성화Amazon EKS 클러스터의 서비스 계정에 대한 IAM 역할을 사용하여 IAM 역할을 Kubernetes 서비스 계정과 연결할 수 있습니다. 그러면 이 서비스 계정은 해당 서비스 계정을 사용하는 모든 포드의 컨테이너에 AWS 권한을 제공할 수 있습니다. 이 기능을 사용하면 해당 노드의 포드가 AWS API를 호출할 수 있도록 더 이상 노드 IAM 역할에 확장된 권한을 제공할 필요가 없습니다.
+
+클러스터의 서비스 계정에 대한 IAM 역할 활성화
+
+```
+mkdir ~/environment/cluster-autoscaler
+
+cat <<EoF > ~/environment/cluster-autoscaler/k8s-asg-policy.json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DescribeTags",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "ec2:DescribeLaunchTemplateVersions"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        }
+    ]
+}
+EoF
+
+aws iam create-policy   \
+  --policy-name k8s-asg-policy \
+  --policy-document file://~/environment/cluster-autoscaler/k8s-asg-policy.json
+
+```
+
+
+
 ### 4.CA (Cluster Autoscaler) 다운로드&#x20;
 
 CA 배포를 위한 매니페스트 파일을 다운으로 하고, 새롭게 생성한 디렉토리에 복사합니다.
