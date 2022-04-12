@@ -136,29 +136,59 @@ php-apache   Deployment/php-apache   0%/50%    1         10        1          16
 
 ## CA 구성과 클러스터 확장 - Node 레벨 확장
 
-AWS를 위한 Cluster Autoscaler는 Auto Scaling Group과 연계하여 제공합니다. 사용자는 아래와 같은 4가지 배포 옵션을 선택할 수 있습니다.
+AWS를 위한 Cluster Autoscaler는 Auto Scaling Group과 연계하여 제공합니다.&#x20;
 
-* 1개의 Auto Scaling Group
-* 다중 Auto Scaling Group
-* 자동 검색
-* 컨트롤 플레인 노드 설정
+CA(Cluster AutoScaling)은 Pod가 Pending 상태인지를 모니터링하면서, Pending 상태를 확인하게 되면 CA가 ASG(Auto Scaling Group)의 Desired Capacity의 수치를 변경해서 Worker Node를 변경하는 방법을 사용합니다.
 
-### Service Account를 위한 IAM Role 구성
+먼저 현재 구성된 완전관리형노드의 최소(minimum), 최대(maximum), 원하는 용량(desired) 를 확인합니다.
+
+```
+aws autoscaling \
+    describe-auto-scaling-groups \
+    --query "AutoScalingGroups[? Tags[? (Key=='eks:cluster-name') && Value=='eksworkshop']].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]" \
+    --output table
+    
+```
+
+Managed Node의 frontend workernode들의 ASG 용량을 아래와 같이 변경합니다.&#x20;
+
+```
+export ASG_NAME=$(aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[? Tags[? (Key=='eks:cluster-name') && Value=='eksworkshop']].AutoScalingGroupName" --output text | awk '{ print $2 }')
+aws autoscaling \
+    update-auto-scaling-group \
+    --auto-scaling-group-name ${ASG_NAME} \
+    --min-size 3 \
+    --desired-capacity 3 \
+    --max-size 4
+    
+```
+
+정상적으로 변경되었는지 확인해 봅니다.&#x20;
+
+```
+aws autoscaling \
+    describe-auto-scaling-groups \
+    --query "AutoScalingGroups[? Tags[? (Key=='eks:cluster-name') && Value=='eksworkshop']].[AutoScalingGroupName, MinSize, MaxSize,DesiredCapacity]" \
+    --output table
+    
+```
 
 
+
+### 4. Service Account를 위한 IAM Role 구성 (IRSA)
+
+Amazon EKS 클러스터의 서비스 계정(Service Account)와 IAM 역할을 IRSA를 통해서 연결할 수 있습니다. 그러면 이 서비스 계정은 해당 서비스 계정을 사용하는 모든 포드의 컨테이너에 AWS 권한을 제공할 수 있습니다. 이 기능을 사용하면 해당 노드의 CA 포드가 AWS API를 호출할 수 있도록 할 수 있습니다.&#x20;
+
+클러스터의 서비스 계정에 대한 IAM 역할 활성화를 아래 ekstcl  명령을 통해 선언합니다.&#x20;
 
 ```
 eksctl utils associate-iam-oidc-provider \
-    --cluster $ekscluster_name \
+    --cluster ${ekscluster_name} \
     --approve
 
 ```
 
-
-
-클러스터의 서비스 계정에 대한 IAM 역할 활성화Amazon EKS 클러스터의 서비스 계정에 대한 IAM 역할을 사용하여 IAM 역할을 Kubernetes 서비스 계정과 연결할 수 있습니다. 그러면 이 서비스 계정은 해당 서비스 계정을 사용하는 모든 포드의 컨테이너에 AWS 권한을 제공할 수 있습니다. 이 기능을 사용하면 해당 노드의 포드가 AWS API를 호출할 수 있도록 더 이상 노드 IAM 역할에 확장된 권한을 제공할 필요가 없습니다.
-
-클러스터의 서비스 계정에 대한 IAM 역할 활성화
+CA 포드가 ASG (Auto Scaling Group)과 상호 작용하도록 허용하는 서비스 계정에 대한 IAM 정책 생성을 합니다.
 
 ```
 mkdir ~/environment/cluster-autoscaler
@@ -190,18 +220,60 @@ aws iam create-policy   \
 
 ```
 
+마지막으로 kube-system 네임스페이스에서 cluster-autoscaler 서비스 계정에 대한 IAM 역할을 생성합니다.
 
+```
+eksctl create iamserviceaccount \
+    --name cluster-autoscaler \
+    --namespace kube-system \
+    --cluster ${ekscluster_name} \
+    --attach-policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/k8s-asg-policy" \
+    --approve \
+    --override-existing-serviceaccounts
+
+```
+
+IAM 역할의 ARN이 있는 서비스 계정에 주석이 추가되었는지 확인합니다.&#x20;
+
+```
+kubectl -n kube-system describe sa cluster-autoscaler
+
+```
+
+아래와 같은 결과가 출력됩니다.&#x20;
+
+```
+$ kubectl -n kube-system describe sa cluster-autoscalerName:                cluster-autoscaler
+Namespace:           kube-system
+Labels:              app.kubernetes.io/managed-by=eksctl
+Annotations:         eks.amazonaws.com/role-arn: arn:aws:iam::195829107343:role/eksctl-eksworkshop-addon-iamserviceaccount-k-Role1-12LCPJRCWUCG1
+Image pull secrets:  <none>
+Mountable secrets:   cluster-autoscaler-token-9l7wf
+Tokens:              cluster-autoscaler-token-9l7wf
+Events:              <none>
+```
 
 ### 4.CA (Cluster Autoscaler) 다운로드&#x20;
 
-CA 배포를 위한 매니페스트 파일을 다운으로 하고, 새롭게 생성한 디렉토리에 복사합니다.
+CA 배포를 위한 매니페스트 파일을 다운으로 하고, 새롭게 생성한 디렉토리에 복사하고 배포합니다.&#x20;
 
 ```
-mkdir ~/environment/cluster-autoscaler
 cd ~/environment/cluster-autoscaler
 wget https://eksworkshop.com/beginner/080_scaling/deploy_ca.files/cluster_autoscaler.yml
+kubectl apply -f ./cluster_autoscaler.yml
 
 ```
+
+CA가 자체 포드가 실행 중인 노드를 제거하는 것을 방지하기 위해 다음 명령을 사용하여 cluster-autoscaler.kubernetes.io/safe-to-evict 주석을 추가합니다.
+
+```
+kubectl -n kube-system \
+    annotate deployment.apps/cluster-autoscaler \
+    cluster-autoscaler.kubernetes.io/safe-to-evict="false"
+
+```
+
+
 
 앞서 다운로드 받은 매니페스트 파일의 내용 중에서 CA (Cluster Autoscaler) version 값을 , 현재 EKS version에 맞추어서 변경합니다.
 
@@ -217,6 +289,15 @@ export AUTOSCALER_VERSION=$(curl -s "https://api.github.com/repos/kubernetes/aut
 echo $K8S_VERSION
 echo $AUTOSCALER_VERSION
 
+```
+
+마지막으로 autoscaler 이미지를 업데이트합니다.&#x20;
+
+```
+kubectl -n kube-system \
+    set image deployment.apps/cluster-autoscaler \
+    cluster-autoscaler=us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler:v${AUTOSCALER_VERSION}
+    
 ```
 
 ```
