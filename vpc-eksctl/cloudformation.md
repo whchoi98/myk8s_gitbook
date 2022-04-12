@@ -63,7 +63,7 @@ AWS 서비스 - Cloudformation 을 선택합니다.&#x20;
 
 앞서 다운로드 받은 "**EKSVPC3AZ.yml**" 파일을 업로드하거나, S3 URL을 입력합니다.&#x20;
 
-![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1) (1).png>)
 
 {% hint style="info" %}
 yml 파일을 로컬 PC에서 업로드 불가능한 경우에는 , 앞서 S3로 업로드한 S3 URL을 선택합니다.
@@ -99,7 +99,7 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 구성이 완료되면 다음과 같은 VPC가 구성됩니다.
 
-![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1).png>)
 
 ## Cloudformation 기반 VPC 구성 요약
 

@@ -14,7 +14,7 @@ Loadbalancer 기반의 서비스 타입은 현재 CLB (Classic Load Balancer)와
 
 Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. Cloud Service Provider의 기본 로드밸런서 타입을 사용하게 되며, AWS의 경우에는 CLB를 사용합니다. CLB는 내부 또는 외부 로드밸런서로 지정이 가능합니다.
 
-![](<../.gitbook/assets/image (221) (1).png>)
+![](<../.gitbook/assets/image (221) (1) (1).png>)
 
 ### 2. CLB Service Type 트래픽 흐름
 
@@ -24,7 +24,7 @@ Traffic 흐름은 다음과 같습니다.
 * CLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (222) (1).png>)
+![](<../.gitbook/assets/image (222) (1) (1).png>)
 
 ### 3. CLB Service 시험
 
@@ -164,7 +164,7 @@ metadata:
 
 다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
 
-![](<../.gitbook/assets/image (221).png>)
+![](<../.gitbook/assets/image (221) (1).png>)
 
 * namespace : clb-test
 * eksdemo-frontend service type : LoadbBlancer

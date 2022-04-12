@@ -16,13 +16,9 @@ Service의 종류는 아래와 같습니다.
 
 아래 그림에서 처럼 Service의 기본은 CLUSTER-IP 방식입니다. 외부로 노출되지 않으며, Service에는  Pod Container의 포트를 기술해 줍니다.
 
-![](<../.gitbook/assets/image (222) (1) (1).png>)
+![](<../.gitbook/assets/image (227).png>)
 
 ## CoreDNS와 Service
-
-아래와 같은 구성을 만들고, Cluster IP의 동작에 대해 이해할 수 있습니다.
-
-![](<../.gitbook/assets/image (219) (1) (1) (1).png>)
 
 ### 1.CoreDNS와 Service 역할 확인을 위한 App배포&#x20;
 
@@ -143,8 +139,6 @@ ClusterIP 타입은 내부에서 사용하도록 노출되며 , 외부에 노출
 
 * ClusterIP 타입 종류 - UserSpace Proxy 모드 , iptables Proxy 모드, IPVS Proxy 모드.
 
-![](<../.gitbook/assets/image (221) (1) (1) (1) (1).png>)
-
 ### 3.ClusterIP Server 시험 &#x20;
 
 아래와 같이 ClusterIP 서비스를 배포합니다.
@@ -184,7 +178,7 @@ ClusterIP service의 A Record는
 
 &#x20;**`"ClusterIP Metadata.name"."namesapce".svc.cluster.local.`** 의 형식을 사용하게 됩니다.
 
-![](<../.gitbook/assets/image (217) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (221).png>)
 
 ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. clur을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
 

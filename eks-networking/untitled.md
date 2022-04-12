@@ -122,7 +122,7 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 EKS Multus 구성을 위한 VPC를 구성합니다. S3에서 앞서 배포되어 있는 eks\_infra.yaml의 Object URL을 복사합니다
 
-![](<../.gitbook/assets/image (227) (1).png>)
+![](<../.gitbook/assets/image (227) (1) (1).png>)
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
