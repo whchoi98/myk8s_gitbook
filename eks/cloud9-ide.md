@@ -135,37 +135,25 @@ sudo sudo yum install -y session-manager-plugin.rpm
 
 EKS를 위한 kubectl 바이너리를 다운로드합니다. 아래 kubectl version 가운데 1개를 다운로드 받습니다.
 
-kubectl은 Version 1개 정도의 차이 호환성은 가지고 갑니다.
+(참조 - [https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html))
 
-**EKS 1.16.15 기반 설치**&#x20;
+{% hint style="info" %}
+Kubernetes 버전 1.23 출시부터 공식적으로 Amazon EKS AMI에는 containerd가 유일한 런타임으로 포함됩니다. Kubernetes 버전 1.18–1.21은 Docker를 기본 런타임으로 사용합니다.
+{% endhint %}
 
-```
-cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.15/bin/linux/amd64/kubectl
-
-```
-
-#### EKS 1.17.17 기반 설치&#x20;
+**EKS 1.18.16 기반 설치**&#x20;
 
 ```
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.17/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.16/bin/linux/amd64/kubectl
 
 ```
 
-**EKS 1.18.20 기반 설치**&#x20;
-
-```
-cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.20/bin/linux/amd64/kubectl
-
-```
-
-**EKS 1.19.13 기반 설치**
+**EKS 1.19.15 기반 설치**
 
 ```
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.13/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.15/bin/linux/amd64/kubectl
 
 ```
 
@@ -177,11 +165,19 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/l
 
 ```
 
-**EKS 1.21.2 기반 설치**
+**EKS 1.21.5 기반 설치**
 
 ```
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.2/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl
+
+```
+
+#### EKS 1.22.6
+
+```
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.22.6/bin/linux/amd64/kubectl
 
 ```
 

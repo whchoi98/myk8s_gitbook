@@ -177,7 +177,7 @@ aws autoscaling \
 
 ### 4. Service Account를 위한 IAM Role 구성 (IRSA)
 
-Amazon EKS 클러스터의 서비스 계정(Service Account)와 IAM 역할을 IRSA를 통해서 연결할 수 있습니다. 그러면 이 서비스 계정은 해당 서비스 계정을 사용하는 모든 포드의 컨테이너에 AWS 권한을 제공할 수 있습니다. 이 기능을 사용하면 해당 노드의 CA 포드가 AWS API를 호출할 수 있도록 할 수 있습니다.&#x20;
+Amazon EKS 클러스터의 서비스 계정(Service Account)와 IAM 역할을 IRSA를 통해서 연결할 수 있습니다. 그러면 이 서비스 계정(Service Account)은 해당 서비스 계정을 사용하는 모든 포드의 컨테이너에 AWS 권한을 제공할 수 있습니다. 이 기능을 사용하면 해당 노드의 CA 포드가 AWS API를 호출할 수 있도록 할 수 있습니다.&#x20;
 
 클러스터의 서비스 계정에 대한 IAM 역할 활성화를 아래 ekstcl  명령을 통해 선언합니다.&#x20;
 
@@ -188,7 +188,7 @@ eksctl utils associate-iam-oidc-provider \
 
 ```
 
-CA 포드가 ASG (Auto Scaling Group)과 상호 작용하도록 허용하는 서비스 계정에 대한 IAM 정책 생성을 합니다.
+CA 포드가 AWS EC2 ASG (Auto Scaling Group)과 상호 작용할 수 있도록  허용하는 서비스 계정(Service Account)에 대한 IAM 정책 생성을 합니다.
 
 ```
 mkdir ~/environment/cluster-autoscaler
@@ -220,7 +220,7 @@ aws iam create-policy   \
 
 ```
 
-마지막으로 kube-system 네임스페이스에서 cluster-autoscaler 서비스 계정에 대한 IAM 역할을 생성합니다.
+마지막으로 **`kube-system`** 네임스페이스에서 **`cluster-autoscaler`** 서비스 계정에 대한 IAM 역할을 생성합니다.
 
 ```
 eksctl create iamserviceaccount \
@@ -233,7 +233,7 @@ eksctl create iamserviceaccount \
 
 ```
 
-IAM 역할의 ARN이 있는 서비스 계정에 주석이 추가되었는지 확인합니다.&#x20;
+IAM 역할의 ARN이 있는 서비스 계정에 annotation이 추가되었는지 확인합니다.&#x20;
 
 ```
 kubectl -n kube-system describe sa cluster-autoscaler
@@ -255,16 +255,196 @@ Events:              <none>
 
 ### 4.CA (Cluster Autoscaler) 다운로드&#x20;
 
-CA 배포를 위한 매니페스트 파일을 다운으로 하고, 새롭게 생성한 디렉토리에 복사하고 배포합니다.&#x20;
+Cluster Autoscaler version을 확인합니다.&#x20;
+
+CA (Cluster AutoScaler) PoD 생성을 위한 mainfest 파일을 생성합니다.&#x20;
 
 ```
-cd ~/environment/cluster-autoscaler
-wget https://eksworkshop.com/beginner/080_scaling/deploy_ca.files/cluster_autoscaler.yml
-kubectl apply -f ./cluster_autoscaler.yml
+cat << EOF > ~/environment/cluster-autoscaler/cluster_autoscaler.yml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+  name: cluster-autoscaler
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-autoscaler
+  labels:
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+rules:
+  - apiGroups: [""]
+    resources: ["events", "endpoints"]
+    verbs: ["create", "patch"]
+  - apiGroups: [""]
+    resources: ["pods/eviction"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["pods/status"]
+    verbs: ["update"]
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    resourceNames: ["cluster-autoscaler"]
+    verbs: ["get", "update"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["watch", "list", "get", "update"]
+  - apiGroups: [""]
+    resources:
+      - "namespaces"
+      - "pods"
+      - "services"
+      - "replicationcontrollers"
+      - "persistentvolumeclaims"
+      - "persistentvolumes"
+    verbs: ["watch", "list", "get"]
+  - apiGroups: ["extensions"]
+    resources: ["replicasets", "daemonsets"]
+    verbs: ["watch", "list", "get"]
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
+    verbs: ["watch", "list"]
+  - apiGroups: ["apps"]
+    resources: ["statefulsets", "replicasets", "daemonsets"]
+    verbs: ["watch", "list", "get"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses", "csinodes", "csidrivers", "csistoragecapacities"]
+    verbs: ["watch", "list", "get"]
+  - apiGroups: ["batch", "extensions"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["create"]
+  - apiGroups: ["coordination.k8s.io"]
+    resourceNames: ["cluster-autoscaler"]
+    resources: ["leases"]
+    verbs: ["get", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cluster-autoscaler
+  namespace: kube-system
+  labels:
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["create","list","watch"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["cluster-autoscaler-status", "cluster-autoscaler-priority-expander"]
+    verbs: ["delete", "get", "update", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-autoscaler
+  labels:
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-autoscaler
+subjects:
+  - kind: ServiceAccount
+    name: cluster-autoscaler
+    namespace: kube-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cluster-autoscaler
+  namespace: kube-system
+  labels:
+    k8s-addon: cluster-autoscaler.addons.k8s.io
+    k8s-app: cluster-autoscaler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cluster-autoscaler
+subjects:
+  - kind: ServiceAccount
+    name: cluster-autoscaler
+    namespace: kube-system
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-autoscaler
+  namespace: kube-system
+  labels:
+    app: cluster-autoscaler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cluster-autoscaler
+  template:
+    metadata:
+      labels:
+        app: cluster-autoscaler
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8085'
+    spec:
+      priorityClassName: system-cluster-critical
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        fsGroup: 65534
+      serviceAccountName: cluster-autoscaler
+      containers:
+        - image: k8s.gcr.io/autoscaling/cluster-autoscaler:v${AUTOSCALER_VERSION}
+          name: cluster-autoscaler
+          resources:
+            limits:
+              cpu: 100m
+              memory: 600Mi
+            requests:
+              cpu: 100m
+              memory: 600Mi
+          command:
+            - ./cluster-autoscaler
+            - --v=4
+            - --stderrthreshold=info
+            - --cloud-provider=aws
+            - --skip-nodes-with-local-storage=false
+            - --expander=least-waste
+            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${ekscluster_name}
+          volumeMounts:
+            - name: ssl-certs
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              readOnly: true
+          imagePullPolicy: "Always"
+      volumes:
+        - name: ssl-certs
+          hostPath:
+            path: "/etc/ssl/certs/ca-bundle.crt"
+EOF
 
 ```
 
-CA가 자체 포드가 실행 중인 노드를 제거하는 것을 방지하기 위해 다음 명령을 사용하여 cluster-autoscaler.kubernetes.io/safe-to-evict 주석을 추가합니다.
+CA Pod를 위한 Manifest 파일은 아래에서 확인 할 수 있습니다. (참조)
+
+```
+curl -O https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+
+```
+
+CA 포드가 실행 중인 노드를 제거하는 것을 방지하기 위해 다음 명령을 사용하여 **`cluster-autoscaler.kubernetes.io/safe-to-evict`** 주석을 추가합니다.
 
 ```
 kubectl -n kube-system \
