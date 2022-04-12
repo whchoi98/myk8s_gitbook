@@ -404,7 +404,7 @@ iptables -t nat -L --line-number | grep nlb-test-01-svc
 
 NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다.&#x20;
 
-![](<../.gitbook/assets/image (228).png>)
+![](<../.gitbook/assets/image (228) (1).png>)
 
 ![](<../.gitbook/assets/image (233).png>)
 

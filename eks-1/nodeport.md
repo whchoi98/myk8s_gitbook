@@ -20,7 +20,7 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 * 공인 IP/Port로 접근한 트래픽은 Node(EC2)의 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
 * IPTable 규칙에 의해 PoD 분산하게 됩니다.
 
-![](<../.gitbook/assets/image (229).png>)
+![](<../.gitbook/assets/image (229) (1).png>)
 
 아래와 같이 새로운 Namespace와 Pod를 생성합니다.
 
@@ -96,7 +96,7 @@ node-test-01-svc   NodePort   172.20.138.254   <none>        8080:30080/TCP   37
 
 아래와 같은 구성이 배포되었습니다. 외부에 Node IP:30080 으로 노출되어 있으며, Cluster 8080으로 Forwarding됩니다. 이후 Iptable에 의해 Pod들로 80 Port로 로드밸런싱됩니다.
 
-![](<../.gitbook/assets/image (228) (1).png>)
+![](<../.gitbook/assets/image (228) (1) (1).png>)
 
 pod shell로 접속해서 Service A Record를 확인해 봅니다.
 

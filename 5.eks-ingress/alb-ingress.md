@@ -24,8 +24,6 @@ AWS EKS 환경에서는 AWS Load Balancer Controller 를 별도로 설치하고,
 * Kong
 * traefik
 
-![](<../.gitbook/assets/image (218) (1).png>)
-
 ### 3. AWS ALB Ingress 개요.
 
 AWS 로드 밸런서 컨트롤러는 Kubernetes 클러스터의 AWS Elastic Load Balancer를 관리합니다. AWS ALB Ingress Controller"로 알려졌으며 "AWS Load Balancer Controller"로 브랜드를 변경했습니다.
@@ -74,7 +72,7 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 * ALB는 각 노드로 로드밸런싱 합니다
 * Kube-API에 의해 업데이트 된 정보를 가지고 ALB에서 Loadbalancing 처리를 합니다.&#x20;
 
-![](<../.gitbook/assets/image (224) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (229).png>)
 
 아래와 같은 구성 단계로 ALB Loadbalancer Controller를 구성합니다.
 
@@ -264,7 +262,7 @@ spec:
                     - --cluster-name=<INSERT_CLUSTER_NAME>
 ```
 
-dkvtjtj 앞서서 Service Account와 IAM Role을 연결하는 작업을 이미 완료했으므로, kind: ServiceAccount 섹션은 삭제하거나 주석처리하는 것이 좋습니다.&#x20;
+앞서서 Service Account와 IAM Role을 연결하는 작업을 이미 완료했으므로, kind: ServiceAccount 섹션은 삭제하거나 주석처리하는 것이 좋습니다.&#x20;
 
 ```
 # apiVersion: v1
@@ -275,7 +273,7 @@ dkvtjtj 앞서서 Service Account와 IAM Role을 연결하는 작업을 이미 �
 
 ```
 cd ~/environment/myeks/alb-controller
-kubectl apply -f v2_3_1_full.yaml
+kubectl apply -f v2_4_0_full.yaml
 
 ```
 
@@ -421,56 +419,58 @@ kubernetes Ingress 및 Service Object에 Annotation을 추가하여 동작을 �
 
 ### 13.ALB Ingress Traffic 흐름 확인
 
+
+
 ALB Ingress를 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
 
 ```
 ## alb-test-01 namespace를 생성하고, pod, service를 배포 
-kubectl create namespace alb-test-01
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-test-01.yaml
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-test-01-ingress.yaml
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-test-01-service.yaml
+kubectl create namespace alb-ing-01
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-01.yaml
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-01-ingress.yaml
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-01-service.yaml
 
 ```
 
 아래와 같은 명령으로 결과를 확인 할 수 있습니다.
 
 ```
-kubectl -n alb-test-01 get pod -o wide
-kubectl -n alb-test-01 get service -o wide 
-kubectl -n alb-test-01 get ingress -o wide 
+kubectl -n alb-ing-01 get pod -o wide
+kubectl -n alb-ing-01 get service -o wide 
+kubectl -n alb-ing-01 get ingress -o wide 
 
 ```
 
 아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다. 해당 A Record를 Cloud9 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다
 
 ```
-$ kubectl -n alb-test-01 get pod -o wide
+$ kubectl -n alb-ing-01 get pod -o wide
 NAME                          READY   STATUS    RESTARTS   AGE     IP              NODE                                               NOMINATED NODE   READINESS GATES
-alb-test-01-ffd85d89f-5s66x   1/1     Running   0          6m15s   10.11.92.148    ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
-alb-test-01-ffd85d89f-sl5bd   1/1     Running   0          6m14s   10.11.88.200    ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
-alb-test-01-ffd85d89f-td4tv   1/1     Running   0          6m14s   10.11.107.214   ip-10-11-108-153.ap-northeast-2.compute.internal   <none>           <none>
-$ kubectl -n alb-test-01 get service -o wide
+alb-ing-01-ffd85d89f-5s66x   1/1     Running   0          6m15s   10.11.92.148    ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
+alb-ing-01-ffd85d89f-sl5bd   1/1     Running   0          6m14s   10.11.88.200    ip-10-11-94-22.ap-northeast-2.compute.internal     <none>           <none>
+alb-ing-01-ffd85d89f-td4tv   1/1     Running   0          6m14s   10.11.107.214   ip-10-11-108-153.ap-northeast-2.compute.internal   <none>           <none>
+$ kubectl -n alb-ing-01 get service -o wide
 NAME          TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE   SELECTOR
-alb-test-01   NodePort   172.20.121.174   <none>        8080:30299/TCP   12m   app=alb-test-01
-$ kubectl -n alb-test-01 get ingress -o wide
+alb-ing-01   NodePort   172.20.121.174   <none>        8080:30299/TCP   12m   app=alb-test-01
+$ kubectl -n alb-ing-01 get ingress -o wide
 NAME          CLASS    HOSTS   ADDRESS                                                                      PORTS   AGE
-alb-test-01   <none>   *       k8s-albtest0-albtest0-1aa7c83247-45114489.ap-northeast-2.elb.amazonaws.com   80      13m
+alb-ing-01   <none>   *       k8s-alb-ing-01-alb-ing-01-1aa7c83247-45114489.ap-northeast-2.elb.amazonaws.com   80      13m
 ```
 
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 
 ```
-echo "export AlbTestPod03=alb-test-01-ffd85d89f-td4tv" | tee -a ~/.bash_profile
-echo "export AlbTestPod02=alb-test-01-ffd85d89f-5s66x" | tee -a ~/.bash_profile
-echo "export AlbTestPod01=alb-test-01-ffd85d89f-sl5bd" | tee -a ~/.bash_profile
+echo "export alb-ing-01Pod03=alb-test-01-ffd85d89f-td4tv" | tee -a ~/.bash_profile
+echo "export alb-ing-01Pod02=alb-test-01-ffd85d89f-5s66x" | tee -a ~/.bash_profile
+echo "export alb-ing-01Pod01=alb-test-01-ffd85d89f-sl5bd" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
 
-AlbTestPod01에 접속해서 아래와 같이 확인해 봅니다.
+alb-ing-01에 접속해서 아래와 같이 확인해 봅니다.
 
 ```
-kubectl -n alb-test-01 exec -it $AlbTestPod01 -- /bin/sh
+kubectl -n alb-test-01 exec -it $alb-ing-01 -- /bin/sh
 tcpdump -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
 
 ```
@@ -507,7 +507,7 @@ Cache-Control: max-age=0
 
 아래와 같이 ALB Ingress가 구성되었습니다.&#x20;
 
-![](<../.gitbook/assets/image (226) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (228).png>)
 
 ## ALB Ingress Controller 기반 Application 배포
 
