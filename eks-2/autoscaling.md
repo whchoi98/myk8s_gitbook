@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2020-11-11'
+description: 'Update : 2022-04-12'
 ---
 
 # 스케쥴링 - AutoScaling 구성
@@ -253,9 +253,17 @@ Tokens:              cluster-autoscaler-token-9l7wf
 Events:              <none>
 ```
 
-### 4.CA (Cluster Autoscaler) 다운로드&#x20;
+### 5.CA (Cluster Autoscaler) Pod 배포 &#x20;
 
-Cluster Autoscaler version을 확인합니다.&#x20;
+Cluster Autoscaler version을 확인하고, Shell 변수에 입력해 둡니다. CA Pod를 생성하는 mainifest&#x20;
+
+```
+export K8S_VERSION=$(kubectl version --short | grep 'Server Version:' | sed 's/[^0-9.]*\([0-9.]*\).*/\1/' | cut -d. -f1,2)
+export AUTOSCALER_VERSION=$(curl -s "https://api.github.com/repos/kubernetes/autoscaler/releases" | grep '"tag_name":' | sed -s 's/.*-\([0-9][0-9\.]*\).*/\1/' | grep -m1 ${K8S_VERSION})
+echo $K8S_VERSION
+echo $AUTOSCALER_VERSION
+
+```
 
 CA (Cluster AutoScaler) PoD 생성을 위한 mainfest 파일을 생성합니다.&#x20;
 
@@ -444,6 +452,14 @@ curl -O https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-a
 
 ```
 
+CA Pod를 배포합니다.&#x20;
+
+```
+cd ~/environment/cluster-autoscaler/
+kubectl apply -f ./cluster_autoscaler.yml
+
+```
+
 CA 포드가 실행 중인 노드를 제거하는 것을 방지하기 위해 다음 명령을 사용하여 **`cluster-autoscaler.kubernetes.io/safe-to-evict`** 주석을 추가합니다.
 
 ```
@@ -453,185 +469,7 @@ kubectl -n kube-system \
 
 ```
 
-
-
-앞서 다운로드 받은 매니페스트 파일의 내용 중에서 CA (Cluster Autoscaler) version 값을 , 현재 EKS version에 맞추어서 변경합니다.
-
-```
-export K8S_VERSION=$(kubectl version --short | grep 'Server Version:' | sed 's/[^0-9.]*\([0-9.]*\).*/\1/' | cut -d. -f1,2)
-export AUTOSCALER_VERSION=$(curl -s "https://api.github.com/repos/kubernetes/autoscaler/releases" | grep '"tag_name":' | sed -s 's/.*-\([0-9][0-9\.]*\).*/\1/' | grep -m1 ${K8S_VERSION})
-
-```
-
-저장된 값을 확인해 봅니다.
-
-```
-echo $K8S_VERSION
-echo $AUTOSCALER_VERSION
-
-```
-
-마지막으로 autoscaler 이미지를 업데이트합니다.&#x20;
-
-```
-kubectl -n kube-system \
-    set image deployment.apps/cluster-autoscaler \
-    cluster-autoscaler=us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler:v${AUTOSCALER_VERSION}
-    
-```
-
-```
-cd ~/environment/cluster-autoscaler
-echo "$(envsubst < cluster_autoscaler.yml)" > cluster_autoscaler.yml
-
-```
-
-cluster\_autoscaler.yml 파일 마지막에 아래 NodeGroup을 선택합니다.
-
-```
-      nodeSelector:
-        nodegroup-type: "managed-frontend-workloads"
-```
-
-### 5.ASG (Auto Scaling Group) 구성
-
-CA(Cluster Autoscaler)가 제어할 ASG(AutoScaling Group)의 이름을 구성합니다. Worker Node를 찾아서 저장해 둡니다. ([Public Subnet Worker Node Group 링크](https://console.aws.amazon.com/ec2/autoscaling/home?#AutoScalingGroups:id=eksctl-eksworkshop-eksctl-nodegroup-0-NodeGroup-SQG8QDVSR73G;view=details;filter=eksworkshop))&#x20;
-
-**EC2 대시보드 - Auto Scaling**
-
-![](<../.gitbook/assets/image (224) (1) (1).png>)
-
-AutoScaling Group Name을 선택하면 태그를 확인 할 수 있습니다. 대상 노드 그룹은 "eksworkshop-managed-ng-public-01-Node" 입니다
-
-![](<../.gitbook/assets/image (226) (1) (1) (1).png>)
-
-```
-eks-42bf7bee-45b3-9e6a-45e6-177b05b9c042
-
-```
-
-ASG Group의 최소, 최대 사이즈를 확인합니다. (min = 3, max =**6**)
-
-### 6.CA(Cluster AutoScaler) 구성
-
-Cloud9 IDE에서 다운로드 받은 매니페스트 파일(cluster\_autoscaler.yml)파일에서 앞서 복사 해 둔 Auto Scaling Group 이름을 --node flag 부분에 변경하고 저장합니다. node
-
-```
-          command:
-            - ./cluster-autoscaler
-            - --v=4
-            - --stderrthreshold=info
-            - --cloud-provider=aws
-            - --skip-nodes-with-local-storage=false
-            - --nodes=3:6:eks-42bf7bee-45b3-9e6a-45e6-177b05b9c042
-      nodeSelector:
-        nodegroup-type: "managed-frontend-workloads"
-```
-
-인라인 정책을 구성하고 Public Worker Node의 EC2 인스턴스 프로파일에 추가합니다. 아래 그림에서 처럼 설정되어 있어야 합니다.
-
-![](<../.gitbook/assets/image (224) (1).png>)
-
-![](<../.gitbook/assets/image (223).png>)
-
-인라인 정책이 Public Worker Node의 EC2 인스턴스 프로파일에 없다면 아래와 같이 추가합니다. **(이미 eksctl을 배포할 때 추가되었기 때문에 아래는 생략해도 됩니다.)**
-
-먼저 StackName을 확인합니다.
-
-```
-eksctl get nodegroup --cluster eksworkshop -o json | jq -r '.[].StackName'
-```
-
-아래와 같은 값을 복사합니다. (--stack-name)
-
-```
-eksctl-eksworkshop-nodegroup-ng-public-01
-```
-
-StackName의 값을 아래 aws cli에 넣고, IAM Role Name 값을 확인합니다.
-
-```
-aws cloudformation describe-stack-resources --stack-name eksctl-eksworkshop-nodegroup-ng-public-01 | jq -r '.StackResources[] | select(.ResourceType=="AWS::IAM::Role") | .PhysicalResourceId'
-```
-
-아래와 같은 값을 복사해 둡니다. (--role-name)
-
-```
-eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG
-
-```
-
-정책 아래와 같이 json파일을 만들고 추가합니다.
-
-```
-mkdir ~/environment/asg_policy
-cat <<EoF > ~/environment/asg_policy/k8s-asg-policy.json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "autoscaling:DescribeAutoScalingGroups",
-        "autoscaling:DescribeAutoScalingInstances",
-        "autoscaling:SetDesiredCapacity",
-        "autoscaling:TerminateInstanceInAutoScalingGroup",
-        "autoscaling:DescribeTags"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-EoF
-aws iam put-role-policy --role-name eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG --policy-name ASG-Policy-For-Worker --policy-document file://~/environment/asg_policy/k8s-asg-policy.json
-```
-
-정상적으로 추가되었다면, 아래와 같이 확인 됩니다.
-
-![](<../.gitbook/assets/image (64).png>)
-
-aws cli를 통해서도 확인 할 수 있습니다.
-
-```
-aws iam get-role-policy --role-name eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1C6T8HUEESIBK --policy-name ASG-Policy-For-Worker
-
-```
-
-aws cli를 통한 출력 결과 예제입니다.
-
-```
-whchoi98:~/environment/cluster-autoscaler $ aws iam get-role-policy --role-name eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG --policy-name ASG-Policy-For-Worker
-{
-    "RoleName": "eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS",
-    "PolicyName": "ASG-Policy-For-Worker",
-    "PolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "autoscaling:DescribeAutoScalingGroups",
-                    "autoscaling:DescribeAutoScalingInstances",
-                    "autoscaling:SetDesiredCapacity",
-                    "autoscaling:TerminateInstanceInAutoScalingGroup",
-                    "autoscaling:DescribeTags"
-                ],
-                "Resource": "*"
-            }
-        ]
-    }
-}
-```
-
-이제 Cluster Auto Scaler를 배포합니다.
-
-```
-kubectl create namespace autoscaler
-kubectl apply -f ~/environment/cluster-autoscaler/cluster_autoscaler.yml
-
-```
-
-### 7.CA로 Cluster 확장하기.
+### 6. CA로  Node 확장하기.
 
 nginx 샘플 App을 배포하기 위해 매니페스트 파일을 작성하고, 배포합니다.
 
@@ -685,10 +523,10 @@ NAME                READY   UP-TO-DATE   AVAILABLE   AGE
 nginx-to-scaleout   1/1     1            1           11s
 ```
 
-아래 명령을 통해 Replicaset을 200개로 변경합니다.
+아래 명령을 통해 Replicaset을 40개로 변경합니다.
 
 ```
-kubectl -n autoscaler scale deployment nginx-to-scaleout --replicas=200 
+kubectl -n autoscaler scale deployment nginx-to-scaleout --replicas=40
 
 ```
 
@@ -714,20 +552,19 @@ nginx-to-scaleout-5c74d46fd6-tsrvq   0/1     Pending             0          0s  
 nginx-to-scaleout-5c74d46fd6-lprfm   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
 ```
 
-아래와 같이 EC2 대시보드에서 인스턴스들이 추가 됩니다.
+아래와 같이 EC2 대시보드에서 Auto Scaling Group에서 Desired 용량이 변경되고  EC 인스턴스들이 추가 됩니다.
 
-![](<../.gitbook/assets/image (60).png>)
+**`EC2 - Auto Scaling Group`**&#x20;
 
-이제 아래와 같이 생성되었던 자원을 삭제합니다.
+![](<../.gitbook/assets/image (231).png>)
+
+**`EC2 - 인스턴스`**&#x20;
+
+![](<../.gitbook/assets/image (226).png>)
+
+아래와 같이 replica를 1로 원복 시킵니다.
 
 ```
-aws iam delete-role-policy --role-name eksctl-eksworkshop-nodegroup-ng1-NodeInstanceRole-1970I5BJYVPFS --policy-name ASG-Policy-For-Worker
-kubectl delete -f ~/environment/cluster-autoscaler/cluster_autoscaler.yml
-kubectl delete -f ~/environment/cluster-autoscaler/nginx.yaml
-kubectl delete hpa,svc php-apache
-kubectl delete deployment php-apache load-generator
-rm -rf ~/environment/cluster-autoscaler
-helm -n metrics uninstall my-metric-server
-kubectl delete ns metrics
-```
+kubectl -n autoscaler scale deployment nginx-to-scaleout --replicas=1
 
+```

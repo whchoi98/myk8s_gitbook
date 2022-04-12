@@ -126,7 +126,7 @@ EKS Multus 구성을 위한 VPC를 구성합니다. S3에서 앞서 배포되어
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
-![](<../.gitbook/assets/image (226) (1) (1).png>)
+![](<../.gitbook/assets/image (226) (1) (1) (1).png>)
 
 Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니다.&#x20;
 
@@ -170,7 +170,7 @@ Cloudformation 에서 새로운 Stack을 배포합니다.
 
 Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니다.&#x20;
 
-![](<../.gitbook/assets/image (226).png>)
+![](<../.gitbook/assets/image (226) (1).png>)
 
 ![](<../.gitbook/assets/image (228).png>)
 
