@@ -72,7 +72,7 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 * ALB는 각 노드로 로드밸런싱 합니다
 * Kube-API에 의해 업데이트 된 정보를 가지고 ALB에서 Loadbalancing 처리를 합니다.&#x20;
 
-![](<../.gitbook/assets/image (229).png>)
+![](<../.gitbook/assets/image (230).png>)
 
 아래와 같은 구성 단계로 ALB Loadbalancer Controller를 구성합니다.
 
@@ -508,6 +508,27 @@ Cache-Control: max-age=0
 아래와 같이 ALB Ingress가 구성되었습니다.&#x20;
 
 ![](<../.gitbook/assets/image (228).png>)
+
+ALB Ingress Controller는 Target Group을 IP기반으로 Pod에 직접 배포할 수 있습니다.&#x20;
+
+![](<../.gitbook/assets/image (222).png>)
+
+IP Mode로 아래와 같이 배포해 봅니다.&#x20;
+
+```
+## alb-test-02 namespace를 생성하고, pod, service를 배포 
+kubectl create namespace alb-ing-02
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-02.yaml
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-02-ingress.yaml
+kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-02-service.yaml
+
+```
+
+아래와 같이 구성되었습니다.
+
+![](<../.gitbook/assets/image (229).png>)
+
+
 
 ## ALB Ingress Controller 기반 Application 배포
 
