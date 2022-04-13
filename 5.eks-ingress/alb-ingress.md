@@ -273,7 +273,7 @@ spec:
 
 ```
 cd ~/environment/myeks/alb-controller
-kubectl apply -f v2_4_0_full.yaml
+kubectl apply -f v2_3_0_full.yaml
 
 ```
 
@@ -426,9 +426,9 @@ ALB Ingress를 시험하기 위해 아래와 같이 namespace와  pod,service를
 ```
 ## alb-test-01 namespace를 생성하고, pod, service를 배포 
 kubectl create namespace alb-ing-01
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-01.yaml
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-01-ingress.yaml
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-01-service.yaml
+kubectl -n alb-ing-01 apply -f ~/environment/myeks/network-test/alb-ing-01.yaml
+kubectl -n alb-ing-01 apply -f ~/environment/myeks/network-test/alb-ing-01-ingress.yaml
+kubectl -n alb-ing-01 apply -f ~/environment/myeks/network-test/alb-ing-01-service.yaml
 
 ```
 
@@ -518,9 +518,9 @@ IP Mode로 아래와 같이 배포해 봅니다.&#x20;
 ```
 ## alb-test-02 namespace를 생성하고, pod, service를 배포 
 kubectl create namespace alb-ing-02
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-02.yaml
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-02-ingress.yaml
-kubectl -n alb-test-01 apply -f ~/environment/myeks/network-test/alb-ing-02-service.yaml
+kubectl -n alb-ing-02 apply -f ~/environment/myeks/network-test/alb-ing-02.yaml
+kubectl -n alb-ing-02 apply -f ~/environment/myeks/network-test/alb-ing-02-ingress.yaml
+kubectl -n alb-ing-02 apply -f ~/environment/myeks/network-test/alb-ing-02-service.yaml
 
 ```
 
