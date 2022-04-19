@@ -68,7 +68,7 @@
 * [10.EKS Security](eks-security/README.md)
   * [RBAC](eks-security/rbac.md)
   * [IAM 그룹 기반 관리](eks-security/iam\_group.md)
-  * [Service Account](eks-security/service\_account.md)
+  * [IRSA (IAM Roles for Service Account)](eks-security/service\_account.md)
   * [Pod Security](eks-security/pod\_security.md)
   * [KMS 기반 암호화](eks-security/kms\_security.md)
   * [Calico 네트워크 정책](eks-security/calico-networking.md)
