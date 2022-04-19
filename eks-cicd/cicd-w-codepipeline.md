@@ -152,9 +152,40 @@ https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.y
 * IAM kubectl IAM Role : EksWorkshopCodeBuildKubectlRole
 * EKS cluster name: eksworkshop
 
+![](<../.gitbook/assets/image (235) (1).png>)
+
+관리 콘솔에서 CodePipeline을 엽니다.&#x20;
+
+**`AWS 관리콘솔 - CodePipeline`**&#x20;
+
+eks-workshop-codepipeline으로 시작하는 CodePipeline이 표시됩니다. 이 링크를 클릭하면 세부 정보를 볼 수 있습니다.
+
+![](<../.gitbook/assets/image (234).png>)
+
+Codepipeline에서 진행중이거나, 완료된 Pipeline을 선택하면 Build 상태를 확인 할 수 있습니다.&#x20;
+
+![](<../.gitbook/assets/image (232).png>)
+
+kubectl을 통해서, 정상적인 배포가 이뤄졌는지 확인해 봅니다.&#x20;
+
+```
+kubectl describe deployment hello-k8s
+kubectl describe service hello-k8s
+kubectl get services hello-k8s -o wide
+
+```
+
+### 6. 신규 버전 배포&#x20;
+
+Application의 신규 버전을 배포해 봅니다.소스 Github Repo에서 새롭게 변경하고, 배포를 합니다.&#x20;
+
+개인 계정에서 fork된 Github의 소스에서 go 파일을 변경합니다.
+
+```
+https://github.com/개인계정/eks-workshop-sample-api-service-go
+
+```
+
 ![](<../.gitbook/assets/image (235).png>)
 
-
-
-
-
+![](<../.gitbook/assets/image (218).png>)

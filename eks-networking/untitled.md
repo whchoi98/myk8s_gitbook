@@ -196,7 +196,7 @@ Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니�
 
 Bastion Host 에서 EKS 제어를 위해, 기본 설정을 합니다. EC2 대시보드를 선택하고, "MyBastionHost"를 선택하고, Public IPv4를 복사하고 SSH로 접속합니다
 
-![](<../.gitbook/assets/image (218).png>)
+![](<../.gitbook/assets/image (218) (1).png>)
 
 아래와 같이 접속한 Bastion Host에 Kubectl 을 설치합니다. &#x20;
 
