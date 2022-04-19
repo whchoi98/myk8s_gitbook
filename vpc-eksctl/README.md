@@ -6,7 +6,7 @@ description: 'Update : 2020-04-04 / 50min'
 
 아래와 같은 구성을 Cloudformation과 eksctl기반으로 설치합니다.
 
-![](<../.gitbook/assets/image (223) (1) (1).png>)
+![](<../.gitbook/assets/image (223) (1) (1) (1).png>)
 
 Cloudformation으로 VPC, AZ, Subnet, Routing Table등을 구성합니다.
 

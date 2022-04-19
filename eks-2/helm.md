@@ -62,7 +62,7 @@ helm version --short
 
 ```
 $ helm version --short
-Helm v3.8.0 is already latest
+v3.8.2+g6e3701e
 
 ```
 
@@ -71,6 +71,7 @@ Helm v3.8.0 is already latest
 Stable한 저장소를 다운로드하여 아래와 같이 구성합니다.
 
 ```
+## helm repo 추가 
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
 
@@ -88,6 +89,7 @@ helm search repo stable
 Helm 명령에 대한 Bash 자동완성을 구성합니다.
 
 ```
+## helem 자동완성 
 helm completion bash >> ~/.bash_completion
 . /etc/profile.d/bash_completion.sh
 . ~/.bash_completion
@@ -918,13 +920,18 @@ chmod +x ./chartmuseum
 Cloud9 IDE를 이용해서 Chartmuseum을 구동합니다. 스토리지 저장소는 S3를 사용합니다.\
 사전에 s3 bucket을 AWS CLI 또는 Console 에서 생성합니다.
 
+S3를 CLI로 생성합니다.&#x20;
+
 ```
 ##S3 Bucket 생성합니다. 
 ##Bucket name은 고유해야 합니다.
-export s3chartmuseumt=whchoi-chartmuseum-2022-02-14
-echo "export s3chartmuseumt=${s3-chartmuseumt}" | tee -a ~/.bash_profile
-aws s3 mb s3://${s3chartmuseumt}
+export s3chartmuseum=usernamechartmuseum
+echo "export s3chartmuseum=${s3chartmuseum}" | tee -a ~/.bash_profile
+aws s3 mb s3://${s3chartmuseum}
+
 ```
+
+\[참고 - AWS Console] AWS 서비스 콘솔에서 S3를 생성합니다
 
 AWS 서비스 - S3&#x20;
 
@@ -952,15 +959,26 @@ whchoi98:~/environment $ aws s3 ls | grep 'chartmuseum'
 
 ```
 ./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=whchoi-chartmuseum-2021-04-06 --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2" &
+./chartmuseum --debug --port=8888 --storage="amazon" --storage-amazon-bucket=${s3chartmuseum} --storage-amazon-prefix="" --storage-amazon-region="ap-northeast-2" &      
 ```
 
-Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트를 오픈해 줍니다.
+Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트를 오픈해 주고, Cloud9의 공인 IP를 확인합니다.&#x20;
 
-* TCP 8888
+* EC2 - 인스턴스 - Cloud9 인스턴스 선택 - 퍼블릭 IPv4 주소&#x20;
 
-![](<../.gitbook/assets/image (50).png>)
+![](<../.gitbook/assets/image (228).png>)
 
-![](<../.gitbook/assets/image (53).png>)
+* EC2 - 인스턴스 -Cloud9 인스턴스 선택 - 보안 - 보안 그룹  선택
+
+![](<../.gitbook/assets/image (231).png>)
+
+* 인바운드 규칙 편집 선택&#x20;
+
+![](<../.gitbook/assets/image (230).png>)
+
+* TCP 8888 포트 추가 / 소스 Anywhere-IPv4&#x20;
+
+![](<../.gitbook/assets/image (223).png>)
 
 helm repo list에 정상적으로 등록되었는지 확인합니다.
 

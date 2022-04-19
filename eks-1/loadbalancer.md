@@ -321,7 +321,7 @@ Traffic 흐름은 다음과 같습니다.
 * NLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (231).png>)
+![](<../.gitbook/assets/image (231) (1).png>)
 
 ### 9. NLB Service 시험
 
@@ -404,7 +404,7 @@ iptables -t nat -L --line-number | grep nlb-test-01-svc
 
 NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다.&#x20;
 
-![](<../.gitbook/assets/image (228) (1).png>)
+![](<../.gitbook/assets/image (228) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (233).png>)
 

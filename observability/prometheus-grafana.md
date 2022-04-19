@@ -430,4 +430,4 @@ kubernetes 한국어 대쉬보드
 13770
 ```
 
-![](<../.gitbook/assets/image (223) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (223) (1) (1) (1) (1).png>)

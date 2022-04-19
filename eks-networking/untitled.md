@@ -16,7 +16,7 @@ Multus는 Pod에 멀 네트워크 인터페이스를 첨부할 수 있는 Kubern
 
 이 랩에서는 아래에서 처럼 Multus 구성을 위한 EKS Cluster를 구성합니다.&#x20;
 
-![](<../.gitbook/assets/image (230) (1).png>)
+![](<../.gitbook/assets/image (230) (1) (1).png>)
 
 ### Task1. Cloud9 구성
 
@@ -130,7 +130,7 @@ EKS Multus 구성을 위한 VPC를 구성합니다. S3에서 앞서 배포되어
 
 Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니다.&#x20;
 
-![](<../.gitbook/assets/image (230) (1) (1).png>)
+![](<../.gitbook/assets/image (230) (1) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (219).png>)
 
@@ -172,7 +172,7 @@ Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니�
 
 ![](<../.gitbook/assets/image (226) (1).png>)
 
-![](<../.gitbook/assets/image (228) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (228) (1) (1) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (229) (1) (1).png>)
 
