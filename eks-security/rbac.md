@@ -12,13 +12,13 @@ AWS 보안인증과 역할 ,정책 관리등과 K8s는 매우 유사합니다. �
 [https://whchoi98.gitbook.io/aws-iam/iam-role](https://whchoi98.gitbook.io/aws-iam/iam-role)
 {% endhint %}
 
-Role-based access control \(RBAC\)은 기업 내에서 개별 사용자의 역할에 따라 컴퓨터 또는 네트워크 리소스에 대한 액세스를 규제하는 방법입니다.
+Role-based access control (RBAC)은 기업 내에서 개별 사용자의 역할에 따라 컴퓨터 또는 네트워크 리소스에 대한 액세스를 규제하는 방법입니다.
 
 RBAC의 핵심적인 구성요소는 다음과 같습니다.
 
 #### Entity
 
-Group, User 또는 Service Account \(특정 작업을 실행하고 이를 수행하는 데 권한이 필요한 애플리케이션을 나타내는 ID\).
+Group, User 또는 Service Account (특정 작업을 실행하고 이를 수행하는 데 권한이 필요한 애플리케이션을 나타내는 ID).
 
 **Resource**
 
@@ -30,7 +30,7 @@ Group, User 또는 Service Account \(특정 작업을 실행하고 이를 수행
 
 **Role Binding**
 
-Role과 Subject의 연결을 정의하며, 두 가지 유형의 역할 \(Role, ClusterRole\)과 각 바인딩 \(RoleBinding, ClusterRoleBinding\)이 있습니다. \( 네임 스페이스 또는 클러스터 전체의 인증을 구분\)
+Role과 Subject의 연결을 정의하며, 두 가지 유형의 역할 (Role, ClusterRole)과 각 바인딩 (RoleBinding, ClusterRoleBinding)이 있습니다. ( 네임 스페이스 또는 클러스터 전체의 인증을 구분)
 
 **NameSpace**
 
@@ -38,11 +38,11 @@ Role과 Subject의 연결을 정의하며, 두 가지 유형의 역할 \(Role, C
 
 ## RBAC 시험용 환경 구성
 
-### 1. Pod 구성 
+### 1. Pod 구성&#x20;
 
 Pod 생성
 
-```text
+```
 kubectl create namespace rbac-test
 kubectl create deploy nginx --image=nginx -n rbac-test
 
@@ -50,14 +50,14 @@ kubectl create deploy nginx --image=nginx -n rbac-test
 
 생성한 Pod 확인을 합니다.
 
-```text
+```
 kubectl get all -n rbac-test
 
 ```
 
-Cloud9 터미널에서 rbac-user 라는 새로운 User 자격증명을 생성하고 저장합니다. 
+Cloud9 터미널에서 rbac-user 라는 새로운 User 자격증명을 생성하고 저장합니다.&#x20;
 
-```text
+```
 aws iam create-user --user-name rbac-user
 aws iam create-access-key --user-name rbac-user | tee /tmp/create_output.json
 
@@ -65,11 +65,11 @@ aws iam create-access-key --user-name rbac-user | tee /tmp/create_output.json
 
 생성한 사용자를 IAM 콘솔에서 확인해 봅니다.
 
-![](../.gitbook/assets/image%20%28199%29.png)
+![](<../.gitbook/assets/image (199).png>)
 
-Cluster를 생성한 Admin\(Cloud9 EC2\)과 새로운 rbac-user 간에 쉽게 전환할 수 있도록 아래 처럼 shell을 작성해 둡니다.
+Cluster를 생성한 Admin(Cloud9 EC2)과 새로운 rbac-user 간에 쉽게 전환할 수 있도록 아래 처럼 shell을 작성해 둡니다.
 
-```text
+```
 cat << EoF > rbacuser_creds.sh
 export AWS_SECRET_ACCESS_KEY=$(jq -r .AccessKey.SecretAccessKey /tmp/create_output.json)
 export AWS_ACCESS_KEY_ID=$(jq -r .AccessKey.AccessKeyId /tmp/create_output.json)
@@ -77,13 +77,13 @@ EoF
 
 ```
 
-### 
+###
 
 ### 2. IAM 사용자 Mapping
 
 rbac-user라는 k8s 사용자를 정의하고 해당 IAM 사용자에 매핑합니다. 다음을 실행하여 기존 ConfigMap을 가져오고 aws-auth.yaml 이라는 파일에 저장합니다. 기본 configmap도 저장해 둡니다.
 
-```text
+```
 kubectl get configmap -n kube-system aws-auth -o yaml > backup-aws-auth.yaml
 kubectl get configmap -n kube-system aws-auth -o yaml > aws-auth.yaml
 
@@ -91,7 +91,7 @@ kubectl get configmap -n kube-system aws-auth -o yaml > aws-auth.yaml
 
 IAM 사용자 "rbac-user" 매핑을 기존 configMap에 추가합니다.
 
-```text
+```
 cat << EoF >> aws-auth.yaml
 data:
   mapUsers: |
@@ -103,14 +103,14 @@ EoF
 
 생성한 aws-auth.yml을 확인 합니다.
 
-```text
+```
 cat aws-auth.yaml
 
 ```
 
 Configmap을 적용합니다.
 
-```text
+```
 kubectl apply -f aws-auth.yaml
 
 ```
@@ -121,7 +121,7 @@ kubectl apply -f aws-auth.yaml
 
 다음 명령을 실행하여 rbac-user의 AWS IAM 사용자 환경 변수를 실행해서, 기존 sts 정보와 새로운 sts 정보를 비교해 봅니다.
 
-```text
+```
 aws sts get-caller-identity > master_sts.txt
 . rbacuser_creds.sh
 aws sts get-caller-identity > rbacuser_sts.txt
@@ -130,31 +130,31 @@ aws sts get-caller-identity > rbacuser_sts.txt
 
 rbac-user의 컨텍스트에서 호출을하고 있으므로 , kubectl 명령 권한에 문제가 발생합니다.
 
-```text
+```
 kubectl get pods -n rbac-test
 
 ```
 
 user를 생성하는 것만으로는 해당 사용자에게 클러스터의 리소스에 대한 액세스 권한이 부여되지 않습니다. 이를 해결려면 Role 정의한 다음 사용자를 해당 Role 바인딩해야합니다.
 
-## Role & Binding 
+## Role & Binding&#x20;
 
-### 1.Role/RoleBinding 
+### 1.Role/RoleBinding&#x20;
 
 새 사용자 rbac-user가 있지만 아직 어떤 역할에도 바인딩되지 않았습니다. 그렇게하려면 기본 관리자 사용자로 다시 전환해야합니다. 아래에서 처럼 kubectl API 조회가 되지 않습니다.
 
-```text
+```
 kubectl -n rbac-test get pods
 ```
 
-```text
+```
 whchoi:~/environment $ kubectl get all
 Error from server (Forbidden): pods is forbidden: User "rbac-user" cannot list resource "pods" in API group "" in the namespace "default"
 ```
 
-rbac-user로 정의하는 환경 변수를 설정 해제하려면 아래 명령을 실행합니.
+rbac-user로 정의하는 환경 변수를 설정 해제하려면 아래 명령을 실행합니다.&#x20;
 
-```text
+```
 unset AWS_SECRET_ACCESS_KEY
 unset AWS_ACCESS_KEY_ID
 
@@ -162,20 +162,20 @@ unset AWS_ACCESS_KEY_ID
 
 다시 admin 사용자이고 더 이상 rbac-user가 아님을 확인하려면 앞서 저장해둔 master\_sts.txt 파일 결과와 비교해 봅니다.
 
-```text
+```
 aws sts get-caller-identity
 
 ```
 
 이제 다시 관리자 모드로 전환되었으므로 모든 kubectl 조회가 가능하지만, "rbac-user"에게  해당 네임 스페이스에 대해서만 pod-reader라는 Role을 만들어 봅니다.  pod-reader의 Role은 rbac-test namespace에 대한 조회와 deploy등의 권한을 가지게 됩니다.
 
-```text
+```
 kubectl -n rbac-test get pods
 ```
 
 아래에서 Role을 생성합다.
 
-```text
+```
 cat << EoF > rbacuser-role.yaml
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
@@ -195,7 +195,7 @@ EoF
 
 생성된 Role에 이제 Rolebinding에 대한 yaml 파일을 생성합니다.
 
-```text
+```
 cat << EoF > rbacuser-role-binding.yaml
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -216,19 +216,19 @@ EoF
 
 이제 생성한 Role과 Rolebinding을 실행해 봅니다.
 
-```text
+```
 kubectl apply -f rbacuser-role.yaml
 kubectl apply -f rbacuser-role-binding.yaml
 
 ```
 
-### 2.Role/RoleBinding 시험 
+### 2.Role/RoleBinding 시험&#x20;
 
 이제 사용자, 역할 및 RoleBinding이 정의되었으므로 rbac-user로 다시 전환하고 테스트 해 봅니다.
 
 rbac-user로 다시 전환하려면 rbac-user 환경 변수를 제공하는 다음 명령을 실행하고 해당 변수가 사용되었는지 확인합니다.
 
-```text
+```
 . rbacuser_creds.sh
 aws sts get-caller-identity
 
@@ -236,12 +236,12 @@ aws sts get-caller-identity
 
 rbac-user로서 다음을 실행하여 rbac 네임 스페이스에서 Pod 정보를 조회해 봅니다.
 
-```text
+```
 kubectl get pods -n rbac-test
 
 ```
 
-```text
+```
 whchoi:~/environment $ kubectl get pods -n rbac-test
 NAME                     READY   STATUS    RESTARTS   AGE
 nginx-6799fc88d8-lt6kc   1/1     Running   0          15m
@@ -249,23 +249,23 @@ nginx-6799fc88d8-lt6kc   1/1     Running   0          15m
 
 rbac-user로 다음을 실행해서 권한이 제대로 바인딩되었는지 확인해 봅니다.
 
-```text
+```
 kubectl get pods -n kube-system
 
 ```
 
-```text
+```
 whchoi:~/environment $ kubectl get pods -n kube-system
 Error from server (Forbidden): pods is forbidden: User "rbac-user" cannot list resource "pods" in API group "" in the namespace "kube-system"
 ```
 
 {% hint style="info" %}
- rbac-user 에게는 pod-reader 권한만 주었기 때문에 get all은 에러가 발생합니다.
+&#x20;rbac-user 에게는 pod-reader 권한만 주었기 때문에 get all은 에러가 발생합니다.
 {% endhint %}
 
 다시 master 권한으로 복귀합니다.
 
-```text
+```
 unset AWS_SECRET_ACCESS_KEY
 unset AWS_ACCESS_KEY_ID
 kubectl delete namespace rbac-test
@@ -274,7 +274,7 @@ kubectl delete namespace rbac-test
 
 rbac-user 에 대한 모든 정보와 configMap을 삭제하려면 아래를 수행합니다.삭제 하지 않더라도 랩 수행에는 이슈가 없습니다.
 
-```text
+```
 rm rbacuser_creds.sh
 rm rbacuser-role.yaml
 rm rbacuser-role-binding.yaml
@@ -284,9 +284,11 @@ rm /tmp/create_output.json
 
 ```
 
-기존 aws-auth.yaml 파일을 편집하여 기존 configMap에서 rbac-user 매핑을 제거합니다.
+기존 aws-auth.yaml 파일을 편집하여 기존 configMap에서 **`rbac-user`** 매핑을 제거합니다.
 
-```text
+```
+kubectl edit configmaps -n kube-system aws-auth
+
 data:
   mapUsers: |
     []
@@ -294,11 +296,9 @@ data:
 
 ConfigMap을 적용하고 aws-auth.yaml 파일을 삭제합니다.
 
-```text
+```
 kubectl apply -f aws-auth.yaml
 rm aws-auth.yaml
 
 ```
-
-
 
