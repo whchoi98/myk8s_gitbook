@@ -560,7 +560,7 @@ nginx-to-scaleout-5c74d46fd6-lprfm   0/1     Pending             0          0s  
 
 **`EC2 - 인스턴스`**&#x20;
 
-![](<../.gitbook/assets/image (226).png>)
+![](<../.gitbook/assets/image (226) (1).png>)
 
 아래와 같이 replica를 1로 원복 시킵니다.
 

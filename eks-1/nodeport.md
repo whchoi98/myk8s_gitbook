@@ -116,11 +116,11 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 * TCP 30080-30090 허용
 * HTTP, HTTPS, ICMP, SSH 허용&#x20;
 
-![](<../.gitbook/assets/image (225) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (225) (1) (1) (1) (1) (1) (1).png>)
 
 아래와 같이 Security Group이 생성됩니다.
 
-![](<../.gitbook/assets/image (217) (1) (1).png>)
+![](<../.gitbook/assets/image (217) (1) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (218) (1) (1).png>)
 
@@ -276,7 +276,7 @@ node공인ip주소:30081
 
 아래와 같은 결과를 확인할 수 있습니다. Pod를 1개 배포했기 때문에 1개의 Pod로 라우팅 되는 것을 확인할 수 있습니다.
 
-![](<../.gitbook/assets/image (225) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (225) (1) (1) (1) (1) (1).png>)
 
 이제 Pod를 3개로 늘려서 서비스를 확인해 봅니다.
 

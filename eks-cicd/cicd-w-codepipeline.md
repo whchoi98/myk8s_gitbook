@@ -75,7 +75,9 @@ data:
         - system:masters
 ```
 
-Sample Repo 포크
+## Repo 구성
+
+### 3.Sample Repo 포크
 
 리포지토리를 수정하고 빌드를 트리거할 수 있도록 샘플 Kubernetes 서비스를 분기합니다.&#x20;
 
@@ -98,19 +100,61 @@ https://github.com/rnzsgh/eks-workshop-sample-api-service-go
 
 ![](<../.gitbook/assets/image (223).png>)
 
+### 4. Github access token 구성&#x20;
+
 CodePipeline이 GitHub에서 Callback을 수신하려면 개인 액세스 토큰을 생성해야 합니다.
 
 일단 생성되면 액세스 토큰을 보안 영역에 저장하고 재사용할 수 있으므로 이 단계는 처음 실행하는 동안이나 새 키를 생성해야 할 때만 필요합니다.&#x20;
 
-개인 Github 계정에서 아와 같이 "settings"를 선택합니다.&#x20;
-
-
-
-![](<../.gitbook/assets/image (225).png>)
+개인 Github 계정에서 "settings"를 선택합니다.&#x20;
 
 Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 
+* Note - **`"eks-workshop"`**
+* repo를 선택합니다
+* 하단의 Generate token을 선택합니다.&#x20;
+
 ![](<../.gitbook/assets/image (231).png>)
 
+personal access token 생성을 확인하고, 복사해 둡니다.&#x20;
+
 ![](<../.gitbook/assets/image (221).png>)
+
+## CodePipeline 구성
+
+### 5. Codepipeline 구성
+
+AWS CloudFormation을 사용하여 AWS CodePipeline을 생성합니다.&#x20;
+
+CloudFormation은 AWS 클라우드 환경의 모든 인프라 리소스를 설명하고 프로비저닝할 수 있는 공통 언어를 제공하는 코드형 인프라(IaC) 도구입니다. CloudFormation을 사용하면 간단한 텍스트 파일을 사용하여 모든 지역 및 계정에서 애플리케이션에 필요한 모든 리소스를 자동화되고 안전한 방식으로 모델링하고 프로비저닝할 수 있습니다.
+
+각 EKS 배포/서비스에는 고유한 CodePipeline이 있어야 하며, 격리된 소스 리포지토리에 있어야 합니다.
+
+이 워크샵과 함께 제공되는 CloudFormation 템플릿을 수정하고 시스템 요구 사항을 충족하여 EKS 클러스터에 새 서비스를 쉽게 적용 할 수 있습니다. 각각의 새로운 서비스에 대해 다음 단계를 반복할 수 있습니다.
+
+Cloudformation - 스택생성 - 새 리소스 사용 (표준) 을 선택합니다.
+
+아래 S3 URL을 입력합니다.&#x20;
+
+```
+https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.yml
+
+```
+
+![](<../.gitbook/assets/image (225).png>)
+
+* 스택 이름 : eksworkshop-codepipeline
+* Username : github 계정
+* Access Token : Github Access token 값
+* Repository : eks-workshop-sample-api-service-go
+* Branch: master
+* Codebuilde dockerimage : aws/codebuild/standard:4.0
+* IAM kubectl IAM Role : EksWorkshopCodeBuildKubectlRole
+* EKS cluster name: eksworkshop
+
+![](<../.gitbook/assets/image (235).png>)
+
+
+
+
 
