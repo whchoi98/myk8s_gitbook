@@ -81,14 +81,14 @@ Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다. \
 (앞서 선언한 IAM Role 이름을 "eksworkshop-admin"으로 선언하지 않은 경우에는 다른 이름으로 변경합니다.)
 
 ```
-aws sts get-caller-identity --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
+aws sts get-caller-identity --region ap-northeast-2 --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
 
 ```
 
 실제 Role의 Arn은 아래 명령을 통해 확인 할 수 있습니다.
 
 ```
-aws sts get-caller-identity
+aws sts get-caller-identity --region ap-northeast-2
 
 ```
 
@@ -97,7 +97,7 @@ aws sts get-caller-identity
 Account ID, Region 정보 등을 환경변수와 프로파일에 저장해 두고, EKSworkshop 에서 사용합니다.
 
 ```
-export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+export ACCOUNT_ID=$(aws sts get-caller-identity --region ap-northeast-2 --output text --query Account)
 export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 echo $ACCOUNT_ID
 echo $AWS_REGION
@@ -184,8 +184,10 @@ aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://.
 
 ```
 
+\[참고 - AWS CLI version 1.x]&#x20;
+
 OpenSSH public key format 에러가 발생할 경우 아래와 같은 명령으로 Key 전송합니다. \
-(AWS CLI version 1.x)
+
 
 ```
 cd ~/environment/
@@ -203,7 +205,7 @@ cat eksworkshop.pub
 
 ```
 
-아래 ec2 대쉬보드에서 키를 등록합니다.
+\[참고 - AWS Console 기반] 아래 ec2 대쉬보드에서 키를 등록합니다.
 
 ![](<../.gitbook/assets/image (91).png>)
 

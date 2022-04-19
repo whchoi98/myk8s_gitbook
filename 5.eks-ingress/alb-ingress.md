@@ -1,5 +1,5 @@
 ---
-description: 'update : 2022-02-12 / 50min'
+description: 'update : 2022-04-19 / 50min'
 ---
 
 # AWS Load Balancer Controller
@@ -273,7 +273,7 @@ spec:
 
 ```
 cd ~/environment/myeks/alb-controller
-kubectl apply -f v2_3_0_full.yaml
+kubectl apply -f v2_3_1_full.yaml
 
 ```
 
