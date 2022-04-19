@@ -162,7 +162,7 @@ metadata:
 
 다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
 
-![](<../.gitbook/assets/image (221) (1).png>)
+![](<../.gitbook/assets/image (221) (1) (1).png>)
 
 * namespace : clb-test
 * eksdemo-frontend service type : LoadbBlancer
@@ -321,7 +321,7 @@ Traffic 흐름은 다음과 같습니다.
 * NLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (231) (1).png>)
+![](<../.gitbook/assets/image (231) (1) (1).png>)
 
 ### 9. NLB Service 시험
 
@@ -359,7 +359,7 @@ nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.
 
-![](<../.gitbook/assets/image (234).png>)
+![](<../.gitbook/assets/image (234) (1).png>)
 
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 

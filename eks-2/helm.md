@@ -970,7 +970,7 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 
 * EC2 - 인스턴스 -Cloud9 인스턴스 선택 - 보안 - 보안 그룹  선택
 
-![](<../.gitbook/assets/image (231).png>)
+![](<../.gitbook/assets/image (231) (1).png>)
 
 * 인바운드 규칙 편집 선택&#x20;
 
@@ -978,7 +978,7 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 
 * TCP 8888 포트 추가 / 소스 Anywhere-IPv4&#x20;
 
-![](<../.gitbook/assets/image (223).png>)
+![](<../.gitbook/assets/image (223) (1).png>)
 
 helm repo list에 정상적으로 등록되었는지 확인합니다.
 
