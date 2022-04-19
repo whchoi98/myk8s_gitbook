@@ -180,7 +180,7 @@ kubectl get job -l app=eks-iam-test-ec2
 
 ```
 
-EC2에 대한 조회를 한 로그를 확인합니다.&#x20;
+app=esk-iam-test-ec2 어플리케이션 로그를 확인합니다.
 
 ```
 kubectl logs -l app=eks-iam-test-ec2
@@ -190,4 +190,6 @@ kubectl logs -l app=eks-iam-test-ec2
 EC2에 대한 조회를 한 로그를 확인합니다.&#x20;
 
 ```
+$ kubectl logs -l app=eks-iam-test-ec2
+Error from server (BadRequest): container "eks-iam-test" in pod "eks-iam-test-ec2-bnbsn" is waiting to start: ContainerCreating
 ```
