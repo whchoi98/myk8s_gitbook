@@ -193,3 +193,10 @@ EC2에 대한 조회를 한 로그를 확인합니다.&#x20;
 $ kubectl logs -l app=eks-iam-test-ec2
 Error from server (BadRequest): container "eks-iam-test" in pod "eks-iam-test-ec2-bnbsn" is waiting to start: ContainerCreating
 ```
+
+아래 명령을 통해 yaml을 확인해 봅니다.
+
+```
+kubectl get pod eks-iam-test-s3-xxxx  debug -o yaml
+kubectl get pod eks-iam-test-ec2-xxxx  debug -o yaml
+```
