@@ -215,4 +215,4 @@ kubectl get services hello-k8s -o wide
 
 아래는 변경된 메세지가 포함된 결과입니다.&#x20;
 
-![](<../.gitbook/assets/image (236).png>)
+![](<../.gitbook/assets/image (236) (1).png>)

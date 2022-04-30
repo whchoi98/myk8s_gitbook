@@ -48,6 +48,7 @@
 * [6.EKS 기반 관리](eks-2/README.md)
   * [패키지 관리 - Helm](eks-2/helm.md)
   * [스케쥴링 - AutoScaling 구성](eks-2/autoscaling.md)
+  * [스케쥴링-Karpenter](eks-2/karpenter.md)
   * [고가용성 Health Check 구성](eks-2/health-check.md)
   * [Assign](eks-2/assign.md)
   * [테인트와 톨러레이션](eks-2/taints\_tolerations.md)

@@ -526,7 +526,7 @@ kubectl -n alb-ing-02 apply -f ~/environment/myeks/network-test/alb-ing-02-servi
 
 아래와 같이 구성되었습니다.
 
-![](<../.gitbook/assets/image (229).png>)
+![](<../.gitbook/assets/image (229) (1).png>)
 
 
 

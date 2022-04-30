@@ -20,7 +20,7 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 * 공인 IP/Port로 접근한 트래픽은 Node(EC2)의 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
 * IPTable 규칙에 의해 PoD 분산하게 됩니다.
 
-![](<../.gitbook/assets/image (229) (1).png>)
+![](<../.gitbook/assets/image (229) (1) (1).png>)
 
 아래와 같이 새로운 Namespace와 Pod를 생성합니다.
 
