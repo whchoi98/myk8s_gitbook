@@ -1,5 +1,5 @@
 ---
-description: 'update : 2022-04-19 / 20min'
+description: 'update : 2022-05-06 / 20min'
 ---
 
 # Cloudformation 구성
@@ -22,11 +22,18 @@ git clone https://github.com/whchoi98/myeks
 
 ### 2. Stack 생성
 
-Cloud9에서 앞서 다운로드 받은 git에서 EKSVPC3AZ.yml 파일을 로컬 PC에 다운로드 합니다. EKS 환경 구성을 위한 VPC 구성용 Cloudformation 입니다.
+아래 aws cli를 통해서 Cloudformation을 실행하여 , VPC를 구성합니다.&#x20;
 
-![](<../.gitbook/assets/image (198).png>)
+```
+cd ./myeks/
+aws cloudformation deploy \
+  --stack-name "eksworkshop" \
+  --template-file "EKSVPC3AZ.yml" \
+  --capabilities CAPABILITY_NAMED_IAM 
+  
+```
 
-Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다.
+Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다. (option)
 
 ```
 ##S3 Bucket 생성합니다. 
@@ -42,50 +49,24 @@ cd ./myeks/
 aws s3 sync ./ s3://${bucket_name}
 
 ## option - copy를 통해 사용해도 가능합니다.
-aws s3 cp ./ s3://${bucket_name} --recursive
+## aws s3 cp ./ s3://${bucket_name} --recursive
 
 ## LAB에서 사용할 Object접근을 허용합니다.
-aws s3api put-object-acl --bucket ${bucket_name} --key EKSVPC3AZ.yml --acl public-read  
+## aws s3api put-object-acl --bucket ${bucket_name} --key EKSVPC3AZ.yml --acl public-read  
 ```
 
-S3 URL 형식은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있습니다. 출력값을 복사해 둡니다.&#x20;
+S3 URL 형식은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있습니다. 출력값을 복사해 둡니다. (Option)
 
 ```
 echo https://${bucket_name}.s3.ap-northeast-2.amazonaws.com/EKSVPC3AZ.yml
 
 ```
 
-AWS 서비스 - Cloudformation 을 선택합니다.&#x20;
+### 3. Stack 완료 확인
 
-"스택생성" - "새 리소스 사용"을 선택합니다.
+Cloudformation Stack 이 완료된 것을 확인합니다.
 
-![](<../.gitbook/assets/image (41).png>)
-
-앞서 다운로드 받은 "**EKSVPC3AZ.yml**" 파일을 업로드하거나, S3 URL을 입력합니다.&#x20;
-
-![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1) (1) (1).png>)
-
-{% hint style="info" %}
-yml 파일을 로컬 PC에서 업로드 불가능한 경우에는 , 앞서 S3로 업로드한 S3 URL을 선택합니다.
-{% endhint %}
-
-아래는 S3 URL을 통한 업로드 방법입니다.&#x20;
-
-![](<../.gitbook/assets/image (220) (1) (1) (1) (1).png>)
-
-### 3. Stack 상세 정보 구성
-
-Cloudformation Stack 상세 정보 구성을 합니다.
-
-![](<../.gitbook/assets/image (163).png>)
-
-![](<../.gitbook/assets/image (23).png>)
-
-![](<../.gitbook/assets/image (7).png>)
-
-생성이 완료되었는지 확인합니다.
-
-![](<../.gitbook/assets/image (32).png>)
+![](<../.gitbook/assets/image (224).png>)
 
 ### 4.Output 정보 확인
 

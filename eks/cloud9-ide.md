@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-09-24 /15min'
+description: 'update : 2022-05-07 /15min'
 ---
 
 # Cloud9 IDE 환경 구성
@@ -117,7 +117,7 @@ complete -C '/usr/local/bin/aws_completer' aws
 
 ### 6. AWS Session Manager Plugin 설치
 
-Cloud9 Terminal에 Session Manager 를 통해 EKS Worker Node 접속을 위해 아래와 같이 설치합니다.
+Cloud9 Terminal에 Hands On Lab에서 Session Manager 를 통해 EKS Worker Node 접속을 위해 아래와 같이 설치합니다.
 
 ```
 curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
@@ -141,7 +141,7 @@ EKS를 위한 kubectl 바이너리를 다운로드합니다. 아래 kubectl vers
 Kubernetes 버전 1.23 출시부터 공식적으로 Amazon EKS AMI에는 containerd가 유일한 런타임으로 포함됩니다. Kubernetes 버전 1.18–1.21은 Docker를 기본 런타임으로 사용합니다.
 {% endhint %}
 
-**EKS 1.18.16 기반 설치**&#x20;
+**EKS 1.18.16 기반 설치 (Option)**
 
 ```
 cd ~
@@ -149,7 +149,7 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.16/bin/
 
 ```
 
-**EKS 1.19.15 기반 설치**
+**EKS 1.19.15 기반 설치 (Option)**
 
 ```
 cd ~
@@ -157,7 +157,7 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.15/bin/
 
 ```
 
-**EKS 1.20.7 기반 설치**
+**EKS 1.20.7 기반 설치 (Option)**
 
 ```
 cd ~
@@ -165,7 +165,7 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/l
 
 ```
 
-**EKS 1.21.5 기반 설치**
+**EKS 1.21.5 기반 설치 (2022.05 기준 추천**
 
 ```
 cd ~
@@ -173,7 +173,7 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/l
 
 ```
 
-#### EKS 1.22.6
+#### EKS 1.22.6 (Option)
 
 ```
 cd ~
@@ -193,7 +193,7 @@ curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s ht
 
 ### 9. 실행권한을 적용 및 구성&#x20;
 
-바이너리에 실행권한을 적용합니다.
+kubectl 설치 후, 바이너리에 실행권한을 적용합니다.
 
 ```
 chmod +x ./kubectl
@@ -306,11 +306,12 @@ Kube krew를 설치합니다.
 ```
 (
   set -x; cd "$(mktemp -d)" &&
-  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" &&
-  tar zxvf krew.tar.gz &&
-  KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" &&
-  "$KREW" install --manifest=krew.yaml --archive=krew.tar.gz &&
-  "$KREW" update
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
 )
 
 ```
@@ -319,6 +320,7 @@ Kube krew경로를 설정합니다.
 
 ```
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+source ~/.bashrc
 
 ```
 
@@ -328,7 +330,8 @@ kubectx는 다중의 Kubecluster 가 존재할 때 전환이 쉽도록 도와주
 
 ```
 kubectl krew install ctx
-brew install kubectx
+## 앞서 설치된 brew를 통해서 설치도 가능합니다
+## brew install kubectx
 ```
 
 ### 16.Kubens 설치 (Option)
@@ -348,6 +351,10 @@ kubetree는 linux의 tree처럼 kube의  파일구조를 확인하는 데 유용
 kubectl krew install tree
 
 ```
+
+### 18. Kube PS1 설치 (Option)
+
+
 
 ## **EKS 환경 구성 요약**
 

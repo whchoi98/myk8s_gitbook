@@ -262,7 +262,7 @@ data:
 
 rolearn 부분을 확인하기 위해서 ,  nodegroup 스택의 출력에서 NodeInstanceRole 의 값을 확인해서 rolearn을 수정합니다.&#x20;
 
-![](<../.gitbook/assets/image (224).png>)
+![](<../.gitbook/assets/image (224) (1).png>)
 
 변경된 aws-auth-cm.yaml 파일을 업데이트 합니다.&#x20;
 
