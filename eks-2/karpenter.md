@@ -26,11 +26,189 @@ Karpenter는 [Apache License 2.0](https://github.com/awslabs/karpenter/blob/main
 
 ### 1.환경 설정
 
+Karpenter 시험 환경 구성을 위해 아래와 같이 환경변수를 구성합니다.&#x20;
 
+```
+#앞서 ekscluster 이름을 구성하였다면 생략합니다.  
+#export ekscluster_name=eksworkshop
+#앞서 ACCOUNT_ID 를 환경변수에 등록하였다면 생략합니다. 
+#export ACCOUNT_ID=$(aws sts get-caller-identity --region ap-northeast-2 --output text --query Account)
+#새로운 노드 labeling을 위해 설정
+export k_public_mgmd_node="k-managed-frontend-workloads"
+export k_private_mgmd_node="k-managed-backend-workloads"
+# EKS CLUSTER_ENDPOINT 값에 대한 환경변수 설정 
+export CLUSTER_ENDPOINT="$(aws eks describe-cluster --name ${ekscluster_name} --query "cluster.endpoint" --output text)"
+# KARPENTER_VERSION 설정
+export KARPENTER_VERSION="v0.9.1"
+echo ${ekscluster_name}
+echo ${ACCOUNT_ID}
+echo ${k_public_mgmd_node}
+echo ${k_private_mgmd_node}
+echo ${CLUSTER_ENDPOINT}
+echo ${KARPENTER_VERSION}
+echo "export k_public_mgmd_node=${k_public_mgmd_node}" | tee -a ~/.bash_profile
+echo "export k_private_mgmd_node=${k_private_mgmd_node}" | tee -a ~/.bash_profile
+echo "export k_private_mgmd_node=${CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
+```
 
-### 2.Karpenter 설치
+### 2.Karpenter 시험 노드 설치
 
+Karpenter 시험을 위한 새로운 노드 그룹 생성을 위한 yaml 파일을 생성합니다.&#x20;
 
+```
+cat << EOF > ~/environment/myeks/karpenter-nodegroup.yaml
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ${ekscluster_name}
+  region: ${AWS_REGION}
+  version: "${eks_version}"  
+
+vpc: 
+  id: ${vpc_ID}
+  subnets:
+    public:
+      PublicSubnet01:
+        id: ${PublicSubnet01}
+      PublicSubnet02:
+        id: ${PublicSubnet02}
+      PublicSubnet03:
+        id: ${PublicSubnet03}
+    private:
+      PrivateSubnet01:
+        id: ${PrivateSubnet01}
+      PrivateSubnet02:
+        id: ${PrivateSubnet02}
+      PrivateSubnet03:
+        id: ${PrivateSubnet03}
+secretsEncryption:
+  keyARN: ${MASTER_ARN}
+
+managedNodeGroups:
+  - name: k-managed-ng-public-01
+    instanceType: ${instance_type}
+    subnets:
+      - PublicSubnet01
+      - PublicSubnet02
+      - PublicSubnet03
+    desiredCapacity: 3
+    minSize: 3
+    maxSize: 6
+    volumeSize: 200
+    volumeType: gp3 
+    amiFamily: AmazonLinux2
+    labels:
+      nodegroup-type: "${public_mgmd_node}"
+    ssh: 
+        publicKeyPath: "${publicKeyPath}"
+        allow: true
+    iam:
+      attachPolicyARNs:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+        fsx: true
+        efs: true
+        
+  - name: k-managed-ng-private-01
+    instanceType: ${instance_type}
+    subnets:
+      - PrivateSubnet01
+      - PrivateSubnet02
+      - PrivateSubnet03
+    desiredCapacity: 3
+    privateNetworking: true
+    minSize: 3
+    maxSize: 9
+    volumeSize: 200
+    volumeType: gp3 
+    amiFamily: AmazonLinux2
+    labels:
+      nodegroup-type: "${private_mgmd_node}"
+    ssh: 
+        publicKeyPath: "${publicKeyPath}"
+        allow: true
+    iam:
+      attachPolicyARNs:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+        fsx: true
+        efs: true
+
+EOF
+
+```
+
+Karpenter 시험을 위한 새로운 노드그룹을 eksctl 로 설치합니다.&#x20;
+
+```
+eksctl create nodegroup --config-file=/home/ec2-user/environment/myeks/karpenter-nodegroup.yaml
+
+```
+
+### 3. Karpenter 노드 권한 설정
+
+kubernetes와 IAM간 인증을 위해 OIDC Provider를 생성합니다. 이미 앞서 Lab에서 생성하였다면 생략합니다.&#x20;
+
+```
+eksctl utils associate-iam-oidc-provider \
+    --region ${AWS_REGION} \
+    --cluster ${ekscluster_name} \
+    --approve
+    
+```
+
+Karpenter Node들을 위한 IAM Role을 생성합니다.&#x20;
+
+```
+mkdir /home/ec2-user/environment/karpenter
+export KARPENTER_CF="/home/ec2-user/environment/karpenter/k-node-iam-role.yaml"
+echo ${KARPENTER_CF}
+
+curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-eksctl/cloudformation.yaml  > $KARPENTER_CF
+aws cloudformation deploy \
+  --stack-name "Karpenter-${ekscluster_name}" \
+  --template-file "${KARPENTER_CF}" \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --parameter-overrides "ClusterName=${ekscluster_name}"
+  
+```
+
+Karpenter Node들을 위해 생성된 IAM Role을 eksctl을 통해 kubernetes 권한에 Mapping 합니다
+
+```
+eksctl create iamidentitymapping \
+  --username system:node:{{EC2PrivateDNSName}} \
+  --cluster "${ekscluster_name}" \
+  --arn "arn:aws:iam::${ACCOUNT_ID}:role/KarpenterNodeRole-${ekscluster_name}" \
+  --group system:bootstrappers \
+  --group system:nodes
+  
+```
+
+Kube-system Configmap/aws-auth에 정상적으로 Mapping 되었는지 확인합니다.&#x20;
+
+```
+kubectl edit -n kube-system configmap/aws-auth 
+
+```
+
+아래와 같이 추가되었습니다
+
+```
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::972012566617:role/KarpenterNodeRole-eksworkshop
+      username: system:node:{{EC2PrivateDNSName}}
+```
+
+###
 
 ### 3.Provisioner 구성
 
