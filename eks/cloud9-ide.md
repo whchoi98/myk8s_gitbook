@@ -354,7 +354,14 @@ kubectl krew install tree
 
 ### 18. Kube PS1 설치 (Option)
 
+kube-ps1은 Prompt 상에 현재 Cluster와 Namespace 위치를 알려줍니다.&#x20;
 
+```
+brew install kube-ps1
+source "$(brew --prefix)/opt/kube-ps1/share/kube-ps1.sh"
+PS1='$(kube_ps1)'$PS1
+
+```
 
 ## **EKS 환경 구성 요약**
 
@@ -418,16 +425,21 @@ brew install derailed/k9s/k9s
 #Kube krew 설치
 (
   set -x; cd "$(mktemp -d)" &&
-  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.{tar.gz,yaml}" &&
-  tar zxvf krew.tar.gz &&
-  KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" &&
-  "$KREW" install --manifest=krew.yaml --archive=krew.tar.gz &&
-  "$KREW" update
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
 )
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+source ~/.bashrc
 
 #kubectx 설치
 kubectl krew install ctx
+
+#kubens 설치
+kubectl krew install ns
 
 #kubetree 설치
 kubectl krew install tree
