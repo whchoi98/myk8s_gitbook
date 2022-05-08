@@ -198,7 +198,7 @@ eksctl utils associate-iam-oidc-provider \
     
 ```
 
-Karpenter Node들을 위한 IAM Role을 생성합니다. karpenter node를 위한 IAM Role Template을 다운로드 합니다
+Karpenter Node들을 위한 IAM Role을 생성합니다. karpenter node를 위한 IAM Role Template을 다운로드 합니다.&#x20;
 
 ```
 mkdir /home/ec2-user/environment/karpenter
@@ -220,7 +220,7 @@ aws cloudformation deploy \
   --parameter-overrides ClusterName="${ekscluster_name}"
 ```
 
-Karpenter Node들을 위해 생성된 IAM Role을 eksctl을 통해 kubernetes 권한에 Mapping 합니다
+Karpenter Node들을 위해 생성된 IAM Role을 eksctl을 통해 kubernetes 권한에 Mapping 합니다.&#x20;
 
 ```
 eksctl create iamidentitymapping \
@@ -239,14 +239,25 @@ kubectl edit -n kube-system configmap/aws-auth
 
 ```
 
-아래와 같이 추가되었습니다
+아래와 같이 추가되었습니다.&#x20;
 
 ```
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::972012566617:role/KarpenterNodeRole-eksworkshop
+      rolearn: arn:aws:iam::123834880106:role/eksctl-eksworkshop-nodegroup-k-ma-NodeInstanceRole-8MF84X3ZTWLY
       username: system:node:{{EC2PrivateDNSName}}
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::123834880106:role/eksctl-eksworkshop-nodegroup-k-ma-NodeInstanceRole-MH0HMELFYYQW
+      username: system:node:{{EC2PrivateDNSName}}
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::123834880106:role/KarpenterNodeRole-eksworkshop
+      username: system:node:{{EC2PrivateDNSName}}
+
 ```
 
 ###
