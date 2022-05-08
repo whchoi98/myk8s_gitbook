@@ -36,6 +36,9 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
 metric server가 정상적으로 설치가 완료되면 아래와 같이 리소스 모니터링을 확인 할 수 있습니다. K9s에서도 Pod들의 CPU/Memory 사용량을 확인 할 수 있습니다.&#x20;
 
 ```
+# api service condition 상태를 확인해 봅니다 
+kubectl get apiservice v1beta1.metrics.k8s.io -o yaml
+# pod의 CPU/Memory가 모니터링되는지 확인해 봅니다
 kubectl top pod --all-namespaces
 ```
 
@@ -100,7 +103,8 @@ metadata:
   name: ${ekscluster_name}
   region: ${AWS_REGION}
   version: "${eks_version}"  
-
+  tags:
+    karpenter.sh/discovery: ${ekscluster_name}
 vpc: 
   id: ${vpc_ID}
   subnets:
@@ -135,7 +139,14 @@ managedNodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "${k_public_mgmd_node}"
+      nodegroup-type: "${k_public_mgmd_node}"        
+      alpha.eksctl.io/cluster-name: ${ekscluster_name}
+      alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
+      intent: public-control-apps
+    tags:
+      alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
+      alpha.eksctl.io/nodegroup-type: managed
+      k8s.io/cluster-autoscaler/node-template/label/intent: control-apps
     ssh: 
         publicKeyPath: "${publicKeyPath}"
         allow: true
@@ -162,7 +173,14 @@ managedNodeGroups:
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "${k_private_mgmd_node}"
+      nodegroup-type: "${k_private_mgmd_node}"        
+      alpha.eksctl.io/cluster-name: ${ekscluster_name}
+      alpha.eksctl.io/nodegroup-name: k-managed-ng-private-01
+      intent: private-control-apps
+    tags:
+      alpha.eksctl.io/nodegroup-name: k-managed-ng-private-01
+      alpha.eksctl.io/nodegroup-type: managed
+      k8s.io/cluster-autoscaler/node-template/label/intent: control-apps
     ssh: 
         publicKeyPath: "${publicKeyPath}"
         allow: true
@@ -260,7 +278,126 @@ kubectl edit -n kube-system configmap/aws-auth
 
 ```
 
-###
+### 4. Service Account 생성
 
-### 3.Provisioner 구성
+eksctl로 Kubernetes Service Account를 생성하고, 앞서 생성한 IAM Role을  Mapping 합니다.&#x20;
+
+```
+eksctl create iamserviceaccount \
+  --cluster "${ekscluster_name}" --name karpenter --namespace karpenter \
+  --role-name "${ekscluster_name}-karpenter" \
+  --attach-policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${ekscluster_name}" \
+  --role-only \
+  --override-existing-serviceaccounts \
+  --approve
+  
+# KARPENTER IAM ROLE ARN을 변수에 저장해 둡니다. 
+echo "export KARPENTER_IAM_ROLE_ARN=${KARPENTER_IAM_ROLE_ARN}" | tee -a ~/.bash_profile
+
+```
+
+EC2 Spot Service를 처음 활성화 시킨 다면, 아래를 구성합니다
+
+```
+aws iam create-service-linked-role --aws-service-name spot.amazonaws.com || true
+
+```
+
+
+
+### 5. Karpenter 설치
+
+Helm을 사용하여 Karpenter를 클러스터에 배포합니다.&#x20;
+
+Helm Chart 를 설치하기 전에 Repo를 Helm에 추가해야 하므로 다음 명령을 실행하여 Repo를 추가합니다.
+
+```
+helm repo add karpenter https://charts.karpenter.sh/
+helm repo update
+
+```
+
+Cluster의 상세 정보 및 Karpenter Role ARN을 전달하는  Helm Chart를 설치합니다.&#x20;
+
+```
+echo ${KARPENTER_VERSION}
+echo ${KARPENTER_IAM_ROLE_ARN}
+echo ${ekscluster_name}
+echo ${CLUSTER_ENDPOINT}
+ 
+helm upgrade --install --namespace karpenter --create-namespace \
+  karpenter karpenter/karpenter \
+  --version ${KARPENTER_VERSION} \
+  --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${KARPENTER_IAM_ROLE_ARN} \
+  --set clusterName=${ekscluster_name} \
+  --set clusterEndpoint=${CLUSTER_ENDPOINT} \
+  --set nodeSelector.nodegroup-type=managed-frontend-workloads \
+  --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${ekscluster_name} \
+  --wait 
+  
+```
+
+karpenter pod가 정상적으로 설치 되었는지 확인합니다&#x20;
+
+```
+kubectl get pods --namespace karpenter
+kubectl get deployment -n karpenter
+
+```
+
+### 6.Provisioner 구성
+
+단일 Karpenter Provisioner는 다양한 Pod를 구성할 수 있습니다. Karpenter는 Label 및 Affinity와 같은 Pod의 속성을 기반으로 Scheduling 및 프로비저닝 결정을 할 수 있습니다. Karpenter는 다양한 노드 그룹을 관리할 필요가 없습니다.
+
+아래 명령을 사용하여 기본 프로비저닝 도구를 만들기 위한 yaml을 정의합니다.이 프로비저닝 도구는 securityGroupSelector 및 subnetSelector를 사용하여 노드를 시작하는 데 사용되는 리소스를 검색합니다. 위의 eksctl 명령에 karpenter.sh/discovery 태그를 적용했습니다.&#x20;
+
+```
+cat << EOF > ~/environment/karpenter/karpenter-provisioner.yaml
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: default
+spec:
+  requirements:
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["spot"]
+  limits:
+    resources:
+      cpu: 1000
+  provider:
+    subnetSelector:
+      karpenter.sh/discovery: ${ekscluster_name}
+    securityGroupSelector:
+      karpenter.sh/discovery: ${ekscluster_name}
+  ttlSecondsAfterEmpty: 30
+EOF
+
+```
+
+* **`ttlSecondsAfterEmpty`** 값은 Karpenter가 노드에 자원이 배치가 없는 경우 종료하도록 구성합니다.
+
+
+
+10\. 삭제
+
+
+
+```
+helm uninstall karpenter --namespace karpenter
+aws iam detach-role-policy --role-name="${ekscluster_name}-karpenter" --policy-arn="arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${ekscluster_name}"
+aws iam delete-policy --policy-arn="arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${ekscluster_name}"
+aws iam delete-role --role-name="${ekscluster_name}-karpenter"
+aws cloudformation delete-stack --stack-name "Karpenter-${ekscluster_name}"
+aws ec2 describe-launch-templates \
+    | jq -r ".LaunchTemplates[].LaunchTemplateName" \
+    | grep -i "Karpenter-${ekscluster_name}" \
+    | xargs -I{} aws ec2 delete-launch-template --launch-template-name {}
+ eksctl delete nodegroup --config-file=/home/ec2-user/environment/myeks/karpenter-nodegroup.yaml --approve
+
+```
+
+
+
+
 
