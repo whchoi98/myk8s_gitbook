@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2022-04-30'
+description: 'Update: 2022-05-08'
 ---
 
 # 스케쥴링-Karpenter
@@ -25,6 +25,41 @@ Karpenter는 [Apache License 2.0](https://github.com/awslabs/karpenter/blob/main
 ## Karpenter 설치
 
 ### 1.환경 설정
+
+Kubernetes Metric-server를 설치합니다. 앞서 설치하였으면 생략합니다.&#x20;
+
+```
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+```
+
+metric server가 정상적으로 설치가 완료되면 아래와 같이 리소스 모니터링을 확인 할 수 있습니다. K9s에서도 Pod들의 CPU/Memory 사용량을 확인 할 수 있습니다.&#x20;
+
+```
+kubectl top pod --all-namespaces
+```
+
+Helm을 통해서 아래 kube-ops-view를 Cloud9에 설치합니다. 노드 배포를 확인하기 위해 kube-ops-view를 service type=LoadBalancer를 설치합니다.&#x20;
+
+```
+## 앞서 Lab에서 생성한 managed Node의 Public Subnet에 위치한 노드에 kube-ops-view를 설치합니다
+kubectl create namespace kube-tools
+helm install kube-ops-view \
+stable/kube-ops-view \
+--namespace kube-tools \
+--set service.type=LoadBalancer \
+--set nodeSelector.nodegroup-type=managed-frontend-workloads \
+--version 1.2.4 \
+--set rbac.create=True
+
+## loadbalancer의 FQDN을 확인하고 웹브라우저에서 접속해 봅니다 
+kubectl -n kube-tools get svc kube-ops-view | tail -n 1 | awk '{ print "Kube-ops-view URL = http://"$4 }'
+
+```
+
+URL을 접속하면 , 아래와 같이 노드와 배치된 PoD들을 확인해 볼 수 있습니다
+
+![](<../.gitbook/assets/image (224).png>)
 
 Karpenter 시험 환경 구성을 위해 아래와 같이 환경변수를 구성합니다.&#x20;
 
@@ -94,13 +129,13 @@ managedNodeGroups:
       - PublicSubnet02
       - PublicSubnet03
     desiredCapacity: 3
-    minSize: 3
+    minSize: 0
     maxSize: 6
     volumeSize: 200
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "${public_mgmd_node}"
+      nodegroup-type: "${k_public_mgmd_node}"
     ssh: 
         publicKeyPath: "${publicKeyPath}"
         allow: true
@@ -121,13 +156,13 @@ managedNodeGroups:
       - PrivateSubnet03
     desiredCapacity: 3
     privateNetworking: true
-    minSize: 3
-    maxSize: 9
+    minSize: 0
+    maxSize: 6
     volumeSize: 200
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "${private_mgmd_node}"
+      nodegroup-type: "${k_private_mgmd_node}"
     ssh: 
         publicKeyPath: "${publicKeyPath}"
         allow: true
@@ -163,7 +198,7 @@ eksctl utils associate-iam-oidc-provider \
     
 ```
 
-Karpenter Node들을 위한 IAM Role을 생성합니다.&#x20;
+Karpenter Node들을 위한 IAM Role을 생성합니다. karpenter node를 위한 IAM Role Template을 다운로드 합니다
 
 ```
 mkdir /home/ec2-user/environment/karpenter
@@ -171,12 +206,18 @@ export KARPENTER_CF="/home/ec2-user/environment/karpenter/k-node-iam-role.yaml"
 echo ${KARPENTER_CF}
 
 curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-eksctl/cloudformation.yaml  > $KARPENTER_CF
+sed -i 's/\${ClusterName}/eksworkshop/g' $KARPENTER_CF
+#eksworkshop은 앞서 정의한 eks clustername 입니다. 다르게 설정한 경우 다른 값을 입력합니다 
+```
+
+AWS CLI를 통해서 IAM Role 구성을 위한 Cloudformation을 배포합니다.&#x20;
+
+```
 aws cloudformation deploy \
   --stack-name "Karpenter-${ekscluster_name}" \
   --template-file "${KARPENTER_CF}" \
   --capabilities CAPABILITY_NAMED_IAM \
-  --parameter-overrides "ClusterName=${ekscluster_name}"
-  
+  --parameter-overrides ClusterName="${ekscluster_name}"
 ```
 
 Karpenter Node들을 위해 생성된 IAM Role을 eksctl을 통해 kubernetes 권한에 Mapping 합니다
