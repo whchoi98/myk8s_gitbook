@@ -236,6 +236,7 @@ aws cloudformation deploy \
   --template-file "${KARPENTER_CF}" \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides ClusterName="${ekscluster_name}"
+  
 ```
 
 Karpenter Node들을 위해 생성된 IAM Role을 eksctl을 통해 kubernetes 권한에 Mapping 합니다.&#x20;
@@ -253,7 +254,7 @@ eksctl create iamidentitymapping \
 Kube-system Configmap/aws-auth에 정상적으로 Mapping 되었는지 확인합니다.&#x20;
 
 ```
-kubectl edit -n kube-system configmap/aws-auth 
+kubectl describe -n kube-system configmap/aws-auth 
 
 ```
 
@@ -296,14 +297,12 @@ echo "export KARPENTER_IAM_ROLE_ARN=${KARPENTER_IAM_ROLE_ARN}" | tee -a ~/.bash_
 
 ```
 
-EC2 Spot Service를 처음 활성화 시킨 다면, 아래를 구성합니다
+EC2 Spot Service를 처음 활성화 시킨 다면, 아래를 구성합니다.&#x20;
 
 ```
 aws iam create-service-linked-role --aws-service-name spot.amazonaws.com || true
 
 ```
-
-
 
 ### 5. Karpenter 설치
 
@@ -337,7 +336,7 @@ helm upgrade --install --namespace karpenter --create-namespace \
   
 ```
 
-karpenter pod가 정상적으로 설치 되었는지 확인합니다&#x20;
+karpenter pod가 정상적으로 설치 되었는지 확인합니다.&#x20;
 
 ```
 kubectl get pods --namespace karpenter
