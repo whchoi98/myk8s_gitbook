@@ -57,6 +57,8 @@ echo "export PublicSubnet03=${PublicSubnet03}" | tee -a ~/.bash_profile
 echo "export PrivateSubnet01=${PrivateSubnet01}" | tee -a ~/.bash_profile
 echo "export PrivateSubnet02=${PrivateSubnet02}" | tee -a ~/.bash_profile
 echo "export PrivateSubnet03=${PrivateSubnet03}" | tee -a ~/.bash_profile
+source ~/.bash_profile
+
 ```
 
 아래는 **`vpc_subnet.txt`** 에 저장된 예제입니다.
@@ -138,6 +140,7 @@ echo "export private_selfmgmd_node=${private_selfmgmd_node}" | tee -a ~/.bash_pr
 echo "export public_mgmd_node=${public_mgmd_node}" | tee -a ~/.bash_profile
 echo "export private_mgmd_node=${private_mgmd_node}" | tee -a ~/.bash_profile
 echo "export publicKeyPath=${publicKeyPath}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 
 ```
 
