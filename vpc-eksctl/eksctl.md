@@ -50,6 +50,7 @@ export PublicSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vp
 export PrivateSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet01/{print $1}')
 export PrivateSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet02/{print $1}')
 export PrivateSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet03/{print $1}')
+echo "export vpc_ID=${vpc_ID}" | tee -a ~/.bash_profile
 echo "export PublicSubnet01=${PublicSubnet01}" | tee -a ~/.bash_profile
 echo "export PublicSubnet02=${PublicSubnet02}" | tee -a ~/.bash_profile
 echo "export PublicSubnet03=${PublicSubnet03}" | tee -a ~/.bash_profile

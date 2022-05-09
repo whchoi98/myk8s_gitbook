@@ -86,7 +86,7 @@ echo ${CLUSTER_ENDPOINT}
 echo ${KARPENTER_VERSION}
 echo "export k_public_mgmd_node=${k_public_mgmd_node}" | tee -a ~/.bash_profile
 echo "export k_private_mgmd_node=${k_private_mgmd_node}" | tee -a ~/.bash_profile
-echo "export k_private_mgmd_node=${CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
+echo "export CLUSTER_ENDPOINT=${CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
 ```
 
 ### 2.Karpenter 시험 노드 설치
@@ -326,11 +326,11 @@ echo ${CLUSTER_ENDPOINT}
  
 helm upgrade --install --namespace karpenter --create-namespace \
   karpenter karpenter/karpenter \
-  --version ${KARPENTER_VERSION} \
   --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${KARPENTER_IAM_ROLE_ARN} \
   --set clusterName=${ekscluster_name} \
   --set clusterEndpoint=${CLUSTER_ENDPOINT} \
-  --set nodeSelector.nodegroup-type=managed-frontend-workloads \
+  --set nodeSelector.intent=public-control-apps \
+  --set defaultProvisioner.create=false \
   --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${ekscluster_name} \
   --wait 
   
@@ -346,9 +346,11 @@ kubectl get deployment -n karpenter
 
 ### 6.Provisioner 구성
 
-단일 Karpenter Provisioner는 다양한 Pod를 구성할 수 있습니다. Karpenter는 Label 및 Affinity와 같은 Pod의 속성을 기반으로 Scheduling 및 프로비저닝 결정을 할 수 있습니다. Karpenter는 다양한 노드 그룹을 관리할 필요가 없습니다.
+Karpenter 구성은 Provisioner CRD(Custom Resource Definition) 형식으로 제공됩니다. 단일 Karpenter Provisioner는 다양한 Pod를 구성할 수 있습니다. Karpenter는 Label 및 Affinity와 같은 Pod의 속성을 기반으로 Scheduling 및 프로비저닝 결정을 할 수 있습니다. Karpenter는 다양한 노드 그룹을 관리할 필요가 없습니다.
 
 아래 명령을 사용하여 기본 프로비저닝 도구를 만들기 위한 yaml을 정의합니다.이 프로비저닝 도구는 securityGroupSelector 및 subnetSelector를 사용하여 노드를 시작하는 데 사용되는 리소스를 검색합니다. 위의 eksctl 명령에 karpenter.sh/discovery 태그를 적용했습니다.&#x20;
+
+앞서 Karpenter Node를 구성할 때 lable 설정으로 "control-apps"로 앞서 Node를 구분지었습니다.&#x20;
 
 ```
 cat << EOF > ~/environment/karpenter/karpenter-provisioner.yaml
@@ -360,25 +362,84 @@ spec:
   requirements:
     - key: karpenter.sh/capacity-type
       operator: In
-      values: ["spot"]
+      values: ["spot", "on-demand"]
   limits:
     resources:
       cpu: 1000
   provider:
-    subnetSelector:
-      karpenter.sh/discovery: ${ekscluster_name}
-    securityGroupSelector:
-      karpenter.sh/discovery: ${ekscluster_name}
+#    subnetSelector:
+#      karpenter.sh/discovery: ${ekscluster_name}
+#    securityGroupSelector:
+#      karpenter.sh/discovery: ${ekscluster_name}
+    tags:
+      alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
   ttlSecondsAfterEmpty: 30
 EOF
 
+## 생성된 provisioner.yaml을 실행합니다. 
+kubectl apply -f ~/environment/karpenter/karpenter-provisioner.yaml
+
 ```
 
-* **`ttlSecondsAfterEmpty`** 값은 Karpenter가 노드에 자원이 배치가 없는 경우 종료하도록 구성합니다.
+* **`instanceProfile`**: Karpenter에서 시작한 인스턴스는 컨테이너를 실행하고 네트워킹을 구성하는 데 필요한 권한을 부여하는 InstanceProfile로 실행해야 합니다.&#x20;
+* **`requirements`** : Provisioner CRD는 인스턴스 type 및 AZ와 같은 노드 속성을 선택할 수 있습니다. 예를 들어 topology.kubernetes.io/zone=ap-northeast-2a 레이블에 대한 응답으로 Karpenter는 해당 가용성 영역에 노드를 프로비저닝합니다. 이 예에서는 karpenter.sh/capacity-type을 설정하여 EC2 스팟 인스턴스를 사용합니다. 여기에서 사용할 수 있는 다른 속성을 확인할 수 있습니다. 이번 랩에서 몇 가지 더 작업할 것입니다.&#x20;
+* **`limit`** : provisioner는 클러스터에 할당된 CPU 및 메모리 수의 제한을 정의할 수 있습니다. ttlSecondsAfterEmpty: 값은 빈 노드를 종료하도록 Karpenter를 구성합니다.&#x20;
+* **`provider:tags`** : EC2 인스턴스가 생성될 때 가지게 되는 Tag를 정의할 수도 있습니다. 이것은 EC2 수준에서 Billing 및 거버넌스를 활성화하는 데 도움이 됩니다.
+* **`ttlSecondsAfterEmpty`** : 값은 Karpenter가 노드에 자원이 배치가 없는 경우 종료하도록 구성합니다.값을 정의하지 않은 상태로 두면 이 동작을 비활성화할 수 있습니다. 이 경우 빠른 시연을 위해 30초 값으로 설정했습니다.
+
+### 7. 자동 노드 프로비저닝
+
+Karpenter는 이제 활성화되었으며 노드 프로비저닝을 시작할 준비가 되었습니다. Deployment를 사용하여 Pod를 만들고 Karpenter가 노드를 프로비저닝하는 것을 확인해 봅니다.자동 노드 프로비저닝 이 배포는 [pause image](https://www.ianlewis.org/en/almighty-pause-container)를 사용하고 replica가  없는 상태에서 시작합니다.
+
+Deployment 하기 전에 웹브라우저에서 앞서 생성한 kube-ops-view를 열어두고 배포를 살펴 봅니다.&#x20;
+
+```
+kubectl -n kube-tools get svc kube-ops-view | tail -n 1 | awk '{ print "Kube-ops-view URL = http://"$4 }'
+
+```
+
+```
+kubectl create namespace karpenter-inflate
+cat << EOF > ~/environment/karpenter/karpenter-inflate.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflate
+  namespace: karpenter-inflate
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: inflate
+  template:
+    metadata:
+      labels:
+        app: inflate
+    spec:
+      nodeSelector:
+        intent: public-control-apps
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: inflate
+          image: public.ecr.aws/eks-distro/kubernetes/pause:3.2
+          resources:
+            requests:
+              cpu: 1
+EOF
+## 생성된 karpenter-inflate.yaml을 실행합니다. 
+kubectl apply -f ~/environment/karpenter/karpenter-inflate.yaml
 
 
+kubectl -n karpenter-inflate scale deployment inflate --replicas 5
+kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 
-10\. 삭제
+
+kubectl scale deployment inflate --replicas 5
+kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
+
+```
+
+### 10. 자원 삭제
 
 
 
