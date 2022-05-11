@@ -378,17 +378,24 @@ spec:
   requirements:
     - key: karpenter.sh/capacity-type
       operator: In
-      values: ["on-demand"]
+      values: ["spot"]
+    - key: node.kubernetes.io/instance-type
+      operator: In
+      values: ["m5.large", "m5.2xlarge"]
   limits:
     resources:
       cpu: 1000
   provider:
     subnetSelector:
-      Name: "*PublicSubnet*"
+      Name: "*Public*"
     securityGroupSelector:
-      Name: "*k-managed-ng-public-01*"
- #   tags:
- #     alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
+      Name: "*Public*"
+    tags:
+      alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
+  taints:
+    - key: asg
+      value: nodes
+      effect: NoSchedule
   ttlSecondsAfterEmpty: 30
 EOF
 
@@ -445,12 +452,12 @@ EOF
 ## 생성된 karpenter-inflate.yaml을 실행합니다. 
 kubectl apply -f ~/environment/karpenter/karpenter-inflate.yaml
 
+```
 
+
+
+```
 kubectl -n karpenter-inflate scale deployment inflate --replicas 5
-kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
-
-
-kubectl scale deployment inflate --replicas 5
 kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 
 ```
