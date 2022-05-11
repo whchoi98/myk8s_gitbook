@@ -77,7 +77,7 @@ export k_private_mgmd_node="k-managed-backend-workloads"
 # EKS CLUSTER_ENDPOINT 값에 대한 환경변수 설정 
 export CLUSTER_ENDPOINT="$(aws eks describe-cluster --name ${ekscluster_name} --query "cluster.endpoint" --output text)"
 # KARPENTER_VERSION 설정
-export KARPENTER_VERSION="v0.9.1"
+export KARPENTER_VERSION="v0.10.0"
 echo ${ekscluster_name}
 echo ${ACCOUNT_ID}
 echo ${k_public_mgmd_node}
@@ -87,6 +87,8 @@ echo ${KARPENTER_VERSION}
 echo "export k_public_mgmd_node=${k_public_mgmd_node}" | tee -a ~/.bash_profile
 echo "export k_private_mgmd_node=${k_private_mgmd_node}" | tee -a ~/.bash_profile
 echo "export CLUSTER_ENDPOINT=${CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
+source ~/.bash_profile
+
 ```
 
 ### 2.Karpenter 시험 노드 설치
@@ -133,8 +135,8 @@ managedNodeGroups:
       - PublicSubnet02
       - PublicSubnet03
     desiredCapacity: 3
-    minSize: 0
-    maxSize: 6
+    minSize: 3
+    maxSize: 9
     volumeSize: 200
     volumeType: gp3 
     amiFamily: AmazonLinux2
@@ -167,8 +169,8 @@ managedNodeGroups:
       - PrivateSubnet03
     desiredCapacity: 3
     privateNetworking: true
-    minSize: 0
-    maxSize: 6
+    minSize: 3
+    maxSize: 9
     volumeSize: 200
     volumeType: gp3 
     amiFamily: AmazonLinux2
@@ -195,6 +197,15 @@ managedNodeGroups:
 
 EOF
 
+```
+
+Subnet과 Security Group에 새로운 Tag를 설정합니다
+
+```
+aws ec2 create-tags --resources "$PublicSubnet01" --tags Key="karpenter.sh/discovery",Value="${ekscluster_name}" 
+aws ec2 create-tags --resources "$PublicSubnet02" --tags Key="karpenter.sh/discovery",Value="${ekscluster_name}" 
+aws ec2 create-tags --resources "$PublicSubnet03" --tags Key="karpenter.sh/discovery",Value="${ekscluster_name}"
+ 
 ```
 
 Karpenter 시험을 위한 새로운 노드그룹을 eksctl 로 설치합니다.&#x20;
@@ -231,6 +242,7 @@ sed -i 's/\${ClusterName}/eksworkshop/g' $KARPENTER_CF
 AWS CLI를 통해서 IAM Role 구성을 위한 Cloudformation을 배포합니다.&#x20;
 
 ```
+cd ~/environment/karpenter
 aws cloudformation deploy \
   --stack-name "Karpenter-${ekscluster_name}" \
   --template-file "${KARPENTER_CF}" \
@@ -293,7 +305,9 @@ eksctl create iamserviceaccount \
   --approve
   
 # KARPENTER IAM ROLE ARN을 변수에 저장해 둡니다. 
+export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${ekscluster_name}-karpenter"
 echo "export KARPENTER_IAM_ROLE_ARN=${KARPENTER_IAM_ROLE_ARN}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 
 ```
 
@@ -326,14 +340,16 @@ echo ${CLUSTER_ENDPOINT}
  
 helm upgrade --install --namespace karpenter --create-namespace \
   karpenter karpenter/karpenter \
+  --version ${KARPENTER_VERSION} \
   --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${KARPENTER_IAM_ROLE_ARN} \
   --set clusterName=${ekscluster_name} \
   --set clusterEndpoint=${CLUSTER_ENDPOINT} \
-  --set nodeSelector.intent=public-control-apps \
-  --set defaultProvisioner.create=false \
   --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${ekscluster_name} \
   --wait 
   
+  
+  #  --set nodeSelector.intent=public-control-apps \
+  #  --set defaultProvisioner.create=false \
 ```
 
 karpenter pod가 정상적으로 설치 되었는지 확인합니다.&#x20;
@@ -362,17 +378,17 @@ spec:
   requirements:
     - key: karpenter.sh/capacity-type
       operator: In
-      values: ["spot", "on-demand"]
+      values: ["on-demand"]
   limits:
     resources:
       cpu: 1000
   provider:
-#    subnetSelector:
-#      karpenter.sh/discovery: ${ekscluster_name}
-#    securityGroupSelector:
-#      karpenter.sh/discovery: ${ekscluster_name}
-    tags:
-      alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
+    subnetSelector:
+      Name: "*PublicSubnet*"
+    securityGroupSelector:
+      Name: "*k-managed-ng-public-01*"
+ #   tags:
+ #     alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
   ttlSecondsAfterEmpty: 30
 EOF
 
@@ -444,6 +460,8 @@ kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 
 
 ```
+kubectl delete namespace karpenter-inflate
+kubectl delete -f ~/environment/karpenter/karpenter-provisioner.yaml
 helm uninstall karpenter --namespace karpenter
 aws iam detach-role-policy --role-name="${ekscluster_name}-karpenter" --policy-arn="arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${ekscluster_name}"
 aws iam delete-policy --policy-arn="arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${ekscluster_name}"
@@ -453,6 +471,7 @@ aws ec2 describe-launch-templates \
     | jq -r ".LaunchTemplates[].LaunchTemplateName" \
     | grep -i "Karpenter-${ekscluster_name}" \
     | xargs -I{} aws ec2 delete-launch-template --launch-template-name {}
+aws cloudformation delete-stack --stack-name eksctl-eksworkshop-addon-iamserviceaccount-karpenter-karpenter
  eksctl delete nodegroup --config-file=/home/ec2-user/environment/myeks/karpenter-nodegroup.yaml --approve
 
 ```
