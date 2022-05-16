@@ -6,7 +6,7 @@ description: 'update : 2022-04-21 / 30min'
 
 ## eksctl 소개
 
-`eksctl`은 관리형 Kubernetes 서비스 인 EKS에서 클러스터를 생성하기위한 간단한 CLI 도구입니다. Go로 작성되었으며 CloudFormation을 사용하며 [Weaveworks](https://www.weave.works) 가 작성했으며 단 하나의 명령으로 몇 분 안에 기본 클러스터를 만듭니다.
+`eksctl`은 관리형 Kubernetes 서비스 인 EKS에서 클러스터를 생성하기위한 간단한 CLI 도구입니다. Go로 작성되었으며 CloudFormation을 사용하며 [Weaveworks](https://www.weave.works/) 가 작성했으며 단 하나의 명령으로 몇 분 안에 기본 클러스터를 만듭니다.
 
 이것은 EKS를 구성하기 위한 도구 이며,  AWS 관리콘솔에서 제공하는 EKS UI, CDK, Terraform, Rancher 등 다양한 도구로도 구성이 가능합니다.
 
@@ -156,23 +156,28 @@ metadata:
   name: ${ekscluster_name}
   region: ${AWS_REGION}
   version: "${eks_version}"  
-
 vpc: 
   id: ${vpc_ID}
   subnets:
     public:
       PublicSubnet01:
+        az: ${AWS_REGION}a
         id: ${PublicSubnet01}
       PublicSubnet02:
+        az: ${AWS_REGION}b
         id: ${PublicSubnet02}
       PublicSubnet03:
+        az: ${AWS_REGION}c
         id: ${PublicSubnet03}
     private:
       PrivateSubnet01:
+        az: ${AWS_REGION}a
         id: ${PrivateSubnet01}
       PrivateSubnet02:
+        az: ${AWS_REGION}b
         id: ${PrivateSubnet02}
       PrivateSubnet03:
+        az: ${AWS_REGION}c
         id: ${PrivateSubnet03}
 secretsEncryption:
   keyARN: ${MASTER_ARN}
@@ -181,9 +186,9 @@ nodeGroups:
   - name: ng-public-01
     instanceType: ${instance_type}
     subnets:
-      - PublicSubnet01
-      - PublicSubnet02
-      - PublicSubnet03
+      - ${PublicSubnet01}
+      - ${PublicSubnet02}
+      - ${PublicSubnet03}
     desiredCapacity: 3
     minSize: 3
     maxSize: 6
@@ -193,8 +198,7 @@ nodeGroups:
     labels:
       nodegroup-type: "${public_selfmgmd_node}"
     ssh: 
-        publicKeyPath: "${publicKeyPath}"
-        allow: true
+      publicKeyPath: "${publicKeyPath}"
     iam:
       attachPolicyARNs:
       withAddonPolicies:
@@ -207,9 +211,9 @@ nodeGroups:
   - name: ng-private-01
     instanceType: ${instance_type}
     subnets:
-      - PrivateSubnet01
-      - PrivateSubnet02
-      - PrivateSubnet03
+      - ${PrivateSubnet01}
+      - ${PrivateSubnet02}
+      - ${PrivateSubnet03}
     desiredCapacity: 3
     privateNetworking: true
     minSize: 3
@@ -220,8 +224,7 @@ nodeGroups:
     labels:
       nodegroup-type: "${private_selfmgmd_node}"
     ssh: 
-        publicKeyPath: "${publicKeyPath}"
-        allow: true
+      publicKeyPath: "${publicKeyPath}"
     iam:
       attachPolicyARNs:
       withAddonPolicies:
@@ -235,9 +238,9 @@ managedNodeGroups:
   - name: managed-ng-public-01
     instanceType: ${instance_type}
     subnets:
-      - PublicSubnet01
-      - PublicSubnet02
-      - PublicSubnet03
+      - ${PublicSubnet01}
+      - ${PublicSubnet02}
+      - ${PublicSubnet03}
     desiredCapacity: 3
     minSize: 3
     maxSize: 6
@@ -247,8 +250,7 @@ managedNodeGroups:
     labels:
       nodegroup-type: "${public_mgmd_node}"
     ssh: 
-        publicKeyPath: "${publicKeyPath}"
-        allow: true
+      publicKeyPath: "${publicKeyPath}"
     iam:
       attachPolicyARNs:
       withAddonPolicies:
@@ -261,9 +263,9 @@ managedNodeGroups:
   - name: managed-ng-private-01
     instanceType: ${instance_type}
     subnets:
-      - PrivateSubnet01
-      - PrivateSubnet02
-      - PrivateSubnet03
+      - ${PrivateSubnet01}
+      - ${PrivateSubnet02}
+      - ${PrivateSubnet03}
     desiredCapacity: 3
     privateNetworking: true
     minSize: 3
@@ -274,8 +276,7 @@ managedNodeGroups:
     labels:
       nodegroup-type: "${private_mgmd_node}"
     ssh: 
-        publicKeyPath: "${publicKeyPath}"
-        allow: true
+      publicKeyPath: "${publicKeyPath}"
     iam:
       attachPolicyARNs:
       withAddonPolicies:
@@ -289,7 +290,6 @@ cloudWatch:
     clusterLogging:
         enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 EOF
-      
 ```
 
 ```
