@@ -1,5 +1,5 @@
 ---
-description: 'update : 2022-04-21 / 30min'
+description: 'update : 2022-05-21 / 30min'
 ---
 
 # eksctl 구성
@@ -44,6 +44,7 @@ echo $vpc_ID > vpc_subnet.txt
 aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> vpc_subnet.txt
 cat vpc_subnet.txt
 
+# VPC, Subnet ID 환경변수 저장 
 export PublicSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet01/{print $1}')
 export PublicSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet02/{print $1}')
 export PublicSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet03/{print $1}')
@@ -132,6 +133,7 @@ echo ${publicKeyPath}
 Shell Profile에 등록합니다. &#x20;
 
 ```
+# ekscluster name, version, instance type, nodegroup label 환경변수 설정.  
 echo "export ekscluster_name=${ekscluster_name}" | tee -a ~/.bash_profile
 echo "export eks_version=${eks_version}" | tee -a ~/.bash_profile
 echo "export instance_type=${instance_type}" | tee -a ~/.bash_profile
@@ -147,6 +149,7 @@ source ~/.bash_profile
 eksctl을 통해 EKS Cluster를 생성합니다.&#x20;
 
 ```
+# eksctl yaml 실행 
 cat << EOF > ~/environment/myeks/eksworkshop.yaml
 ---
 apiVersion: eksctl.io/v1alpha5
@@ -290,9 +293,11 @@ cloudWatch:
     clusterLogging:
         enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 EOF
+
 ```
 
 ```
+# eksctl로 cluster 만들기 
 eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop.yaml
  
 ```
@@ -428,151 +433,3 @@ ip-10-11-99-248.ap-northeast-2.compute.internal    Ready    <none>   26m   v1.20
 다음과 같은 구성도가 완성되었습니다.
 
 ![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1).png>)
-
-### 6.eksctl yaml code 참조 (option)
-
-eksctl 배포를 위한 EKS Cluster yaml 파일은 다음과 같습니다. 각자의 Cloud9 콘솔에서 파일을 확인해 봅니다.
-
-```
----
-apiVersion: eksctl.io/v1alpha5
-kind: ClusterConfig
-
-metadata:
-  name: eksworkshop
-  region: ap-northeast-2
-  version: "1.20"  
-
-vpc: 
-  id: vpc-0cac82bae42538fd7
-  subnets:
-    public:
-      PublicSubnet01:
-        id: subnet-0cd13d352f0960e86
-      PublicSubnet02:
-        id: subnet-065f091e585fea002
-      PublicSubnet03:
-        id: subnet-0d767589be30c617f
-    private:
-      PrivateSubnet01:
-        id: subnet-056e4159357931f83
-      PrivateSubnet02:
-        id: subnet-02bb9d3ae75d5c333
-      PrivateSubnet03:
-        id: subnet-006b575333b696f4b
-secretsEncryption:
-  keyARN: arn:aws:kms:ap-northeast-2:794454221194:key/e9d049ae-38f1-4f38-b084-02ce197b0894
-
-nodeGroups:
-  - name: ng-public-01
-    instanceType: m5.xlarge
-    subnets:
-      - PublicSubnet01
-      - PublicSubnet02
-      - PublicSubnet03
-    desiredCapacity: 3
-    minSize: 3
-    maxSize: 6
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "frontend-workloads"
-    ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
-        allow: true
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-
-  - name: ng-private-01
-    instanceType: m5.xlarge
-    subnets:
-      - PrivateSubnet01
-      - PrivateSubnet02
-      - PrivateSubnet03
-    desiredCapacity: 3
-    privateNetworking: true
-    minSize: 3
-    maxSize: 9
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "backend-workloads"
-    ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
-        allow: true
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-
-managedNodeGroups:
-  - name: managed-ng-public-01
-    instanceType: m5.xlarge
-    subnets:
-      - PublicSubnet01
-      - PublicSubnet02
-      - PublicSubnet03
-    desiredCapacity: 3
-    minSize: 3
-    maxSize: 6
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "managed-frontend-workloads"
-    ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
-        allow: true
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-        
-  - name: managed-ng-private-01
-    instanceType: m5.xlarge
-    subnets:
-      - PrivateSubnet01
-      - PrivateSubnet02
-      - PrivateSubnet03
-    desiredCapacity: 3
-    privateNetworking: true
-    minSize: 3
-    maxSize: 9
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "managed-backend-workloads"
-    ssh: 
-        publicKeyPath: "/home/ec2-user/environment/eksworkshop.pub"
-        allow: true
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-        
-cloudWatch:
-    clusterLogging:
-        enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-
-```
