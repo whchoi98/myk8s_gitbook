@@ -184,37 +184,6 @@ aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://.
 
 ```
 
-\[참고 - AWS CLI version 1.x]&#x20;
-
-OpenSSH public key format 에러가 발생할 경우 아래와 같은 명령으로 Key 전송합니다. \
-
-
-```
-cd ~/environment/
-aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://./environment/eksworkshop.pub
-
-```
-
-AWS 콘솔에서 직접 복사할 수도 있습니다. (AWS CLI 명령으로 정상적으로 Key를 Export하였다면, 생략하십시요.)
-
-AWS  콘솔에서 다음과 같은 방법으로 key 페어를 등록합니다.아래 명령의 Public key값을 복사합니다.
-
-```
-cd ~/environment/
-cat eksworkshop.pub
-
-```
-
-\[참고 - AWS Console 기반] 아래 ec2 대쉬보드에서 키를 등록합니다.
-
-![](<../.gitbook/assets/image (91).png>)
-
-![](<../.gitbook/assets/image (92).png>)
-
-생성된 key를 "AWS 서비스" - "EC2 대시보드" 에서 확인합니다.
-
-![](<../.gitbook/assets/image (19).png>)
-
 ## CMK  생성
 
 ### 9.KMS 소개
