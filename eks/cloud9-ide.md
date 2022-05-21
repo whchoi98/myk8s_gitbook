@@ -141,14 +141,6 @@ EKS를 위한 kubectl 바이너리를 다운로드합니다. 아래 kubectl vers
 Kubernetes 버전 1.23 출시부터 공식적으로 Amazon EKS AMI에는 containerd가 유일한 런타임으로 포함됩니다. Kubernetes 버전 1.18–1.21은 Docker를 기본 런타임으로 사용합니다.
 {% endhint %}
 
-**EKS 1.18.16 기반 설치 (Option)**
-
-```
-cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.16/bin/linux/amd64/kubectl
-
-```
-
 **EKS 1.19.15 기반 설치 (Option)**
 
 ```
@@ -165,7 +157,7 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/l
 
 ```
 
-**EKS 1.21.5 기반 설치 (2022.05 기준 추천**
+**EKS 1.21.5 기반 설치 (2022.05 기준 추천)**
 
 ```
 cd ~
@@ -184,7 +176,7 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.22.6/bin/l
 #### Kubectl 버전 다운로드 (Linux 기준)
 
 ```
-# 최신버전 다운로
+# 최신버전 다운로드
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
 # 특정 버전을 다운로드하려면, $(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) 명령 부분을 특정 버전으로 바꾼다.
 ```
