@@ -80,7 +80,7 @@
   * [Argo 기반 CD (TBD)](eks-cicd/argo-cd.md)
 * [12.EKS Service Mesh](eks-security/eks-service-mesh/README.md)
   * [Istio (TBD)](eks-security/eks-service-mesh/istio.md)
-  * [App Mesh](eks-security/eks-service-mesh/app-mesh.md)
+  * [App Mesh (TBD)](eks-security/eks-service-mesh/app-mesh.md)
 * [12.Tip](tip/README.md)
   * [shell](tip/shell.md)
   * [git\_source](tip/git-source.md)
