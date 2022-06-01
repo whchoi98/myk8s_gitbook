@@ -132,7 +132,7 @@ Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니�
 
 ![](<../.gitbook/assets/image (230) (1) (1) (1).png>)
 
-![](<../.gitbook/assets/image (219).png>)
+![](<../.gitbook/assets/image (219) (1).png>)
 
 * Stack Name : eks-multus-cluster
 * Availability Zone : ap-northeast-2a, ap-northeast-2b

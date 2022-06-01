@@ -8,7 +8,7 @@ description: 'Update : 2021-10-21'
 
 ![](<../.gitbook/assets/image (87).png>)
 
-Fluent Bit는 다양한 소스에서 데이터 / 로그를 수집하고 통합하여 여러 대상으로 보낼 수 있는 오픈 소스 및 다중 플랫폼 **로그 프로세서 및 Forwarder** 입니다. Docker 및 Kubernetes 환경 과 완벽하게 호환 됩니다.Fluent Bit는 **C** 로 작성되었으며 약 30 개의 확장을 지원하는 플러그 가능 아키텍처가 있습니다. 빠르고 가벼우 며 TLS를 통한 네트워크 운영에 필요한 보안을 제공합니다. (참조 - [https://fluentbit.io](https://fluentbit.io))
+Fluent Bit는 다양한 소스에서 데이터 / 로그를 수집하고 통합하여 여러 대상으로 보낼 수 있는 오픈 소스 및 다중 플랫폼 **로그 프로세서 및 Forwarder** 입니다. Docker 및 Kubernetes 환경 과 완벽하게 호환 됩니다.Fluent Bit는 **C** 로 작성되었으며 약 30 개의 확장을 지원하는 플러그 가능 아키텍처가 있습니다. 빠르고 가벼우 며 TLS를 통한 네트워크 운영에 필요한 보안을 제공합니다. (참조 - [https://fluentbit.io](https://fluentbit.io/))
 
 ## Fluent Bit 설치환경 구성 .
 

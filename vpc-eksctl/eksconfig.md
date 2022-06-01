@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2021-10-01 / 10min'
+description: 'Update : 2022-06-01 / 10min'
 ---
 
 # EKS 구성확인
@@ -121,17 +121,23 @@ mapUsers:
 
 ## EKS Cluster 결과 확인.
 
-EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드들을 확인할 수 있습니다.
+EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드들을 확인할 수 있습니다. 생성한 클러스터를 선택합니다
 
-![](<../.gitbook/assets/image (215).png>)
+![](<../.gitbook/assets/image (219).png>)
+
+컴퓨팅을 선택하고, 생성된 WorkerNode들을 확인해 봅니다
+
+![](<../.gitbook/assets/image (234).png>)
 
 EKS Cluster내에 생성된 워크로드들을 확인해 볼 수 있습니다.
 
-![](<../.gitbook/assets/image (213).png>)
+![](<../.gitbook/assets/image (236).png>)
 
-managed Node type으로 설치한 경우에는 Configuration Compute에서 추가로 확인할 수 있습니다.
+managed Node type과 Self Managed Node Type의 차이를 확인할 수 있습니다
 
-![](<../.gitbook/assets/image (214).png>)
+Kuernetes의 Resource들을 선택하고 확인해 봅니다.&#x20;
+
+![](<../.gitbook/assets/image (237).png>)
 
 이제 아래와 같은 EKS Cluster가 완성되었습니다. kubectl 명령을 통해 확인해 봅니다.
 

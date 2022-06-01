@@ -2,11 +2,11 @@
 
 ## Docs
 
-* [**kubernetes io**](https://kubernetes.io)****
+* [**kubernetes io**](https://kubernetes.io/)****
 * ****[**aws eks feature**](https://aws.amazon.com/ko/eks/features/)****
 * ****[**aws eks price**](https://aws.amazon.com/ko/eks/pricing/)****
 * ****[**aws eks menual**](https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/getting-started.html)****
-* ****[**eksctl**](https://eksctl.io)****
+* ****[**eksctl**](https://eksctl.io/)****
 * ****[**eksctl github sample config file**](https://github.com/weaveworks/eksctl/tree/main/examples)****
 
 ## kubernetes-sigs

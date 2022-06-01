@@ -6,7 +6,7 @@ description: 'Update : 2021-10-21'
 
 ## Prometheus 소개
 
-[Prometheus](https://github.com/prometheus) 는 원래 [SoundCloud에](https://soundcloud.com) 구축 된 오픈 소스 시스템 모니터링 및 alerting tool kit 입니다. 2012 년에 시작된 이래로 많은 회사와 조직에서 Prometheus를 채택했으며이 프로젝트에는 매우 활발한 개발자 및 사용자 [커뮤니티가](https://prometheus.io/community) 있습니다.  프로젝트의 거버넌스 구조를 명확하게하기 위해 Prometheus는 2016 년 [Kubernetes](https://kubernetes.io) 에 이어 두 번째 호스팅 프로젝트로 [Cloud Native Computing Foundation](https://cncf.io) 에 합류했습니다 .
+[Prometheus](https://github.com/prometheus) 는 원래 [SoundCloud에](https://soundcloud.com/) 구축 된 오픈 소스 시스템 모니터링 및 alerting tool kit 입니다. 2012 년에 시작된 이래로 많은 회사와 조직에서 Prometheus를 채택했으며이 프로젝트에는 매우 활발한 개발자 및 사용자 [커뮤니티가](https://prometheus.io/community) 있습니다.  프로젝트의 거버넌스 구조를 명확하게하기 위해 Prometheus는 2016 년 [Kubernetes](https://kubernetes.io/) 에 이어 두 번째 호스팅 프로젝트로 [Cloud Native Computing Foundation](https://cncf.io/) 에 합류했습니다 .
 
 ### 1.주요 특징
 
@@ -196,7 +196,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 Grafana를 사용하게 되면 시계열 메트릭 데이터를 질의, 시각화, Alert을 이해하는 데 사용할 수 있습니다.
 
-#### Grafana Demo 공식 사이트 - [https://play.grafana.org/](https://play.grafana.org)
+#### Grafana Demo 공식 사이트 - [https://play.grafana.org/](https://play.grafana.org/)
 
 먼저 Grafana설치를 위해서 몇가지 변수를 정의하고, 설치를 위한 매니페스트 파일을 작성합니다.
 
