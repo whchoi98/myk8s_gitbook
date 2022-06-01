@@ -103,7 +103,7 @@ git clone https://github.com/aws-samples/eks-install-guide-for-multus.git
 # US-WEST-2에 S3 Bucket을 생성합니다. Bucket Name은 고유해야 합니다.
 cd ~/envvironment
 export bucket_name=whchoimultus
-aws s3 mb s3://$bucket_name
+aws s3 mb s3://$bucket_name --region us-east-1
 
 # 생성된 Bucket에 git을 업로드 합니다.
 cd ~/envvironment
@@ -157,7 +157,7 @@ cd ~/envvironment
 aws s3 cp  ~/environment/eks-install-guide-for-multus/cfn/templates/nodegroup/lambda_function.zip s3://$bucket_name  
 
 # object가 외부에서 접근할 수 있도록 , Read 권한을 부여합니다.
-# aws s3api put-object-acl --bucket {bucket name} --key lambda_function.zip --acl public-read  
+aws s3api put-object-acl --bucket $bucket_name --key lambda_function.zip --acl public-read  
 ```
 
 S3에 업로드한 EKS Nodegroup용 Cloudformation Stack yaml 파일의 Object URL을 복사해 둡니다.
