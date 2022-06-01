@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2021-10-01 / 30min'
+description: 'Update: 2022-06-01 / 30min'
 ---
 
 # Cluster IP 기반 배포
@@ -43,7 +43,7 @@ cluster-test-01-b86b9c685-lkm56   1/1     Running   0          95s   10.11.38.20
 cluster-test-01-b86b9c685-vxgxq   1/1     Running   0          94s   10.11.16.103   ip-10-11-28-53.ap-northeast-2.compute.internal   <none>           <none>
 ```
 
-shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
+(Option) shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
 
 ```
 export ClusterTestPod01=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.1.103/{print $1}')
@@ -56,7 +56,7 @@ source ~/.bash_profile
 
 ```
 
-각각의 Pod로 접속해 봅니다.
+K9s로 접속하거나 bash profile에 등록한 컨테이너들로 각각의 Pod로 접속해 봅니다.&#x20;
 
 ```
 kubectl -n cluster-test-01 exec -it $ClusterTestPod01 -- /bin/sh
@@ -93,7 +93,7 @@ search cluster-test-01.svc.cluster.local svc.cluster.local cluster.local ap-nort
 options ndots:5
 ```
 
-한개의 Pod에 더 연결해 보고 동일하게 비교해 봅니다.
+K9s로 접속하거나 bash profile에 등록한 다른 Pod에 더 연결해 보고 동일하게 비교해 봅니다.
 
 ```
 kubectl -n cluster-test-01 exec -it $ClusterTestPod02 -- /bin/sh
@@ -180,7 +180,7 @@ ClusterIP service의 A Record는
 
 ![](<../.gitbook/assets/image (221) (1).png>)
 
-ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. clur을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
+ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. curl을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
 
 ```
 kubectl -n cluster-test-01 exec -it $ClusterTestPod01 -- /bin/sh
