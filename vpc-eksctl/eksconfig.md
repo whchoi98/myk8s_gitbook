@@ -4,11 +4,11 @@ description: 'Update : 2021-10-01 / 10min'
 
 # EKS 구성확인
 
-## EKS Cluster 구성 확인 
+## EKS Cluster 구성 확인&#x20;
 
 EKS 콘솔을 통해서, 생성된 EKS Cluster를 확인 할 수 있습니다.
 
-각 계정의 User로 로그인 한 경우, 아래에서 처럼 eks cluster에 대한 정보를 확인 할 수 없습니다. 이것은 권한이 없기 때문입니다. User의 권한을 Cloud9에서 추가해 줍니다.  
+각 계정의 User로 로그인 한 경우, 아래에서 처럼 eks cluster에 대한 정보를 확인 할 수 없습니다. 이것은 권한이 없기 때문입니다. User의 권한을 Cloud9에서 추가해 줍니다. &#x20;
 
 ![](<../.gitbook/assets/image (176).png>)
 
@@ -20,13 +20,18 @@ cloud9 IDE Terminal 에 kubectl 명령을 통해서, 계정의 사용자에 대�
 kubectl edit -n kube-system configmap/aws-auth
 ```
 
-user arn은 IAM에서 확인 할 수 있습니다. 
+user arn은 IAM에서 확인 할 수 있습니다.&#x20;
 
 **`AWS 관리 콘솔 - IAM - User`**
 
 ![](<../.gitbook/assets/image (170).png>)
 
-아래 새로운 사용자의 권한을 mapRoles 뒤에 추가해 줍니다.
+아래 새로운 사용자의 권한을 mapRoles 뒤에 추가해 줍니다. kubectl edit는 vi edit과 동일하게 수정하는 방식입니다. 아래 명령을 입력하고 복사해서 붙여 넣습니다.
+
+```
+#vi 실행 창에 입력합니다
+:set paste
+```
 
 ```
   mapUsers: |
