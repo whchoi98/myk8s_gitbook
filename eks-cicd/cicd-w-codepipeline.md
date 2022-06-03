@@ -160,7 +160,7 @@ https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.y
 
 eks-workshop-codepipeline으로 시작하는 CodePipeline이 표시됩니다. 이 링크를 클릭하면 세부 정보를 볼 수 있습니다.
 
-![](<../.gitbook/assets/image (234) (1) (1).png>)
+![](<../.gitbook/assets/image (234) (2).png>)
 
 Codepipeline에서 진행중이거나, 완료된 Pipeline을 선택하면 Build 상태를 확인 할 수 있습니다.&#x20;
 
