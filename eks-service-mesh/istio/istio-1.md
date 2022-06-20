@@ -207,4 +207,54 @@ spec:
 
 로그아웃한 다음 페이지의 오른쪽 상단 모서리에서 로그인을 클릭합니다. 빈 암호와 함께 jason을 사용자 이름으로 사용합니다. 지연이 표시되고 리뷰에 대한 표시 오류가 발생합니다. 다른 사람들은 오류 없이 리뷰를 볼 수 있습니다.
 
+제품 페이지와 리뷰 서비스 사이의 제한 시간은 6초입니다.
+
 ![](<../../.gitbook/assets/image (238).png>)
+
+![](<../../.gitbook/assets/image (226).png>)
+
+추가적으로 복원력을 테스트하기 위해 테스트 사용자 jason에 대한 rating 마이크로 서비스에 HTTP 중단을 도입합니다. 페이지에 "Ratings service is currently unavailable"라는 메시지가 즉시 표시됩니다.
+
+아래를 실행합니다.&#x20;
+
+```
+kubectl -n bookinfo \
+  apply -f ${HOME}/environment/istio-${ISTIO_VERSION}/samples/bookinfo/networking/virtual-service-ratings-test-abort.yaml
+
+```
+
+Cloud9에서 virtual-service-ratings-test-abort.yaml을 확인하거나, 아래 Kubectl 명령을 통해 확인해 봅니다.
+
+```
+kubectl -n bookinfo get virtualservice ratings -o yaml
+
+```
+
+```
+spec:
+  hosts:
+  - ratings
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: jason
+    fault:
+      abort:
+        percentage:
+          value: 100.0
+        httpStatus: 500
+    route:
+    - destination:
+        host: ratings
+        subset: v1
+  - route:
+    - destination:
+        host: ratings
+        subset: v1
+```
+
+Subset은 v1으로 설정되고 기록된 사용자 이름이 'jason'과 일치하는 경우 reviewer 이름 아래에 "“Ratings service is currently unavailable”라는 오류 메시지를 반환합니다.
+
+```
+```
