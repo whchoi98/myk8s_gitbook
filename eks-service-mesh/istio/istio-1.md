@@ -211,7 +211,7 @@ spec:
 
 ![](<../../.gitbook/assets/image (238).png>)
 
-![](<../../.gitbook/assets/image (226).png>)
+![](<../../.gitbook/assets/image (226) (1).png>)
 
 추가적으로 복원력을 테스트하기 위해 테스트 사용자 jason에 대한 rating 마이크로 서비스에 HTTP 중단을 도입합니다. 페이지에 "Ratings service is currently unavailable"라는 메시지가 즉시 표시됩니다.
 
@@ -258,9 +258,9 @@ Subset은 v1으로 설정되고 기록된 사용자 이름이 'jason'과 일치�
 
 테스트하려면 페이지 오른쪽 상단에서 로그인을 클릭하고 사용자 이름에 jason을 사용하여 빈 비밀번호로 로그인합니다. jason으로 오류 메시지가 표시됩니다.
 
-![](<../../.gitbook/assets/image (239).png>)
+![](<../../.gitbook/assets/image (239) (1).png>)
 
-![](<../../.gitbook/assets/image (237).png>)
+![](<../../.gitbook/assets/image (237) (1).png>)
 
 ### 6. Traffic Shaping
 
@@ -313,7 +313,7 @@ Subnet은 모든 review 요청에 대해 review-v1에 대한 트래픽의 50% �
 
 테스트하려면 브라우저를 계속 새로고침하면 아래처럼 review-v1 및 review-v3만 표시됩니다.
 
-![](<../../.gitbook/assets/image (236).png>)
+![](<../../.gitbook/assets/image (236) (1).png>)
 
 ![](<../../.gitbook/assets/image (219).png>)
 

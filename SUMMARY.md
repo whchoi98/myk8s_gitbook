@@ -83,7 +83,7 @@
     * [Istio 소개](eks-service-mesh/istio/istio\_overview.md)
     * [istio 설치와 구성](eks-service-mesh/istio/page-4.md)
     * [istio 트래픽 관리 1](eks-service-mesh/istio/istio-1.md)
-    * [Page 2](eks-service-mesh/istio/page-2.md)
+    * [istio 모니터링](eks-service-mesh/istio/istio-2.md)
     * [Page 1](eks-service-mesh/istio/page-1.md)
   * [App Mesh (TBD)](eks-security/eks-service-mesh/app-mesh.md)
 * [12.Tip](tip/README.md)

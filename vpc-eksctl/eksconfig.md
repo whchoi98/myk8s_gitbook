@@ -131,13 +131,13 @@ EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드�
 
 EKS Cluster내에 생성된 워크로드들을 확인해 볼 수 있습니다.
 
-![](<../.gitbook/assets/image (236) (1).png>)
+![](<../.gitbook/assets/image (236) (1) (1).png>)
 
 managed Node type과 Self Managed Node Type의 차이를 확인할 수 있습니다
 
 Kuernetes의 Resource들을 선택하고 확인해 봅니다.&#x20;
 
-![](<../.gitbook/assets/image (237) (1).png>)
+![](<../.gitbook/assets/image (237) (1) (1).png>)
 
 이제 아래와 같은 EKS Cluster가 완성되었습니다. kubectl 명령을 통해 확인해 봅니다.
 
