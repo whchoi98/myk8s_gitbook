@@ -237,7 +237,7 @@ kubectl get pod
 
 istio 공식 사이트에서는 Sample App을 제공합니다.
 
-![](<../../.gitbook/assets/image (224).png>)
+![](<../../.gitbook/assets/image (227).png>)
 
 istio binary를 설치하고 나면 samples 디렉토리에 bookinfo 앱이 포함되어 있습니다. 이 앱을 설치해 봅니다.&#x20;
 
@@ -246,5 +246,56 @@ kubectl create namespace bookinfo
 kubectl label namespace bookinfo istio-injection=enabled
 kubectl get namespace -L istio-injection
 kubectl get ns bookinfo --show-labels
+kubectl -n bookinfo apply \
+  -f ${HOME}/environment/istio-${ISTIO_VERSION}/samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl -n bookinfo get pod,svc
+  
+```
+
+아래와 같은 Pod와 Service들이 배포 됩니다.&#x20;
 
 ```
+$ kubectl -n bookinfo get pod,svc
+NAME                                  READY   STATUS    RESTARTS   AGE
+pod/details-v1-7d88846999-5rw28       2/2     Running   0          7m56s
+pod/productpage-v1-7795568889-zwzgx   2/2     Running   0          7m56s
+pod/ratings-v1-754f9c4975-lmhl7       2/2     Running   0          7m56s
+pod/reviews-v1-55b668fc65-6np7d       2/2     Running   0          7m56s
+pod/reviews-v2-858f99c99-rvxvz        2/2     Running   0          7m56s
+pod/reviews-v3-7886dd86b9-j4fk7       2/2     Running   0          7m56s
+
+NAME                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/details       ClusterIP   172.20.32.154   <none>        9080/TCP   7m56s
+service/productpage   ClusterIP   172.20.5.101    <none>        9080/TCP   7m56s
+service/ratings       ClusterIP   172.20.14.146   <none>        9080/TCP   7m56s
+service/reviews       ClusterIP   172.20.134.44   <none>        9080/TCP   7m56s
+```
+
+이제 Gateway와 Virtual Service를 배포합니다.&#x20;
+
+```
+kubectl -n bookinfo \
+ apply -f ${HOME}/environment/istio-${ISTIO_VERSION}/samples/bookinfo/networking/bookinfo-gateway.yaml
+
+kubectl -n bookinfo get gateways,virtualservices
+kubectl -n istio-system get services
+
+```
+
+아래와 같이 출력됩니다.&#x20;
+
+```
+$ kubectl -n bookinfo get gateways,virtualservices
+NAME                                           AGE
+gateway.networking.istio.io/bookinfo-gateway   4m26s
+
+NAME                                          GATEWAYS               HOSTS   AGE
+virtualservice.networking.istio.io/bookinfo   ["bookinfo-gateway"]   ["*"]   4m27s
+
+$ kubectl -n istio-system get services
+NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP                                                                  PORT(S)                                                                      AGE
+istio-egressgateway    ClusterIP      172.20.9.165   <none>                                                                       80/TCP,443/TCP                                                               47m
+istio-ingressgateway   LoadBalancer   172.20.26.89   a36f3d5b98fc24cb29851355830f685e-55560905.ap-northeast-2.elb.amazonaws.com   15021:31074/TCP,80:32168/TCP,443:31397/TCP,31400:30472/TCP,15443:31709/TCP   47m
+istiod                 ClusterIP      172.20.69.47   <none>                                                                       15010/TCP,15012/TCP,443/TCP,15014/TCP                                        47m
+```
+
