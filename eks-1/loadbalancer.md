@@ -406,7 +406,7 @@ NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를
 
 ![](<../.gitbook/assets/image (228) (1) (1) (1).png>)
 
-![](<../.gitbook/assets/image (233) (1) (1).png>)
+![](<../.gitbook/assets/image (233) (1) (1) (1).png>)
 
 아래와 같이 새롭게 서비스와  PoD를 배포하고 확인해 봅니다.&#x20;
 

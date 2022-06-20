@@ -37,7 +37,7 @@ Pull 방식으로 지표정보를 읽어올때는 각 서버에 설치된 Export
 
 
 
-![](<../.gitbook/assets/image (225) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (225) (1) (1) (1) (1) (1).png>)
 
 ## Prometheus 구성
 
