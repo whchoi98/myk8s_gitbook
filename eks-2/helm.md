@@ -964,7 +964,7 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 
 * EC2 - 인스턴스 - Cloud9 인스턴스 선택 - 퍼블릭 IPv4 주소&#x20;
 
-![](<../.gitbook/assets/image (228) (1).png>)
+![](<../.gitbook/assets/image (228) (1) (1).png>)
 
 * EC2 - 인스턴스 -Cloud9 인스턴스 선택 - 보안 - 보안 그룹  선택
 

@@ -152,7 +152,7 @@ https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.y
 * IAM kubectl IAM Role : EksWorkshopCodeBuildKubectlRole
 * EKS cluster name: eksworkshop
 
-![](<../.gitbook/assets/image (235) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (235) (1) (1) (1) (1).png>)
 
 관리 콘솔에서 CodePipeline을 엽니다.&#x20;
 
@@ -186,13 +186,13 @@ https://github.com/개인계정/eks-workshop-sample-api-service-go
 
 ```
 
-![](<../.gitbook/assets/image (235) (1) (1).png>)
+![](<../.gitbook/assets/image (235) (1) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (218).png>)
 
 
 
-![](<../.gitbook/assets/image (235) (1).png>)
+![](<../.gitbook/assets/image (235) (1) (1).png>)
 
 Commit Changes에서 Commit을 합니다.&#x20;
 
@@ -204,7 +204,7 @@ GitHub에서 변경 사항을 수정하고 커밋하면 약 1분 안에 AWS Mana
 
 Build 상태를 통해서 , 빌드의 상세사항을 확인 할 수 있습니다.&#x20;
 
-![](<../.gitbook/assets/image (237) (1).png>)
+![](<../.gitbook/assets/image (237) (1) (1).png>)
 
 kubectl 명령을 통해 Service URL을 확인하고, 업데이트 현황을 확인합니다.
 
@@ -215,4 +215,4 @@ kubectl get services hello-k8s -o wide
 
 아래는 변경된 메세지가 포함된 결과입니다.&#x20;
 
-![](<../.gitbook/assets/image (236) (1) (1).png>)
+![](<../.gitbook/assets/image (236) (1) (1) (1).png>)

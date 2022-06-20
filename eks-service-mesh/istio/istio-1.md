@@ -76,7 +76,7 @@ echo "http://${GATEWAY_URL}/productpage"
 
 웹 브라우져를 계속 해서 접근해 보거나, 아래 CURL명령을 Cloud9 창에서 실행합니다.&#x20;
 
-![](<../../.gitbook/assets/image (235).png>)
+![](<../../.gitbook/assets/image (235) (1).png>)
 
 아래 Curl을 반복 실행해 봅니다.&#x20;
 
@@ -257,4 +257,74 @@ spec:
 Subset은 v1으로 설정되고 기록된 사용자 이름이 'jason'과 일치하는 경우 reviewer 이름 아래에 "“Ratings service is currently unavailable”라는 오류 메시지를 반환합니다.
 
 테스트하려면 페이지 오른쪽 상단에서 로그인을 클릭하고 사용자 이름에 jason을 사용하여 빈 비밀번호로 로그인합니다. jason으로 오류 메시지가 표시됩니다.
+
+![](<../../.gitbook/assets/image (239).png>)
+
+![](<../../.gitbook/assets/image (237).png>)
+
+### 6. Traffic Shaping
+
+마이크로서비스의 한 버전에서 다른 버전으로 트래픽을 조금씩로 마이그레이션하는 방법을 보여줍니다. 이 예에서는 트래픽의 50%를 review:v1로 보내고 50%를 review:v3으로 보냅니다.
+
+명령을 실행하여 모든 트래픽을 각 마이크로서비스의 v1 버전으로 라우팅합니다.
+
+```
+kubectl -n bookinfo \
+  apply -f ${HOME}/environment/istio-${ISTIO_VERSION}/samples/bookinfo/networking/virtual-service-all-v1.yaml
+
+```
+
+브라우저에서 Bookinfo 사이트를 엽니다. 페이지의 리뷰 부분은 새로 고침 횟수에 상관없이 별점 없이 표시됩니다.
+
+![](<../../.gitbook/assets/image (228).png>)
+
+아래 명령을 통해서 트래픽의 50%를 리뷰:v1에서 리뷰:v3으로 전송할 수 있습니다.&#x20;
+
+```
+kubectl -n bookinfo \
+  apply -f ${HOME}/environment/istio-${ISTIO_VERSION}/samples/bookinfo/networking/virtual-service-reviews-50-v3.yaml
+
+```
+
+Cloud9에서 virtual-service-reviews-50-v3.yaml을 확인하거나, 아래 Kubectl 명령을 통해 확인해 봅니다.
+
+```
+kubectl -n bookinfo get virtualservice reviews -o yaml
+
+```
+
+```
+spec:
+  hosts:
+    - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+      weight: 50
+    - destination:
+        host: reviews
+        subset: v3
+      weight: 50
+```
+
+Subnet은 모든 review 요청에 대해 review-v1에 대한 트래픽의 50% 및 review-v3에 대한 트래픽의 50%로 설정됩니다.
+
+테스트하려면 브라우저를 계속 새로고침하면 아래처럼 review-v1 및 review-v3만 표시됩니다.
+
+![](<../../.gitbook/assets/image (236).png>)
+
+![](<../../.gitbook/assets/image (219).png>)
+
+reviews-v3 마이크로서비스가 안정적이라고 판단되면, 트래픽의 100%를 이 마이크로서비스로 라우팅할 수 있습니다.
+
+```
+kubectl -n bookinfo apply -f ${HOME}/environment/istio-${ISTIO_VERSION}/samples/bookinfo/networking/virtual-service-reviews-v3.yaml
+
+```
+
+이제 /productpage를 새로고침하면 항상 review-v3(빨간색 별 등급)이 표시됩니다.
+
+![](<../../.gitbook/assets/image (224).png>)
 

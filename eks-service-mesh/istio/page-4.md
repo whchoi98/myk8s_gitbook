@@ -149,7 +149,7 @@ Istio의 모든 기능을 활용하려면 Pod에서 Istio 사이드카 프록시
 
 Istio에서 제공하는  Webhook admission Controller를 사용하여 사이드카를 적용 가능한 Kubernetes 포드에 자동으로 추가할 수 있습니다. 네임스페이스에 istio-injection=enabled 레이블을 설정하고 Injection Webhook이 활성화되면 해당 네임스페이스에서 생성되는 모든 새로운 Pod에는 자동으로 사이드카가 추가됩니다.
 
-![](<../../.gitbook/assets/image (239).png>)
+![](<../../.gitbook/assets/image (239) (1).png>)
 
 수동 주입과 달리 자동 주입은 Pod 수준에서 발생합니다.&#x20;
 
@@ -313,7 +313,7 @@ echo "http://${GATEWAY_URL}/productpage"
 
 EC2-로드밸런싱-로드밸런서에서 확인이 가능합니다.&#x20;
 
-![](<../../.gitbook/assets/image (228).png>)
+![](<../../.gitbook/assets/image (228) (1).png>)
 
 ### 6. istio flow 파악
 
