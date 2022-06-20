@@ -256,5 +256,5 @@ spec:
 
 Subset은 v1으로 설정되고 기록된 사용자 이름이 'jason'과 일치하는 경우 reviewer 이름 아래에 "“Ratings service is currently unavailable”라는 오류 메시지를 반환합니다.
 
-```
-```
+테스트하려면 페이지 오른쪽 상단에서 로그인을 클릭하고 사용자 이름에 jason을 사용하여 빈 비밀번호로 로그인합니다. jason으로 오류 메시지가 표시됩니다.
+
