@@ -62,7 +62,7 @@ kubectl -n kube-tools get svc kube-ops-view | tail -n 1 | awk '{ print "Kube-ops
 
 URL을 접속하면 , 아래와 같이 노드와 배치된 PoD들을 확인해 볼 수 있습니다
 
-![](<../.gitbook/assets/image (224).png>)
+![](<../.gitbook/assets/image (224) (1).png>)
 
 Karpenter 시험 환경 구성을 위해 아래와 같이 환경변수를 구성합니다.&#x20;
 

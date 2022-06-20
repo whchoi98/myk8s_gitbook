@@ -81,7 +81,7 @@
 * [12.EKS Service Mesh](eks-security/eks-service-mesh/README.md)
   * [Istio (TBD)](eks-service-mesh/istio/README.md)
     * [Istio 소개](eks-service-mesh/istio/istio\_overview.md)
-    * [Page 4](eks-service-mesh/istio/page-4.md)
+    * [istio 설치와 구성](eks-service-mesh/istio/istio.md)
     * [Page 3](eks-service-mesh/istio/page-3.md)
     * [Page 2](eks-service-mesh/istio/page-2.md)
     * [Page 1](eks-service-mesh/istio/page-1.md)

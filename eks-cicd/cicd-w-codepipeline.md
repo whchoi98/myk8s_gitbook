@@ -164,7 +164,7 @@ eks-workshop-codepipeline으로 시작하는 CodePipeline이 표시됩니다. �
 
 Codepipeline에서 진행중이거나, 완료된 Pipeline을 선택하면 Build 상태를 확인 할 수 있습니다.&#x20;
 
-![](<../.gitbook/assets/image (232).png>)
+![](<../.gitbook/assets/image (232) (1).png>)
 
 kubectl을 통해서, 정상적인 배포가 이뤄졌는지 확인해 봅니다.&#x20;
 
@@ -200,7 +200,7 @@ Commit Changes에서 Commit을 합니다.&#x20;
 
 GitHub에서 변경 사항을 수정하고 커밋하면 약 1분 안에 AWS Management Console CodePipeline에서 트리거된 새 빌드가 실행되는 것을 볼 수 있습니다.
 
-![](<../.gitbook/assets/image (238).png>)
+![](<../.gitbook/assets/image (238) (1).png>)
 
 Build 상태를 통해서 , 빌드의 상세사항을 확인 할 수 있습니다.&#x20;
 
