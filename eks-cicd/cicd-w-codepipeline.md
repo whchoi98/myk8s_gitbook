@@ -118,7 +118,7 @@ Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 
 personal access token 생성을 확인하고, 복사해 둡니다.&#x20;
 
-![](<../.gitbook/assets/image (221).png>)
+![](<../.gitbook/assets/image (221) (1).png>)
 
 ## CodePipeline 구성
 

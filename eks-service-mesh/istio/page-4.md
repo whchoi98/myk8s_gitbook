@@ -239,6 +239,8 @@ istio 공식 사이트에서는 Sample App을 제공합니다.
 
 ![](<../../.gitbook/assets/image (227).png>)
 
+### 5. Sample App 설치
+
 istio binary를 설치하고 나면 samples 디렉토리에 bookinfo 앱이 포함되어 있습니다. 이 앱을 설치해 봅니다.&#x20;
 
 ```
@@ -297,5 +299,114 @@ NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP                
 istio-egressgateway    ClusterIP      172.20.9.165   <none>                                                                       80/TCP,443/TCP                                                               47m
 istio-ingressgateway   LoadBalancer   172.20.26.89   a36f3d5b98fc24cb29851355830f685e-55560905.ap-northeast-2.elb.amazonaws.com   15021:31074/TCP,80:32168/TCP,443:31397/TCP,31400:30472/TCP,15443:31709/TCP   47m
 istiod                 ClusterIP      172.20.69.47   <none>                                                                       15010/TCP,15012/TCP,443/TCP,15014/TCP                                        47m
+```
+
+접속할 Product Page URL을 확인합니다.&#x20;
+
+```
+export GATEWAY_URL=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+echo "http://${GATEWAY_URL}/productpage"
+
+```
+
+![](<../../.gitbook/assets/image (240).png>)
+
+EC2-로드밸런싱-로드밸런서에서 확인이 가능합니다.&#x20;
+
+![](<../../.gitbook/assets/image (228).png>)
+
+### 6. istio flow 파악
+
+아래에서 ingress gateway의 실제 Endpoint를 확인합니다.&#x20;
+
+```
+ kubectl -n istio-system get pods -o wide
+ 
+```
+
+아래 처럼 결과를 확인 할 수 있습니다.&#x20;
+
+```
+## 10.11.88.41 주소가 istio-ingressgateway 입니다. 
+$ kubectl -n istio-system get pods -o wide
+NAME                                    READY   STATUS    RESTARTS   AGE    IP             NODE                                            NOMINATED NODE   READINESS GATES
+istio-egressgateway-859f895667-79rd6    1/1     Running   0          108m   10.11.89.163   ip-10-11-90-2.ap-northeast-2.compute.internal   <none>           <none>
+istio-ingressgateway-6565cc5469-frp4w   1/1     Running   0          108m   10.11.88.41    ip-10-11-90-2.ap-northeast-2.compute.internal   <none>           <none>
+istiod-54588fb7bf-286r7                 1/1     Running   0          108m   10.11.95.4     ip-10-11-90-2.ap-northeast-2.compute.internal   <none>           <none>
+```
+
+이제 워커 노드에서 경로를 확인해 봅니다.  워커노드를 SSH 또는 Session Manager로 접속해 봅니다.&#x20;
+
+```
+# NodePort확인을 위해서 EKS WorkerNode에 접속
+# 80 port 확인
+iptables -t nat -nvL KUBE-SERVICES | grep 80
+#istio-gateway endpoint
+iptables -t nat -nvL KUBE-SVC-xxxxxxxxx
+
+```
+
+아래와 같이 결과를 확인 합니다.
+
+* CLB - NodePort - IstioIngress Gateway
+
+IPTable에서 구성된 Proxy로 연결되지 않고 직접 Istio-Ingress Gateway로 포워딩 됩니다.&#x20;
+
+```
+# 각 노드들은 Kubernetes Service로 유입되는 80포트를 IPTable의 체인으로 보냅니다. 
+[root@ip-10-11-12-72 bin]# iptables -t nat -nvL KUBE-SERVICES | grep dpt:80
+     0     0 KUBE-SVC-G6D3V5KS3PXPUEDS  tcp  --  *      *       0.0.0.0/0            172.20.26.89         /* istio-system/istio-ingressgateway:http2 cluster IP */ tcp dpt:80
+
+# 해당 체인은 Endpoint로 포워딩 합니다
+[root@ip-10-11-12-72 bin]# iptables -t nat -nvL KUBE-SVC-G6D3V5KS3PXPUEDS
+Chain KUBE-SVC-G6D3V5KS3PXPUEDS (2 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-SEP-HL5XEYN4N2XIE3Z4  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* istio-system/istio-ingressgateway:http2 */
+
+해당 Endpoint는 Ingress Gateway 입니다. 
+[root@ip-10-11-12-72 bin]#  iptables -t nat -nvL KUBE-SEP-HL5XEYN4N2XIE3Z4
+Chain KUBE-SEP-HL5XEYN4N2XIE3Z4 (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-MARK-MASQ  all  --  *      *       10.11.88.41          0.0.0.0/0            /* istio-system/istio-ingressgateway:http2 */
+    0     0 DNAT       tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* istio-system/istio-ingressgateway:http2 */ tcp to:10.11.88.41:8080
+```
+
+아래에서 Curl을 통해 실제 Istio Proxy/Envoy가 응답 하지는 지 확인해 봅니다.&#x20;
+
+```
+curl -I XGET http://${GATEWAY_URL}/productpage -v
+
+```
+
+아래 처럼 Pod내의 istio-envoy Container가 응답하는 것을 확인할 수 있습니다.&#x20;
+
+```
+$ curl -I XGET http://${GATEWAY_URL}/productpage -v
+* Could not resolve host: XGET
+* Closing connection 0
+curl: (6) Could not resolve host: XGET
+*   Trying 15.164.69.90:80...
+* Connected to a36f3d5b98fc24cb29851355830f685e-55560905.ap-northeast-2.elb.amazonaws.com (15.164.69.90) port 80 (#1)
+> HEAD /productpage HTTP/1.1
+> Host: a36f3d5b98fc24cb29851355830f685e-55560905.ap-northeast-2.elb.amazonaws.com
+> User-Agent: curl/7.79.1
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+HTTP/1.1 200 OK
+< content-type: text/html; charset=utf-8
+content-type: text/html; charset=utf-8
+< content-length: 5290
+content-length: 5290
+< server: istio-envoy
+server: istio-envoy
+< date: Mon, 20 Jun 2022 15:27:24 GMT
+date: Mon, 20 Jun 2022 15:27:24 GMT
+< x-envoy-upstream-service-time: 32
+x-envoy-upstream-service-time: 32
+
+< 
+* Connection #1 to host a36f3d5b98fc24cb29851355830f685e-55560905.ap-northeast-2.elb.amazonaws.com left intact
 ```
 

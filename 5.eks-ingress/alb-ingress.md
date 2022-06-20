@@ -507,7 +507,7 @@ Cache-Control: max-age=0
 
 아래와 같이 ALB Ingress가 구성되었습니다.&#x20;
 
-![](<../.gitbook/assets/image (228) (1).png>)
+![](<../.gitbook/assets/image (228) (1) (1).png>)
 
 ALB Ingress Controller는 Target Group을 IP기반으로 Pod에 직접 배포할 수 있습니다.&#x20;
 

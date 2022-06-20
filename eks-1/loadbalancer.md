@@ -162,7 +162,7 @@ metadata:
 
 다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
 
-![](<../.gitbook/assets/image (221) (1) (1).png>)
+![](<../.gitbook/assets/image (221) (1) (1) (1).png>)
 
 * namespace : clb-test
 * eksdemo-frontend service type : LoadbBlancer
@@ -404,7 +404,7 @@ iptables -t nat -L --line-number | grep nlb-test-01-svc
 
 NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다.&#x20;
 
-![](<../.gitbook/assets/image (228) (1) (1).png>)
+![](<../.gitbook/assets/image (228) (1) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (233) (1) (1).png>)
 

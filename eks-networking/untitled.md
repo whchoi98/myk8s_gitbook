@@ -172,7 +172,7 @@ Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니�
 
 ![](<../.gitbook/assets/image (226) (1) (1).png>)
 
-![](<../.gitbook/assets/image (228) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (228) (1) (1) (1) (1) (1).png>)
 
 ![](<../.gitbook/assets/image (229) (1) (1) (1).png>)
 

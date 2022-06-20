@@ -178,7 +178,7 @@ ClusterIP service의 A Record는
 
 &#x20;**`"ClusterIP Metadata.name"."namesapce".svc.cluster.local.`** 의 형식을 사용하게 됩니다.
 
-![](<../.gitbook/assets/image (221) (1).png>)
+![](<../.gitbook/assets/image (221) (1) (1).png>)
 
 ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. curl을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
 
