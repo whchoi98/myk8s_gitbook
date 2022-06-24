@@ -22,7 +22,7 @@ Traffic 흐름은 다음과 같습니다.
 * CLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (232) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (237).png>)
 
 ### 3. CLB Service 시험
 
@@ -36,7 +36,7 @@ kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01-ser
 
 ```
 
-정상적으로 배포되었는지 아래 Command로 확인합니다
+정상적으로 배포되었는지 아래 Command로 확인합니다.&#x20;
 
 ```
 ## clb-test-01 namespace의 pod 확인 
@@ -52,19 +52,19 @@ kubectl -n clb-test-01 get service -o wide
 ```
 kubectl -n clb-test-01 get pod -o wide
 NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE                                             NOMINATED NODE   READINESS GATES
-clb-test-01-66f4b975ff-25mvk   0/1     Running   0          9s    10.11.3.103    ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
+clb-test-01-66f4b975ff-25mvk   1/1     Running   0          9s    10.11.3.103    ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
 clb-test-01-66f4b975ff-hmm52   1/1     Running   0          9s    10.11.40.163   ip-10-11-35-39.ap-northeast-2.compute.internal   <none>           <none>
-clb-test-01-66f4b975ff-vrmx5   0/1     Running   0          9s    10.11.30.212   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
+clb-test-01-66f4b975ff-vrmx5   1/1     Running   0          9s    10.11.30.212   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
 kubectl -n clb-test-01 get service -o wide
 NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)          AGE   SELECTOR
-clb-test-01-svc   LoadBalancer   172.20.238.198   a2bb893008047439ba29a8df77944bcf-1758389191.ap-northeast-2.elb.amazonaws.com   8080:30975/TCP   10s   app=clb-test-01
+clb-test-01-svc   LoadBalancer   172.20.157.165   a2bb893008047439ba29a8df77944bcf-1758389191.ap-northeast-2.elb.amazonaws.com   8080:30975/TCP   10s   app=clb-test-01
 ```
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.&#x20;
 
-![](<../.gitbook/assets/image (227) (1) (1).png>)
+![](<../.gitbook/assets/image (219).png>)
 
-아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
+아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다. (Option)
 
 ```
 export Clb_Test_Pod01=$(kubectl -n clb-test-01 get pod -o wide | awk '/10.11.3.103/{print $1}')
@@ -77,11 +77,12 @@ source ~/.bash_profile
 
 ```
 
-ClbTestPod01에 접속해서 아래와 같이 확인해 봅니다
+ClbTestPod01에 접속해서 아래와 같이 확인해 봅니다. K9s에서 접속해도 됩니다.
 
 ```
 kubectl -n clb-test-01 exec -it $Clb_Test_Pod01 -- /bin/sh
 nslookup {cluster-ip}
+# Container tcpdump
 tcpdump -i eth0 dst port 80 | grep "HTTP: GET"
 
 ```
@@ -91,7 +92,7 @@ Cloud9 IDE Terminal에서 CLB External IP:8080 으로 접속합니다
 ```
 kubectl -n clb-test-01 get service
 NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)          AGE
-clb-test-01-svc   LoadBalancer   172.20.214.188   a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com   8080:32139/TCP   3h16m
+clb-test-01-svc   LoadBalancer   172.20.157.165   a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com   8080:32139/TCP   3h16m
 
 curl a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com:8080
 ```
@@ -101,9 +102,9 @@ Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅
 ```
 aws ssm start-session --target $ng_public01_id
 sudo -s
-iptables -t nat -L --line-number | more
-iptables -t nat -L --line-number | grep clb-test-01-svc
-
+iptables -t nat -nvL --line-number | more
+iptables -t nat -nvL --line-number | grep clb-test-01-svc
+iptables -t nat -nL KUBE-SERVICES
 ```
 
 CLB에서는 아래와 같은 다양한 Annotation을 추가하여 CLB의 속성 또는 AWS 자원을 연결해서 사용할 수 있습니다
@@ -162,12 +163,12 @@ metadata:
 
 다음과 같은 구성을 통해서 CLB 서비스를 구현해 봅니다.&#x20;
 
-![](<../.gitbook/assets/image (221) (1) (1) (1).png>)
-
 * namespace : clb-test
 * eksdemo-frontend service type : LoadbBlancer
 * eksdemo-crystal service type: Cluster-IP&#x20;
 * eksdemo-nodejs service type: Cluster-IP&#x20;
+
+![](<../.gitbook/assets/image (232).png>)
 
 ### 4. FrontEnd 어플리케이션 배포와 서비스 구성.
 
@@ -210,6 +211,13 @@ kubectl -n clb-test get pod -o wide
 kubectl -n clb-test get service -o wide                                                           
 NAME               TYPE           CLUSTER-IP     EXTERNAL-IP                                                                   PORT(S)        AGE     SELECTOR
 ecsdemo-frontend   LoadBalancer   172.20.37.78   afd75bf8c69c04c3aacf6cfbdefe1c4f-884593752.ap-northeast-2.elb.amazonaws.com   80:31380/TCP   5m45s   app=ecsdemo-frontend
+```
+
+CLB 접속 URL 주소는 아래 결과로 출력할 수 있습니다.&#x20;
+
+```
+kubectl -n clb-test get svc ecsdemo-frontend | tail -n 1 | awk '{ print "CLB-FRONTEND URL = http://"$4 }' 
+
 ```
 
 출력결과 예시
@@ -321,7 +329,7 @@ Traffic 흐름은 다음과 같습니다.
 * NLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (231) (1) (1).png>)
+![](<../.gitbook/assets/image (224).png>)
 
 ### 9. NLB Service 시험
 
@@ -354,7 +362,7 @@ nlb-test-01-7c5cf9bd5-gsxlk   1/1     Running   0          6m15s   10.11.27.219 
 
 kubectl -n nlb-test-01 get service -o wide
 NAME              TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
-nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017-374347eabaa0875f.elb.ap-northeast-2.amazonaws.com   8080:31965/TCP   28s   app=nlb-test-01
+nlb-test-01-svc   LoadBalancer   172.20.221.81   aaa7c67484fd94ea8a2b6bf1fa091017-374347eabaa0875f.elb.ap-northeast-2.amazonaws.com   8080:31965/TCP   28s   app=nlb-test-01
 ```
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.
@@ -385,6 +393,10 @@ tcpdump -i eth0 dst port 80 | grep "HTTP: GET"
 Cloud9 IDE Terminal에서 NLB External IP:8080 으로 접속합니다.&#x20;
 
 ```
+kubectl -n nlb-test-01 get svc nlb-test-01-svc | tail -n 1 | awk '{ print "NLB-TEST-01 URL = http://"$4 }'
+```
+
+```
 $ kubectl -n nlb-test-01 get service -o wide
 NAME              TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
 nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017-374347eabaa0875f.elb.ap-northeast-2.amazonaws.com   8080:31965/TCP   18m   app=nlb-test-01
@@ -397,16 +409,17 @@ Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅
 ```
 aws ssm start-session --target $ng_public01_id
 sudo -s
-iptables -t nat -L --line-number | more
-iptables -t nat -L --line-number | grep nlb-test-01-svc
+iptables -t nat -nvL --line-number | more
+iptables -t nat -nvL --line-number | grep nlb-test-01-svc
+iptables -t nat -nL KUBE-SERVICES
 
 ```
 
 NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다.&#x20;
 
-![](<../.gitbook/assets/image (228) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (229).png>)
 
-![](<../.gitbook/assets/image (233) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (230).png>)
 
 아래와 같이 새롭게 서비스와  PoD를 배포하고 확인해 봅니다.&#x20;
 
@@ -450,6 +463,7 @@ aws ssm start-session --target $ng_public01_id
 sudo -s
 iptables -t nat -L --line-number | more
 iptables -t nat -L --line-number | grep nlb-test-02-svc
+iptables -t nat -nL KUBE-SERVICES
 
 ```
 

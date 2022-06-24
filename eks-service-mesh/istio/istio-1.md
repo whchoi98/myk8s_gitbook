@@ -260,7 +260,7 @@ Subset은 v1으로 설정되고 기록된 사용자 이름이 'jason'과 일치�
 
 ![](<../../.gitbook/assets/image (239) (1) (1).png>)
 
-![](<../../.gitbook/assets/image (237) (1).png>)
+![](<../../.gitbook/assets/image (237) (1) (1).png>)
 
 ### 6. Traffic Shaping
 
@@ -313,9 +313,9 @@ Subnet은 모든 review 요청에 대해 review-v1에 대한 트래픽의 50% �
 
 테스트하려면 브라우저를 계속 새로고침하면 아래처럼 review-v1 및 review-v3만 표시됩니다.
 
-![](<../../.gitbook/assets/image (236) (1).png>)
+![](<../../.gitbook/assets/image (236) (1) (1).png>)
 
-![](<../../.gitbook/assets/image (219).png>)
+![](<../../.gitbook/assets/image (219) (1).png>)
 
 reviews-v3 마이크로서비스가 안정적이라고 판단되면, 트래픽의 100%를 이 마이크로서비스로 라우팅할 수 있습니다.
 
@@ -326,5 +326,5 @@ kubectl -n bookinfo apply -f ${HOME}/environment/istio-${ISTIO_VERSION}/samples/
 
 이제 /productpage를 새로고침하면 항상 review-v3(빨간색 별 등급)이 표시됩니다.
 
-![](<../../.gitbook/assets/image (224).png>)
+![](<../../.gitbook/assets/image (224) (1).png>)
 

@@ -67,7 +67,7 @@ echo https://${bucket_name}.s3.ap-northeast-2.amazonaws.com/EKSVPC3AZ.yml
 
 Cloudformation Stack 이 완료된 것을 확인합니다.
 
-![](<../.gitbook/assets/image (224) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (224) (1) (1) (1) (1).png>)
 
 ### 4.Output 정보 확인
 

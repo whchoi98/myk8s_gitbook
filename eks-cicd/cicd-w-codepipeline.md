@@ -164,7 +164,7 @@ eks-workshop-codepipeline으로 시작하는 CodePipeline이 표시됩니다. �
 
 Codepipeline에서 진행중이거나, 완료된 Pipeline을 선택하면 Build 상태를 확인 할 수 있습니다.&#x20;
 
-![](<../.gitbook/assets/image (232) (1).png>)
+![](<../.gitbook/assets/image (232) (1) (1).png>)
 
 kubectl을 통해서, 정상적인 배포가 이뤄졌는지 확인해 봅니다.&#x20;
 
@@ -204,7 +204,7 @@ GitHub에서 변경 사항을 수정하고 커밋하면 약 1분 안에 AWS Mana
 
 Build 상태를 통해서 , 빌드의 상세사항을 확인 할 수 있습니다.&#x20;
 
-![](<../.gitbook/assets/image (237) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (237) (1) (1) (1) (1).png>)
 
 kubectl 명령을 통해 Service URL을 확인하고, 업데이트 현황을 확인합니다.
 
@@ -215,4 +215,4 @@ kubectl get services hello-k8s -o wide
 
 아래는 변경된 메세지가 포함된 결과입니다.&#x20;
 
-![](<../.gitbook/assets/image (236) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (236) (1) (1) (1) (1) (1).png>)
