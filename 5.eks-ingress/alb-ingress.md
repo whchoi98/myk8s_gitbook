@@ -72,7 +72,7 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 * ALB는 각 노드로 로드밸런싱 합니다
 * Kube-API에 의해 업데이트 된 정보를 가지고 ALB에서 Loadbalancing 처리를 합니다.&#x20;
 
-![](<../.gitbook/assets/image (230) (1).png>)
+![](<../.gitbook/assets/image (230) (1) (1).png>)
 
 아래와 같은 구성 단계로 ALB Loadbalancer Controller를 구성합니다.
 

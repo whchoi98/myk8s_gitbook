@@ -20,7 +20,7 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 * 공인 IP/Port로 접근한 트래픽은 Node(EC2)의 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
 * IPTable 규칙에 의해 PoD 분산하게 됩니다.
 
-![](<../.gitbook/assets/image (229) (1) (1).png>)
+![](<../.gitbook/assets/image (230).png>)
 
 아래와 같이 새로운 Namespace와 Pod를 생성합니다.
 
@@ -91,18 +91,18 @@ nodePort Service가 정상적으로 배포되었는지 확인합니다.
 ```
 kubectl -n node-test-01 get services -o wide
 NAME               TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE   SELECTOR
-node-test-01-svc   NodePort   172.20.138.254   <none>        8080:30080/TCP   37s   app=node-test-01
+node-test-01-svc   NodePort   172.20.177.168   <none>        8080:30080/TCP   37s   app=node-test-01
 ```
 
 아래와 같은 구성이 배포되었습니다. 외부에 Node IP:30080 으로 노출되어 있으며, Cluster 8080으로 Forwarding됩니다. 이후 Iptable에 의해 Pod들로 80 Port로 로드밸런싱됩니다.
 
-![](<../.gitbook/assets/image (228) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (227).png>)
 
 pod shell로 접속해서 Service A Record를 확인해 봅니다.
 
 ```
 kubectl -n node-test-01 exec -it $NodePort_Test_Pod01 -- /bin/sh
-/# nslookup 172.20.138.254
+/# nslookup 172.20.177.168
 ```
 
 Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니다. 해당 EC2 대시보드에서 인스턴스를 선택합니다.
@@ -259,13 +259,17 @@ kubectl get nodes -o wide
 
 ![](<../.gitbook/assets/image (220) (1) (1).png>)
 
-eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
+eksworkshop-managed-ng-public-01-node 들의 EIP를 확인합니다.
 
 ```
-~/environment/useful-shell/aws_ec2_text.sh | awk '/eksworkshop-ng-public-01-Node/{print $1,$2,$6,$7,$8}'
-eksworkshop-ng-public-01-Node ap-northeast-2a running 10.11.10.88 52.79.206.201
-eksworkshop-ng-public-01-Node ap-northeast-2b running 10.11.30.67 3.38.195.240
-eksworkshop-ng-public-01-Node ap-northeast-2c running 10.11.35.39 13.125.40.125
+~/environment/useful-shell/aws_ec2_text.sh | awk '/eksworkshop-managed-ng-public-01-Node/{print $1,$2,$6,$7,$8}' 
+```
+
+```
+~/environment/useful-$ ~/environment/useful-shell/aws_ec2_text.sh | awk '/eksworkshop-managed-ng-public-01-Node/{print $1,$2,$6,$7,$8}'                                                    
+eksworkshop-managed-ng-public-01-Node ap-northeast-2a running 10.11.13.125 3.38.193.206
+eksworkshop-managed-ng-public-01-Node ap-northeast-2b running 10.11.26.163 3.34.195.59
+eksworkshop-managed-ng-public-01-Node ap-northeast-2c running 10.11.41.213 52.78.36.141
 ```
 
 eksworkshop-ng-public-01-Node 의 IP 주소를 확인하고 , 브라우저에서 아래와 같이 주소를 입력합니다.

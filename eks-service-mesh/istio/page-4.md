@@ -237,7 +237,7 @@ kubectl get pod
 
 istio 공식 사이트에서는 Sample App을 제공합니다.
 
-![](<../../.gitbook/assets/image (227).png>)
+![](<../../.gitbook/assets/image (227) (1).png>)
 
 ### 5. Sample App 설치
 

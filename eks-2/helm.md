@@ -972,7 +972,7 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 
 * 인바운드 규칙 편집 선택&#x20;
 
-![](<../.gitbook/assets/image (230).png>)
+![](<../.gitbook/assets/image (230) (1).png>)
 
 * TCP 8888 포트 추가 / 소스 Anywhere-IPv4&#x20;
 
