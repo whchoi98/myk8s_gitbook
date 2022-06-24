@@ -59,7 +59,7 @@ Kiali 대시보드를 열기 위해, 아래 처럼 Cloud9 환경에서 "Preview 
 
 새로운 창을 확대해서, 실행 시킵니다.&#x20;
 
-![](<../../.gitbook/assets/image (239).png>)
+![](<../../.gitbook/assets/image (239) (1).png>)
 
 아래와 같이 확인 할 수 있습니다.&#x20;
 

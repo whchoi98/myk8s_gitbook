@@ -16,7 +16,7 @@ Service의 종류는 아래와 같습니다.
 
 아래 그림에서 처럼 Service의 기본은 CLUSTER-IP 방식입니다. 외부로 노출되지 않으며, Service에는  Pod Container의 포트를 기술해 줍니다.
 
-![](<../.gitbook/assets/image (227) (1) (1).png>)
+![](<../.gitbook/assets/image (238).png>)
 
 ## CoreDNS와 Service
 
@@ -178,7 +178,7 @@ ClusterIP service의 A Record는
 
 &#x20;**`"ClusterIP Metadata.name"."namesapce".svc.cluster.local.`** 의 형식을 사용하게 됩니다.
 
-![](<../.gitbook/assets/image (221) (1) (1).png>)
+![](<../.gitbook/assets/image (239).png>)
 
 ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. curl을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
 
@@ -190,8 +190,8 @@ nslookup {CLUSTER-IP}
 ```
 ## ClusterTest01에서 ClusterIP Service A Record 확인.
 #ClusterTestPod01
-# nslookup 172.20.4.192
-192.4.20.172.in-addr.arpa       name = cluster-test-01-svc.cluster-test-01.svc.cluster.local.
+# nslookup 172.20.120.4
+4.120.20.172.in-addr.arpa       name = cluster-test-01-svc.cluster-test-01.svc.cluster.local.
 
 / # curl cluster-test-01-svc.cluster-test-01.svc.cluster.local.:8080
 Praqma Network MultiTool (with NGINX) - cluster-test-01-6f4dddc749-tq8jj - 10.11.1.72

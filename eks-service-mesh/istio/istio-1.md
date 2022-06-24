@@ -209,7 +209,7 @@ spec:
 
 제품 페이지와 리뷰 서비스 사이의 제한 시간은 6초입니다.
 
-![](<../../.gitbook/assets/image (238).png>)
+![](<../../.gitbook/assets/image (238) (1).png>)
 
 ![](<../../.gitbook/assets/image (226) (1).png>)
 
@@ -258,7 +258,7 @@ Subset은 v1으로 설정되고 기록된 사용자 이름이 'jason'과 일치�
 
 테스트하려면 페이지 오른쪽 상단에서 로그인을 클릭하고 사용자 이름에 jason을 사용하여 빈 비밀번호로 로그인합니다. jason으로 오류 메시지가 표시됩니다.
 
-![](<../../.gitbook/assets/image (239) (1).png>)
+![](<../../.gitbook/assets/image (239) (1) (1).png>)
 
 ![](<../../.gitbook/assets/image (237) (1).png>)
 
