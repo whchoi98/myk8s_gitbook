@@ -231,7 +231,7 @@ source ~/.bash_profile
 
 aws ssm start-session --target $ng_public01_id
 sudo -s
-iptables -t nat -L --line-number | more
-iptables -t nat -L --line-number | grep cluster-test-01-svc
-
+iptables -t nat -nvL --line-number | more
+iptables -t nat -nvL --line-number | grep cluster-test-01-svc
+iptables -t nat -nvL KUBE-SERVICES
 ```
