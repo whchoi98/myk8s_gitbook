@@ -216,36 +216,22 @@ datasources:
 EoF
 ```
 
-helm chart를 통해 설치를 위해, repo 검색을 합니다.
+helm repo에 grafana를 등록 합니다.
 
 ```
-helm search repo grafana
+helm repo add grafana https://grafana.github.io/helm-charts
 
-```
-
-아래와 같은 결과를 얻을 수 있습니다.
-
-```
-$ helm search repo grafana
-NAME                                            CHART VERSION   APP VERSION     DESCRIPTION                                       
-bitnami/grafana                                 7.0.0           8.2.1           Grafana is an open source, feature rich metrics...
-bitnami/grafana-operator                        1.3.0           3.10.3          Kubernetes Operator based on the Operator SDK f...
-bitnami/grafana-tempo                           0.2.9           1.1.0           Grafana Tempo is an open source, easy-to-use an...
-stable/grafana                                  5.5.7           7.1.1           DEPRECATED - The leading tool for querying and ...
-prometheus-community/kube-prometheus-stack      19.2.2          0.50.0          kube-prometheus-stack collects Kubernetes manif...
-prometheus-community/prometheus-druid-exporter  0.11.0          v0.8.0          Druid exporter to monitor druid metrics with Pr...
 ```
 
 이제 helm 을 통해 grafana를 설치합니다. 설치시에 옵션을 통해 prometheus 설치와 동일하게 storage type을 설정하고, 생성한 매니페스트를 불러옵니다.  또한 외부에서 접속을 위해서 Loadbalacer type을 지정합니다.
 
 ```
-cd ~/environment/grafana/
-helm install grafana stable/grafana \
+helm install grafana grafana/grafana \
     --namespace grafana \
     --set persistence.storageClassName="gp2" \
     --set persistence.enabled=true \
     --set adminPassword='1234Qwer' \
-    --values grafana.yaml \
+    --values ${HOME}/environment/grafana/grafana.yaml \
     --set service.type=LoadBalancer
 
 ```
@@ -253,29 +239,23 @@ helm install grafana stable/grafana \
 아래와 같이 helm을 통해 설치된 결과를 확인 할 수 있습니다.&#x20;
 
 ```
-$ helm install grafana stable/grafana \
+$ helm install grafana grafana/grafana \
 >     --namespace grafana \
 >     --set persistence.storageClassName="gp2" \
 >     --set persistence.enabled=true \
 >     --set adminPassword='1234Qwer' \
->     --values grafana.yaml \
+>     --values ${HOME}/environment/grafana/grafana.yaml \
 >     --set service.type=LoadBalancer
-WARNING: This chart is deprecated
-W1021 16:05:21.573233   25796 warnings.go:70] rbac.authorization.k8s.io/v1beta1 Role is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1 Role
-W1021 16:05:21.610033   25796 warnings.go:70] rbac.authorization.k8s.io/v1beta1 RoleBinding is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1 RoleBinding
-W1021 16:05:21.818776   25796 warnings.go:70] rbac.authorization.k8s.io/v1beta1 Role is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1 Role
-W1021 16:05:21.829339   25796 warnings.go:70] rbac.authorization.k8s.io/v1beta1 RoleBinding is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1 RoleBinding
+W0619 03:59:14.014204   23344 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
+W0619 03:59:14.022486   23344 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
+W0619 03:59:14.208545   23344 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
+W0619 03:59:14.214443   23344 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
 NAME: grafana
-LAST DEPLOYED: Thu Oct 21 16:05:21 2021
+LAST DEPLOYED: Sun Jun 19 03:59:13 2022
 NAMESPACE: grafana
 STATUS: deployed
 REVISION: 1
 NOTES:
-*******************
-****DEPRECATED*****
-*******************
-* The chart is deprecated. Future development has been moved to https://github.com/grafana/helm2-grafana
-
 1. Get your 'admin' user password by running:
 
    kubectl get secret --namespace grafana grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
