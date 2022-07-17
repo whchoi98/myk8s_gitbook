@@ -107,7 +107,7 @@ aws iam list-open-id-connect-providers
 
 ![](<../.gitbook/assets/image (197).png>)
 
-### 8. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드&#x20;
+### 8. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드 (생략)
 
 ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다. (이미 앞서 git에서 받은 폴더에 포함되어 있습니다.)
 
@@ -155,7 +155,7 @@ aws iam create-policy \
 
 ### 10. AWS LoadBalancer Controller IAM 역할 및 Service Account 생성
 
-이 단계에서는 AWS LoadBalancer Controller 에 대한 Service Account를 생성하고, 앞서 생성한 IAM Role을 연결합니다.&#x20;
+이 단계에서는 AWS LoadBalancer Controller 에 대한 Service Account를 생성하고, 앞서 생성한 IAM Role을 연결합니다.  2\~3분 정도 시간이 소요 됩니다.&#x20;
 
 ```
 eksctl create iamserviceaccount \
@@ -237,7 +237,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 
 ### 12. AWS Loadbalancer Controller Pod 설치
 
-Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다. 이미 git을 통해서 다운 받았을 경우에는 생략해도 됩니다
+Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다. (이미 git을 통해서 다운 받았을 경우에는 생략해도 됩니다.)
 
 ```
 wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.3.1/v2_3_1_full.yaml
@@ -441,7 +441,14 @@ kubectl -n alb-ing-01 get ingress -o wide
 
 ```
 
-아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다. 해당 A Record를 Cloud9 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다
+아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다.&#x20;
+
+```
+kubectl -n alb-ing-01 get ingress alb-ing-01 | tail -n 1 | awk '{ print "ALB-INGRESS URL = http://"$4}' 
+
+```
+
+해당 A Record를 Cloud9 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다.
 
 ```
 $ kubectl -n alb-ing-01 get pod -o wide
