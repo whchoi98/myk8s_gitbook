@@ -24,6 +24,60 @@ Karpenter는 [Apache License 2.0](https://github.com/awslabs/karpenter/blob/main
 
 ## Karpenter 설치
 
+0\. EKS Cluster 설치
+
+ap-northeast-1 region에 새로운 Cluster를 설치합니다.
+
+* ap-northeast-1 region에서 새로운 Cloud9 을 설치 합니다. ([2.EKS 환경 구성 참조](../eks/cloud9-ide.md#1.-cloud9-ide))
+
+설치  Script는 아래와 같이 진행합니다.
+
+```
+### AWS Cli 2.0 Install
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+source ~/.bashrc
+aws --version
+
+which aws_completer
+export PATH=/usr/local/bin:$PATH
+source ~/.bash_profile
+complete -C '/usr/local/bin/aws_completer' aws
+
+### Kubectl 1.21.5 Install
+cd ~
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+
+### util setup
+
+sudo yum -y install jq gettext bash-completion moreutils
+for command in kubectl jq envsubst aws
+  do
+    which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
+  done
+
+
+```
+
+
+
+```
+aws sts get-caller-identity --region ap-northeast-1 --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
+export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
+echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
+aws configure set default.region ${AWS_REGION}
+aws configure --profile default list
+
+```
+
 ### 1.환경 설정
 
 Kubernetes Metric-server를 설치합니다. 앞서 설치하였으면 생략합니다.&#x20;
@@ -379,23 +433,14 @@ spec:
     - key: karpenter.sh/capacity-type
       operator: In
       values: ["spot"]
-    - key: node.kubernetes.io/instance-type
-      operator: In
-      values: ["m5.large", "m5.2xlarge"]
   limits:
     resources:
       cpu: 1000
   provider:
     subnetSelector:
-      Name: "*Public*"
+      karpenter.sh/discovery: eksworkshop
     securityGroupSelector:
-      Name: "*Public*"
-    tags:
-      alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
-  taints:
-    - key: asg
-      value: nodes
-      effect: NoSchedule
+      karpenter.sh/discovery: eksworkshop
   ttlSecondsAfterEmpty: 30
 EOF
 
@@ -428,7 +473,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: inflate
-  namespace: karpenter-inflate
+  namespace: karpenter-inflate  
 spec:
   replicas: 0
   selector:
@@ -439,8 +484,6 @@ spec:
       labels:
         app: inflate
     spec:
-      nodeSelector:
-        intent: public-control-apps
       terminationGracePeriodSeconds: 0
       containers:
         - name: inflate
@@ -448,6 +491,8 @@ spec:
           resources:
             requests:
               cpu: 1
+      nodeSelector:
+        karpenter.sh/capacity-type: spot
 EOF
 ## 생성된 karpenter-inflate.yaml을 실행합니다. 
 kubectl apply -f ~/environment/karpenter/karpenter-inflate.yaml
