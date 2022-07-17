@@ -135,6 +135,182 @@ aws cloudformation deploy \
 
 
 ```
+# eksctl 설정 
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+# eksctl 자동완성 - bash
+. <(eksctl completion bash)
+eksctl version
+
+```
+
+
+
+```
+### make env for the karpenter test      
+
+export ekscluster_name=eksworkshop
+export ACCOUNT_ID=$(aws sts get-caller-identity --region ap-northeast-1 --output text --query Account)
+export k_public_mgmd_node="k-managed-frontend-workloads"
+export k_private_mgmd_node="k-managed-backend-workloads"
+export KARPENTER_VERSION="v0.13.2"
+export eks_version="1.21"
+export publicKeyPath="/home/ec2-user/environment/eksworkshop.pub"
+echo ${ekscluster_name}
+echo ${ACCOUNT_ID}
+echo ${k_public_mgmd_node}
+echo ${k_private_mgmd_node}
+echo ${CLUSTER_ENDPOINT}
+echo ${KARPENTER_VERSION}
+echo "export ekscluster_name=${ekscluster_name}" | tee -a ~/.bash_profile
+echo "export k_public_mgmd_node=${k_public_mgmd_node}" | tee -a ~/.bash_profile
+echo "export k_private_mgmd_node=${k_private_mgmd_node}" | tee -a ~/.bash_profile
+echo "export k_private_mgmd_node=${CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
+echo "export eks_version=${eks_version}" | tee -a ~/.bash_profile
+echo "export KARPENTER_VERSION=${KARPENTER_VERSION}" | tee -a ~/.bash_profile
+source ~/.bash_profile
+
+```
+
+
+
+```
+### VPC 정보 
+cd ~/environment/
+#VPC ID export
+export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
+echo $vpc_ID
+
+#Subnet ID, CIDR, Subnet Name export
+aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)'
+echo $vpc_ID > vpc_subnet.txt
+aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> vpc_subnet.txt
+cat vpc_subnet.txt
+
+# VPC, Subnet ID 환경변수 저장 
+export PublicSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet01/{print $1}')
+export PublicSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet02/{print $1}')
+export PublicSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet03/{print $1}')
+export PrivateSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet01/{print $1}')
+export PrivateSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet02/{print $1}')
+export PrivateSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet03/{print $1}')
+echo "export vpc_ID=${vpc_ID}" | tee -a ~/.bash_profile
+echo "export PublicSubnet01=${PublicSubnet01}" | tee -a ~/.bash_profile
+echo "export PublicSubnet02=${PublicSubnet02}" | tee -a ~/.bash_profile
+echo "export PublicSubnet03=${PublicSubnet03}" | tee -a ~/.bash_profile
+echo "export PrivateSubnet01=${PrivateSubnet01}" | tee -a ~/.bash_profile
+echo "export PrivateSubnet02=${PrivateSubnet02}" | tee -a ~/.bash_profile
+echo "export PrivateSubnet03=${PrivateSubnet03}" | tee -a ~/.bash_profile
+echo "export publicKeyPath=${publicKeyPath}" | tee -a ~/.bash_profile
+source ~/.bash_profile
+
+```
+
+
+
+```
+### create nodegroup yaml file for the karpenter      
+
+cat << EOF > ~/environment/myeks/karpenter-nodegroup.yaml
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ${ekscluster_name}
+  region: ${AWS_REGION}
+  version: "${eks_version}"  
+  tags:
+    karpenter.sh/discovery: ${ekscluster_name}
+
+iam:
+  withOIDC: true
+
+vpc: 
+  id: ${vpc_ID}
+  subnets:
+    public:
+      PublicSubnet01:
+        az: ${AWS_REGION}a
+        id: ${PublicSubnet01}
+      PublicSubnet02:
+        az: ${AWS_REGION}c
+        id: ${PublicSubnet02}
+      PublicSubnet03:
+        az: ${AWS_REGION}d
+        id: ${PublicSubnet03}
+    private:
+      PrivateSubnet01:
+        az: ${AWS_REGION}a
+        id: ${PrivateSubnet01}
+      PrivateSubnet02:
+        az: ${AWS_REGION}c
+        id: ${PrivateSubnet02}
+      PrivateSubnet03:
+        az: ${AWS_REGION}d
+        id: ${PrivateSubnet03}
+secretsEncryption:
+  keyARN: ${MASTER_ARN}
+
+managedNodeGroups:
+  - name: k-managed-ng-public-01
+    instanceType: ${instance_type}
+    subnets:
+      - ${PublicSubnet01}
+      - ${PublicSubnet02}
+      - ${PublicSubnet03}
+    desiredCapacity: 3
+    minSize: 3
+    maxSize: 6
+    volumeSize: 200
+    volumeType: gp3 
+    amiFamily: AmazonLinux2
+    labels:
+      nodegroup-type: "${k_public_mgmd_node}"
+    ssh: 
+        publicKeyPath: "${publicKeyPath}"
+        allow: true
+    iam:
+      attachPolicyARNs:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+        fsx: true
+        efs: true
+        
+  - name: k-managed-ng-private-01
+    instanceType: ${instance_type}
+    subnets:
+      - ${PrivateSubnet01}
+      - ${PrivateSubnet02}
+      - ${PrivateSubnet03}
+    desiredCapacity: 3
+    privateNetworking: true
+    minSize: 3
+    maxSize: 9
+    volumeSize: 200
+    volumeType: gp3 
+    amiFamily: AmazonLinux2
+    labels:
+      nodegroup-type: "${k_private_mgmd_node}"
+    ssh: 
+        publicKeyPath: "${publicKeyPath}"
+        allow: true
+    iam:
+      attachPolicyARNs:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        ebs: true
+        fsx: true
+        efs: true
+
+EOF
+
+### create nodegroup for the karpenter      
+eksctl create nodegroup --config-file=/home/ec2-user/environment/myeks/karpenter-nodegroup.yaml
+
 ```
 
 ### 1.환경 설정
@@ -159,6 +335,9 @@ Helm을 통해서 아래 kube-ops-view를 Cloud9에 설치합니다. 노드 배�
 
 ```
 ## 앞서 Lab에서 생성한 managed Node의 Public Subnet에 위치한 노드에 kube-ops-view를 설치합니다
+cd ~/environment
+curl -L https://git.io/get_helm.sh | bash -s -- --version v3.8.2
+
 kubectl create namespace kube-tools
 helm install kube-ops-view \
 stable/kube-ops-view \
@@ -180,137 +359,15 @@ URL을 접속하면 , 아래와 같이 노드와 배치된 PoD들을 확인해 �
 Karpenter 시험 환경 구성을 위해 아래와 같이 환경변수를 구성합니다.&#x20;
 
 ```
-#앞서 ekscluster 이름을 구성하였다면 생략합니다.  
-#export ekscluster_name=eksworkshop
-#앞서 ACCOUNT_ID 를 환경변수에 등록하였다면 생략합니다. 
-#export ACCOUNT_ID=$(aws sts get-caller-identity --region ap-northeast-2 --output text --query Account)
-#새로운 노드 labeling을 위해 설정
-export k_public_mgmd_node="k-managed-frontend-workloads"
-export k_private_mgmd_node="k-managed-backend-workloads"
 # EKS CLUSTER_ENDPOINT 값에 대한 환경변수 설정 
 export CLUSTER_ENDPOINT="$(aws eks describe-cluster --name ${ekscluster_name} --query "cluster.endpoint" --output text)"
 # KARPENTER_VERSION 설정
-export KARPENTER_VERSION="v0.10.0"
-echo ${ekscluster_name}
-echo ${ACCOUNT_ID}
-echo ${k_public_mgmd_node}
-echo ${k_private_mgmd_node}
-echo ${CLUSTER_ENDPOINT}
-echo ${KARPENTER_VERSION}
-echo "export k_public_mgmd_node=${k_public_mgmd_node}" | tee -a ~/.bash_profile
-echo "export k_private_mgmd_node=${k_private_mgmd_node}" | tee -a ~/.bash_profile
 echo "export CLUSTER_ENDPOINT=${CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
 
-### 2.Karpenter 시험 노드 설치
-
-Karpenter 시험을 위한 새로운 노드 그룹 생성을 위한 yaml 파일을 생성합니다.&#x20;
-
-```
-cat << EOF > ~/environment/myeks/karpenter-nodegroup.yaml
----
-apiVersion: eksctl.io/v1alpha5
-kind: ClusterConfig
-
-metadata:
-  name: ${ekscluster_name}
-  region: ${AWS_REGION}
-  version: "${eks_version}"  
-  tags:
-    karpenter.sh/discovery: ${ekscluster_name}
-vpc: 
-  id: ${vpc_ID}
-  subnets:
-    public:
-      PublicSubnet01:
-        id: ${PublicSubnet01}
-      PublicSubnet02:
-        id: ${PublicSubnet02}
-      PublicSubnet03:
-        id: ${PublicSubnet03}
-    private:
-      PrivateSubnet01:
-        id: ${PrivateSubnet01}
-      PrivateSubnet02:
-        id: ${PrivateSubnet02}
-      PrivateSubnet03:
-        id: ${PrivateSubnet03}
-secretsEncryption:
-  keyARN: ${MASTER_ARN}
-
-managedNodeGroups:
-  - name: k-managed-ng-public-01
-    instanceType: ${instance_type}
-    subnets:
-      - PublicSubnet01
-      - PublicSubnet02
-      - PublicSubnet03
-    desiredCapacity: 3
-    minSize: 3
-    maxSize: 9
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "${k_public_mgmd_node}"        
-      alpha.eksctl.io/cluster-name: ${ekscluster_name}
-      alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
-      intent: public-control-apps
-    tags:
-      alpha.eksctl.io/nodegroup-name: k-managed-ng-public-01
-      alpha.eksctl.io/nodegroup-type: managed
-      k8s.io/cluster-autoscaler/node-template/label/intent: control-apps
-    ssh: 
-        publicKeyPath: "${publicKeyPath}"
-        allow: true
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-        
-  - name: k-managed-ng-private-01
-    instanceType: ${instance_type}
-    subnets:
-      - PrivateSubnet01
-      - PrivateSubnet02
-      - PrivateSubnet03
-    desiredCapacity: 3
-    privateNetworking: true
-    minSize: 3
-    maxSize: 9
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "${k_private_mgmd_node}"        
-      alpha.eksctl.io/cluster-name: ${ekscluster_name}
-      alpha.eksctl.io/nodegroup-name: k-managed-ng-private-01
-      intent: private-control-apps
-    tags:
-      alpha.eksctl.io/nodegroup-name: k-managed-ng-private-01
-      alpha.eksctl.io/nodegroup-type: managed
-      k8s.io/cluster-autoscaler/node-template/label/intent: control-apps
-    ssh: 
-        publicKeyPath: "${publicKeyPath}"
-        allow: true
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-
-EOF
-
-```
+### 2.Karpenter 환경구
 
 Subnet과 Security Group에 새로운 Tag를 설정합니다
 
@@ -319,13 +376,6 @@ aws ec2 create-tags --resources "$PublicSubnet01" --tags Key="karpenter.sh/disco
 aws ec2 create-tags --resources "$PublicSubnet02" --tags Key="karpenter.sh/discovery",Value="${ekscluster_name}" 
 aws ec2 create-tags --resources "$PublicSubnet03" --tags Key="karpenter.sh/discovery",Value="${ekscluster_name}"
  
-```
-
-Karpenter 시험을 위한 새로운 노드그룹을 eksctl 로 설치합니다.&#x20;
-
-```
-eksctl create nodegroup --config-file=/home/ec2-user/environment/myeks/karpenter-nodegroup.yaml
-
 ```
 
 ### 3. Karpenter 노드 권한 설정
@@ -558,15 +608,21 @@ kubectl apply -f ~/environment/karpenter/karpenter-inflate.yaml
 
 ```
 
-
+replica를 늘려가면서 시험해 봅니다.
 
 ```
 kubectl -n karpenter-inflate scale deployment inflate --replicas 5
+
+```
+
+Terminal 에서 로그를 확인해 봅니다.
+
+```
 kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 
 ```
 
-### 10. 자원 삭제
+### 10. 자원 삭제 (Option)
 
 
 
