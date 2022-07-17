@@ -68,7 +68,10 @@ for command in kubectl jq envsubst aws
 
 
 
+Cloud9 에 새로운 Role을 부여합니다. ([2.EKS 환경 구성 참조](../eks/cloud9-ide.md#1.-cloud9-ide))
+
 ```
+rm -vf ${HOME}/.aws/credentials
 aws sts get-caller-identity --region ap-northeast-1 --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
 export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
@@ -76,6 +79,62 @@ echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
 aws configure set default.region ${AWS_REGION}
 aws configure --profile default list
 
+```
+
+
+
+ssh key를 설정하고, key를 전송합니다.
+
+```
+### SSH Key
+cd ~/environment/
+ssh-keygen
+
+# key naem 은 eksworkshop으로 선
+cd ~/environment/
+mv ./eksworkshop ./eksworkshop.pem
+chmod 400 ./eksworkshop.pem
+
+cd ~/environment/
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://./eksworkshop.pub
+
+```
+
+
+
+KMS 를 설정합니다.
+
+```
+aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms create-key --query KeyMetadata.Arn --output text)
+export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
+cd ~/environment
+echo $MASTER_ARN
+echo $MASTER_ARN > master_arn.txt
+cat master_arn.txt
+echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
+```
+
+
+
+```
+### git clone
+cd ~/environment
+git clone https://github.com/whchoi98/myeks
+
+cd ./myeks/
+
+cd ./myeks/
+
+aws cloudformation deploy \
+  --stack-name "eksworkshop" \
+  --template-file "karpenter_vpc.yml" \
+  --capabilities CAPABILITY_NAMED_IAM 
+
+```
+
+
+
+```
 ```
 
 ### 1.환경 설정
