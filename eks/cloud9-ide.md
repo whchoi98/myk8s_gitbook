@@ -248,35 +248,14 @@ for command in kubectl jq envsubst aws
 
 K9s는 쿠버네티스 클러스터와 상호작용을 통해 직관적인 UI 터미널을 제공합니다. 이 도구를 통해서 쿠버네티스 자원들을 쉽게 탐색하고 관리할 수 있도록 도움을 줍니다.(참조 - [https://github.com/derailed/k9s](https://github.com/derailed/k9s))
 
-K9s 설치를 위해 Linux brew 를 설치합니다.&#x20;
+K9s의 최신 버전을 아래 링크에서 확인합니다.
 
-해당 패키지를 설치하기 위해 필수 패키지를 먼저 설치합니다.
-
-```
-sudo yum groupinstall -y 'Development Tools' && sudo yum install curl file git ruby which
+{% embed url="https://github.com/derailed/k9s/releases" %}
 
 ```
-
-Linux Brew를 설치합니다.
-
-```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-
-#Press Control-D to install to /home/ec2-user/.linuxbrew
-```
-
-경로를 설정합니다.
-
-```
-echo 'eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"' >> /home/ec2-user/.bash_profile
-eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"
-
-```
-
-Brew 기반의 K9s를 설치합니다.
-
-```
-brew install derailed/k9s/k9s
+# K9s 0.26.3 기준 설치 방
+K9S_VERSION=v0.26.3
+curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | sudo tar xfz - -C /usr/local/bin k9s
 
 ```
 
