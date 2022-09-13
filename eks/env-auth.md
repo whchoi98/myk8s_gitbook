@@ -12,7 +12,7 @@ description: 'update : 2021-10-18 / 15min'
 
 IAM 서비스 대쉬보드 접속 및 역할(Role) 생성을 합니다. AWS 서비스에서 IAM을 선택하고, "역할 만들기"를 선택합니다.
 
-![](<../.gitbook/assets/image (36).png>)
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 ### 2.역할(Role)을 만듭니다.
 
@@ -20,9 +20,13 @@ EC2 - 다음: 권한
 
 역할 만들기 단계에서 EC2를 선택하고, "다음:권한"을 선택합니다.
 
-![](<../.gitbook/assets/image (14).png>)
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 권한정책 연결에서 `"AdministratorAccess"`를 선택합니다.
+
+```
+AdministratorAccess
+```
 
 ![](<../.gitbook/assets/image (29).png>)
 
@@ -190,7 +194,7 @@ aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://.
 
 AWS KMS(Key Management Service)를 사용하면 손쉽게 암호화 키를 생성 및 관리하고 다양한 AWS 서비스와 애플리케이션에서의 사용을 제어할 수 있습니다. AWS KMS는 FIPS 140-2에 따라 검증되었거나 검증 과정에 있는 하드웨어 보안 모듈을 사용하여 키를 보호하는 안전하고 복원력 있는 서비스입니다. 또한, AWS KMS는 AWS CloudTrail과도 통합되어 모든 키 사용에 관한 로그를 제공함으로써 각종 규제 및 규정 준수 요구 사항을 충족할 수 있게 지원합니다.&#x20;
 
-![](<../.gitbook/assets/image (1).png>)
+![](<../.gitbook/assets/image (1) (1).png>)
 
 EKS에서는 K8s와 Key를 통한 인증이 많이 일어납니다. 안전한 관리를 위해 Option으로 구성할 수 있습니다.
 
