@@ -12,7 +12,7 @@ description: 'update : 2021-10-18 / 15min'
 
 IAM 서비스 대쉬보드 접속 및 역할(Role) 생성을 합니다. AWS 서비스에서 IAM을 선택하고, "역할 만들기"를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
 ### 2.역할(Role)을 만듭니다.
 
@@ -66,11 +66,11 @@ Cloud9의 기존 자격증명과 임시 자격 증명등을 비활성화 합니�
 
 Cloud9에서 설정 환경을 아래와 같이 선택합니다.
 
-![](<../.gitbook/assets/image (4).png>)
+![](<../.gitbook/assets/image (4) (1).png>)
 
 Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니다.
 
-![](<../.gitbook/assets/image (15).png>)
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 임시 자격증명을 사용하지 않도록 기존 자격 증명 파일을 제거합니다.
 
@@ -175,6 +175,7 @@ Cloud9 IDE Terminal 에서 이후 생성된 Workernode 또는 EC2에 접속하�
 cd ~/environment/
 mv ./eksworkshop ./eksworkshop.pem
 chmod 400 ./eksworkshop.pem
+
 ```
 
 ### 8.ssh key 전송
