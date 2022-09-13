@@ -105,11 +105,7 @@ kubectl -n node-test-01 exec -it $NodePort_Test_Pod01 -- /bin/sh
 /# nslookup 172.20.177.168
 ```
 
-Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니다. 해당 EC2 대시보드에서 인스턴스를 선택합니다.
-
-Public-SG 라는 Security Group을 생성하고, 해당 인스턴스에 적용합니다.
-
-![](<../.gitbook/assets/image (223) (1) (1) (1) (1) (1) (1) (1).png>)
+Yaml 파일에 정의된 Service의 NodePort는 EKS Node에서 허용되지 않은 서비스 포트입니다. 허용하기 위해 Security Group을 추가합니다.
 
 Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
@@ -124,13 +120,21 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 ![](<../.gitbook/assets/image (218) (1) (1) (1).png>)
 
+Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니다. 해당 EC2 대시보드에서 인스턴스를 선택합니다. 이 랩에서는 "eksworkshop-managed-ng-public-01-Node"에 배포됩니다.
+
+생성한 Public-SG 라는 Security Group을 해당 인스턴스에 적용합니다.
+
+```
+eksworkshop-managed-ng-public-01-Node
+```
+
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+
 eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
 
 ```
-~/environment/useful-shell/aws_ec2_text.sh | awk '/eksworkshop-ng-public-01-Node/{print $1,$2,$6,$7,$8}'
-eksworkshop-ng-public-01-Node ap-northeast-2a running 10.11.10.88 52.79.206.201
-eksworkshop-ng-public-01-Node ap-northeast-2b running 10.11.30.67 3.38.195.240
-eksworkshop-ng-public-01-Node ap-northeast-2c running 10.11.35.39 13.125.40.125
+aws ec2 describe-instances --filters 'Name=tag:Name,Values=eksworkshop-managed-ng-public-01-Node' | jq -r '.Reservations[].Instances[].PublicIpAddress'
+
 ```
 
 아래와 같이 EC2 Public IP 주소와 Nodeport로 접속해 봅니다.
