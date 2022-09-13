@@ -670,3 +670,47 @@ ecsdemo-frontend   <none>   *       k8s-albtest-ecsdemof-ee882fe5b1-1732413705.a
 ```
 
 ![](<../.gitbook/assets/image (195).png>)
+
+### 14. 2048 Game 어플리케이션 배포
+
+아래와 같이 새로운 aplication game을 실행합니다.&#x20;
+
+```
+kubectl apply -f ~/environment/myeks/alb-controller/2048_full.yaml
+
+```
+
+yaml 파일을 배포하고, 서비스를 확인합니다.
+
+```
+kubectl -n game-2048 get pods,svc,ingress
+
+```
+
+아래와 같은 결과를 확인 할 수 있습니다.
+
+```
+$ kubectl -n game-2048 get pods,svc,ingress
+NAME                                   READY   STATUS    RESTARTS   AGE
+pod/deployment-2048-79785cfdff-5w9vw   1/1     Running   0          2m1s
+pod/deployment-2048-79785cfdff-6h9wt   1/1     Running   0          2m1s
+pod/deployment-2048-79785cfdff-ghrx7   1/1     Running   0          2m1s
+pod/deployment-2048-79785cfdff-kq9bd   1/1     Running   0          2m1s
+pod/deployment-2048-79785cfdff-rhpmt   1/1     Running   0          2m1s
+
+NAME                   TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/service-2048   NodePort   172.20.51.224   <none>        80:31181/TCP   2m1s
+
+NAME                                     CLASS    HOSTS   ADDRESS                                                                        PORTS   AGE
+ingress.networking.k8s.io/ingress-2048   <none>   *       k8s-game2048-ingress2-2810c0c2ad-1261616116.ap-northeast-2.elb.amazonaws.com   80      2m1s
+```
+
+아래 명령을 통해서 게임앱 URL을 확인하고에 브라우저를 통해 접속해 봅니다.
+
+```
+kubectl -n game-2048 get ingress ingress-2048 | tail -n 1 | awk '{ print "game-2048 URL = http://"$4 }'
+
+```
+
+![](<../.gitbook/assets/image (7).png>)
+
