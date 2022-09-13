@@ -302,9 +302,95 @@ ecsdemo-frontend   LoadBalancer   172.20.213.219   a6531bc45d323472d869946b9bfac
 ecsdemo-nodejs     ClusterIP      172.20.181.252   <none>                                                                       80/TCP         22m    app=ecsdemo-nodejs
 ```
 
+### 7. Super Mario 어플리케이션 배포하기
+
+CLB 로드밸런서를 사용하는 간단한 게임 앱을 배포해 봅니다.
+
+```
+kubectl create namespace mario
+kubectl apply -f ~/environment/myeks/sample/super_mario.yml 
+
+```
+
+정상적으로 배포되었는지 확인해 봅니다.&#x20;
+
+```
+kubectl -n mario get pods,svc
+
+```
+
+아래와 같이 배포된 것을 확인 할 수 있습니다.
+
+```
+$ kubectl -n mario get pods,svc
+NAME                         READY   STATUS              RESTARTS   AGE
+pod/mario-7f947cb549-mxzk8   0/1     ContainerCreating   0          9s
+
+NAME            TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)        AGE
+service/mario   LoadBalancer   172.20.103.149   a0557981a407141ab81fb9e0e5a5e02f-169514957.ap-northeast-2.elb.amazonaws.com   80:30459/TCP   9s
+```
+
+실제 deployment에 사용된 YAML 을 확인해 봅니다.
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mario
+  labels:
+    app: mario
+  namespace: mario
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mario
+  template:
+    metadata:
+      labels:
+        app: mario
+    spec:
+      containers:
+      - name: mario
+        image: pengbai/docker-supermario
+      nodeSelector:
+        nodegroup-type: "managed-frontend-workloads"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mario
+  namespace: mario
+spec:
+  selector:
+    app: mario
+  ports:
+  type: LoadBalancer
+  ports:
+   -  protocol: TCP
+      port: 80
+      targetPort: 8080
+```
+
+아래 명령을 통해서 게임앱 URL을 확인하고에 브라우저를 통해 접속해 봅니다.
+
+```
+kubectl -n mario get svc mario | tail -n 1 | awk '{ print "mario URL = http://"$4 }'
+
+```
+
+3\~4분 뒤에 웹 브라우저를 통해 위 명령에서 실행된 URL을 접속하면 , CLB를 통해서 아래와 같이 게임이 실행됩니다.
+
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+
+* "s" - 게임시작
+* 방향키로 각 스테이지 이동
+* "s" - 점프
+* 방향키  - 마리오 이동&#x20;
+
 ## NLB Loadbalancer 서비스 기반 구성
 
-### 7. NLB 기반 Service Type
+### 8. NLB 기반 Service Type
 
 Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. CLB와 다르게 반드시 annotation을 통해 NLB를 지정해야 합니다. NLB도 내부 또는 외부 로드밸런서로 지정이 가능합니다. 또한 NLB는 외부의 IP를 PoD까지 그대로 전달 할 수 있습니다
 
@@ -321,7 +407,7 @@ Service Type 필드를 LoadBalancer로 설정하여 프로브저닝합니다. CL
     service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
 ```
 
-### 8.NLB Service Type 트래픽 흐름
+### 9.NLB Service Type 트래픽 흐름
 
 Traffic 흐름은 다음과 같습니다.
 
@@ -331,7 +417,7 @@ Traffic 흐름은 다음과 같습니다.
 
 ![](<../.gitbook/assets/image (224).png>)
 
-### 9. NLB Service 시험
+### 10. NLB Service 시험
 
 NLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
 
@@ -568,7 +654,7 @@ k9s -A
 우리 LAB에서는 NLB의 Internal과 External을 어떻게 변경했는지 yaml 파일을 다시 확인해 봅니다.
 {% endhint %}
 
-### 10.BackEnd 어플리케이션 배포
+### 12.BackEnd 어플리케이션 배포
 
 Backend 어플리케이션 Nodejs와 Crystal을 배포합니다. 이 2개의 어플리케이션들은 Private Subnet에 배포할 것입니다. 이 구성은 앞서 이미 Yaml 파일의 Deployment에서 nodeSelector로 지정하였습니다.
 
@@ -607,5 +693,92 @@ k9s 를 통해 Pod의 구성을 확인합니다.
 
 ![](<../.gitbook/assets/image (154).png>)
 
+### 13. Tetris 어플리케이션 배포
 
+NLB 로드밸런서를 사용하는 간단한 게임 앱을 배포해 봅니다.
+
+```
+kubectl create namespace tetris
+kubectl apply -f ~/environment/myeks/sample/tetris.yml 
+
+```
+
+정상적으로 배포되었는지 확인해 봅니다.&#x20;
+
+```
+kubectl -n tetris get pods,svc
+
+```
+
+아래와 같이 배포된 것을 확인 할 수 있습니다.
+
+```
+$ kubectl -n tetris get pods,svc
+NAME                          READY   STATUS    RESTARTS   AGE
+pod/tetris-67f8b848f4-m5xt2   1/1     Running   0          66s
+pod/tetris-67f8b848f4-nn99k   1/1     Running   0          66s
+pod/tetris-67f8b848f4-pt4tl   1/1     Running   0          66s
+
+NAME             TYPE           CLUSTER-IP       EXTERNAL-IP                                                                          PORT(S)        AGE
+service/tetris   LoadBalancer   172.20.174.151   a2cc703e290b6440a9eb69a6f483f1e7-322e917eecf3bd07.elb.ap-northeast-2.amazonaws.com   80:32418/TCP   66s
+```
+
+실제 deployment에 사용된 YAML 을 확인해 봅니다.
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tetris
+  labels:
+    app: tetris
+  namespace: tetris
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tetris
+  template:
+    metadata:
+      labels:
+        app: tetris
+    spec:
+      containers:
+      - name: tetris
+        image: bsord/tetris
+      nodeSelector:
+        nodegroup-type: "managed-frontend-workloads"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tetris
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+  namespace: tetris
+spec:
+  externalTrafficPolicy: Local
+  selector:
+    app: tetris
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+```
+
+아래 명령을 통해서 게임앱 URL을 확인하고에 브라우저를 통해 접속해 봅니다.
+
+```
+kubectl -n tetris get svc tetris | tail -n 1 | awk '{ print "tetris-game URL = http://"$4 }'
+
+```
+
+브라우저를 통해 접속하면 아래와 같이 게임이 실행됩니다.
+
+NLB는 배포시간이 5분 정도 소요 됩니다.&#x20;
+
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
