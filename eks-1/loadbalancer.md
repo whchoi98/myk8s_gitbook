@@ -546,7 +546,11 @@ NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 
 아래 출력되는 결과의 EXTERNAL-IP를 복사해서 브라우져 창에서 실행해 봅니다.
 
 ```
-$ kubectl -n nlb-test get service -o wide
+kubectl -n nlb-test get svc ecsdemo-frontend | tail -n 1 | awk '{ print "NLB-TEST URL = http://"$4 }'$ kubectl -n nlb-test get service -o wide
+
+```
+
+```
 NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                                                                          PORT(S)        AGE   SELECTOR
 ecsdemo-frontend   LoadBalancer   172.20.55.163   a68e1e3f279654af99a680bff29f6685-43ae3919758c9316.elb.ap-northeast-2.amazonaws.com   80:31784/TCP   55s   app=ecsdemo-frontend
 ```
