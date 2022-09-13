@@ -203,7 +203,7 @@ kubectl version --short --client
 출력결과 예제 (1.20.7 예시)
 
 ```
-Client Version: v1.20.7 
+Client Version: v1.21.5
 
 ```
 
@@ -379,12 +379,12 @@ sudo sudo yum install -y session-manager-plugin.rpm
 
 ```
 
-3\. Cloud9에 Kubectl 설치 (1.20.7기준)
+3\. Cloud9에 Kubectl 설치 (1.21.5기준)
 
 ```
-# EKS 1.20.7 기반 설치
+# EKS 1.21.5 기반 설치
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
 echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
