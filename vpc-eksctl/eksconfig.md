@@ -14,24 +14,20 @@ EKS 콘솔을 통해서, 생성된 EKS Cluster를 확인 할 수 있습니다.
 
 ## configmap 인증 정보 수정
 
-cloud9 IDE Terminal 에 kubectl 명령을 통해서, 계정의 사용자에 대한 권한을 추가해 줍니다.
+cloud9 IDE Terminal 에 kubectl 명령을 통해서, aws-auth 파일을 확인해 봅니다.&#x20;
 
 ```
-kubectl edit -n kube-system configmap/aws-auth
+kubectl get configmap -n kube-system aws-auth -o yaml
 ```
 
-user arn은 IAM에서 확인 할 수 있습니다.&#x20;
-
-**`AWS 관리 콘솔 - IAM - User`**
-
-![](<../.gitbook/assets/image (170).png>)
-
-아래 새로운 사용자의 권한을 mapRoles 뒤에 추가해 줍니다. kubectl edit는 vi edit과 동일하게 수정하는 방식입니다. 아래 명령을 입력하고 복사해서 붙여 넣습니다.
+aws-auth.yaml 파일을 아래 디렉토리에 생성합니다.&#x20;
 
 ```
-#vi 실행 창에 입력합니다
-:set paste
+kubectl get configmap -n kube-system aws-auth -o yaml | grep -v "creationTimestamp\|resourceVersion\|selfLink\|uid" | sed '/^  annotations:/,+2 d' > ~/environment/aws-auth.yaml
+
 ```
+
+아래 값을 aws-auth 파일에 입력합니다.
 
 ```
   mapUsers: |
@@ -41,7 +37,19 @@ user arn은 IAM에서 확인 할 수 있습니다.&#x20;
         - system:masters
 ```
 
-추가한 이후 configmap/aws-auth 입니다.
+```
+kubectl  -n kube-system configmap/aws-auth
+```
+
+user arn은  AM에서 확인 할 수 있습니다.&#x20;
+
+**`AWS 관리 콘솔 - IAM - User`**
+
+![](<../.gitbook/assets/image (170).png>)
+
+아래 새로운 사용자의 권한을 mapRoles 뒤에 추가해 줍니다. kubectl edit는 vi edit과 동일하게 수정하는 방식입니다. 아래 명령을 입력하고 복사해서 붙여 넣습니다.
+
+추가한 이후 aws-auth.yaml 파일 입니다.
 
 ```
 apiVersion: v1
@@ -50,28 +58,38 @@ data:
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1VEXSSMR1CWJ0
+      rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1WKNHHYJD99CR
       username: system:node:{{EC2PrivateDNSName}}
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1SYQ7SFAJFYQX
+      rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-WBJOTQC4HJOD
       username: system:node:{{EC2PrivateDNSName}}
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG
+      rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-122GCV62TF8AS
       username: system:node:{{EC2PrivateDNSName}}
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-83YEOE9PLC79
+      rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-1SRFNRXCSDVMW
       username: system:node:{{EC2PrivateDNSName}}
   mapUsers: |
-    - userarn: arn:aws:iam::584172017494:user/whchoi
-      username: whchoi
+    - userarn: arn:aws:iam::027268078051:user/user01
+      username: user01
       groups:
         - system:masters
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+```
+
+aws-auth.yaml을 실행시켜 AWS IAM User 에서도 EKS Cluster 접근 권한을 활성화 합니다.&#x20;
+
+```
+kubectl apply -f ~/environment/aws-auth.yaml
 ```
 
 실제 configmap에 대한 값을 확인해 봅니다. configmap은 kube-system namespace에 존재합니다.
@@ -93,30 +111,32 @@ mapRoles:
 - groups:
   - system:bootstrappers
   - system:nodes
-  rolearn: arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1VEXSSMR1CWJ0
+  rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1WKNHHYJD99CR
   username: system:node:{{EC2PrivateDNSName}}
 - groups:
   - system:bootstrappers
   - system:nodes
-  rolearn: arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1SYQ7SFAJFYQX
+  rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-WBJOTQC4HJOD
   username: system:node:{{EC2PrivateDNSName}}
 - groups:
   - system:bootstrappers
   - system:nodes
-  rolearn: arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-S7BXB5A9FVBG
+  rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-122GCV62TF8AS
   username: system:node:{{EC2PrivateDNSName}}
 - groups:
   - system:bootstrappers
   - system:nodes
-  rolearn: arn:aws:iam::584172017494:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-83YEOE9PLC79
+  rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-1SRFNRXCSDVMW
   username: system:node:{{EC2PrivateDNSName}}
 
 mapUsers:
 ----
-- userarn: arn:aws:iam::584172017494:user/whchoi98
-  username: whchoi98
+- userarn: arn:aws:iam::027268078051:user/user01
+  username: user01
   groups:
     - system:masters
+
+Events:  <none>
 ```
 
 ## EKS Cluster 결과 확인.
@@ -129,9 +149,13 @@ EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드�
 
 ![](<../.gitbook/assets/image (234) (1).png>)
 
+
+
 EKS Cluster내에 생성된 워크로드들을 확인해 볼 수 있습니다.
 
 ![](<../.gitbook/assets/image (236) (1) (1) (1).png>)
+
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
 managed Node type과 Self Managed Node Type의 차이를 확인할 수 있습니다
 
