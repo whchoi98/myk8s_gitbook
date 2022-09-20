@@ -1,5 +1,5 @@
 ---
-description: 'update : 2022-05-21 / 30min'
+description: 'update : 2022-09-10 / 20min'
 ---
 
 # eksctl 구성
@@ -62,239 +62,38 @@ source ~/.bash_profile
 
 ```
 
-아래는 **`vpc_subnet.txt`** 에 저장된 예제입니다.
-
-```
-vpc-04a7f563ebe750a92
-subnet-0db014e6a52f7b002 10.11.16.0/20 eksworkshop-PublicSubnet02
-subnet-01a18de77c71a9d8d 10.11.32.0/20 eksworkshop-PublicSubnet03
-subnet-0396e3d1dfe08d224 10.11.0.0/20 eksworkshop-PublicSubnet01
-subnet-0e49bdf1a4b2a0f6a 10.11.80.0/20 eksworkshop-PrivateSubnet02
-subnet-0914eefaede7a14c9 10.11.64.0/20 eksworkshop-PrivateSubnet01
-subnet-01db4b6773a94e6a2 10.11.96.0/20 eksworkshop-PrivateSubnet03
-
-```
-
-저장해둔 Region 정보와 master\_arn을 확인합니다. 앞서 [인증/자격증명 및 환경구성](../eks/env-auth.md#undefined-1) 에서 이미 **`master_arn.txt`** 파일로 저장해 두었습니다. 관련 파일을 확인합니다.
-
-```
-#사용자 AWS Region
-echo $AWS_REGION
-
-#사용자 KMS Key ARM
-echo $MASTER_ARN
-cat master_arn.txt
-
-```
-
 VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포하는 데 사용합니다.
 
-### 3. eksctl 배포 yaml 수정
+### 3. eksctl 배포를 위한 yaml 생
 
-아래 파일을 생성합니다. 해당 파일의 예제는 앞서 복제한 git의 eksworkshop-cluster-3az.yaml과 동일합니다.
+eksctl을 통해 EKS Cluster를 생성하기 위해서, 아래와 같이 Shell을 실행합니다.&#x20;
 
-{% hint style="warning" %}
-**vpc/subnet id , KMS CMK keyARN 등이 다를 경우 설치 에러가 발생합니다. 또한 Cloud9의 publickeyPath의 경로도 확인하고, 반드시 다음 단계를 진행하기 전에 다시 한번 Review 합니다.**
+```
+~/environment/myeks/eks_shell.sh
+
+
+```
+
+{% hint style="info" %}
+cat \~/.bash\_profile 을 실행해서 환경 변수가 정상적으로 입력되었는 지 확인해 봅니다.
 {% endhint %}
 
-### 4. cluster 생성
-
-eksctl을 통해 EKS Cluster를 생성하기 위해서, 아래와 같이 Shell 변수에 값을 입력하고, 정상적으로 값이 출력되는 지 확인합니다.&#x20;
-
-```
-export ekscluster_name="eksworkshop"
-export eks_version="1.21"
-export instance_type="m5.xlarge"
-export public_selfmgmd_node="frontend-workloads"
-export private_selfmgmd_node="backend-workloads"
-export public_mgmd_node="managed-frontend-workloads"
-export private_mgmd_node="managed-backend-workloads"
-export publicKeyPath="/home/ec2-user/environment/eksworkshop.pub"
-
-echo ${ekscluster_name}
-echo ${AWS_REGION}
-echo ${eks_version}
-echo ${PublicSubnet01}
-echo ${PublicSubnet02}
-echo ${PublicSubnet03}
-echo ${PrivateSubnet01}
-echo ${PrivateSubnet02}
-echo ${PrivateSubnet03}
-echo ${MASTER_ARN}
-echo ${instance_type}
-echo ${public_selfmgmd_node}
-echo ${private_selfmgmd_node}
-echo ${public_mgmd_node}
-echo ${private_mgmd_node}
-echo ${publicKeyPath}
-
-```
-
-Shell Profile에 등록합니다. &#x20;
-
-```
-# ekscluster name, version, instance type, nodegroup label 환경변수 설정.  
-echo "export ekscluster_name=${ekscluster_name}" | tee -a ~/.bash_profile
-echo "export eks_version=${eks_version}" | tee -a ~/.bash_profile
-echo "export instance_type=${instance_type}" | tee -a ~/.bash_profile
-echo "export public_selfmgmd_node=${public_selfmgmd_node}" | tee -a ~/.bash_profile
-echo "export private_selfmgmd_node=${private_selfmgmd_node}" | tee -a ~/.bash_profile
-echo "export public_mgmd_node=${public_mgmd_node}" | tee -a ~/.bash_profile
-echo "export private_mgmd_node=${private_mgmd_node}" | tee -a ~/.bash_profile
-echo "export publicKeyPath=${publicKeyPath}" | tee -a ~/.bash_profile
-source ~/.bash_profile
-
-```
-
-eksctl을 통해 EKS Cluster를 생성합니다.&#x20;
+eksctl yaml 생성을 위해 아래 Shell을 실행합니다.&#x20;
 
 ```
 # eksctl yaml 실행 
-cat << EOF > ~/environment/myeks/eksworkshop.yaml
----
-apiVersion: eksctl.io/v1alpha5
-kind: ClusterConfig
+~/environment/myeks/eksctl_shell.sh
+ 
+```
 
-metadata:
-  name: ${ekscluster_name}
-  region: ${AWS_REGION}
-  version: "${eks_version}"  
-vpc: 
-  id: ${vpc_ID}
-  subnets:
-    public:
-      PublicSubnet01:
-        az: ${AWS_REGION}a
-        id: ${PublicSubnet01}
-      PublicSubnet02:
-        az: ${AWS_REGION}b
-        id: ${PublicSubnet02}
-      PublicSubnet03:
-        az: ${AWS_REGION}c
-        id: ${PublicSubnet03}
-    private:
-      PrivateSubnet01:
-        az: ${AWS_REGION}a
-        id: ${PrivateSubnet01}
-      PrivateSubnet02:
-        az: ${AWS_REGION}b
-        id: ${PrivateSubnet02}
-      PrivateSubnet03:
-        az: ${AWS_REGION}c
-        id: ${PrivateSubnet03}
-secretsEncryption:
-  keyARN: ${MASTER_ARN}
-
-nodeGroups:
-  - name: ng-public-01
-    instanceType: ${instance_type}
-    subnets:
-      - ${PublicSubnet01}
-      - ${PublicSubnet02}
-      - ${PublicSubnet03}
-    desiredCapacity: 3
-    minSize: 3
-    maxSize: 6
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "${public_selfmgmd_node}"
-    ssh: 
-      publicKeyPath: "${publicKeyPath}"
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-
-  - name: ng-private-01
-    instanceType: ${instance_type}
-    subnets:
-      - ${PrivateSubnet01}
-      - ${PrivateSubnet02}
-      - ${PrivateSubnet03}
-    desiredCapacity: 3
-    privateNetworking: true
-    minSize: 3
-    maxSize: 9
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "${private_selfmgmd_node}"
-    ssh: 
-      publicKeyPath: "${publicKeyPath}"
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-
-managedNodeGroups:
-  - name: managed-ng-public-01
-    instanceType: ${instance_type}
-    subnets:
-      - ${PublicSubnet01}
-      - ${PublicSubnet02}
-      - ${PublicSubnet03}
-    desiredCapacity: 3
-    minSize: 3
-    maxSize: 6
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "${public_mgmd_node}"
-    ssh: 
-      publicKeyPath: "${publicKeyPath}"
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-        
-  - name: managed-ng-private-01
-    instanceType: ${instance_type}
-    subnets:
-      - ${PrivateSubnet01}
-      - ${PrivateSubnet02}
-      - ${PrivateSubnet03}
-    desiredCapacity: 3
-    privateNetworking: true
-    minSize: 3
-    maxSize: 9
-    volumeSize: 200
-    volumeType: gp3 
-    amiFamily: AmazonLinux2
-    labels:
-      nodegroup-type: "${private_mgmd_node}"
-    ssh: 
-      publicKeyPath: "${publicKeyPath}"
-    iam:
-      attachPolicyARNs:
-      withAddonPolicies:
-        autoScaler: true
-        cloudWatch: true
-        ebs: true
-        fsx: true
-        efs: true
-        
-cloudWatch:
-    clusterLogging:
-        enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-EOF
+생성된 eksctl yaml 파일을 dry-run을 실행시켜서 확인해 봅니다.
 
 ```
+eksctl create cluster --config-file=/home/ec2-user/environment/myeks/eksworkshop.yaml --dry-run
+
+```
+
+아래와 같이 명령을 실행시켜 eks cluster를 생성합니다.&#x20;
 
 ```
 # eksctl로 cluster 만들기 

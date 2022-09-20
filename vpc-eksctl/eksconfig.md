@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2022-06-01 / 10min'
+description: 'Update : 2022-09-10 / 10min'
 ---
 
 # EKS 구성확인

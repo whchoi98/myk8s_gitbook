@@ -1,5 +1,5 @@
 ---
-description: 'update : 2021-10-18 / 15min'
+description: 'update : 2022-09-10 / 15min'
 ---
 
 # 인증/자격증명 및 환경 구성
