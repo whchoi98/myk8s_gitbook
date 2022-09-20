@@ -72,26 +72,17 @@ Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니�
 
 <figure><img src="../.gitbook/assets/image (3) (3).png" alt=""><figcaption></figcaption></figure>
 
-임시 자격증명을 사용하지 않도록 기존 자격 증명 파일을 제거합니다.
-
-```
-rm -vf ${HOME}/.aws/credentials
-
-```
-
 ### 5. Cloud9 IDE 역할 점검
 
 Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다. \
 (앞서 선언한 IAM Role 이름을 "eksworkshop-admin"으로 선언하지 않은 경우에는 다른 이름으로 변경합니다.)
 
 ```
+# 임시 자격증명을 사용하지 않도록 기존 자격 증명 파일을 제거합니다.
+rm -vf ${HOME}/.aws/credentials
+# Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다. 
 aws sts get-caller-identity --region ap-northeast-2 --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
-
-```
-
-실제 Role의 Arn은 아래 명령을 통해 확인 할 수 있습니다.
-
-```
+# 실제 Role을 확인해 봅니다.
 aws sts get-caller-identity --region ap-northeast-2
 
 ```
@@ -101,16 +92,12 @@ aws sts get-caller-identity --region ap-northeast-2
 Account ID, Region 정보 등을 환경변수와 프로파일에 저장해 두고, EKSworkshop 에서 사용합니다.
 
 ```
+# Account , Region 정보를 AWS Cli로 추출합니다.
 export ACCOUNT_ID=$(aws sts get-caller-identity --region ap-northeast-2 --output text --query Account)
 export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 echo $ACCOUNT_ID
 echo $AWS_REGION
-
-```
-
-bash\_profile에 저장합니다.
-
-```
+# bash_profile에 Account 정보, Region 정보를 저장합니다.
 echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
 echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
 aws configure set default.region ${AWS_REGION}
@@ -185,7 +172,10 @@ chmod 400 ./eksworkshop.pem
 
 ```
 cd ~/environment/
-aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://./eksworkshop.pub
+# ap-northeast-2 로 전송합니다.
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://./eksworkshop.pub --region ap-northeast-2
+# ap-northeast-1 으로 전송합니다.
+aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://./eksworkshop.pub --region ap-northeast-1
 
 ```
 
@@ -201,48 +191,21 @@ EKS에서는 K8s와 Key를 통한 인증이 많이 일어납니다. 안전한 �
 
 ### 10.CMK 생성
 
-K8s Secret 암호화를 할 때, EKS 클러스터에서 사용할 CMK(Cusomter Management Key : 사용자 관리형 키)를 생성합니다.
+K8s Secret 암호화를 할 때, EKS 클러스터에서 사용할 CMK(Cusomter Management Key : 사용자 관리형 키)를 생성하고 변수에 저장해 둡니다.
 
 ```
+# kms 를 생성합니다.
 aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms create-key --query KeyMetadata.Arn --output text)
+# kms 값을 환경변수에 저장합니다.
+export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
+echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
+echo $MASTER_ARN
 
 ```
 
 정상적으로 Key가 생성되었는지 **`AWS 관리 콘솔 - KMS - 고객관리형 키`**에서 확인합니다.
 
 ![](<../.gitbook/assets/image (142).png>)
-
-### 11. CMK ARN 변수 저장
-
-CMK의 ARN을 $MASTER\_ARN에 입력해 둡니다.&#x20;
-
-```
-export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
-
-```
-
-MASTER\_ARN에 입력된 값을 조회하고, 홈디렉토리에 **`master_arn.txt`** 파일을 저장합니다. master\_arn 의 값은 계속 사용되는 값입니다.
-
-```
- cd ~/environment
- echo $MASTER_ARN
- echo $MASTER_ARN > master_arn.txt
- cat master_arn.txt
- 
-```
-
-출력 결과 예제&#x20;
-
-```
-arn:aws:kms:ap-northeast-2:xxxxxxx:key/xxxxxxx
-```
-
-이 랩에서 KMS Key를 쉽게 참조 할 수 있도록 MASTER 환경변수를 bash\_profile에 저장합니다.
-
-```
-echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
-
-```
 
 출력 결과 예제
 
