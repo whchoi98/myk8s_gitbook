@@ -26,8 +26,7 @@ Service의 종류는 아래와 같습니다.
 
 ```
 cd ~/environment/myeks/network-test
-kubectl create namespace cluster-test-01
-kubectl -n cluster-test-01 apply -f cluster-test-01.yaml
+kubectl apply -f cluster-test-01.yaml
 kubectl -n cluster-test-01 get pods
 kubectl -n cluster-test-01 get pods -o wide
 
@@ -46,9 +45,9 @@ cluster-test-01-b86b9c685-vxgxq   1/1     Running   0          94s   10.11.16.10
 (Option) shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
 
 ```
-export ClusterTestPod01=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.1.103/{print $1}')
-export ClusterTestPod02=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.38.204/{print $1}')
-export ClusterTestPod03=$(kubectl -n cluster-test-01 get pod -o wide | awk '/10.11.16.103 /{print $1}') 
+export ClusterTestPod01=$(kubectl -n cluster-test-01 get pod -o wide | awk 'NR==2' | awk '/cluster/{print $1 } ')
+export ClusterTestPod02=$(kubectl -n cluster-test-01 get pod -o wide | awk 'NR==3' | awk '/cluster/{print $1 } ')
+export ClusterTestPod03=$(kubectl -n cluster-test-01 get pod -o wide | awk 'NR==4' | awk '/cluster/{print $1 } ')
 echo "export ClusterTestPod01=${ClusterTestPod01}" | tee -a ~/.bash_profile
 echo "export ClusterTestPod02=${ClusterTestPod02}" | tee -a ~/.bash_profile
 echo "export ClusterTestPod03=${ClusterTestPod03}" | tee -a ~/.bash_profile
