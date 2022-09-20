@@ -88,30 +88,18 @@ $ aws --version
 aws-cli/1.19.39 Python/2.7.18 Linux/4.14.225-169.362.amzn2.x86_64 botocore/1.20.39
 ```
 
-아래 명령을 통해 CLI를 2.0으로 업그레이드합니다.
+아래 명령을 통해 CLI를 2.0으로 업그레이드하고, 자동완성을 설치합니다.
 
 ```
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
-
-```
-
-정상적으로 업그레이드 되었는지 확인합니다.
-
-```
-source ~/.bashrc
-aws --version
-
-```
-
-aws cli 자동완성을 설치 합니다.
-
-```
 which aws_completer
 export PATH=/usr/local/bin:$PATH
 source ~/.bash_profile
 complete -C '/usr/local/bin/aws_completer' aws
+source ~/.bashrc
+aws --version
 
 ```
 
@@ -141,35 +129,11 @@ EKS를 위한 kubectl 바이너리를 다운로드합니다. 아래 kubectl vers
 Kubernetes 버전 1.23 출시부터 공식적으로 Amazon EKS AMI에는 containerd가 유일한 런타임으로 포함됩니다. Kubernetes 버전 1.18–1.21은 Docker를 기본 런타임으로 사용합니다.
 {% endhint %}
 
-**EKS 1.19.15 기반 설치 (Option)**
-
-```
-cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.15/bin/linux/amd64/kubectl
-
-```
-
-**EKS 1.20.7 기반 설치 (Option)**
-
-```
-cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.7/bin/linux/amd64/kubectl
-
-```
-
-**EKS 1.21.5 기반 설치 (2022.05 기준 추천)**
+**EKS 1.21.5 기반 설치**&#x20;
 
 ```
 cd ~
 curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl
-
-```
-
-#### EKS 1.22.6 (Option)
-
-```
-cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.22.6/bin/linux/amd64/kubectl
 
 ```
 
@@ -185,52 +149,33 @@ curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s ht
 
 ### 9. 실행권한을 적용 및 구성&#x20;
 
-kubectl 설치 후, 바이너리에 실행권한을 적용합니다.
+kubectl 설치 후, 바이너리에 실행권한을 적용합니다. 또한 자동완성을 설치합니다.
 
 ```
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
-
-```
-
-### 10. kubectl 설치 확인 &#x20;
-
-```
 kubectl version --short --client
-
-```
-
-출력결과 예제 (1.20.7 예시)
-
-```
-Client Version: v1.21.5
-
-```
-
-kubectl 자동완성을 설치합니다.&#x20;
-
-{% hint style="info" %}
-kubectl은 Bash 및 Zsh에 대한 자동 완성 지원을 제공하므로 입력을 위한 타이핑을 많이 절약할 수 있습니다.
-{% endhint %}
-
-```
 source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 ```
 
+{% hint style="info" %}
+kubectl은 Bash 및 Zsh에 대한 자동 완성 지원을 제공하므로 입력을 위한 타이핑을 많이 절약할 수 있습니다.
+{% endhint %}
+
 
 
 ## 기타 유틸리티 설치
 
-### 11.GNU gettext,jq,bash 자동완성, moreutil 설치
+### 10.GNU gettext,jq,bash 자동완성, moreutil 설치
 
 ```
 sudo yum -y install jq gettext bash-completion moreutils
 
 ```
 
-### 12.jq 구성
+### 11. jq 구성
 
 ```
 for command in kubectl jq envsubst aws
@@ -241,7 +186,7 @@ for command in kubectl jq envsubst aws
 ```
 
 {% hint style="info" %}
-**jq**는 커맨드라인에서 JSON을 조작할 수 있는 도구입니다. 프로그래밍 언어는 아니지만 JSON 데이터를 다루기 위한 다양한 기능들을 제공합니다. kubectl의 결과들 중에서 복잡한 중첩 JSON구조  내에서 키를 찾을 때 유용합니다.
+**jq**는 커맨드라인에서 JSON을 조작할 수 있는 도구입니다. 프로그래밍 언어는 아니지만 JSON 데이터를 다루기 위한 다양한 기능들을 제공합니다. kubectl, aws cli의 결과들 중에서 복잡한 중첩 JSON구조  내에서 키를 찾을 때 유용합니다.
 {% endhint %}
 
 ### 13.K9s 설치
@@ -253,7 +198,7 @@ K9s의 최신 버전을 아래 링크에서 확인합니다.
 {% embed url="https://github.com/derailed/k9s/releases" %}
 
 ```
-# K9s 0.26.3 기준 설치 방
+# K9s 0.26.3 기준 설치 방법 
 K9S_VERSION=v0.26.3
 curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | sudo tar xfz - -C /usr/local/bin k9s
 
@@ -387,32 +332,8 @@ for command in kubectl jq envsubst aws
   done
   
 #K9s 설치
-sudo yum groupinstall -y 'Development Tools' && sudo yum install curl file git ruby which
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-echo 'eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"' >> /home/ec2-user/.bash_profile
-eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"
-brew install derailed/k9s/k9s
+K9S_VERSION=v0.26.3
+curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | sudo tar xfz - -C /usr/local/bin k9s
 
-#Kube krew 설치
-(
-  set -x; cd "$(mktemp -d)" &&
-  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
-  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
-  KREW="krew-${OS}_${ARCH}" &&
-  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
-  tar zxvf "${KREW}.tar.gz" &&
-  ./"${KREW}" install krew
-)
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-source ~/.bashrc
-
-#kubectx 설치
-kubectl krew install ctx
-
-#kubens 설치
-kubectl krew install ns
-
-#kubetree 설치
-kubectl krew install tree
 
 ```
