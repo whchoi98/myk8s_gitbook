@@ -34,7 +34,7 @@ aws cloudformation deploy \
   
 ```
 
-Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다. (option)
+(Option) Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다.&#x20;
 
 ```
 ##S3 Bucket 생성합니다. 
@@ -53,14 +53,10 @@ aws s3 sync ./ s3://${bucket_name}
 ## aws s3 cp ./ s3://${bucket_name} --recursive
 
 ## LAB에서 사용할 Object접근을 허용합니다.
-## aws s3api put-object-acl --bucket ${bucket_name} --key EKSVPC3AZ.yml --acl public-read  
-```
-
-S3 URL 형식은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있습니다. 출력값을 복사해 둡니다. (Option)
-
-```
-echo https://${bucket_name}.s3.ap-northeast-2.amazonaws.com/EKSVPC3AZ.yml
-
+## aws s3api put-object-acl --bucket ${bucket_name} --key EKSVPC3AZ.yml --acl public-read 
+# S3 URL 형식은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있습니다. 출력값을 복사해 둡니다.
+ echo https://${bucket_name}.s3.ap-northeast-2.amazonaws.com/EKSVPC3AZ.yml
+  
 ```
 
 ### 3. Stack 완료 확인
@@ -83,24 +79,4 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 ![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1) (1) (1).png>)
 
-## Cloudformation 기반 VPC 구성 요약
-
-#### 1.EKS workshop을 위한 File Download
-
-```
-cd ~/environment
-git clone https://github.com/whchoi98/myeks
-
-```
-
-#### 2. Cloudformation 기반 배포
-
-**`AWS 서비스 - Cloudformation`**
-
-**`스택생성 - 새 리소스 사용`**
-
-**`스택생성 - 템플릿 파일 업로드`**
-
-**`파일선택 - EKSVPCxAZ.yml 선택`**
-
-**`출력정보 확인`**
+**``**
