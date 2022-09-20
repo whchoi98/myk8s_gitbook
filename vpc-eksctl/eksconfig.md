@@ -24,10 +24,11 @@ aws-auth.yaml 파일을 아래 디렉토리에 생성합니다.&#x20;
 
 ```
 kubectl get configmap -n kube-system aws-auth -o yaml | grep -v "creationTimestamp\|resourceVersion\|selfLink\|uid" | sed '/^  annotations:/,+2 d' > ~/environment/aws-auth.yaml
+cp ~/environment/aws-auth.yaml ~/environment/aws-auth_backup.yaml
 
 ```
 
-아래 값을 aws-auth 파일에 입력합니다.
+Cloud9에서 \~/environment/aws-auth.yaml 을 열고, 아래 값을 aws-auth 파일에 입력합니다.
 
 ```
   mapUsers: |
@@ -38,7 +39,8 @@ kubectl get configmap -n kube-system aws-auth -o yaml | grep -v "creationTimesta
 ```
 
 ```
-kubectl  -n kube-system configmap/aws-auth
+# 아래와 같이 터미널에서 직접 수정도 가능합니다. 
+# kubectl edit -n kube-system configmap/aws-auth
 ```
 
 user arn은  AM에서 확인 할 수 있습니다.&#x20;
@@ -149,13 +151,11 @@ EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드�
 
 ![](<../.gitbook/assets/image (234) (1).png>)
 
-
-
 EKS Cluster내에 생성된 워크로드들을 확인해 볼 수 있습니다.
 
 ![](<../.gitbook/assets/image (236) (1) (1) (1).png>)
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 managed Node type과 Self Managed Node Type의 차이를 확인할 수 있습니다
 
