@@ -1,3 +1,7 @@
+---
+description: 'Update : 2022-09-24'
+---
+
 # istio 설치와 구성
 
 ## Istio 설치/구성&#x20;
@@ -9,14 +13,20 @@ istio 설치를 위해 istio binary를 Cloud9에 다운로드 받습니다. kube
 Cloud9에서 아래와 같이 실행시킵니다. istio version 1.13.5 기준으로 설치하는 예제입니다.&#x20;
 
 ```
-# istio version 1.13.5 기준
-echo 'export ISTIO_VERSION="1.13.5"' | tee -a ~/.bash_profile
+# istio version 1.14.4 기준
+echo 'export ISTIO_VERSION="1.14.4"' | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 cd ~/environment
 curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${ISTIO_VERSION} TARGET_ARCH=x86_64 sh -
 
 ```
+
+{% hint style="info" %}
+istio 버전은 분기에 한번씩 마이너 릴리즈를 제공하고 있습니다. Kubernetes 버전과 API 지원 종속성을 가지기 때문에 확인해야 합니다.  아래 링크를 통해서 확인이 가능합니다
+
+[https://istio.io/latest/docs/releases/supported-releases/#supported-releases/](https://istio.io/latest/docs/releases/supported-releases/#supported-releases/)
+{% endhint %}
 
 다운로드 받은 Binary안에는 istioctl이 포함되어 있습니다.
 
@@ -39,7 +49,7 @@ istioctl version
 ```
 $ istioctl version
 no running Istio pods in "istio-system"
-1.13.4
+1.14.4
 ```
 
 ### 2. Istio Profile 구성
@@ -75,14 +85,14 @@ kubectl -n istio-system get pod,svc
 ```
 $ kubectl -n istio-system get pod,svc
 NAME                                        READY   STATUS    RESTARTS   AGE
-pod/istio-egressgateway-7767fbfc44-8vzl9    1/1     Running   0          66s
-pod/istio-ingressgateway-76df49f94d-wp8lz   1/1     Running   0          66s
-pod/istiod-5689858c76-8nfdh                 1/1     Running   0          80s
+pod/istio-egressgateway-649b7b8dd5-cl4wx    1/1     Running   0          14s
+pod/istio-ingressgateway-75758855d7-bjxfj   1/1     Running   0          15s
+pod/istiod-59bd9654d7-qsfhz                 1/1     Running   0          27s
 
-NAME                           TYPE           CLUSTER-IP       EXTERNAL-IP                                                                   PORT(S)                                                                      AGE
-service/istio-egressgateway    ClusterIP      172.20.106.111   <none>                                                                        80/TCP,443/TCP                                                               66s
-service/istio-ingressgateway   LoadBalancer   172.20.60.183    a8564d1f37f284cb99faa29e2a16fc13-777516970.ap-northeast-2.elb.amazonaws.com   15021:31474/TCP,80:31139/TCP,443:31337/TCP,31400:32499/TCP,15443:31025/TCP   66s
-service/istiod                 ClusterIP      172.20.68.251    <none>                                                                        15010/TCP,15012/TCP,443/TCP,15014/TCP                                        80s
+NAME                           TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)                                                                      AGE
+service/istio-egressgateway    ClusterIP      172.20.201.1     <none>                                                                       80/TCP,443/TCP                                                               14s
+service/istio-ingressgateway   LoadBalancer   172.20.101.189   ab31b810421fa465c9c6fd8f82f4ad3e-23812066.ap-northeast-2.elb.amazonaws.com   15021:32050/TCP,80:30601/TCP,443:30861/TCP,31400:30474/TCP,15443:31660/TCP   14s
+service/istiod                 ClusterIP      172.20.212.253   <none>                                                                       15010/TCP,15012/TCP,443/TCP,15014/TCP 
 ```
 
 아래 명령을 통해 현재 구성된 프로파일을 확인해 볼 수 있습니다
