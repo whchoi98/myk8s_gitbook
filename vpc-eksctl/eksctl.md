@@ -28,55 +28,18 @@ eksctl version
 
 ### 2.VPC/Subnet 정보 확인
 
-앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC id, Subnet id를 확인합니다.
-
-다음 aws cli 명령을 통해서 확인 할 수 있습니다. 결과값은 홈디렉토리 **`vpc_subnet.txt`** 에 저장합니다. 아래 명령을 실행하면 자동으로 저장됩니다.
-
-```
-cd ~/environment/
-#VPC ID export
-export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
-echo $vpc_ID
-
-#Subnet ID, CIDR, Subnet Name export
-aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)'
-echo $vpc_ID > vpc_subnet.txt
-aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> vpc_subnet.txt
-cat vpc_subnet.txt
-
-# VPC, Subnet ID 환경변수 저장 
-export PublicSubnet01=$(aws ec2 describe-subnets --filters 'Name=tag:Name,Values=eksworkshop-PublicSubnet01' | jq -r '.Subnets[].SubnetId')
-export PublicSubnet02=$(aws ec2 describe-subnets --filters 'Name=tag:Name,Values=eksworkshop-PublicSubnet02' | jq -r '.Subnets[].SubnetId')
-export PublicSubnet03=$(aws ec2 describe-subnets --filters 'Name=tag:Name,Values=eksworkshop-PublicSubnet03' | jq -r '.Subnets[].SubnetId')
-export PrivateSubnet01=$(aws ec2 describe-subnets --filters 'Name=tag:Name,Values=eksworkshop-PrivateSubnet01' | jq -r '.Subnets[].SubnetId')
-export PrivateSubnet02=$(aws ec2 describe-subnets --filters 'Name=tag:Name,Values=eksworkshop-PrivateSubnet02' | jq -r '.Subnets[].SubnetId')
-export PrivateSubnet03=$(aws ec2 describe-subnets --filters 'Name=tag:Name,Values=eksworkshop-PrivateSubnet03' | jq -r '.Subnets[].SubnetId')
-echo "export vpc_ID=${vpc_ID}" | tee -a ~/.bash_profile
-echo "export PublicSubnet01=${PublicSubnet01}" | tee -a ~/.bash_profile
-echo "export PublicSubnet02=${PublicSubnet02}" | tee -a ~/.bash_profile
-echo "export PublicSubnet03=${PublicSubnet03}" | tee -a ~/.bash_profile
-echo "export PrivateSubnet01=${PrivateSubnet01}" | tee -a ~/.bash_profile
-echo "export PrivateSubnet02=${PrivateSubnet02}" | tee -a ~/.bash_profile
-echo "export PrivateSubnet03=${PrivateSubnet03}" | tee -a ~/.bash_profile
-source ~/.bash_profile
-
-```
-
-VPC id, subnet id, region, master arn은 eksctl을 통해 EKS cluster를 배포하는 데 사용합니다.
-
-### 3. eksctl 배포를 위한 yaml 생
-
-eksctl을 통해 EKS Cluster를 생성하기 위해서, 아래와 같이 Shell을 실행합니다.&#x20;
+앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC 자원들에 대한 고유의 자원 값을 추출해서, Cloud9 내에서 환경 변수에 저장합니다
 
 ```
 ~/environment/myeks/eks_shell.sh
-
 
 ```
 
 {% hint style="info" %}
 cat \~/.bash\_profile 을 실행해서 환경 변수가 정상적으로 입력되었는 지 확인해 봅니다.
 {% endhint %}
+
+### 3. eksctl 배포를 위한 yaml 생성&#x20;
 
 eksctl yaml 생성을 위해 아래 Shell을 실행합니다.&#x20;
 
