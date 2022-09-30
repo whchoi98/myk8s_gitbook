@@ -67,9 +67,9 @@ clb-test-01-svc   LoadBalancer   172.20.157.165   a2bb893008047439ba29a8df77944b
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다. (Option)
 
 ```
-export Clb_Test_Pod01=$(kubectl -n clb-test-01 get pod -o wide | awk '/10.11.3.103/{print $1}')
-export Clb_Test_Pod02=$(kubectl -n clb-test-01 get pod -o wide | awk '/10.11.30.212/{print $1}')
-export Clb_Test_Pod03=$(kubectl -n clb-test-01 get pod -o wide | awk '/10.11.40.163/{print $1}') 
+export Clb_Test_Pod01=$(kubectl -n clb-test-01 get pod -o wide | awk 'NR==2' | awk '/clb-test-01/{print $1 } ')
+export Clb_Test_Pod02=$(kubectl -n clb-test-01 get pod -o wide | awk 'NR==3' | awk '/clb-test-01/{print $1 } ')
+export Clb_Test_Pod03=$(kubectl -n clb-test-01 get pod -o wide | awk 'NR==4' | awk '/clb-test-01/{print $1 } ')
 echo "export Clb_Test_Pod01=${Clb_Test_Pod01}" | tee -a ~/.bash_profile
 echo "export Clb_Test_Pod02=${Clb_Test_Pod02}" | tee -a ~/.bash_profile
 echo "export Clb_Test_Pod03=${Clb_Test_Pod03}" | tee -a ~/.bash_profile
@@ -458,12 +458,12 @@ nlb-test-01-svc   LoadBalancer   172.20.221.81   aaa7c67484fd94ea8a2b6bf1fa09101
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 
 ```
-export Nlb_Test_Pod01=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.13.246/{print $1}')
-export Nlb_Test_Pod02=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.27.219/{print $1}')
-export Nlb_Test_Pod03=$(kubectl -n nlb-test-01 get pod -o wide | awk '/10.11.39.128/{print $1}') 
-echo "export Nlb_Test_Pod01=${Nlb_Test_Pod01}" | tee -a ~/.bash_profile
-echo "export Nlb_Test_Pod02=${Nlb_Test_Pod02}" | tee -a ~/.bash_profile
-echo "export Nclb_Test_Pod03=${Nlb_Test_Pod03}" | tee -a ~/.bash_profile
+export Nlb_Test_01_Pod01=$(kubectl -n nlb-test-01 get pod -o wide | awk 'NR==2' | awk '/nlb-test-01/{print $1 } ')
+export Nlb_Test_01_Pod02=$(kubectl -n nlb-test-01 get pod -o wide | awk 'NR==3' | awk '/nlb-test-01/{print $1 } ')
+export Nlb_Test_01_Pod03=$(kubectl -n nlb-test-01 get pod -o wide | awk 'NR==4' | awk '/nlb-test-01/{print $1 } ')
+echo "export Nlb_Test_01_Pod01=${Nlb_Test_01_Pod01}" | tee -a ~/.bash_profile
+echo "export Nlb_Test_01_Pod02=${Nlb_Test_01_Pod02}" | tee -a ~/.bash_profile
+echo "export Nlb_Test_01_Pod03=${Nlb_Test_01_Pod03}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
@@ -471,23 +471,23 @@ source ~/.bash_profile
 NlbTestPod01에 접속해서 아래와 같이 확인해 봅니다.&#x20;
 
 ```
-kubectl -n nlb-test-01 exec -it $Nlb_Test_Pod01 -- /bin/sh
-nslookup {cluster-ip}
+#Nlb_Test_01_Pod01 Container 접속
+kubectl -n nlb-test-01 exec -it $Nlb_Test_01_Pod01 -- /bin/sh
+#Nlb_Test_01_Pod01 Container 에서 HTTP 접속 확인
 tcpdump -i eth0 dst port 80 | grep "HTTP: GET"
 ```
 
 Cloud9 IDE Terminal에서 NLB External IP:8080 으로 접속합니다.&#x20;
 
 ```
-kubectl -n nlb-test-01 get svc nlb-test-01-svc | tail -n 1 | awk '{ print "NLB-TEST-01 URL = http://"$4 }'
-```
+## nlb-test-01-svc external hostname 변수 등록
+export nlb_test_01_svc_name=$(kubectl -n nlb-test-01 get svc nlb-test-01-svc --output jsonpath='{.status.loadBalancer.ingress[*].hostname}')
+echo "export nlb_test_01_svc_name=${nlb_test_01_svc_name}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 
-```
-$ kubectl -n nlb-test-01 get service -o wide
-NAME              TYPE           CLUSTER-IP     EXTERNAL-IP                                                                          PORT(S)          AGE   SELECTOR
-nlb-test-01-svc   LoadBalancer   172.20.18.55   aaa7c67484fd94ea8a2b6bf1fa091017-374347eabaa0875f.elb.ap-northeast-2.amazonaws.com   8080:31965/TCP   18m   app=nlb-test-01
+## nlb-test-01-svc external hostname 으로 접속
+curl $nlb_test_01_svc_name:8080
 
-curl aee3bccea7e554a008b3257942202ee1-89daeb3e502cc5fc.elb.ap-northeast-2.amazonaws.com:8080
 ```
 
 Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
@@ -522,17 +522,37 @@ kubectl -n nlb-test-02 get service -o wide
 
 ```
 
-NlbTestPod0에 접속해서 외부의 Client IP가 보이는지 확인해 봅니다.&#x20;
+아래와 같이 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록합니다. &#x20;
+
+```
+## pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 
+export Nlb_Test_02_Pod01=$(kubectl -n nlb-test-02 get pod -o wide | awk 'NR==2' | awk '/nlb-test-02/{print $1 } ')
+export Nlb_Test_02_Pod02=$(kubectl -n nlb-test-02 get pod -o wide | awk 'NR==3' | awk '/nlb-test-02/{print $1 } ')
+export Nlb_Test_02_Pod03=$(kubectl -n nlb-test-02 get pod -o wide | awk 'NR==4' | awk '/nlb-test-02/{print $1 } ')
+echo "export Nlb_Test_Pod01=${Nlb_Test_02_Pod01}" | tee -a ~/.bash_profile
+echo "export Nlb_Test_Pod02=${Nlb_Test_02_Pod02}" | tee -a ~/.bash_profile
+echo "export Nlb_Test_Pod03=${Nlb_Test_02_Pod03}" | tee -a ~/.bash_profile
+source ~/.bash_profile
+
+```
+
+NlbTestPod에 접속해서 외부의 Client IP가 보이는지 확인해 봅니다.&#x20;
 
 ```
 ### Cloud9 Terminal IP 를 확인합니다. 
 curl http://169.254.169.254/latest/meta-data/public-ipv4
 
-### Cloud9 에서 NLB External IP로 계속 접속 해 봅니다.
-while true; do curl {NLB External IP:8080}; sleep 1; clear; done
+## nlb-test-02-svc external hostname 변수 등록
+export nlb_test_02_svc_name=$(kubectl -n nlb-test-02 get svc nlb-test-02-svc --output jsonpath='{.status.loadBalancer.ingress[*].hostname}')
+echo "export nlb_test_02_svc_name=${nlb_test_02_svc_name}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 
-### nlb-test-02 namespace의 Pod1로 접속합니다. 
-kubectl -n nlb-test-02 exec -it {nlb-test-pod name} -- /bin/sh                                   
+### Cloud9 에서 NLB External IP로 계속 접속 해 봅니다.
+while true; do curl ${nlb_test_02_svc_name}:8080; sleep 1; clear; done
+
+### nlb-test-02 namespace의 Pod1로 접속합니다.
+
+kubectl -n nlb-test-02 exec -it ${Nlb_Test_02_Pod01} -- /bin/sh                                   
 
 / # tcpdump -i eth0 src {cloud9_terminal_ip} and dst port 80 | grep "HTTP: GET"
 tcpdump: verbose output suppressed, use -v[v]... for full protocol decode

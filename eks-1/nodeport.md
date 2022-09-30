@@ -46,9 +46,9 @@ node-test-01-869b8d5f87-x6mf9   1/1     Running   0          19s   10.11.11.70  
 shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
 
 ```
-export NodePort_Test_Pod01=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.16.79/{print $1}')
-export NodePort_Test_Pod02=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.41.25/{print $1}')
-export NodePort_Test_Pod03=$(kubectl -n node-test-01 get pod -o wide | awk '/10.11.11.70/{print $1}') 
+export NodePort_Test_Pod01=$(kubectl -n node-test-01 get pod -o wide | awk 'NR==2' | awk '/node-test-01/{print $1 } ')
+export NodePort_Test_Pod02=$(kubectl -n node-test-01 get pod -o wide | awk 'NR==3' | awk '/node-test-01/{print $1 } ')
+export NodePort_Test_Pod03=$(kubectl -n node-test-01 get pod -o wide | awk 'NR==4' | awk '/node-test-01/{print $1 } ')
 echo "export NodePort_Test_Pod01=${NodePort_Test_Pod01}" | tee -a ~/.bash_profile
 echo "export NodePort_Test_Pod02=${NodePort_Test_Pod02}" | tee -a ~/.bash_profile
 echo "export NodePort_Test_Pod03=${NodePort_Test_Pod03}" | tee -a ~/.bash_profile
@@ -61,6 +61,7 @@ source ~/.bash_profile
 Nodeport service를 배포합니다.
 
 ```
+cd ~/environment/myeks/network-test
 kubectl -n node-test-01 apply -f node-test-01-service.yaml
 kubectl -n node-test-01 get services -o wide
 
