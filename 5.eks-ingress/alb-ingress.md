@@ -232,12 +232,19 @@ secrets:
 
 ```
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml
+kubectl -n cert-manager get pods
 
 ```
 
+cert-manager pod 3대가 모두 정상적으로 동작되는지 확인하고 , 다음 단계를 진행합니다.&#x20;
+
+* Cert-manager
+* Cert-manager-cainjector
+* cert-manager-webhook
+
 ### 12. AWS Loadbalancer Controller Pod 설치
 
-Helm 기반 또는 mainfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다. (이미 git을 통해서 다운 받았을 경우에는 생략해도 됩니다.)
+Helm 기반 또는 manfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다. (이미 git을 통해서 다운 받았을 경우에는 생략해도 됩니다.)
 
 ```
 wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.3.1/v2_3_1_full.yaml
@@ -274,6 +281,7 @@ spec:
 ```
 cd ~/environment/myeks/alb-controller
 kubectl apply -f v2_3_1_full.yaml
+kubectl -n kube-system get pods | grep balancer
 
 ```
 
