@@ -475,9 +475,12 @@ alb-ing-01   <none>   *       k8s-alb-ing-01-alb-ing-01-1aa7c83247-45114489.ap-n
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 
 ```
-echo "export alb-ing-01Pod03=alb-test-01-ffd85d89f-td4tv" | tee -a ~/.bash_profile
-echo "export alb-ing-01Pod02=alb-test-01-ffd85d89f-5s66x" | tee -a ~/.bash_profile
-echo "export alb-ing-01Pod01=alb-test-01-ffd85d89f-sl5bd" | tee -a ~/.bash_profile
+export alb_ing_01_Pod01=$(kubectl -n alb-ing-01 get pod -o wide | awk 'NR==2' | awk '/alb-ing-01/{print $1 } ')
+export alb_ing_01_Pod02=$(kubectl -n alb-ing-01 get pod -o wide | awk 'NR==3' | awk '/alb-ing-01/{print $1 } ')
+export alb_ing_01_Pod03=$(kubectl -n alb-ing-01 get pod -o wide | awk 'NR==4' | awk '/alb-ing-01/{print $1 } ')
+echo "export alb_ing_01_Pod01=${alb_ing_01_Pod01}" | tee -a ~/.bash_profile
+echo "export alb_ing_01_Pod02=${alb_ing_01_Pod02}" | tee -a ~/.bash_profile
+echo "export alb_ing_01_Pod03=${alb_ing_01_Pod03}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
@@ -485,7 +488,7 @@ source ~/.bash_profile
 alb-ing-01에 접속해서 아래와 같이 확인해 봅니다.
 
 ```
-kubectl -n alb-test-01 exec -it $alb-ing-01 -- /bin/sh
+kubectl -n alb-test-01 exec -it $alb_ing_01_Pod01 -- /bin/sh
 tcpdump -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
 
 ```
@@ -494,7 +497,10 @@ Pod에서 TCPDump로 확인하면 정상적으로 Pakcet이 덤프되고 X-Forwa
 
 ```
 ## Cloud9 IDE
-curl {alb-ingress-address}
+export alb_ing_01_svc_name=$(kubectl -n alb-ing-01 get ingress alb-ing-01 --output jsonpath='{.status.loadBalancer.ingress[*].hostname}')
+echo "export alb_ing_01_svc_name=${alb_ing_01_svc_name}" | tee -a ~/.bash_profile
+curl ${alb_ing_01_svc_name}
+
 ```
 
 ```
