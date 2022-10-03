@@ -1,5 +1,5 @@
 ---
-description: 'update : 2022-04-19 / 50min'
+description: 'update : 2022-10-03 / 50min'
 ---
 
 # AWS Load Balancer Controller
@@ -488,7 +488,7 @@ source ~/.bash_profile
 alb-ing-01에 접속해서 아래와 같이 확인해 봅니다.
 
 ```
-kubectl -n alb-test-01 exec -it $alb_ing_01_Pod01 -- /bin/sh
+kubectl -n alb-ing-01 exec -it $alb_ing_01_Pod01 -- /bin/sh
 tcpdump -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
 
 ```
@@ -549,7 +549,65 @@ kubectl -n alb-ing-02 apply -f ~/environment/myeks/network-test/alb-ing-02-servi
 
 ![](<../.gitbook/assets/image (229) (1) (1).png>)
 
+아래와 같은 명령으로 결과를 확인 할 수 있습니다.
 
+```
+kubectl -n alb-ing-02 get pod -o wide
+kubectl -n alb-ing-02 get service -o wide 
+kubectl -n alb-ing-02 get ingress -o wide 
+
+```
+
+아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다.&#x20;
+
+```
+kubectl -n alb-ing-02 get ingress alb-ing-02 | tail -n 1 | awk '{ print "ALB-INGRESS URL = http://"$4}' 
+
+```
+
+해당 A Record를 Cloud9 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다.
+
+```
+$ kubectl -n alb-ing-02 get pod -o wide
+NAME                         READY   STATUS    RESTARTS   AGE     IP             NODE                                              NOMINATED NODE   READINESS GATES
+alb-ing-02-68795df47-7wt4j   1/1     Running   0          6m23s   10.11.55.70    ip-10-11-58-9.ap-northeast-2.compute.internal     <none>           <none>
+alb-ing-02-68795df47-kcmps   1/1     Running   0          6m23s   10.11.68.116   ip-10-11-69-251.ap-northeast-2.compute.internal   <none>           <none>
+alb-ing-02-68795df47-wp7jr   1/1     Running   0          6m23s   10.11.94.155   ip-10-11-81-171.ap-northeast-2.compute.internal   <none>           <none>
+$ kubectl -n alb-ing-02 get ingress -o wide
+NAME         CLASS    HOSTS   ADDRESS                                                  PORTS   AGE
+alb-ing-02   <none>   *       alb-ing-02-1854312130.ap-northeast-2.elb.amazonaws.com   80      7m14s
+```
+
+아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
+
+```
+export alb_ing_02_Pod01=$(kubectl -n alb-ing-02 get pod -o wide | awk 'NR==2' | awk '/alb-ing-02/{print $1 } ')
+export alb_ing_02_Pod02=$(kubectl -n alb-ing-02 get pod -o wide | awk 'NR==3' | awk '/alb-ing-02/{print $1 } ')
+export alb_ing_02_Pod03=$(kubectl -n alb-ing-02 get pod -o wide | awk 'NR==4' | awk '/alb-ing-02/{print $1 } ')
+echo "export alb_ing_02_Pod01=${alb_ing_02_Pod01}" | tee -a ~/.bash_profile
+echo "export alb_ing_02_Pod02=${alb_ing_02_Pod02}" | tee -a ~/.bash_profile
+echo "export alb_ing_02_Pod03=${alb_ing_02_Pod03}" | tee -a ~/.bash_profile
+source ~/.bash_profile
+
+```
+
+alb-ing-01에 접속해서 아래와 같이 확인해 봅니다.
+
+```
+kubectl -n alb-ing-02 exec -it $alb_ing_02_Pod01 -- /bin/sh
+tcpdump -s 0 -A 'tcp[((tcp[12:1] & 0xf0) >> 2):4] = 0x47455420'
+
+```
+
+Pod에서 TCPDump로 확인하면 정상적으로 Pakcet이 덤프되고 X-Forwarded를 통해 Source IP를 확인할 수 있습니다.&#x20;
+
+```
+## Cloud9 IDE
+export alb_ing_02_svc_name=$(kubectl -n alb-ing-02 get ingress alb-ing-02 --output jsonpath='{.status.loadBalancer.ingress[*].hostname}')
+echo "export alb_ing_02_svc_name=${alb_ing_02_svc_name}" | tee -a ~/.bash_profile
+curl ${alb_ing_02_svc_name}
+
+```
 
 ## ALB Ingress Controller 기반 Application 배포
 
