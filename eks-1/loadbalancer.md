@@ -28,20 +28,13 @@ Traffic 흐름은 다음과 같습니다.
 
 CLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.&#x20;
 
-```
-## clb-test-01 namespace를 생성하고, pod, service를 배포 
-kubectl create namespace clb-test-01
-kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01.yaml
-kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01-service.yaml
-
-```
-
 정상적으로 배포되었는지 아래 Command로 확인합니다.&#x20;
 
 ```
+## clb-test-01 namespace를 생성하고, pod, service를 배포 
+kubectl apply -f ./network-test/clb-test-01-deployment.yaml
 ## clb-test-01 namespace의 pod 확인 
 kubectl -n clb-test-01 get pod -o wide
-
 ## clb-test-01 namespace의 service 확인
 kubectl -n clb-test-01 get service -o wide
 
@@ -87,14 +80,17 @@ tcpdump -i eth0 dst port 80 | grep "HTTP: GET"
 
 ```
 
-Cloud9 IDE Terminal에서 CLB External IP:8080 으로 접속합니다
+Cloud9 IDE Terminal에서 CLB External IP:8080 으로 접속합니다.
 
 ```
-kubectl -n clb-test-01 get service
-NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                  PORT(S)          AGE
-clb-test-01-svc   LoadBalancer   172.20.157.165   a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com   8080:32139/TCP   3h16m
+## clb-test-01-svc external hostname 변수 등록
+kubectl -n clb-test-01 get svc clb-test-01-svc --output jsonpath='{.status.loadBalancer.ingress[*].hostname}'
+export clb_test_01_svc_name=$(kubectl -n clb-test-01 get svc clb-test-01-svc --output jsonpath='{.status.loadBalancer.ingress[*].hostname}')
+echo "export clb_test_01_svc_name=${clb_test_01_svc_name}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 
-curl a8505cbace07d4e15842c4403e55f27b-54739774.ap-northeast-2.elb.amazonaws.com:8080
+## clb-test-01-svc external hostname 으로 접속
+curl $clb_test_01_svc_name:8080
 ```
 
 Node에서 iptable에 설정된 NAT Table, Loadbalancing 구성을 확인해 봅니다.
