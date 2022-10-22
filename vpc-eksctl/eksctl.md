@@ -1,5 +1,5 @@
 ---
-description: 'update : 2022-09-10 / 20min'
+description: 'update : 2022-10-22 / 20min'
 ---
 
 # eksctl 구성
@@ -31,7 +31,7 @@ eksctl version
 앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC 자원들에 대한 고유의 자원 값을 추출해서, Cloud9 내에서 환경 변수에 저장합니다
 
 ```
-~/environment/myeks/eks_shell.sh
+~/environment/myeks/shell/eks_shell.sh
 
 ```
 
@@ -45,7 +45,7 @@ eksctl yaml 생성을 위해 아래 Shell을 실행합니다.&#x20;
 
 ```
 # eksctl yaml 실행 
-~/environment/myeks/eksctl_shell.sh
+~/environment/myeks/shell/eksctl_shell.sh
  
 ```
 
