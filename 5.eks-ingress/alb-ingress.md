@@ -113,9 +113,9 @@ ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다.
 
 ```
 ## ALB Load Balancer Controller 의 IAM Policy Download
-#cd ~/environment/myeks/alb-controller/
-#curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.3.1/docs/install/iam_policy.json
-#curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.1/docs/install/iam_policy.json
+# cd ~/environment/myeks/alb-controller/
+# export ALB_CONTROLLER_VERSION=2.4.1
+# curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v${ALB_CONTROLLER_VERSION}/docs/install/iam_policy.json
 ```
 
 ### 9. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
@@ -247,7 +247,7 @@ cert-manager pod 3대가 모두 정상적으로 동작되는지 확인하고 , �
 Helm 기반 또는 manfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다. (이미 git을 통해서 다운 받았을 경우에는 생략해도 됩니다.)
 
 ```
-wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.3.1/v2_3_1_full.yaml
+# wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.3.1/v2_3_1_full.yaml
 
 ```
 
