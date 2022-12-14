@@ -18,6 +18,8 @@ Service의 종류는 아래와 같습니다.
 
 ![](<../.gitbook/assets/image (238).png>)
 
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+
 ## CoreDNS와 Service
 
 ### 1.CoreDNS와 Service 역할 확인을 위한 App배포&#x20;
@@ -60,6 +62,15 @@ K9s로 접속하거나 bash profile에 등록한 컨테이너들로 각각의 Po
 ```
 kubectl -n cluster-test-01 exec -it $ClusterTestPod01 -- /bin/sh
 ```
+
+앞서 설치한 K9s에서 container에 접속해 봅니다.
+
+```
+k9s -n cluster-test-01
+
+```
+
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 ip a 와 /etc/resolve.conf를 조회해 봅니다.
 
@@ -166,6 +177,13 @@ spec:
 ```
 
 ClusterIP Service가 정상적으로 배포되었는지 확인합니다.
+
+```
+kubectl -n cluster-test-01 get services -o wide
+
+```
+
+아래와 같이 출력됩니다.&#x20;
 
 ```
 kubectl -n cluster-test-01 get services -o wide

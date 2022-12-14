@@ -377,7 +377,7 @@ kubectl -n mario get svc mario | tail -n 1 | awk '{ print "mario URL = http://"$
 
 3\~4분 뒤에 웹 브라우저를 통해 위 명령에서 실행된 URL을 접속하면 , CLB를 통해서 아래와 같이 게임이 실행됩니다.
 
-<figure><img src="../.gitbook/assets/image (1) (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (3) (1).png" alt=""><figcaption></figcaption></figure>
 
 * "s" - 게임시작
 * 방향키로 각 스테이지 이동
