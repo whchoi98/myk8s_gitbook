@@ -784,5 +784,5 @@ kubectl -n game-2048 get ingress ingress-2048 | tail -n 1 | awk '{ print "game-2
 
 ```
 
-![](<../.gitbook/assets/image (7).png>)
+![](<../.gitbook/assets/image (7) (2).png>)
 

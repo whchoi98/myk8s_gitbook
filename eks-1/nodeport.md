@@ -129,7 +129,7 @@ Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니�
 eksworkshop-managed-ng-public-01-Node
 ```
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (4).png" alt=""><figcaption></figcaption></figure>
 
 eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
 
