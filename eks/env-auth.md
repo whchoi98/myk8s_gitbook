@@ -48,11 +48,11 @@ Cloud9 상단 좌측 메뉴에서 EC2 대쉬보드로 접속을 선택하거나,
 
 EC2 대쉬보드의 인스턴스에는 이미 생성된 Cloud9 EC2 인스턴스가 보입니다.
 
-"작업"-"보"-"IAM 역할 연결/바꾸기"를 선택합니다.
+"작업"-"보안"-"IAM 역할 연결/바꾸기"를 선택합니다.&#x20;
 
 ![](../.gitbook/assets/eks\_cloud9\_iam\_role\_change.png)
 
-앞서 생성한 IAM 역할 **"eksworkshop-admin"**을 선택합니다.
+앞서 생성한 IAM 역할 **"eksworkshop-admin"**을 선택합니다.&#x20;
 
 ![](<../.gitbook/assets/image (12).png>)
 
