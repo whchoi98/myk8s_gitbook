@@ -168,7 +168,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
 
-![](<../.gitbook/assets/image (2) (1).png>)
+![](<../.gitbook/assets/image (2) (1) (1).png>)
 
 생성된 윈도우에서 아래 Path를 URL뒤에 복사해서 뒤에 붙여 넣습니다.
 

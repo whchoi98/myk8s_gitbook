@@ -155,7 +155,7 @@ EKS Cluster내에 생성된 워크로드들을 확인해 볼 수 있습니다.
 
 ![](<../.gitbook/assets/image (236) (1) (1) (1).png>)
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
 
 managed Node type과 Self Managed Node Type의 차이를 확인할 수 있습니다
 

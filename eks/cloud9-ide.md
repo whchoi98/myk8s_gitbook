@@ -14,15 +14,22 @@ AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 �
 
 AWS 서비스에서 Cloud9을 선택하고, `"Environments"`를 설정합니다.
 
+<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+
 Cloud9 의 이름과 Description을 설정합니다.
 
 ![](https://firebasestorage.googleapis.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-MB-iH\_e37nRZq7Rkf7x%2Fuploads%2F277HscdTA0yGf6A28s9S%2Ffile.png?alt=media)
 
 ### 2. Cloud9 인스턴스 타입과 플랫폼 설정
 
-인스턴스 타입과 운영체제, 그리고 절전모드 환경을 선택합니다. 절전모드 환경은 기본 30분입니다.
+인스턴스 타입과 Cost-Saving Setting을 변경합니다.
 
-![](<../.gitbook/assets/image (144).png>)
+* **`Instance Type - Other Instance Type - m5.2xlarge`**
+* **`Cost-Saving setting - Never`**
+
+<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 Cloud9 하단의 설정 메뉴 중에 Network Setting은 변경하지 않으면, 자동으로 VPC Default로 설정되며 Cloud9 인스턴스는 해당 Default VPC의 public subnet에 자동으로 설치됩니다.
@@ -31,6 +38,8 @@ Cloud9 하단의 설정 메뉴 중에 Network Setting은 변경하지 않으면,
 ### 3. Cloud9 터미널 접속
 
 Cloud9 터미널에 접속하여, EKS Workshop 터미널  IDE 환경을 살펴봅니다.
+
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 ![](<../.gitbook/assets/image (10).png>)
 
@@ -74,7 +83,7 @@ fi
 
 ## AWS CLI 설치
 
-### 5.AWS CLI 버전 확인과 업그레이드
+### 5. Cloud9 에 패키지 설치
 
 {% hint style="info" %}
 AWS 명령줄 인터페이스(CLI)는 AWS 서비스를 관리하는 통합 도구입니다. 도구 하나만 다운로드하여 구성하면 여러 AWS 서비스를 명령줄에서 제어하고 스크립트를 통해 자동화할 수 있습니다.
@@ -82,23 +91,20 @@ AWS 명령줄 인터페이스(CLI)는 AWS 서비스를 관리하는 통합 도�
 
 Cloud9 IDE는 이미 AWS CLI가 설치되어 있습니다. 하지만 기본 1.x 버전이 설치되어 있습니다.
 
-```
-$ aws --version
-aws-cli/1.19.39 Python/2.7.18 Linux/4.14.225-169.362.amzn2.x86_64 botocore/1.20.39
-```
-
 아래 명령을 통해 CLI를 2.0으로 업그레이드하고, 자동완성을 설치합니다.
 
 ```
+# AWS CLI Upgrade
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
+source ~/.bashrc
+aws --version
+# AWS CLI 자동완성 설치 
 which aws_completer
 export PATH=/usr/local/bin:$PATH
 source ~/.bash_profile
 complete -C '/usr/local/bin/aws_completer' aws
-source ~/.bashrc
-aws --version
 
 ```
 
@@ -128,15 +134,19 @@ EKS를 위한 kubectl 바이너리를 다운로드합니다. 아래 kubectl vers
 Kubernetes 버전 1.23 출시부터 공식적으로 Amazon EKS AMI에는 containerd가 유일한 런타임으로 포함됩니다. Kubernetes 버전 1.18–1.21은 Docker를 기본 런타임으로 사용합니다.
 {% endhint %}
 
-**EKS 1.21.5 기반 설치**&#x20;
+kubectl 바이너리 버전은 1.22.6 설치합니다.&#x20;
 
 ```
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.22.6/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 ```
 
-#### Kubectl 버전 다운로드 (Linux 기준)
+#### \[참고] Kubectl 버전 다운로드 (Linux 기준)
 
 ```
 # 최신버전 다운로드
@@ -167,16 +177,10 @@ kubectl은 Bash 및 Zsh에 대한 자동 완성 지원을 제공하므로 입력
 
 ## 기타 유틸리티 설치
 
-### 10.GNU gettext,jq,bash 자동완성, moreutil 설치
+### 10.GNU gettext,jq,bash 자동완성 설치
 
 ```
 sudo yum -y install jq gettext bash-completion moreutils
-
-```
-
-### 11. jq 구성
-
-```
 for command in kubectl jq envsubst aws
   do
     which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
@@ -188,7 +192,7 @@ for command in kubectl jq envsubst aws
 **jq**는 커맨드라인에서 JSON을 조작할 수 있는 도구입니다. 프로그래밍 언어는 아니지만 JSON 데이터를 다루기 위한 다양한 기능들을 제공합니다. kubectl, aws cli의 결과들 중에서 복잡한 중첩 JSON구조  내에서 키를 찾을 때 유용합니다.
 {% endhint %}
 
-### 13.K9s 설치
+### 11.K9s 설치
 
 K9s는 쿠버네티스 클러스터와 상호작용을 통해 직관적인 UI 터미널을 제공합니다. 이 도구를 통해서 쿠버네티스 자원들을 쉽게 탐색하고 관리할 수 있도록 도움을 줍니다.(참조 - [https://github.com/derailed/k9s](https://github.com/derailed/k9s))
 
@@ -284,55 +288,6 @@ PS1='$(kube_ps1)'$PS1
 
 2.AWS CLI 2.0 업그레이드 및 자동완성 설치
 
-```
-#AWS CLI를 2.0으로 업그레이드합니다.
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
-#AWS CLI 자동완성을 설치합니다.
-which aws_completer
-export PATH=/usr/local/bin:$PATH
-source ~/.bash_profile
-complete -C '/usr/local/bin/aws_completer' aws
-
-# Session Manager Plugin 설치 
-curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
-sudo sudo yum install -y session-manager-plugin.rpm
-
-```
-
 3\. Cloud9에 Kubectl 설치 (1.21.5기준)
 
-```
-# EKS 1.21.5 기반 설치
-cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl
-chmod +x ./kubectl
-mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
-echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-
-# Kubectl 자동완성 설치
-source <(kubectl completion bash)
-echo "source <(kubectl completion bash)" >> ~/.bashrc
-
-```
-
 4\. 기타 유틸리티 설치
-
-```
-#GNU gettext,jq,bash 자동완성, moreutil 설치
-sudo yum -y install jq gettext bash-completion moreutils tree
-
-#yq 구성
-for command in kubectl jq envsubst aws
-  do
-    which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
-  done
-  
-#K9s 설치
-K9S_VERSION=v0.26.3
-curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | sudo tar xfz - -C /usr/local/bin k9s
-
-
-```
