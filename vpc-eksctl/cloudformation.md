@@ -10,6 +10,10 @@ AWS CloudFormation에서는 클라우드 환경에서 AWS 및 타사 애플리�
 
 ## Cloudformation 기반의 VPC 구성
 
+{% hint style="info" %}
+생성되는 VPC에서는 NAT Gateway가 3개 사용됩니다. NAT Gateway는 3개의 EIP를 사용합니다. 사용 중인 계정에 EIP 할당 숫자는 최대 5개 입니다. EIP가 3개 이상 여유가 있어야 배포가 가능합니다.&#x20;
+{% endhint %}
+
 ### 1.VPC yaml 다운로드
 
 eksworkshop에서 사용할 다양한 yaml file을 git에서 내려받습니다. Cloud9에서 아래와 같이 실행합니다.
@@ -31,31 +35,6 @@ aws cloudformation deploy \
   --stack-name "eksworkshop" \
   --template-file "EKSVPC3AZ.yml" \
   --capabilities CAPABILITY_NAMED_IAM 
-  
-```
-
-(Option) Cloud9에서 직접 file을 업로드하기 위해서는 아래와 같이 S3를 활용할 수도 있습니다.&#x20;
-
-```
-##S3 Bucket 생성합니다. 
-##Bucket name은 고유해야 합니다.
-export bucket_name="usernameDate"
-echo "export bucket_name=${bucket_name}" | tee -a ~/.bash_profile
-aws s3 mb s3://${bucket_name}
-
-#생성한 S3 Bucket으로 파일을 모두 복사해 둡니다.
-cd ./myeks/
-
-# Cloud9에서 변경되는 파일을 S3와 동기화 합니다. 
-aws s3 sync ./ s3://${bucket_name}
-
-## option - copy를 통해 사용해도 가능합니다.
-## aws s3 cp ./ s3://${bucket_name} --recursive
-
-## LAB에서 사용할 Object접근을 허용합니다.
-## aws s3api put-object-acl --bucket ${bucket_name} --key EKSVPC3AZ.yml --acl public-read 
-# S3 URL 형식은 생성한 버킷 이름과 리전 주소, Object 로 생성되어 있습니다. 출력값을 복사해 둡니다.
- echo https://${bucket_name}.s3.ap-northeast-2.amazonaws.com/EKSVPC3AZ.yml
   
 ```
 
