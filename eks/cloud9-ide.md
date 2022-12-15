@@ -29,7 +29,7 @@ Cloud9 의 이름과 Description을 설정합니다.
 * **`Instance Type - Other Instance Type - m5.2xlarge`**
 * **`Cost-Saving setting - Never`**
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (2).png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 Cloud9 하단의 설정 메뉴 중에 Network Setting은 변경하지 않으면, 자동으로 VPC Default로 설정되며 Cloud9 인스턴스는 해당 Default VPC의 public subnet에 자동으로 설치됩니다.
