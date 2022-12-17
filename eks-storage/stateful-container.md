@@ -334,7 +334,7 @@ EOF
 
 ```text
 kubectl -n mysql run mysql-client --image=mysql:5.7 -it --rm --restart=Never --\
->   mysql -h mysql-read -e "SELECT * FROM test.messages"
+   mysql -h mysql-read -e "SELECT * FROM test.messages"
 
 ```
 
