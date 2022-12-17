@@ -1074,14 +1074,14 @@ whchoi98:~/environment/helm-chart-demo $ curl --data-binary "@helm-chart-demo-0.
 S3에 정상적으로 Chartmuseum이 배포되었는지 확인합니다.
 
 ```
-aws s3 ls s3://${s3chartmuseumt}
+aws s3 ls s3://${s3chartmuseum}
 
 ```
 
 출력 결과 예제
 
 ```
-aws s3 ls s3://${s3chartmuseumt}
+aws s3 ls s3://${s3chartmuseum}
 2022-02-14 14:28:03       1400 helm-chart-demo-0.1.0.tgz
 ```
 

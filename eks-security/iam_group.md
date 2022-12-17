@@ -220,7 +220,7 @@ kubernetes 사용자 DevUser 에게 development namespace 전체 액세스 권�
 ```
 cat << EOF | kubectl apply -f - -n development
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: dev-role
 rules:
@@ -253,7 +253,7 @@ rules:
       - "update"
 ---
 kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: dev-role-binding
 subjects:
@@ -272,7 +272,7 @@ kubernetes 사용자 InteUser 에게 development namespace 전체 액세스 권�
 ```
 cat << EOF | kubectl apply -f - -n integration
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: integ-role
 rules:
@@ -305,7 +305,7 @@ rules:
       - "update"
 ---
 kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: integ-role-binding
 subjects:
@@ -331,12 +331,12 @@ arn 그룹을 허용하거나 삭제하려면 kube-system 네임 스페이스 �
 eksctl create iamidentitymapping \
   --cluster eksworkshop \
   --arn arn:aws:iam::${ACCOUNT_ID}:role/k8sDev \
-  --username DevUser
+  --username dev-user
 
 eksctl create iamidentitymapping \
   --cluster eksworkshop \
   --arn arn:aws:iam::${ACCOUNT_ID}:role/k8sInteg \
-  --username IntUser
+  --username integ-user
 
 eksctl create iamidentitymapping \
   --cluster eksworkshop \
@@ -418,14 +418,14 @@ EoF
 이제 만들어진 계정으로 전환하면서, 계정, 권한 ,역할 등을 점검해 봅니다.
 
 ```
-export KUBECONFIG=/tmp/kubeconfig-dev && eksctl utils write-kubeconfig eksworkshop
+export KUBECONFIG=/tmp/kubeconfig-dev && eksctl utils write-kubeconfig --cluster eksworkshop
 cat $KUBECONFIG | yq e '.users.[].user.exec.args += ["--profile", "dev"]' - -- | sed 's/eksworkshop./eksworkshop-dev./g' | sponge $KUBECONFIG
 
 ```
 
 ```
 aws sts get-caller-identity --profile dev
-kubectl run --generator=run-pod/v1 nginx-dev --image=nginx -n development
+kubectl run nginx-dev --image=nginx -n development
 kubectl get pods -n development
 
 ```

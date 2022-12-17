@@ -165,7 +165,7 @@ Events:              <none>
 export ES_DOMAIN_NAME="eksworkshop-logging"
 
 # Elasticsearch version
-export ES_VERSION="7.4"
+export ES_VERSION="OpenSearch_1.0"
 
 # kibana admin user
 export ES_DOMAIN_USER="eksworkshop"
@@ -187,7 +187,7 @@ curl -sS https://www.eksworkshop.com/intermediate/230_logging/deploy.files/es_do
   | envsubst > ~/environment/logging/es_domain.json
 
 # Create the cluster
-aws es create-elasticsearch-domain \
+aws opensearch create-domain \
   --cli-input-json  file://~/environment/logging/es_domain.json
 
 ```
