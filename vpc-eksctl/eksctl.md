@@ -172,20 +172,20 @@ kubectl get nodes
 출력 결과 예시
 
 ```
-whchoi:~/environment $ kubectl get nodes
-NAME                                               STATUS   ROLES    AGE   VERSION
-ip-10-11-104-129.ap-northeast-2.compute.internal   Ready    <none>   28m   v1.20.7-eks-135321
-ip-10-11-13-217.ap-northeast-2.compute.internal    Ready    <none>   28m   v1.20.7-eks-135321
-ip-10-11-16-169.ap-northeast-2.compute.internal    Ready    <none>   28m   v1.20.7-eks-135321
-ip-10-11-17-190.ap-northeast-2.compute.internal    Ready    <none>   27m   v1.20.7-eks-135321
-ip-10-11-45-25.ap-northeast-2.compute.internal     Ready    <none>   28m   v1.20.7-eks-135321
-ip-10-11-46-97.ap-northeast-2.compute.internal     Ready    <none>   27m   v1.20.7-eks-135321
-ip-10-11-7-117.ap-northeast-2.compute.internal     Ready    <none>   27m   v1.20.7-eks-135321
-ip-10-11-72-242.ap-northeast-2.compute.internal    Ready    <none>   28m   v1.20.7-eks-135321
-ip-10-11-78-241.ap-northeast-2.compute.internal    Ready    <none>   26m   v1.20.7-eks-135321
-ip-10-11-81-97.ap-northeast-2.compute.internal     Ready    <none>   28m   v1.20.7-eks-135321
-ip-10-11-95-61.ap-northeast-2.compute.internal     Ready    <none>   26m   v1.20.7-eks-135321
-ip-10-11-99-248.ap-northeast-2.compute.internal    Ready    <none>   26m   v1.20.7-eks-135321
+$  kubectl get nodes
+NAME                                              STATUS   ROLES    AGE     VERSION
+ip-10-11-1-225.ap-northeast-2.compute.internal    Ready    <none>   2m16s   v1.22.15-eks-fb459a0
+ip-10-11-15-121.ap-northeast-2.compute.internal   Ready    <none>   5m26s   v1.22.15-eks-fb459a0
+ip-10-11-27-197.ap-northeast-2.compute.internal   Ready    <none>   2m17s   v1.22.15-eks-fb459a0
+ip-10-11-27-216.ap-northeast-2.compute.internal   Ready    <none>   5m14s   v1.22.15-eks-fb459a0
+ip-10-11-33-12.ap-northeast-2.compute.internal    Ready    <none>   2m17s   v1.22.15-eks-fb459a0
+ip-10-11-47-74.ap-northeast-2.compute.internal    Ready    <none>   5m25s   v1.22.15-eks-fb459a0
+ip-10-11-50-128.ap-northeast-2.compute.internal   Ready    <none>   83s     v1.22.15-eks-fb459a0
+ip-10-11-59-180.ap-northeast-2.compute.internal   Ready    <none>   5m34s   v1.22.15-eks-fb459a0
+ip-10-11-69-123.ap-northeast-2.compute.internal   Ready    <none>   5m23s   v1.22.15-eks-fb459a0
+ip-10-11-74-5.ap-northeast-2.compute.internal     Ready    <none>   84s     v1.22.15-eks-fb459a0
+ip-10-11-80-166.ap-northeast-2.compute.internal   Ready    <none>   79s     v1.22.15-eks-fb459a0
+ip-10-11-90-157.ap-northeast-2.compute.internal   Ready    <none>   5m30s   v1.22.15-eks-fb459a0
 ```
 
 * 생성된 VPC와 Subnet, Internet Gateway, NAT Gateway, Route Table등을 확인해 봅니다.
@@ -195,3 +195,6 @@ ip-10-11-99-248.ap-northeast-2.compute.internal    Ready    <none>   26m   v1.20
 다음과 같은 구성도가 완성되었습니다.
 
 ![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1) (1).png>)
+
+
+
