@@ -28,7 +28,7 @@ cp ~/environment/aws-auth.yaml ~/environment/aws-auth_backup.yaml
 
 ```
 
-Cloud9에서 \~/environment/aws-auth.yaml 을 열고, 아래 값을 aws-auth 파일에 입력합니다.
+Cloud9에서 \~/environment/aws-auth.yaml 을 열고, 아래 값을 aws-auth 파일에 아래와 같은 내용을 추가 입력합니다.
 
 ```
   mapUsers: |
@@ -38,16 +38,11 @@ Cloud9에서 \~/environment/aws-auth.yaml 을 열고, 아래 값을 aws-auth 파
         - system:masters
 ```
 
+user arn에서 xxxxx 의 값은 account id 입니다. 아래와 같이 account id는 이미 Shell 환경 변수에 저장해 두었습니다.
+
 ```
-# 아래와 같이 터미널에서 직접 수정도 가능합니다. 
-# kubectl edit -n kube-system configmap/aws-auth
+echo $ACCOUNT_ID
 ```
-
-user arn은  AM에서 확인 할 수 있습니다.&#x20;
-
-**`AWS 관리 콘솔 - IAM - User`**
-
-![](<../.gitbook/assets/image (170).png>)
 
 아래 새로운 사용자의 권한을 mapRoles 뒤에 추가해 줍니다. kubectl edit는 vi edit과 동일하게 수정하는 방식입니다. 아래 명령을 입력하고 복사해서 붙여 넣습니다.
 
@@ -86,6 +81,11 @@ kind: ConfigMap
 metadata:
   name: aws-auth
   namespace: kube-system
+```
+
+```
+# 아래와 같이 터미널에서 직접 수정도 가능합니다. 
+# kubectl edit -n kube-system configmap/aws-auth
 ```
 
 aws-auth.yaml을 실행시켜 AWS IAM User 에서도 EKS Cluster 접근 권한을 활성화 합니다.&#x20;
