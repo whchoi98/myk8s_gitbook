@@ -32,9 +32,19 @@ CLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace�
 
 ```
 ## clb-test-01 namespace를 생성하고, pod, service를 배포 
-kubectl apply -f ./network-test/clb-test-01-deployment.yaml
+kubectl create namespace clb-test-01
+kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01.yaml
+kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01-service.yaml
+
+
+```
+
+정상적으로 배포되었는지 아래 Command로 확인합니다.
+
+```
 ## clb-test-01 namespace의 pod 확인 
 kubectl -n clb-test-01 get pod -o wide
+
 ## clb-test-01 namespace의 service 확인
 kubectl -n clb-test-01 get service -o wide
 
@@ -44,13 +54,13 @@ kubectl -n clb-test-01 get service -o wide
 
 ```
 kubectl -n clb-test-01 get pod -o wide
-NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE                                             NOMINATED NODE   READINESS GATES
-clb-test-01-66f4b975ff-25mvk   1/1     Running   0          9s    10.11.3.103    ip-10-11-10-88.ap-northeast-2.compute.internal   <none>           <none>
-clb-test-01-66f4b975ff-hmm52   1/1     Running   0          9s    10.11.40.163   ip-10-11-35-39.ap-northeast-2.compute.internal   <none>           <none>
-clb-test-01-66f4b975ff-vrmx5   1/1     Running   0          9s    10.11.30.212   ip-10-11-30-67.ap-northeast-2.compute.internal   <none>           <none>
+NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE                                              NOMINATED NODE   READINESS GATES
+clb-test-01-5bbc58fd87-29k6r   1/1     Running   0          32s   10.11.42.35    ip-10-11-44-207.ap-northeast-2.compute.internal   <none>           <none>
+clb-test-01-5bbc58fd87-f56bv   1/1     Running   0          32s   10.11.20.234   ip-10-11-26-22.ap-northeast-2.compute.internal    <none>           <none>
+clb-test-01-5bbc58fd87-fr49z   1/1     Running   0          32s   10.11.2.14     ip-10-11-1-131.ap-northeast-2.compute.internal    <none>           <none>
 kubectl -n clb-test-01 get service -o wide
-NAME              TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)          AGE   SELECTOR
-clb-test-01-svc   LoadBalancer   172.20.157.165   a2bb893008047439ba29a8df77944bcf-1758389191.ap-northeast-2.elb.amazonaws.com   8080:30975/TCP   10s   app=clb-test-01
+NAME              TYPE           CLUSTER-IP    EXTERNAL-IP                                                                    PORT(S)          AGE   SELECTOR
+clb-test-01-svc   LoadBalancer   172.20.81.6   aa4ad3c7607774968a7f13c1940554c1-1190922948.ap-northeast-2.elb.amazonaws.com   8080:31906/TCP   32s   app=clb-test-01
 ```
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.&#x20;
@@ -425,7 +435,7 @@ kubectl -n nlb-test-01 apply -f ~/environment/myeks/network-test/nlb-test-01-ser
 
 ```
 
-정상적으로 배포되었는지 아래 Command로 확인합니다.&#x20;
+정상적으로 배포되었는지 아래 명령어로 확인합니다.&#x20;
 
 ```
 kubectl -n nlb-test-01 get pod -o wide
@@ -544,7 +554,7 @@ echo "export nlb_test_02_svc_name=${nlb_test_02_svc_name}" | tee -a ~/.bash_prof
 source ~/.bash_profile
 
 ### Cloud9 에서 NLB External IP로 계속 접속 해 봅니다.
-while true; do curl ${nlb_test_02_svc_name}:8080; sleep 1; clear; done
+while true; do curl ${nlb_test_02_svc_name}:8080; sleep 1; done
 
 ### nlb-test-02 namespace의 Pod1로 접속합니다.
 
@@ -581,13 +591,6 @@ iptables -t nat -nL KUBE-SERVICES
 * ecsdemo-nodejs service type: nlb(internal)
 
 ### 10.FrontEnd 어플리케이션 배포
-
-새로운 namespace를 구성합니다.
-
-```
-kubectl create namespace nlb-test
-
-```
 
 어플리케이션을 배포하고, service를 구성합니다.
 
@@ -648,7 +651,7 @@ NLB를 위해서는 사전에 서브넷에 태그가 지정되어야 합니다. 
 아래 출력되는 결과의 EXTERNAL-IP를 복사해서 브라우져 창에서 실행해 봅니다.
 
 ```
-kubectl -n nlb-test get svc ecsdemo-frontend | tail -n 1 | awk '{ print "NLB-TEST URL = http://"$4 }'$ kubectl -n nlb-test get service -o wide
+kubectl -n nlb-test get svc ecsdemo-frontend | tail -n 1 | awk '{ print "NLB-TEST URL = http://"$4 }'
 
 ```
 
