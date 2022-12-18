@@ -32,10 +32,11 @@ CLB Loadbalance Service Type 을 시험하기 위해 아래와 같이 namespace�
 
 ```
 ## clb-test-01 namespace를 생성하고, pod, service를 배포 
-kubectl create namespace clb-test-01
-kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01.yaml
-kubectl -n clb-test-01 apply -f ~/environment/myeks/network-test/clb-test-01-service.yaml
-
+kubectl apply -f ~/environment/myeks/network-test/clb-test-01-deployment.yaml 
+## clb-test-01 namespace의 pod 확인 
+kubectl -n clb-test-01 get pod -o wide
+## clb-test-01 namespace의 service 확인
+kubectl -n clb-test-01 get service -o wide
 
 ```
 
