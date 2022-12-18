@@ -238,52 +238,11 @@ export MASTER_ARN=arn:aws:kms:ap-northeast-2:909121566064:key/9a0c5a6c-be81-4463
 
 **`Cloud9 콘솔 - Preference - AWS Settings - Credentials - AWS managed temporary credentials 비활성`**
 
-```
-#임시 자격 증명 삭제
-rm -vf ${HOME}/.aws/credentials
-
-#환경변수 저장
-export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
-export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
-echo $ACCOUNT_ID
-echo $AWS_REGION
-
-#Bash Profile에 저장
-echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
-echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
-aws configure set default.region ${AWS_REGION}
-aws configure --profile default list
-
-```
-
 **2.Cloud 9 또는 기타장소에서 Key 생성.**
-
-```
-#key 생성 , Key name - eksworkshop
-ssh-keygen
-
-```
 
 **3. Public Key를 AWS 키페어 집합소에 전송.**
 
-```
-aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material file://~/environment/eksworkshop.pub
-```
-
 **4. KMS 기반 key 생성.**
-
-```
-#KMS Key 생성
-aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms create-key --query KeyMetadata.Arn --output text)
-
-#CMK의 ARN을 $MASTER_ARN에 입력
-export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
-echo $MASTER_ARN > master_arn.txt
-
-#KMS Key를 쉽게 참조 할 수 있도록 MASTER 환경변수를 bash_profile에 저장
-echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
-
-```
 
 
 
