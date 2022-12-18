@@ -164,7 +164,7 @@ kubernetes dashboard는 ClusterIP 타입으로 서비스 배포됩니다. Cluste
 
 Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
 
-![](<../.gitbook/assets/image (16).png>)
+![](<../.gitbook/assets/image (16) (1).png>)
 
 생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
 

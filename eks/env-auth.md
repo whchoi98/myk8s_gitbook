@@ -12,7 +12,7 @@ description: 'update : 2022-09-10 / 15min'
 
 IAM 서비스 대쉬보드 접속 및 역할(Role) 생성을 합니다. AWS 서비스에서 IAM을 선택하고, "역할 만들기"를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (4) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4) (2) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### 2.역할(Role)을 만듭니다.
 

@@ -18,7 +18,7 @@ Service의 종류는 아래와 같습니다.
 
 ![](<../.gitbook/assets/image (238).png>)
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ## CoreDNS와 Service
 
@@ -70,7 +70,7 @@ k9s -n cluster-test-01
 
 ```
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (16).png" alt=""><figcaption></figcaption></figure>
 
 ip a 와 /etc/resolve.conf를 조회해 봅니다.
 

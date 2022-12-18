@@ -262,7 +262,7 @@ kubectl get nodes -o wide
 
 이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다. Node의 IP 주소는 EC2 서비스 대시 보드에서 확인 할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (2).png" alt=""><figcaption></figcaption></figure>
 
 eksworkshop-managed-ng-public-01-node 들의 EIP를 확인합니다.
 

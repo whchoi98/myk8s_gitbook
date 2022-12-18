@@ -174,7 +174,7 @@ kubectl port-forward -n prometheus deploy/prometheus-server 8081:9090 &
 
 Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
 
-![](<../.gitbook/assets/image (16).png>)
+![](<../.gitbook/assets/image (16) (1).png>)
 
 생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
 
