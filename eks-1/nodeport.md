@@ -131,7 +131,7 @@ eksworkshop-managed-ng-public-01-Node
 
 <figure><img src="../.gitbook/assets/image (3) (4).png" alt=""><figcaption></figcaption></figure>
 
-eksworkshop-ng-public-01-node 들의 EIP를 확인합니다.
+eksworkshop-managed-ng-public-01-Node 들의 EIP를 확인합니다.
 
 ```
 aws ec2 describe-instances --filters 'Name=tag:Name,Values=eksworkshop-managed-ng-public-01-Node' | jq -r '.Reservations[].Instances[].PublicIpAddress'
