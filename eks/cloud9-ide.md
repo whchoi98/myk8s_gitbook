@@ -201,7 +201,7 @@ K9s의 최신 버전을 아래 링크에서 확인합니다.
 {% embed url="https://github.com/derailed/k9s/releases" %}
 
 ```
-# K9s 0.26.6 기준 설치 방법 
+# K9s 0.26.7 기준 설치 방법 
 K9S_VERSION=v0.26.7
 curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | sudo tar xfz - -C /usr/local/bin k9s
 
