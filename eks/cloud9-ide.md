@@ -39,7 +39,7 @@ Cloud9 하단의 설정 메뉴 중에 Network Setting은 변경하지 않으면,
 
 Cloud9 터미널에 접속하여, EKS Workshop 터미널  IDE 환경을 살펴봅니다.
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (2).png" alt=""><figcaption></figcaption></figure>
 
 ![](<../.gitbook/assets/image (10).png>)
 

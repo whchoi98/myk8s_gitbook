@@ -18,7 +18,7 @@ Service의 종류는 아래와 같습니다.
 
 ![](<../.gitbook/assets/image (238).png>)
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ## CoreDNS와 Service
 
