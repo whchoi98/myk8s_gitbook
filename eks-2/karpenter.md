@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2022-05-08'
+description: 'Update: 2023-01-27'
 ---
 
 # 스케쥴링-Karpenter
@@ -24,241 +24,159 @@ Karpenter는 [Apache License 2.0](https://github.com/awslabs/karpenter/blob/main
 
 ## Karpenter 설치
 
-0\. EKS Cluster 설치
+설치 순서
 
-ap-northeast-1 region에 새로운 Cluster를 설치합니다.
+1. VPC 구성
+2. ekstcl기반의 Cluster 구성
+3. subnet에 karpenter tag 구성
+4. OIDC 구성
+5. IAM Role 구성 및 Node에 적용
+6.
 
-* ap-northeast-1 region에서 새로운 Cloud9 을 설치 합니다. ([2.EKS 환경 구성 참조](../eks/cloud9-ide.md#1.-cloud9-ide))
+### 1.환경설정 및 VPC 구성
 
-설치  Script는 아래와 같이 진행합니다.
+ap-northeast-1 (도쿄) region에 새로운 Cluster를 설치하기 위한 환경변수를 설정합니다.
 
 ```
-### AWS Cli 2.0 Install
-
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
-source ~/.bashrc
-aws --version
-
-which aws_completer
-export PATH=/usr/local/bin:$PATH
-source ~/.bash_profile
-complete -C '/usr/local/bin/aws_completer' aws
-
-### Kubectl 1.21.5 Install
-cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.5/bin/linux/amd64/kubectl
-chmod +x ./kubectl
-sudo mv ./kubectl /usr/local/bin/kubectl
-source <(kubectl completion bash)
-echo "source <(kubectl completion bash)" >> ~/.bashrc
-
-### util setup
-
-sudo yum -y install jq gettext bash-completion moreutils
-for command in kubectl jq envsubst aws
-  do
-    which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
-  done
-
+echo "export KARPENTER_ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
+export KARPENTER_AWS_REGION=ap-northeast-1
+echo "export KARPENTER_AWS_REGION=$KARPENTER_AWS_REGION" | tee -a ~/.bash_profile
 
 ```
 
-
-
-Cloud9 에 새로운 Role을 부여합니다. ([2.EKS 환경 구성 참조](../eks/cloud9-ide.md#1.-cloud9-ide))
+KMS 를 ap-northeast-1  도쿄리전에서 사용할 수 있도록 설정합니다.
 
 ```
-rm -vf ${HOME}/.aws/credentials
-aws sts get-caller-identity --region ap-northeast-1 --query Arn | grep eksworkshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
-export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
-echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
-echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
-aws configure set default.region ${AWS_REGION}
-aws configure --profile default list
+# kms 를 생성
+aws kms create-alias --alias-name alias/k-eksworkshop --target-key-id --region ap-northeast-1 $(aws kms create-key --query KeyMetadata.Arn --region ap-northeast-1 --output text)
+
+# kms 값을 환경변수에 저장합니다.
+export K_MASTER_ARN=$(aws kms describe-key --key-id alias/k-eksworkshop --query KeyMetadata.Arn --region ap-northeast-1 --output text)
+echo "export K_MASTER_ARN=${K_MASTER_ARN}" | tee -a ~/.bash_profile
+echo $K_MASTER_ARN
 
 ```
 
-
-
-ssh key를 설정하고, key를 전송합니다.
+ap-northeast-1 에서 사용할 VPC를 구성합니다.
 
 ```
-### SSH Key
-cd ~/environment/
-ssh-keygen
-
-# key naem 은 eksworkshop으로 선
-cd ~/environment/
-mv ./eksworkshop ./eksworkshop.pem
-chmod 400 ./eksworkshop.pem
-
-cd ~/environment/
-aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://./eksworkshop.pub
-
-```
-
-
-
-KMS 를 설정합니다.
-
-```
-aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms create-key --query KeyMetadata.Arn --output text)
-export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
-cd ~/environment
-echo $MASTER_ARN
-echo $MASTER_ARN > master_arn.txt
-cat master_arn.txt
-echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
-```
-
-
-
-```
-### git clone
-cd ~/environment
-git clone https://github.com/whchoi98/myeks
-
-cd ./myeks/
-
-cd ./myeks/
-
+## 앞서 myeks reop를 다운 받았습니다.
+cd ~/environment/myeks/
 aws cloudformation deploy \
+  --region ap-northeast-1 \
   --stack-name "eksworkshop" \
   --template-file "karpenter_vpc.yml" \
   --capabilities CAPABILITY_NAMED_IAM 
-
+  
 ```
 
-
-
-```
-# eksctl 설정 
-curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-sudo mv /tmp/eksctl /usr/local/bin
-# eksctl 자동완성 - bash
-. <(eksctl completion bash)
-eksctl version
-
-```
-
-
+아래와 같이 Karpenter 설치를 위한 환경변수들을 추가로 설정합니다.
 
 ```
 ### make env for the karpenter test      
 
-export ekscluster_name=eksworkshop
-export ACCOUNT_ID=$(aws sts get-caller-identity --region ap-northeast-1 --output text --query Account)
-export k_public_mgmd_node="k-managed-frontend-workloads"
-export k_private_mgmd_node="k-managed-backend-workloads"
-export KARPENTER_VERSION="v0.13.2"
-export eks_version="1.21"
-export publicKeyPath="/home/ec2-user/environment/eksworkshop.pub"
-echo ${ekscluster_name}
-echo ${ACCOUNT_ID}
+export k_ekscluster_name=k-eksworkshop
+export k_public_mgmd_node="frontend"
+export k_private_mgmd_node="backend"
+export KARPENTER_VERSION="v0.23.0"
+#export eks_version=1.22
+echo ${k_ekscluster_name}
 echo ${k_public_mgmd_node}
 echo ${k_private_mgmd_node}
-echo ${CLUSTER_ENDPOINT}
 echo ${KARPENTER_VERSION}
-echo "export ekscluster_name=${ekscluster_name}" | tee -a ~/.bash_profile
+echo "export k_ekscluster_name=${k_ekscluster_name}" | tee -a ~/.bash_profile
 echo "export k_public_mgmd_node=${k_public_mgmd_node}" | tee -a ~/.bash_profile
 echo "export k_private_mgmd_node=${k_private_mgmd_node}" | tee -a ~/.bash_profile
-echo "export k_private_mgmd_node=${CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
-echo "export eks_version=${eks_version}" | tee -a ~/.bash_profile
+#echo "export eks_version=${eks_version}" | tee -a ~/.bash_profile
 echo "export KARPENTER_VERSION=${KARPENTER_VERSION}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
 
-
+eksctl을 사용해서 새로운 Cluster를 생성하기 위해, 앞서 구성한 VPC들의 주요 정보들을 환경 변수에 저장합니다.&#x20;
 
 ```
 ### VPC 정보 
 cd ~/environment/
 #VPC ID export
-export vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
-echo $vpc_ID
+export k_vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop --region ap-northeast-1| jq -r '.Vpcs[].VpcId')
+echo $k_vpc_ID
 
 #Subnet ID, CIDR, Subnet Name export
-aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)'
-echo $vpc_ID > vpc_subnet.txt
-aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> vpc_subnet.txt
-cat vpc_subnet.txt
+aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)'
+aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> k_vpc_subnet.txt
 
 # VPC, Subnet ID 환경변수 저장 
-export PublicSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet01/{print $1}')
-export PublicSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet02/{print $1}')
-export PublicSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet03/{print $1}')
-export PrivateSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet01/{print $1}')
-export PrivateSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet02/{print $1}')
-export PrivateSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet03/{print $1}')
-echo "export vpc_ID=${vpc_ID}" | tee -a ~/.bash_profile
-echo "export PublicSubnet01=${PublicSubnet01}" | tee -a ~/.bash_profile
-echo "export PublicSubnet02=${PublicSubnet02}" | tee -a ~/.bash_profile
-echo "export PublicSubnet03=${PublicSubnet03}" | tee -a ~/.bash_profile
-echo "export PrivateSubnet01=${PrivateSubnet01}" | tee -a ~/.bash_profile
-echo "export PrivateSubnet02=${PrivateSubnet02}" | tee -a ~/.bash_profile
-echo "export PrivateSubnet03=${PrivateSubnet03}" | tee -a ~/.bash_profile
-echo "export publicKeyPath=${publicKeyPath}" | tee -a ~/.bash_profile
+export k_PublicSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet01/{print $1}')
+export k_PublicSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet02/{print $1}')
+export k_PublicSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet03/{print $1}')
+export k_PrivateSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet01/{print $1}')
+export k_PrivateSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet02/{print $1}')
+export k_PrivateSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet03/{print $1}')
+echo "export k_vpc_ID=${k_vpc_ID}" | tee -a ~/.bash_profile
+echo "export k_PublicSubnet01=${k_PublicSubnet01}" | tee -a ~/.bash_profile
+echo "export k_PublicSubnet02=${k_PublicSubnet02}" | tee -a ~/.bash_profile
+echo "export k_PublicSubnet03=${k_PublicSubnet03}" | tee -a ~/.bash_profile
+echo "export k_PrivateSubnet01=${k_PrivateSubnet01}" | tee -a ~/.bash_profile
+echo "export k_PrivateSubnet02=${k_PrivateSubnet02}" | tee -a ~/.bash_profile
+echo "export k_PrivateSubnet03=${k_PrivateSubnet03}" | tee -a ~/.bash_profile
+#echo "export publicKeyPath=${publicKeyPath}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
 
+### 2.Cluster 구성
 
+새로운 Cluster 구성을 위해 yaml 파일을 생성합니다.
 
 ```
-### create nodegroup yaml file for the karpenter      
+### create cluster yaml file for the karpenter      
 
-cat << EOF > ~/environment/myeks/karpenter-nodegroup.yaml
+cat << EOF > ~/environment/myeks/karpenter_cluster.yaml
 ---
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: ${ekscluster_name}
-  region: ${AWS_REGION}
+  name: ${k_ekscluster_name}
+  region: ${KARPENTER_AWS_REGION}
   version: "${eks_version}"  
   tags:
-    karpenter.sh/discovery: ${ekscluster_name}
-
-iam:
-  withOIDC: true
+    karpenter.sh/discovery: ${k_ekscluster_name}
 
 vpc: 
-  id: ${vpc_ID}
+  id: ${k_vpc_ID}
   subnets:
     public:
-      PublicSubnet01:
-        az: ${AWS_REGION}a
-        id: ${PublicSubnet01}
-      PublicSubnet02:
-        az: ${AWS_REGION}c
-        id: ${PublicSubnet02}
-      PublicSubnet03:
-        az: ${AWS_REGION}d
-        id: ${PublicSubnet03}
+      k_PublicSubnet01:
+        az: ${KARPENTER_AWS_REGION}a
+        id: ${k_PublicSubnet01}
+      k_PublicSubnet02:
+        az: ${KARPENTER_AWS_REGION}c
+        id: ${k_PublicSubnet02}
+      k_PublicSubnet03:
+        az: ${KARPENTER_AWS_REGION}d
+        id: ${k_PublicSubnet03}
     private:
-      PrivateSubnet01:
-        az: ${AWS_REGION}a
-        id: ${PrivateSubnet01}
-      PrivateSubnet02:
-        az: ${AWS_REGION}c
-        id: ${PrivateSubnet02}
-      PrivateSubnet03:
-        az: ${AWS_REGION}d
-        id: ${PrivateSubnet03}
+      k_PrivateSubnet01:
+        az: ${KARPENTER_AWS_REGION}a
+        id: ${k_PrivateSubnet01}
+      k_PrivateSubnet02:
+        az: ${KARPENTER_AWS_REGION}c
+        id: ${k_PrivateSubnet02}
+      k_PrivateSubnet03:
+        az: ${KARPENTER_AWS_REGION}d
+        id: ${k_PrivateSubnet03}
 secretsEncryption:
-  keyARN: ${MASTER_ARN}
+  keyARN: ${K_MASTER_ARN}
 
 managedNodeGroups:
-  - name: k-managed-ng-public-01
+  - name: public
     instanceType: ${instance_type}
     subnets:
-      - ${PublicSubnet01}
-      - ${PublicSubnet02}
-      - ${PublicSubnet03}
+      - ${k_PublicSubnet01}
+      - ${k_PublicSubnet02}
+      - ${k_PublicSubnet03}
     desiredCapacity: 3
     minSize: 3
     maxSize: 6
@@ -279,12 +197,12 @@ managedNodeGroups:
         fsx: true
         efs: true
         
-  - name: k-managed-ng-private-01
+  - name: private
     instanceType: ${instance_type}
     subnets:
-      - ${PrivateSubnet01}
-      - ${PrivateSubnet02}
-      - ${PrivateSubnet03}
+      - ${k_PrivateSubnet01}
+      - ${k_PrivateSubnet02}
+      - ${k_PrivateSubnet03}
     desiredCapacity: 3
     privateNetworking: true
     minSize: 3
@@ -308,12 +226,26 @@ managedNodeGroups:
 
 EOF
 
-### create nodegroup for the karpenter      
-eksctl create nodegroup --config-file=/home/ec2-user/environment/myeks/karpenter-nodegroup.yaml
 
 ```
 
-### 1.환경 설정
+생성된 clsuter yaml파일이 정상적으로 구성되었는지 dry-run을 통해 확인해 봅니다.
+
+```
+eksctl create cluster --config-file=/home/ec2-user/environment/myeks/karpenter_cluster.yaml --dry-run
+
+```
+
+아래와 같이 명령을 실행시켜 eks cluster를 생성합니다.&#x20;
+
+```
+eksctl create cluster --config-file=/home/ec2-user/environment/myeks/karpenter_cluster.yaml
+
+```
+
+
+
+\#
 
 Kubernetes Metric-server를 설치합니다. 앞서 설치하였으면 생략합니다.&#x20;
 
@@ -356,36 +288,35 @@ URL을 접속하면 , 아래와 같이 노드와 배치된 PoD들을 확인해 �
 
 ![](<../.gitbook/assets/image (224) (1) (1) (1).png>)
 
+### 3.Karpenter 구성을 위한 환경 구성
+
 Karpenter 시험 환경 구성을 위해 아래와 같이 환경변수를 구성합니다.&#x20;
 
 ```
-# EKS CLUSTER_ENDPOINT 값에 대한 환경변수 설정 
-export CLUSTER_ENDPOINT="$(aws eks describe-cluster --name ${ekscluster_name} --query "cluster.endpoint" --output text)"
-# KARPENTER_VERSION 설정
-echo "export CLUSTER_ENDPOINT=${CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
+### Karpenter Cluster Endpoint 변수 설정
+export K_CLUSTER_ENDPOINT="$(aws eks describe-cluster --name ${k_ekscluster_name} --query "cluster.endpoint" --region ap-northeast-1 --output text)"
+echo "export K_CLUSTER_ENDPOINT=${K_CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
 
-### 2.Karpenter 환경구
-
-Subnet과 Security Group에 새로운 Tag를 설정합니다
+Subnet에 karpenter 환경을 위한 새로운 Tag를 설정합니다.
 
 ```
-aws ec2 create-tags --resources "$PublicSubnet01" --tags Key="karpenter.sh/discovery",Value="${ekscluster_name}" 
-aws ec2 create-tags --resources "$PublicSubnet02" --tags Key="karpenter.sh/discovery",Value="${ekscluster_name}" 
-aws ec2 create-tags --resources "$PublicSubnet03" --tags Key="karpenter.sh/discovery",Value="${ekscluster_name}"
- 
+aws ec2 create-tags --resources "$k_PublicSubnet01" --tags Key="karpenter.sh/discovery",Value="${k_ekscluster_name}" --region ap-northeast-1
+aws ec2 create-tags --resources "$k_PublicSubnet02" --tags Key="karpenter.sh/discovery",Value="${k_ekscluster_name}" --region ap-northeast-1
+aws ec2 create-tags --resources "$k_PublicSubnet03" --tags Key="karpenter.sh/discovery",Value="${k_ekscluster_name}" --region ap-northeast-1
+
 ```
 
-### 3. Karpenter 노드 권한 설정
+### 4. Karpenter 노드 권한 설정
 
-kubernetes와 IAM간 인증을 위해 OIDC Provider를 생성합니다. 이미 앞서 Lab에서 생성하였다면 생략합니다.&#x20;
+kubernetes와 IAM간 인증을 위해 OIDC Provider를 생성합니다. &#x20;
 
 ```
 eksctl utils associate-iam-oidc-provider \
-    --region ${AWS_REGION} \
-    --cluster ${ekscluster_name} \
+    --region ${KARPENTER_AWS_REGION} \
+    --cluster ${k_ekscluster_name} \
     --approve
     
 ```
@@ -400,17 +331,21 @@ echo ${KARPENTER_CF}
 curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-eksctl/cloudformation.yaml  > $KARPENTER_CF
 sed -i 's/\${ClusterName}/eksworkshop/g' $KARPENTER_CF
 #eksworkshop은 앞서 정의한 eks clustername 입니다. 다르게 설정한 경우 다른 값을 입력합니다 
-```
 
-AWS CLI를 통해서 IAM Role 구성을 위한 Cloudformation을 배포합니다.&#x20;
+## Karpenter Node에 Role을 적용하기 위한 Template 다운로드를 합니다.
+mkdir /home/ec2-user/environment/karpenter
+export KARPENTER_CF="/home/ec2-user/environment/karpenter/k-node-iam-role.yaml"
+echo ${KARPENTER_CF}
+curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-eksctl/cloudformation.yaml  > $KARPENTER_CF
+sed -i 's/\${ClusterName}/k-eksworkshop/g' $KARPENTER_CF
 
-```
-cd ~/environment/karpenter
+## 구성한 Node Role Template을 생성합니다.
 aws cloudformation deploy \
-  --stack-name "Karpenter-${ekscluster_name}" \
+  --region ${KARPENTER_AWS_REGION} \
+  --stack-name "Karpenter-${k_ekscluster_name}" \
   --template-file "${KARPENTER_CF}" \
   --capabilities CAPABILITY_NAMED_IAM \
-  --parameter-overrides ClusterName="${ekscluster_name}"
+  --parameter-overrides "ClusterName=${k_ekscluster_name}"
   
 ```
 
@@ -418,15 +353,48 @@ Karpenter Node들을 위해 생성된 IAM Role을 eksctl을 통해 kubernetes �
 
 ```
 eksctl create iamidentitymapping \
+  --region ${KARPENTER_AWS_REGION} \
   --username system:node:{{EC2PrivateDNSName}} \
-  --cluster "${ekscluster_name}" \
-  --arn "arn:aws:iam::${ACCOUNT_ID}:role/KarpenterNodeRole-${ekscluster_name}" \
+  --cluster ${k_ekscluster_name} \
+  --arn "arn:aws:iam::${ACCOUNT_ID}:role/KarpenterNodeRole-${k_ekscluster_name}" \
   --group system:bootstrappers \
   --group system:nodes
-  
+
 ```
 
 Kube-system Configmap/aws-auth에 정상적으로 Mapping 되었는지 확인합니다.&#x20;
+
+kube krew를 설치하고, 아래와 같은 Plugin을 구성합니다.
+
+```
+##Kube Krew 설치
+(
+  set -x; cd "$(mktemp -d)" &&
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
+)
+
+##kube krew 경로 설정
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+source ~/.bashrc
+
+##kube ctx 설치
+kubectl krew install ctx
+
+```
+
+도쿄리전에 설치된 Cluster로 이동합니다.
+
+```
+kubectl ctx
+# kubectl ctx {xxxx@k-eksworkshop.ap-northeast-1.eksctl.io}
+```
+
+도쿄리전에 구성된 kube 인증을 확인해 봅니다.&#x20;
 
 ```
 kubectl describe -n kube-system configmap/aws-auth 
@@ -436,48 +404,62 @@ kubectl describe -n kube-system configmap/aws-auth
 아래와 같이 추가되었습니다.&#x20;
 
 ```
-    - groups:
-      - system:bootstrappers
-      - system:nodes
-      rolearn: arn:aws:iam::123834880106:role/eksctl-eksworkshop-nodegroup-k-ma-NodeInstanceRole-8MF84X3ZTWLY
-      username: system:node:{{EC2PrivateDNSName}}
-    - groups:
-      - system:bootstrappers
-      - system:nodes
-      rolearn: arn:aws:iam::123834880106:role/eksctl-eksworkshop-nodegroup-k-ma-NodeInstanceRole-MH0HMELFYYQW
-      username: system:node:{{EC2PrivateDNSName}}
-    - groups:
-      - system:bootstrappers
-      - system:nodes
-      rolearn: arn:aws:iam::123834880106:role/KarpenterNodeRole-eksworkshop
-      username: system:node:{{EC2PrivateDNSName}}
+Name:         aws-auth
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+mapRoles:
+----
+- groups:
+  - system:bootstrappers
+  - system:nodes
+  rolearn: arn:aws:iam::224149737230:role/eksctl-k-eksworkshop-nodegroup-pu-NodeInstanceRole-TRO569QNFBC1
+  username: system:node:{{EC2PrivateDNSName}}
+- groups:
+  - system:bootstrappers
+  - system:nodes
+  rolearn: arn:aws:iam::224149737230:role/eksctl-k-eksworkshop-nodegroup-pr-NodeInstanceRole-JDAJCTGD59TB
+  username: system:node:{{EC2PrivateDNSName}}
+- groups:
+  - system:bootstrappers
+  - system:nodes
+  rolearn: arn:aws:iam::224149737230:role/KarpenterNodeRole-k-eksworkshop
+  username: system:node:{{EC2PrivateDNSName}}
+
+mapUsers:
+----
+[]
+
+
+BinaryData
+====
+
 
 ```
 
-### 4. Service Account 생성
+### 4. Service Account 생성 (ISRA)
 
 eksctl로 Kubernetes Service Account를 생성하고, 앞서 생성한 IAM Role을  Mapping 합니다.&#x20;
 
 ```
+### Service Account를 위한 IAM Role을 매핑합니다.
+
 eksctl create iamserviceaccount \
-  --cluster "${ekscluster_name}" --name karpenter --namespace karpenter \
-  --role-name "${ekscluster_name}-karpenter" \
-  --attach-policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${ekscluster_name}" \
+  --region ${KARPENTER_AWS_REGION} \
+  --cluster "${k_ekscluster_name}" --name karpenter --namespace karpenter \
+  --role-name "${k_ekscluster_name}-karpenter" \
+  --attach-policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${k_ekscluster_name}" \
   --role-only \
   --override-existing-serviceaccounts \
   --approve
-  
+
 # KARPENTER IAM ROLE ARN을 변수에 저장해 둡니다. 
-export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${ekscluster_name}-karpenter"
-echo "export KARPENTER_IAM_ROLE_ARN=${KARPENTER_IAM_ROLE_ARN}" | tee -a ~/.bash_profile
-source ~/.bash_profile
-
-```
-
-EC2 Spot Service를 처음 활성화 시킨 다면, 아래를 구성합니다.&#x20;
-
-```
-aws iam create-service-linked-role --aws-service-name spot.amazonaws.com || true
+export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${k_ekscluster_name}-karpenter"
+echo ${KARPENTER_IAM_ROLE_ARN}
+echo "export export KARPENTER_IAM_ROLE_ARN=${KARPENTER_IAM_ROLE_ARN}" | tee -a ~/.bash_profile
 
 ```
 
@@ -488,6 +470,9 @@ Helm을 사용하여 Karpenter를 클러스터에 배포합니다.&#x20;
 Helm Chart 를 설치하기 전에 Repo를 Helm에 추가해야 하므로 다음 명령을 실행하여 Repo를 추가합니다.
 
 ```
+cd ~/environment
+curl -L https://git.io/get_helm.sh | bash -s -- --version v3.8.2
+
 helm repo add karpenter https://charts.karpenter.sh/
 helm repo update
 
@@ -496,23 +481,15 @@ helm repo update
 Cluster의 상세 정보 및 Karpenter Role ARN을 전달하는  Helm Chart를 설치합니다.&#x20;
 
 ```
-echo ${KARPENTER_VERSION}
-echo ${KARPENTER_IAM_ROLE_ARN}
-echo ${ekscluster_name}
-echo ${CLUSTER_ENDPOINT}
- 
-helm upgrade --install --namespace karpenter --create-namespace \
-  karpenter karpenter/karpenter \
-  --version ${KARPENTER_VERSION} \
+docker logout public.ecr.aws
+helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --version ${KARPENTER_VERSION} --namespace karpenter --create-namespace \
   --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${KARPENTER_IAM_ROLE_ARN} \
-  --set clusterName=${ekscluster_name} \
-  --set clusterEndpoint=${CLUSTER_ENDPOINT} \
-  --set aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${ekscluster_name} \
-  --wait 
-  
-  
-  #  --set nodeSelector.intent=public-control-apps \
-  #  --set defaultProvisioner.create=false \
+  --set settings.aws.clusterName=${k_ekscluster_name} \
+  --set settings.aws.clusterEndpoint=${K_CLUSTER_ENDPOINT} \
+  --set settings.aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${k_ekscluster_name} \
+  --set settings.aws.interruptionQueueName=${k_ekscluster_name} \
+  --wait
+
 ```
 
 karpenter pod가 정상적으로 설치 되었는지 확인합니다.&#x20;
@@ -529,14 +506,12 @@ Karpenter 구성은 Provisioner CRD(Custom Resource Definition) 형식으로 제
 
 아래 명령을 사용하여 기본 프로비저닝 도구를 만들기 위한 yaml을 정의합니다.이 프로비저닝 도구는 securityGroupSelector 및 subnetSelector를 사용하여 노드를 시작하는 데 사용되는 리소스를 검색합니다. 위의 eksctl 명령에 karpenter.sh/discovery 태그를 적용했습니다.&#x20;
 
-앞서 Karpenter Node를 구성할 때 lable 설정으로 "control-apps"로 앞서 Node를 구분지었습니다.&#x20;
-
 ```
-cat << EOF > ~/environment/karpenter/karpenter-provisioner.yaml
+cat << EOF > ~/environment/karpenter/karpenter-provisioner1.yaml
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: default
+  name: provisioner1
 spec:
   requirements:
     - key: karpenter.sh/capacity-type
@@ -547,14 +522,14 @@ spec:
       cpu: 1000
   provider:
     subnetSelector:
-      karpenter.sh/discovery: eksworkshop
+      karpenter.sh/discovery: ${k_ekscluster_name}
     securityGroupSelector:
-      karpenter.sh/discovery: eksworkshop
+      karpenter.sh/discovery: ${k_ekscluster_name}
   ttlSecondsAfterEmpty: 30
 EOF
 
 ## 생성된 provisioner.yaml을 실행합니다. 
-kubectl apply -f ~/environment/karpenter/karpenter-provisioner.yaml
+kubectl apply -f ~/environment/karpenter/karpenter-provisioner1.yaml
 
 ```
 
@@ -564,38 +539,65 @@ kubectl apply -f ~/environment/karpenter/karpenter-provisioner.yaml
 * **`provider:tags`** : EC2 인스턴스가 생성될 때 가지게 되는 Tag를 정의할 수도 있습니다. 이것은 EC2 수준에서 Billing 및 거버넌스를 활성화하는 데 도움이 됩니다.
 * **`ttlSecondsAfterEmpty`** : 값은 Karpenter가 노드에 자원이 배치가 없는 경우 종료하도록 구성합니다.값을 정의하지 않은 상태로 두면 이 동작을 비활성화할 수 있습니다. 이 경우 빠른 시연을 위해 30초 값으로 설정했습니다.
 
-### 7. 자동 노드 프로비저닝
+### 7. 자동 노드 프로비저닝 시험
 
-Karpenter는 이제 활성화되었으며 노드 프로비저닝을 시작할 준비가 되었습니다. Deployment를 사용하여 Pod를 만들고 Karpenter가 노드를 프로비저닝하는 것을 확인해 봅니다.자동 노드 프로비저닝 이 배포는 [pause image](https://www.ianlewis.org/en/almighty-pause-container)를 사용하고 replica가  없는 상태에서 시작합니다.
+Spot을 구동하기 위해 아래와 같이 EC2 Spot Service에 대한 설정을 합니다.
+
+```
+aws iam create-service-linked-role --aws-service-name spot.amazonaws.com || true
+
+```
 
 Deployment 하기 전에 웹브라우저에서 앞서 생성한 kube-ops-view를 열어두고 배포를 살펴 봅니다.&#x20;
 
-```
-kubectl -n kube-tools get svc kube-ops-view | tail -n 1 | awk '{ print "Kube-ops-view URL = http://"$4 }'
+아래 kube-ops-view를 먼저 설치합니다.
 
 ```
+kubectl create namespace kube-tools
+helm repo add christianknell https://christianknell.github.io/helm-charts
+helm repo update
+helm install my-release christianknell/kube-ops-view \
+--namespace kube-tools \
+--set service.type=LoadBalancer \
+--set nodeSelector.nodegroup-type=${k_public_mgmd_node} \
+--set rbac.create=True
+
+```
+
+kube-ops-view 의 FQDN LB 주소를 확인하고 접속해 봅니다.&#x20;
+
+```
+kubectl -n kube-tools get svc my-release-kube-ops-view  | tail -n 1 | awk '{ print "my-release-kube-ops-view URL = http://"$4 }'
+ 
+```
+
+아래와 같은 현재 Node와 Pod의 구성 배치도를 확인 할 수 있습니다.&#x20;
+
+<figure><img src="../.gitbook/assets/image (242).png" alt=""><figcaption></figcaption></figure>
+
+Karpenter는 이제 활성화되었으며 노드 프로비저닝을 시작할 준비가 되었습니다. Deployment를 사용하여 Pod를 만들고 Karpenter가 노드를 프로비저닝하는 것을 확인해 봅니다.자동 노드 프로비저닝 이 배포는 [pause image](https://www.ianlewis.org/en/almighty-pause-container)를 사용하고 replica가  없는 상태에서 시작합니다.
 
 ```
 kubectl create namespace karpenter-inflate
-cat << EOF > ~/environment/karpenter/karpenter-inflate.yaml
+cat << EOF > ~/environment/karpenter/karpenter-inflate1.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inflate
+  name: inflate1
   namespace: karpenter-inflate  
 spec:
   replicas: 0
   selector:
     matchLabels:
-      app: inflate
+      app: inflate1
   template:
     metadata:
       labels:
-        app: inflate
+        app: inflate1
     spec:
       terminationGracePeriodSeconds: 0
       containers:
-        - name: inflate
+        - name: inflate1
           image: public.ecr.aws/eks-distro/kubernetes/pause:3.2
           resources:
             requests:
@@ -604,14 +606,14 @@ spec:
         karpenter.sh/capacity-type: spot
 EOF
 ## 생성된 karpenter-inflate.yaml을 실행합니다. 
-kubectl apply -f ~/environment/karpenter/karpenter-inflate.yaml
+kubectl apply -f ~/environment/karpenter/karpenter-inflate1.yaml
 
 ```
 
 replica를 늘려가면서 시험해 봅니다.
 
 ```
-kubectl -n karpenter-inflate scale deployment inflate --replicas 5
+kubectl -n karpenter-inflate scale deployment inflate1 --replicas 5
 
 ```
 
@@ -619,6 +621,113 @@ Terminal 에서 로그를 확인해 봅니다.
 
 ```
 kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
+
+```
+
+아래에서 처럼 새로운 Spot Instance가 할당되는 것을 확인할 수 있습니다.
+
+```
+2023-01-29T06:08:37.738Z        DEBUG   controller.provisioner  discovered subnets      {"commit": "5a7faa0-dirty", "subnets": ["subnet-092f608fed124f61a (ap-northeast-1c)", "subnet-0869716c80d96d66b (ap-northeast-1a)"]}
+2023-01-29T06:08:37.858Z        DEBUG   controller.provisioner  discovered EC2 instance types zonal offerings for subnets       {"commit": "5a7faa0-dirty", "subnet-selector": "{\"karpenter.sh/discovery\":\"k-eksworkshop\"}"}
+2023-01-29T06:08:38.048Z        INFO    controller.provisioner  found provisionable pod(s)      {"commit": "5a7faa0-dirty", "pods": 5}
+2023-01-29T06:08:38.048Z        INFO    controller.provisioner  computed new node(s) to fit pod(s)      {"commit": "5a7faa0-dirty", "newNodes": 1, "pods": 5}
+2023-01-29T06:08:38.048Z        INFO    controller.provisioner  launching node with 5 pods requesting {"cpu":"5125m","pods":"7"} from types c5d.metal, r6id.16xlarge, r5d.8xlarge, c5.24xlarge, m5dn.8xlarge and 196 other(s)   {"commit": "5a7faa0-dirty", "provisioner": "default"}
+2023-01-29T06:08:38.236Z        DEBUG   controller.provisioner.cloudprovider    discovered security groups      {"commit": "5a7faa0-dirty", "provisioner": "default", "security-groups": ["sg-0ca6d78e6e9c402f9", "sg-0e58a7ca488f9b652", "sg-04976538139e6ff95", "sg-030cbd50908fc2e77"]}
+2023-01-29T06:08:38.240Z        DEBUG   controller.provisioner.cloudprovider    discovered kubernetes version   {"commit": "5a7faa0-dirty", "provisioner": "default", "kubernetes-version": "1.22"}
+2023-01-29T06:08:38.311Z        DEBUG   controller.provisioner.cloudprovider    discovered new ami      {"commit": "5a7faa0-dirty", "provisioner": "default", "ami": "ami-0db66a825cfe82f8f", "query": "/aws/service/eks/optimized-ami/1.22/amazon-linux-2/recommended/image_id"}
+2023-01-29T06:08:38.477Z        DEBUG   controller.provisioner.cloudprovider    created launch template {"commit": "5a7faa0-dirty", "provisioner": "default", "launch-template-name": "Karpenter-k-eksworkshop-8022396668081538733", "launch-template-id": "lt-081ac3b8a0f85f3af"}
+2023-01-29T06:08:41.110Z        INFO    controller.provisioner.cloudprovider    launched new instance   {"commit": "5a7faa0-dirty", "provisioner": "default", "id": "i-0790ae0c76c905f84", "hostname": "ip-10-21-4-182.ap-northeast-1.compute.internal", "instance-type": "c5.2xlarge", "zone": "ap-northeast-1a", "capacity-type": "spot"}
+```
+
+kube-ops-view 에서도 신규 노드가 할당된 것을 확인 할 수 있습니다.
+
+<figure><img src="../.gitbook/assets/image (241).png" alt=""><figcaption></figcaption></figure>
+
+
+
+```
+cat << EOF > ~/environment/karpenter/karpenter-provisioner2.yaml
+apiVersion: karpenter.sh/v1alpha5
+kind: Provisioner
+metadata:
+  name: provisioner2
+spec:
+  taints:
+    - key: cpuIntensive
+      value: "true"
+      effect: NoSchedule
+  labels:
+    phase: test2
+    nodeType: cpu-node
+  requirements:
+    - key: "node.kubernetes.io/instance-type"
+      operator: In
+      values: ["c5.xlarge"]
+    - key: "topology.kubernetes.io/zone"
+      operator: In
+      values: ["ap-northeast-1a"]
+    - key: "karpenter.sh/capacity-type"
+      operator: In
+      values: ["on-demand"]
+  limits:
+    resources:
+      cpu: 1000
+  provider:
+    subnetSelector:
+      karpenter.sh/discovery: ${k_ekscluster_name}
+    securityGroupSelector:
+      karpenter.sh/discovery: ${k_ekscluster_name}
+  ttlSecondsAfterEmpty: 30
+EOF
+
+## 생성된 provisioner.yaml을 실행합니다. 
+kubectl apply -f ~/environment/karpenter/karpenter-provisioner2.yaml
+
+```
+
+
+
+```
+cat << EOF > ~/environment/karpenter/karpenter-inflate2.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflate2
+  namespace: karpenter-inflate  
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: inflate2
+  template:
+    metadata:
+      labels:
+        app: inflate2
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: inflate1
+          image: public.ecr.aws/eks-distro/kubernetes/pause:3.2
+          resources:
+            requests:
+              cpu: 1
+      nodeSelector:
+        nodeType: cpu-node
+      tolerations:
+      - effect: "NoSchedule"
+        key: "cpuIntensive"
+        operator: "Equal"
+        value: "true"
+EOF
+## 생성된 karpenter-inflate2.yaml을 실행합니다. 
+kubectl apply -f ~/environment/karpenter/karpenter-inflate2.yaml
+
+```
+
+
+
+```
+kubectl -n karpenter-inflate scale deployment inflate2 --replicas 5
 
 ```
 
