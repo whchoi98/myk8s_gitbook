@@ -116,9 +116,9 @@ Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 * repo를 선택합니다
 * 하단의 Generate token을 선택합니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (242).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (242) (2).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (6).png" alt=""><figcaption></figcaption></figure>
 
 ![](<../.gitbook/assets/image (231).png>)
 
@@ -176,7 +176,11 @@ Codepipeline에서 진행중이거나, 완료된 Pipeline을 선택하면 Build 
 
 ![](<../.gitbook/assets/image (232) (1) (1).png>)
 
-kubectl을 통해서, 정상적인 배포가 이뤄졌는지 확인해 봅니다.&#x20;
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (242).png" alt=""><figcaption></figcaption></figure>
+
+5분 정도 이후에, kubectl을 통해서 정상적인 배포가 이뤄졌는지 확인해 봅니다.&#x20;
 
 ```
 kubectl describe deployment hello-k8s
