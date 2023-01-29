@@ -20,18 +20,13 @@ Karpenter가 클러스터에 설치되면 Karpenter는 예약되지 않은 포�
 
 Karpenter는 [Apache License 2.0](https://github.com/awslabs/karpenter/blob/main/LICENSE)을 통해 라이선스가 부여되는 오픈 소스 프로젝트입니다. 모든 주요 클라우드 공급업체 및 온프레미스 환경을 포함하여, 모든 환경에서 실행되는 모든 Kubernetes 클러스터와 함께 작동하도록 설계되었습니다.&#x20;
 
+상세한 내용은 아래 URL을 참조하기 바랍니다.
 
+```
+https://karpenter.sh/
+```
 
 ## Karpenter 설치
-
-설치 순서
-
-1. VPC 구성
-2. ekstcl기반의 Cluster 구성
-3. subnet에 karpenter tag 구성
-4. OIDC 구성
-5. IAM Role 구성 및 Node에 적용
-6.
 
 ### 1.환경설정 및 VPC 구성
 
@@ -245,49 +240,6 @@ eksctl create cluster --config-file=/home/ec2-user/environment/myeks/karpenter_c
 
 
 
-\#
-
-Kubernetes Metric-server를 설치합니다. 앞서 설치하였으면 생략합니다.&#x20;
-
-```
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-
-```
-
-metric server가 정상적으로 설치가 완료되면 아래와 같이 리소스 모니터링을 확인 할 수 있습니다. K9s에서도 Pod들의 CPU/Memory 사용량을 확인 할 수 있습니다.&#x20;
-
-```
-# api service condition 상태를 확인해 봅니다 
-kubectl get apiservice v1beta1.metrics.k8s.io -o yaml
-# pod의 CPU/Memory가 모니터링되는지 확인해 봅니다
-kubectl top pod --all-namespaces
-```
-
-Helm을 통해서 아래 kube-ops-view를 Cloud9에 설치합니다. 노드 배포를 확인하기 위해 kube-ops-view를 service type=LoadBalancer를 설치합니다.&#x20;
-
-```
-## 앞서 Lab에서 생성한 managed Node의 Public Subnet에 위치한 노드에 kube-ops-view를 설치합니다
-cd ~/environment
-curl -L https://git.io/get_helm.sh | bash -s -- --version v3.8.2
-
-kubectl create namespace kube-tools
-helm install kube-ops-view \
-stable/kube-ops-view \
---namespace kube-tools \
---set service.type=LoadBalancer \
---set nodeSelector.nodegroup-type=managed-frontend-workloads \
---version 1.2.4 \
---set rbac.create=True
-
-## loadbalancer의 FQDN을 확인하고 웹브라우저에서 접속해 봅니다 
-kubectl -n kube-tools get svc kube-ops-view | tail -n 1 | awk '{ print "Kube-ops-view URL = http://"$4 }'
-
-```
-
-URL을 접속하면 , 아래와 같이 노드와 배치된 PoD들을 확인해 볼 수 있습니다
-
-![](<../.gitbook/assets/image (224) (1) (1) (1).png>)
-
 ### 3.Karpenter 구성을 위한 환경 구성
 
 Karpenter 시험 환경 구성을 위해 아래와 같이 환경변수를 구성합니다.&#x20;
@@ -300,7 +252,7 @@ source ~/.bash_profile
 
 ```
 
-Subnet에 karpenter 환경을 위한 새로운 Tag를 설정합니다.
+Subnet에 karpenter 환경을 위한 새로운 Tag를 설정합니다. Tag가 설정된 Subnet에 배포될 것입니다.
 
 ```
 aws ec2 create-tags --resources "$k_PublicSubnet01" --tags Key="karpenter.sh/discovery",Value="${k_ekscluster_name}" --region ap-northeast-1
@@ -324,14 +276,6 @@ eksctl utils associate-iam-oidc-provider \
 Karpenter Node들을 위한 IAM Role을 생성합니다. karpenter node를 위한 IAM Role Template을 다운로드 합니다.&#x20;
 
 ```
-mkdir /home/ec2-user/environment/karpenter
-export KARPENTER_CF="/home/ec2-user/environment/karpenter/k-node-iam-role.yaml"
-echo ${KARPENTER_CF}
-
-curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-eksctl/cloudformation.yaml  > $KARPENTER_CF
-sed -i 's/\${ClusterName}/eksworkshop/g' $KARPENTER_CF
-#eksworkshop은 앞서 정의한 eks clustername 입니다. 다르게 설정한 경우 다른 값을 입력합니다 
-
 ## Karpenter Node에 Role을 적용하기 위한 Template 다운로드를 합니다.
 mkdir /home/ec2-user/environment/karpenter
 export KARPENTER_CF="/home/ec2-user/environment/karpenter/k-node-iam-role.yaml"
@@ -364,6 +308,10 @@ eksctl create iamidentitymapping \
 
 Kube-system Configmap/aws-auth에 정상적으로 Mapping 되었는지 확인합니다.&#x20;
 
+{% hint style="info" %}
+이미 서울리전에 Cluster가 1개 생성되어 있습니다. Cluster간 명령과 구성 등을 편리하게 하기 위해서 아래 kubectl ctx Plugin을 설치합니다. Cluster간 이동을 편리하게 합니다.
+{% endhint %}
+
 kube krew를 설치하고, 아래와 같은 Plugin을 구성합니다.
 
 ```
@@ -387,7 +335,7 @@ kubectl krew install ctx
 
 ```
 
-도쿄리전에 설치된 Cluster로 이동합니다.
+아래와 같이 _**`kubect ctx`**_ 명령을 통해서 도쿄리전에 설치된 Cluster로 이동합니다.
 
 ```
 kubectl ctx
@@ -440,7 +388,7 @@ BinaryData
 
 ```
 
-### 4. Service Account 생성 (ISRA)
+### 5. Service Account 생성 (ISRA)
 
 eksctl로 Kubernetes Service Account를 생성하고, 앞서 생성한 IAM Role을  Mapping 합니다.&#x20;
 
@@ -463,9 +411,9 @@ echo "export export KARPENTER_IAM_ROLE_ARN=${KARPENTER_IAM_ROLE_ARN}" | tee -a ~
 
 ```
 
-### 5. Karpenter 설치
+### 6. Karpenter Pod설치
 
-Helm을 사용하여 Karpenter를 클러스터에 배포합니다.&#x20;
+Helm을 사용하여 Karpenter Pod를 클러스터에 배포합니다.&#x20;
 
 Helm Chart 를 설치하기 전에 Repo를 Helm에 추가해야 하므로 다음 명령을 실행하여 Repo를 추가합니다.
 
@@ -500,11 +448,15 @@ kubectl get deployment -n karpenter
 
 ```
 
+Karpenter Pod는 Controller와 Webhook을 담당하는 컨테이너가 배치되어 있습니다.
+
 ### 6.Provisioner 구성
 
 Karpenter 구성은 Provisioner CRD(Custom Resource Definition) 형식으로 제공됩니다. 단일 Karpenter Provisioner는 다양한 Pod를 구성할 수 있습니다. Karpenter는 Label 및 Affinity와 같은 Pod의 속성을 기반으로 Scheduling 및 프로비저닝 결정을 할 수 있습니다. Karpenter는 다양한 노드 그룹을 관리할 필요가 없습니다.
 
 아래 명령을 사용하여 기본 프로비저닝 도구를 만들기 위한 yaml을 정의합니다.이 프로비저닝 도구는 securityGroupSelector 및 subnetSelector를 사용하여 노드를 시작하는 데 사용되는 리소스를 검색합니다. 위의 eksctl 명령에 karpenter.sh/discovery 태그를 적용했습니다.&#x20;
+
+아래와 같이 Spot 인스턴스를 사용하는 Provisioner를 먼저 생성해 봅니다.
 
 ```
 cat << EOF > ~/environment/karpenter/karpenter-provisioner1.yaml
@@ -539,7 +491,7 @@ kubectl apply -f ~/environment/karpenter/karpenter-provisioner1.yaml
 * **`provider:tags`** : EC2 인스턴스가 생성될 때 가지게 되는 Tag를 정의할 수도 있습니다. 이것은 EC2 수준에서 Billing 및 거버넌스를 활성화하는 데 도움이 됩니다.
 * **`ttlSecondsAfterEmpty`** : 값은 Karpenter가 노드에 자원이 배치가 없는 경우 종료하도록 구성합니다.값을 정의하지 않은 상태로 두면 이 동작을 비활성화할 수 있습니다. 이 경우 빠른 시연을 위해 30초 값으로 설정했습니다.
 
-### 7. 자동 노드 프로비저닝 시험
+### 7. 자동 노드 프로비저닝 1
 
 Spot을 구동하기 위해 아래와 같이 EC2 Spot Service에 대한 설정을 합니다.
 
@@ -643,7 +595,15 @@ kube-ops-view 에서도 신규 노드가 할당된 것을 확인 할 수 있습�
 
 <figure><img src="../.gitbook/assets/image (241).png" alt=""><figcaption></figcaption></figure>
 
+### 8. 자동 노드 프로비저닝 2
 
+Karpenter Provisioner CRD를 새로운 형태로 만들어 봅니다.
+
+이 구성은 특정 인스턴스 타입을 Taint와 Toleration 등을 조합하여, 적용해 보는 예제입니다.
+
+* **인스턴스 타입 : C5.xlarge**
+* **Zone : ap-northeast-1a**
+* **인스턴스 Capa: On Demand**
 
 ```
 cat << EOF > ~/environment/karpenter/karpenter-provisioner2.yaml
@@ -685,7 +645,7 @@ kubectl apply -f ~/environment/karpenter/karpenter-provisioner2.yaml
 
 ```
 
-
+새로운 Deployment Yaml을 배포합니다.
 
 ```
 cat << EOF > ~/environment/karpenter/karpenter-inflate2.yaml
@@ -724,31 +684,17 @@ kubectl apply -f ~/environment/karpenter/karpenter-inflate2.yaml
 
 ```
 
-
+아래와 같이 5개 Pod를 배포하고, ap-northeast-1a Zone에 C5.xlarge 인스턴스가 배치 되는 지 확인해 봅니다.&#x20;
 
 ```
 kubectl -n karpenter-inflate scale deployment inflate2 --replicas 5
 
 ```
 
-### 10. 자원 삭제 (Option)
-
-
+아래 로그에서 확인이 가능합니다.&#x20;
 
 ```
-kubectl delete namespace karpenter-inflate
-kubectl delete -f ~/environment/karpenter/karpenter-provisioner.yaml
-helm uninstall karpenter --namespace karpenter
-aws iam detach-role-policy --role-name="${ekscluster_name}-karpenter" --policy-arn="arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${ekscluster_name}"
-aws iam delete-policy --policy-arn="arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${ekscluster_name}"
-aws iam delete-role --role-name="${ekscluster_name}-karpenter"
-aws cloudformation delete-stack --stack-name "Karpenter-${ekscluster_name}"
-aws ec2 describe-launch-templates \
-    | jq -r ".LaunchTemplates[].LaunchTemplateName" \
-    | grep -i "Karpenter-${ekscluster_name}" \
-    | xargs -I{} aws ec2 delete-launch-template --launch-template-name {}
-aws cloudformation delete-stack --stack-name eksctl-eksworkshop-addon-iamserviceaccount-karpenter-karpenter
- eksctl delete nodegroup --config-file=/home/ec2-user/environment/myeks/karpenter-nodegroup.yaml --approve
+kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 
 ```
 
