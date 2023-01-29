@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2021-10-21'
+description: 'Update : 2023-01-27'
 ---
 
 # Prometheus-Grafana
@@ -312,6 +312,15 @@ NAME      TYPE           CLUSTER-IP      EXTERNAL-IP                            
 grafana   LoadBalancer   172.20.23.245   a555fefad0ed8493fb4a9ec240318103-2014381236.ap-northeast-2.elb.amazonaws.com   80:31156/TCP   3h12m
 ```
 
+아래 명령을 통해서 Grafana Service 주소를 확인합니다.&#x20;
+
+```
+kubectl -n grafana get svc grafana  | tail -n 1 | awk '{ print "grafana URL = http://"$4 }'
+
+```
+
+
+
 앞서 grafana.yaml에서 입력한 admin의 패스워드를 입력합니다.
 
 ```
@@ -326,9 +335,9 @@ grafana   LoadBalancer   172.20.23.245   a555fefad0ed8493fb4a9ec240318103-201438
 
 이제 생성된 Grafana 에서 배포된 Cluster들에 대해서 모니터링을 합니다.
 
-좌측 상단 메뉴의 "+" 를 선택하고 Import를 선택합니다.
+좌측 상단 메뉴의 "Dashboards" 를 선택하고 +Import를 선택합니다.
 
-![](<../.gitbook/assets/image (73).png>)
+<figure><img src="../.gitbook/assets/image (243).png" alt=""><figcaption></figcaption></figure>
 
 Import 값을 "3119"를 선택하고, Load를 선택합니다.
 
