@@ -96,6 +96,8 @@ https://github.com/rnzsgh/eks-workshop-sample-api-service-go
 
 ![](<../.gitbook/assets/image (216).png>)
 
+<figure><img src="../.gitbook/assets/image (246).png" alt=""><figcaption></figcaption></figure>
+
 자신의 계정으로 분기된 Repo는 아래와 같습니다.&#x20;
 
 ![](<../.gitbook/assets/image (223).png>)
@@ -114,11 +116,15 @@ Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 * repo를 선택합니다
 * 하단의 Generate token을 선택합니다.&#x20;
 
+<figure><img src="../.gitbook/assets/image (242).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+
 ![](<../.gitbook/assets/image (231).png>)
 
 personal access token 생성을 확인하고, 복사해 둡니다.&#x20;
 
-![](<../.gitbook/assets/image (221) (1).png>)
+<figure><img src="../.gitbook/assets/image (244).png" alt=""><figcaption></figcaption></figure>
 
 ## CodePipeline 구성
 
@@ -132,7 +138,7 @@ CloudFormation은 AWS 클라우드 환경의 모든 인프라 리소스를 설�
 
 이 워크샵과 함께 제공되는 CloudFormation 템플릿을 수정하고 시스템 요구 사항을 충족하여 EKS 클러스터에 새 서비스를 쉽게 적용 할 수 있습니다. 각각의 새로운 서비스에 대해 다음 단계를 반복할 수 있습니다.
 
-Cloudformation - 스택생성 - 새 리소스 사용 (표준) 을 선택합니다.
+**`Cloudformation - 스택생성 - 새 리소스 사용 (표준)`** 을 선택합니다.
 
 아래 S3 URL을 입력합니다.&#x20;
 
@@ -153,6 +159,10 @@ https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.y
 * EKS cluster name: eksworkshop
 
 ![](<../.gitbook/assets/image (235) (1) (1) (1) (1).png>)
+
+다음 단계를 계속 진행해서 , Cloudformation을 완료합니다.
+
+### 6.Codepipeline 확인
 
 관리 콘솔에서 CodePipeline을 엽니다.&#x20;
 
@@ -175,7 +185,7 @@ kubectl get services hello-k8s -o wide
 
 ```
 
-### 6. 신규 버전 배포&#x20;
+### 7. 신규 버전 배포&#x20;
 
 Application의 신규 버전을 배포해 봅니다.소스 Github Repo에서 새롭게 변경하고, 배포를 합니다.&#x20;
 

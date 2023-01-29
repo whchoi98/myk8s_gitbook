@@ -525,7 +525,7 @@ kubectl -n kube-tools get svc my-release-kube-ops-view  | tail -n 1 | awk '{ pri
 
 아래와 같은 현재 Node와 Pod의 구성 배치도를 확인 할 수 있습니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (242).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (242) (1).png" alt=""><figcaption></figcaption></figure>
 
 Karpenter는 이제 활성화되었으며 노드 프로비저닝을 시작할 준비가 되었습니다. Deployment를 사용하여 Pod를 만들고 Karpenter가 노드를 프로비저닝하는 것을 확인해 봅니다.자동 노드 프로비저닝 이 배포는 [pause image](https://www.ianlewis.org/en/almighty-pause-container)를 사용하고 replica가  없는 상태에서 시작합니다.
 

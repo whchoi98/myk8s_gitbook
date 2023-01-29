@@ -559,7 +559,7 @@ kubectl -n alb-ing-02 get ingress -o wide
 
 아래와 같이 ALB 구성의 Target Group이 PoD IP로 등록됩니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (5).png" alt=""><figcaption></figcaption></figure>
 
 아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다.&#x20;
 

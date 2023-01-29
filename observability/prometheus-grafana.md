@@ -337,7 +337,7 @@ kubectl -n grafana get svc grafana  | tail -n 1 | awk '{ print "grafana URL = ht
 
 좌측 상단 메뉴의 "Dashboards" 를 선택하고 +Import를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (243).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (243) (1).png" alt=""><figcaption></figcaption></figure>
 
 Import 값을 "3119"를 선택하고, Load를 선택합니다.
 
