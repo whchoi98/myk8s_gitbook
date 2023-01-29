@@ -13,7 +13,7 @@ X-Ray 데몬셋이 서비스 되기 위해서는, Kubernetes 서비스 어카운
 X-Ray를 위해 서비스 어카운트를 생성합니다.
 
 ```
-eksctl create iamserviceaccount --name xray-daemon --namespace default --cluster eksworkshop --attach-policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess --approve --override-existing-serviceaccounts
+eksctl create iamserviceaccount --name xray-daemon --namespace default --cluster ${ekscluster_name} --attach-policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess --approve --override-existing-serviceaccounts
 
 ```
 
