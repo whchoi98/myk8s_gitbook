@@ -14,7 +14,7 @@ AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 �
 
 AWS 서비스에서 Cloud9을 선택하고, `"Environments"`를 설정합니다.
 
-<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8) (2).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (1) (4).png" alt=""><figcaption></figcaption></figure>
 

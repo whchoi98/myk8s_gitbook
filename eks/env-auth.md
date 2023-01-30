@@ -66,7 +66,7 @@ Cloud9의 기존 자격증명과 임시 자격 증명등을 비활성화 합니�
 
 Cloud9에서 설정 환경을 아래와 같이 선택합니다.
 
-![](<../.gitbook/assets/image (4) (1) (1).png>)
+![](<../.gitbook/assets/image (4) (1) (1) (1).png>)
 
 Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니다.
 
