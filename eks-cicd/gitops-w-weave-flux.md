@@ -87,7 +87,7 @@ flux라는 이름의 Namespace를 만들고, Helm을 통해서 Flux와 Helm-Oper
 ```
 helm repo add fluxcd https://charts.fluxcd.io
 helm repo update
-kubectl create namesapce flux
+kubectl create namespace flux
 helm upgrade -i flux fluxcd/flux \
 --set git.url=git@github.com:${githubid}/k8s-config \
 --set git.branch=main \
@@ -236,7 +236,7 @@ git push
 
 ECR로 이동해서 정상적으로 Private Repo에 등록되었는지도 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (2).png" alt=""><figcaption></figcaption></figure>
 
 ### 5.Manifest 파일 배포
 
