@@ -41,7 +41,7 @@ Cloud9 터미널에 접속하여, EKS Workshop 터미널  IDE 환경을 살펴�
 
 <figure><img src="../.gitbook/assets/image (3) (2).png" alt=""><figcaption></figcaption></figure>
 
-![](<../.gitbook/assets/image (10).png>)
+![](<../.gitbook/assets/image (10) (1).png>)
 
 ### 4. Cloud9 Volume 증설
 
