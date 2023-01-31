@@ -178,7 +178,7 @@ Codepipeline에서 진행중이거나, 완료된 Pipeline을 선택하면 Build 
 
 <figure><img src="../.gitbook/assets/image (4) (1).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (3).png" alt=""><figcaption></figcaption></figure>
 
 5분 정도 이후에, kubectl을 통해서 정상적인 배포가 이뤄졌는지 확인해 봅니다.&#x20;
 

@@ -40,7 +40,7 @@ aws iam put-role-policy --role-name eksworkshop-CodeBuildServiceRole --policy-na
 
 위의 단계와 동일하게 Kubernetes 매니페스트 리포지토리를 만듭니다. 아래와 같이 양식을 작성하고 저장소 생성을 클릭합니다.
 
-<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (7) (3).png" alt=""><figcaption></figcaption></figure>
 
 CodePipeline이 GitHub에서 Callback을 수신하려면 개인 액세스 토큰을 생성해야 합니다.
 
@@ -52,9 +52,9 @@ Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 
 
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9) (2).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
 
@@ -150,11 +150,11 @@ Add deploy key를 선택합니다.
 
 * Add deploy key 선택
 
-<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8) (3).png" alt=""><figcaption></figcaption></figure>
 
 앞서 복사해 둔 fluxctl identity --k8s-fwd-ns flux 값을 붙여 넣고, Add Key를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (28).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (28) (2).png" alt=""><figcaption></figcaption></figure>
 
 아래와 같이 Deploy Keys에 추가 됩니다.
 
@@ -192,7 +192,7 @@ Codepipeline으로 이동해서 진행상황을 살펴 봅니다.
 
 <figure><img src="../.gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 현재 리포지토리에 코드가 없기 때문에 이미지 빌드가 실패했을 것입니다.&#x20;
 
@@ -236,7 +236,7 @@ git push
 
 ECR로 이동해서 정상적으로 Private Repo에 등록되었는지도 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### 5.Manifest 파일 배포
 
