@@ -255,14 +255,17 @@ Events:              <none>
 
 ### 5.CA (Cluster Autoscaler) Pod 배포 &#x20;
 
-Cluster Autoscaler version을 확인하고, Shell 변수에 입력해 둡니다. CA Pod를 생성하는 mainifest&#x20;
+Cluster Autoscaler version을 확인하고, Shell 변수에 입력해 둡니다.&#x20;
+
+K8s 버전과 Autoscaler를 위한 CA version을 동일하게 사용합니다.
+
+([https://github.com/kubernetes/autoscaler/releases](https://github.com/kubernetes/autoscaler/releases))&#x20;
 
 ```
 export K8S_VERSION=$(kubectl version --short | grep 'Server Version:' | sed 's/[^0-9.]*\([0-9.]*\).*/\1/' | cut -d. -f1,2)
-export AUTOSCALER_VERSION=$(curl -s "https://api.github.com/repos/kubernetes/autoscaler/releases" | grep '"tag_name":' | sed -s 's/.*-\([0-9][0-9\.]*\).*/\1/' | grep -m1 ${K8S_VERSION})
+export AUTOSCALER_VERSION="1.22.0"
 echo $K8S_VERSION
 echo $AUTOSCALER_VERSION
-
 ```
 
 CA (Cluster AutoScaler) PoD 생성을 위한 mainfest 파일을 생성합니다.&#x20;
@@ -457,6 +460,8 @@ CA Pod를 배포합니다.&#x20;
 ```
 cd ~/environment/cluster-autoscaler/
 kubectl apply -f ./cluster_autoscaler.yml
+kubectl -n kube-system get pods -o wide
+# cluster-autoscaler pod가 정상적으로 배포되었는지 확인
 
 ```
 
