@@ -214,7 +214,7 @@ k9s
 
 ```
 
-### 14.Kube krew 설치 (option)
+### 14.Kube krew 설치
 
 {% hint style="info" %}
 kube krew는 Mac OS brew, CentOS yum, Ubuntu apt 처럼 Kube에 관련된 좋은 유틸리티를 제공하고 있습니다.
@@ -243,7 +243,7 @@ source ~/.bashrc
 
 ```
 
-### 15.Kubectx 설치 (Option)
+### 15.Kubectx 설치
 
 kubectx는 다중의 Kubecluster 가 존재할 때 전환이 쉽도록 도와주는 훌륭한 도구입니다. kubectx를 설치합니다.
 
