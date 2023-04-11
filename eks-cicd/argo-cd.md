@@ -2,7 +2,7 @@
 description: 'Update : 2023-01-27'
 ---
 
-# Argo 기반 CD (TBD)
+# Argo 기반 CD
 
 ## Argo CD Overview
 
@@ -203,7 +203,7 @@ apps   Deployment  default         ecsdemo-nodejs  OutOfSync  Missing
 
 UI에서도 동일한 값을 확인 할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
 애플리케이션이 아직 배포되지 않았기 때문에 애플리케이션이 OutOfSync 상태에 있음을 알 수 있습니다. 이제 애플리케이션을 동기화합니다.
 
@@ -264,7 +264,7 @@ Application이 ArgoCD에 배포되었습니다. 이제 애플리케이션과 동
 https://github.com/{github-userid}/ecsdemo-nodejs/blob/master/kubernetes/deployment.yaml
 ```
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (2).png" alt=""><figcaption></figcaption></figure>
 
 변경후 _**`Commit Chaged`**_ 를 선택합니다.
 

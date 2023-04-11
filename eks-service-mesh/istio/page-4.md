@@ -56,7 +56,7 @@ no running Istio pods in "istio-system"
 
 Istio는 Profile이라는 4가지 설정이 있고 여기서 필요한 모든 것을 정의하도록 되어 있습니다
 
-* default : **** IstioOperator API의 기본 설정에 따라 구성 요소를 활성화합니다. 이 프로필은 프로덕션 배포 및 멀티클러스터 메시의 기본 클러스터에 권장됩니다. istioctl profile dump 명령을 실행하여 기본 설정을 표시할 수 있습니다.
+* default :  IstioOperator API의 기본 설정에 따라 구성 요소를 활성화합니다. 이 프로필은 프로덕션 배포 및 멀티클러스터 메시의 기본 클러스터에 권장됩니다. istioctl profile dump 명령을 실행하여 기본 설정을 표시할 수 있습니다.
 * demo: 적절한 리소스 요구 사항으로 Istio 기능을 보여주도록 설계된 구성입니다. Bookinfo 응용 프로그램 및 관련 작업을 실행하는 데 적합합니다. 이것은 Quick start와 함께 설치되는 구성입니다. 이 프로필은 높은 수준의 추적 및 액세스 로깅을 가능하게 하므로 성능 테스트에 적합하지 않습니다.
 * minimal: : 기본 프로필과 동일하지만 Control Plane 만 설치됩니다. 이를 통해 별도의 프로필을 사용하여 컨트롤 플레인 및 데이터 플레인 구성 요소(예: Gateway)를 구성할 수 있습니다.
 * external: 다중 클러스터 메시의 기본 클러스터에 있는 Control Plane 또는 외부 Control Plane에서 관리하는 원격 클러스터를 구성하는 데 사용됩니다.

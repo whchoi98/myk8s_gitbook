@@ -58,4 +58,3 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 ![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1) (1) (1).png>)
 
-**``**

@@ -178,7 +178,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
 
-![](<../.gitbook/assets/image (2) (1) (1).png>)
+![](<../.gitbook/assets/image (2) (1) (1) (1).png>)
 
 전체 화면 창에서 아래와 같이 마지막에 URL을 추가합니다.
 

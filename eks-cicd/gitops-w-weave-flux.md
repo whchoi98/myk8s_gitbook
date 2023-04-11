@@ -236,7 +236,7 @@ git push
 
 ECR로 이동해서 정상적으로 Private Repo에 등록되었는지도 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### 5.Manifest 파일 배포
 
