@@ -1,4 +1,4 @@
-# 볼륨 (TBD)
+# 볼륨
 
 ## 소개
 
@@ -8,9 +8,7 @@
 
 
 
-## 볼륨 유형 1&#x20;
-
-### 임시볼륨 (empty volume)
+## 임시볼륨 (empty volume)
 
 파드가 시작될 때 빈 상태로 시작되며, 저장소는 로컬의 kubelet 베이스 디렉터리(보통 루트 디스크) 또는 램에서 제공됩니다.
 
@@ -76,7 +74,7 @@ cat /mount2/empty.txt
 
 
 
-### hostPath
+## hostPath
 
 `hostPath` 볼륨은 호스트 노드의 파일시스템에 있는 파일이나 디렉터리를 파드에 마운트하는 방식입니다. hostPath는 호스트 내의 Pod들이 볼륨을 공유하는 방식이기 때문에 Worker Node가 삭제되면 데이터도 삭제됩니다.
 
@@ -182,9 +180,9 @@ echo "This is hostpath-mount-02" >> /hostpath-mount/hostpath.txt
 
 Session Manager를 통해서 접속이 가능합니다.
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 ```
 cat /tmp/hostpath.txt
@@ -194,6 +192,20 @@ cat /tmp/hostpath.txt
 노드에서 실행한 값이 앞서 Container1,2에서 실행한 값을 모두 포함하는지 확인해 봅니다.
 
 노드기반의 hostPath는 노드가 삭제되면 모든 데이터는 소멸됩니다.
+
+
+
+## 퍼시스턴트 볼륨
+
+퍼시스턴트볼륨은 사용자 및 관리자에게 스토리지 사용 방법에서부터 스토리지가 제공되는 방법에 대한 세부 사항을 추상화하는 API를 제공합니다. 이를 위해 퍼시스턴트볼륨(PV) 및 퍼시스턴트볼륨클레임(PVC)이라는 두 가지 새로운 API 리소스를 제공합니다.
+
+_퍼시스턴트볼륨_ (PV)은 관리자가 프로비저닝하거나 [스토리지 클래스](https://kubernetes.io/ko/docs/concepts/storage/storage-classes/)를 사용하여 동적으로 프로비저닝한 클러스터의 스토리지입니다. PV는 Volumes와 같은 볼륨 플러그인이지만, PV를 사용하는 개별 파드와는 별개의 라이프사이클을 가진다. 이 API 오브젝트는 NFS, iSCSI 또는 클라우드 공급자별 스토리지 시스템 등 스토리지 구현에 대한 세부 정보를 포함하고 있습니다.
+
+_퍼시스턴트볼륨클레임_ (PVC)은 사용자의 스토리지에 대한 요청입니다. 이것은 파드와 비슷하다. 파드는 노드 리소스를 사용하고 PVC는 PV 리소스를 사용한다. 파드는 특정 수준의 리소스(CPU 및 메모리)를 요청할 수 있지만, 클레임은 특정 디스크 크기 및 접근 모드를 요청할 수 있습니다. (예: ReadWriteOnce, ReadOnlyMany 또는 ReadWriteMany로 마운트 할 수 있음. [AccessModes](https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/#%EC%A0%91%EA%B7%BC-%EB%AA%A8%EB%93%9C) 참고).
+
+퍼시스턴트볼륨클레임을 사용하면 사용자가 추상화된 스토리지 리소스를 사용할 수 있지만, 다른 문제들 때문에 성능과 같은 다양한 속성을 가진 퍼시스턴트볼륨이 필요한 경우가 일반적입니다. 클러스터 관리자는 사용자에게 해당 볼륨의 구현 방법에 대한 세부 정보를 제공하지 않고 크기와 접근 모드와는 다른 방식으로 다양한 퍼시스턴트볼륨을 제공할 수 있어야 하며, 이러한 요구를 위해서는 _스토리지클래스_ 리소스가 있습니다.
+
+
 
 
 

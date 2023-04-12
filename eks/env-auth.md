@@ -20,7 +20,7 @@ EC2 - 다음: 권한
 
 역할 만들기 단계에서 EC2를 선택하고, "다음:권한"을 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (1) (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (2).png" alt=""><figcaption></figcaption></figure>
 
 권한정책 연결에서 `"AdministratorAccess"`를 선택합니다.
 

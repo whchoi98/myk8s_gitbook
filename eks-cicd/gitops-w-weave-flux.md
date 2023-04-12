@@ -192,7 +192,7 @@ Codepipeline으로 이동해서 진행상황을 살펴 봅니다.
 
 <figure><img src="../.gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (4).png" alt=""><figcaption></figcaption></figure>
 
 현재 리포지토리에 코드가 없기 때문에 이미지 빌드가 실패했을 것입니다.&#x20;
 

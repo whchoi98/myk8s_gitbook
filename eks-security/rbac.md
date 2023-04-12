@@ -70,10 +70,13 @@ aws iam create-access-key --user-name rbac-user | tee /tmp/create_output.json
 Cluster를 생성한 Admin(Cloud9 EC2)과 새로운 rbac-user 간에 쉽게 전환할 수 있도록 아래 처럼 shell을 작성해 둡니다.
 
 ```
-cat << EoF > rbacuser_creds.sh
+mkdir ~/environment/rbac
+cd ~/environment/rbac
+cat << EoF > ~/environment/rbac/rbacuser_creds.sh
 export AWS_SECRET_ACCESS_KEY=$(jq -r .AccessKey.SecretAccessKey /tmp/create_output.json)
 export AWS_ACCESS_KEY_ID=$(jq -r .AccessKey.AccessKeyId /tmp/create_output.json)
 EoF
+chmod 755 ~/environment/rbac/rbacuser_creds.sh
 
 ```
 
@@ -84,15 +87,15 @@ EoF
 rbac-user라는 k8s 사용자를 정의하고 해당 IAM 사용자에 매핑합니다. 다음을 실행하여 기존 ConfigMap을 가져오고 aws-auth.yaml 이라는 파일에 저장합니다. 기본 configmap도 저장해 둡니다.
 
 ```
-kubectl get configmap -n kube-system aws-auth -o yaml > backup-aws-auth.yaml
-kubectl get configmap -n kube-system aws-auth -o yaml > aws-auth.yaml
+kubectl get configmap -n kube-system aws-auth -o yaml > ~/environment/rbac/backup-aws-auth.yaml
+kubectl get configmap -n kube-system aws-auth -o yaml > ~/environment/rbac/aws-auth.yaml
 
 ```
 
 IAM 사용자 "rbac-user" 매핑을 기존 configMap에 추가합니다.
 
 ```
-cat << EoF >> aws-auth.yaml
+cat << EoF >> ~/environment/rbac/aws-auth.yaml
 data:
   mapUsers: |
     - userarn: arn:aws:iam::${ACCOUNT_ID}:user/rbac-user
@@ -104,14 +107,14 @@ EoF
 생성한 aws-auth.yml을 확인 합니다.
 
 ```
-cat aws-auth.yaml
+cat ~/environment/rbac/aws-auth.yaml
 
 ```
 
 Configmap을 적용합니다.
 
 ```
-kubectl apply -f aws-auth.yaml
+kubectl apply -f ~/environment/rbac/aws-auth.yaml
 
 ```
 
@@ -122,9 +125,10 @@ kubectl apply -f aws-auth.yaml
 다음 명령을 실행하여 rbac-user의 AWS IAM 사용자 환경 변수를 실행해서, 기존 sts 정보와 새로운 sts 정보를 비교해 봅니다.
 
 ```
-aws sts get-caller-identity > master_sts.txt
+aws sts get-caller-identity > ~/environment/rbac/master_sts.txt
+cd ~/environment/rbac
 . rbacuser_creds.sh
-aws sts get-caller-identity > rbacuser_sts.txt
+aws sts get-caller-identity > ~/environment/rbac/rbacuser_sts.txt
 
 ```
 
@@ -176,7 +180,7 @@ kubectl -n rbac-test get pods
 아래에서 Role을 생성합다.
 
 ```
-cat << EoF > rbacuser-role.yaml
+cat << EoF > ~/environment/rbac/rbacuser-role.yaml
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -196,7 +200,7 @@ EoF
 생성된 Role에 이제 Rolebinding에 대한 yaml 파일을 생성합니다.
 
 ```
-cat << EoF > rbacuser-role-binding.yaml
+cat << EoF > ~/environment/rbac/rbacuser-role-binding.yaml
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -217,8 +221,8 @@ EoF
 이제 생성한 Role과 Rolebinding을 실행해 봅니다.
 
 ```
-kubectl apply -f rbacuser-role.yaml
-kubectl apply -f rbacuser-role-binding.yaml
+kubectl apply -f ~/environment/rbac/rbacuser-role.yaml
+kubectl apply -f ~/environment/rbac/rbacuser-role-binding.yaml
 
 ```
 
@@ -229,6 +233,7 @@ kubectl apply -f rbacuser-role-binding.yaml
 rbac-user로 다시 전환하려면 rbac-user 환경 변수를 제공하는 다음 명령을 실행하고 해당 변수가 사용되었는지 확인합니다.
 
 ```
+cd ~/environment/rbac/
 . rbacuser_creds.sh
 aws sts get-caller-identity
 
