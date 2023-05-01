@@ -145,6 +145,15 @@ mapUsers:
 Events:  <none>
 ```
 
+
+
+아래와 같이 eksctl 명령을 통해 현재 IAM과 Kubernetes Role 이 바인딩 된 목록을 확인합니다.
+
+```
+eksctl get iamidentitymapping --cluster ${ekscluster_name}
+
+```
+
 ## EKS Cluster 결과 확인.
 
 EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드들을 확인할 수 있습니다. 생성한 클러스터를 선택합니다
