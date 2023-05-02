@@ -54,7 +54,7 @@ Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 
 <figure><img src="../.gitbook/assets/image (9) (2).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (7) (4).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
 
@@ -158,7 +158,7 @@ Add deploy key를 선택합니다.
 
 아래와 같이 Deploy Keys에 추가 됩니다.
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (5).png" alt=""><figcaption></figcaption></figure>
 
 ### 4.CODEPIPELINE으로 이미지 생성
 
