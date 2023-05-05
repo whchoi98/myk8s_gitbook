@@ -214,6 +214,16 @@ k9s
 
 ```
 
+아래에서 처럼 구성하면 최신 버전을 설치할 수 있습니다.
+
+```
+K9S_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | jq -r '.tag_name')
+curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_amd64.tar.gz | sudo tar xfz - -C /usr/local/bin k9s
+
+```
+
+
+
 ### 14.Kube krew 설치
 
 {% hint style="info" %}
