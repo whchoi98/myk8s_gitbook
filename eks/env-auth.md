@@ -1,5 +1,5 @@
 ---
-description: 'update : 2022-09-10 / 15min'
+description: 'update : 2023-05-06 / 15min'
 ---
 
 # 인증/자격증명 및 환경 구성
@@ -63,6 +63,15 @@ EC2 대쉬보드의 인스턴스에는 이미 생성된 Cloud9 EC2 인스턴스�
 ### 4. 기존자격 증명 파일 제거
 
 Cloud9의 기존 자격증명과 임시 자격 증명등을 비활성화 합니다.
+
+Cloud9 콘솔에서 아래와 같이 명령을 입력합니다.
+
+```
+aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE
+
+```
+
+아래와 같이 Cloud9 UI 환경에서도 설정할 수 있습니다. 위의 Terminal 에서의 입력된 명령이 정상적으로 처리되었다면, 추가 작업은 필요없습니다.
 
 Cloud9에서 설정 환경을 아래와 같이 선택합니다.
 
