@@ -132,7 +132,7 @@ https://github.com/brentley/ecsdemo-nodejs.git
 
 사용자의 Github에 Fork된 Repo로 이동하고, Repo를 복사해 둡니다.
 
-<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8) (4).png" alt=""><figcaption></figcaption></figure>
 
 복사한 URL은 아래와 같은 형식입니다.
 
