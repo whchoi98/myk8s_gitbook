@@ -228,7 +228,7 @@ _퍼시스턴트볼륨클레임_ (PVC)은 사용자의 스토리지에 대한 �
 
 
 
-## 4. 스토리지 클래스 <a href="#storage-classes" id="storage-classes"></a>
+### 3.1 스토리지 클래스 <a href="#storage-classes" id="storage-classes"></a>
 
 클러스터에 이미 있는 스토리지 클래스를 확인합니다.
 
@@ -247,7 +247,9 @@ gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   f
 
 최초 Worker Node를 배포할 때 생성한 기본 Storage Class 입니다.
 
-## 5. Amazon EBS CSI 드라이버 구성
+### 3.2. Amazon EBS CSI 드라이버 구성
+
+> 참조 URL : [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/ebs-csi.html](https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/ebs-csi.html)
 
 클러스터를 처음 생성할 때 Amazon EBS CSI 드라이버가 설치되지 않습니다. 드라이버를 사용하려면 Amazon EKS 추가 기능 또는 자체 관리형 추가 기능으로 드라이버를 추가해야 합니다.
 
@@ -257,7 +259,7 @@ Amazon EBS CSI 드라이버 구성을 위해서는 아래와 같은 내용을 �
 * Fargate에서 Amazon EBS CSI 컨트롤러를 실행할 수 있지만 Fargate pods에 볼륨을 탑재할 수는 없습니다.
 * Amazon EKS 클러스터에서는 Amazon EBS CSI 드라이버의 알파 기능을 지원하지 않습니다.
 
-## 6. Service Account 대한 EBS CSI 드라이버 IAM 역할 생성 <a href="#csi-iam-role" id="csi-iam-role"></a>
+### 3.3 Service Account 대한 EBS CSI 드라이버 IAM 역할 생성 <a href="#csi-iam-role" id="csi-iam-role"></a>
 
 Amazon EBS CSI 플러그 인이 사용자를 대신하여 AWS API를 호출하려면 IAM 권한이 필요합니다.
 
@@ -288,7 +290,7 @@ eksctl create iamserviceaccount \
  
 ```
 
-## 7. EBS Volume 암호화
+### 3.4 EBS Volume 암호화
 
 Amazon EBS 볼륨의 암호화에 사용자 지정 [KMS 키](http://aws.amazon.com/kms/)를 사용하는 경우 필요에 따라 IAM 역할을 사용자 지정합니다.
 
@@ -361,7 +363,7 @@ aws iam attach-role-policy \
 
 
 
-## 8.Amazon EKS Addon으로 Amazon EBS CSI 드라이버 관리 <a href="#managing-ebs-csi" id="managing-ebs-csi"></a>
+### 3.5 Amazon EKS Addon으로 Amazon EBS CSI 드라이버 관리 <a href="#managing-ebs-csi" id="managing-ebs-csi"></a>
 
 보안을 강화하고 작업량을 줄이려면 Amazon EKS CSI 드라이버를 Amazon EKS 추가 기능으로 관리할 수 있습니다.
 
