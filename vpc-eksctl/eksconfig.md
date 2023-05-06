@@ -36,7 +36,7 @@ Account ID는 이미 Shell 환경변수에 저장해 두었습니다.
 ## USER_ID의 값은 현재 콘솔에서의 user id
 export USER_ID=user01
 echo "export USER_ID=${USER_ID}" | tee -a ~/.bash_profile
-soure ~/.bash_profile
+source ~/.bash_profile
 
 ## ACCOUNT ID 확인
 echo $ACCOUNT_ID

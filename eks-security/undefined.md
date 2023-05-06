@@ -95,7 +95,7 @@ ECR Repository 에 Image 가 Push 되면 ECR 자체적으로 취약점 Scanning 
 
 "eks-security-sandbox" Repository 의 경우 아래와 같이 "Scanning" 이 꺼져있는 것을 확인할 수 있습니다. 즉, "eks-security-sandbox" Repository 에 Push 되는 Container Image 들은 취약점 Scanning 이 적용되지 않는다는 것을 알 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (7) (1).png" alt=""><figcaption></figcaption></figure>
 
 "eks-security-prod" Repository 의 경우에는 아래와 같이 "See Findings" 링크가 있는 것을 확인할 수 있습니다. 해당 링크를 클릭하여 탐지된 취약점 리스트를 확인하도록 하겠습니다.
 
@@ -104,7 +104,7 @@ ECR Repository 에 Image 가 Push 되면 ECR 자체적으로 취약점 Scanning 
 정상적인 경우 아래와 같이 Enhanced Scanning 기능을 통해 해당 Container Image 에 포함되어 있는 "Log4j" 취약점을 포함한 다양한 취약점들이 탐지된 것을 확인할 수 있습니다.\
 
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9) (1).png" alt=""><figcaption></figcaption></figure>
 
 ECR Repository 의 Enhanced Scanning 은 Amazon Inspector 와 통합되어 있는 기능으로 ECR Repository 뿐만 아니라 [AWS Management Console 의 Inspector 메뉴 ](https://ap-northeast-2.console.aws.amazon.com/inspector/v2/home?region=ap-northeast-2#/dashboard) 에서도 확인이 가능합니다. [Amazon Inspector 메뉴 ](https://ap-northeast-2.console.aws.amazon.com/inspector/v2/home?region=ap-northeast-2#/dashboard)에 접속하여 아래와 같이 "eks-security-prod" Repository 에 대한 취약점 정보를 확인하도록 합니다.\
 

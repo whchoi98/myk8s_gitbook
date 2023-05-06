@@ -57,6 +57,8 @@ kubectl -n empty get pods
 생성된 첫번째 컨테이너 (Container 1)의 Shell에 접속해서 아래 명령을 수행합니다. \
 (앞서 설치한 K9를 활용해서 접속할 수 있습니다.)
 
+<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+
 ```
 echo "This is empty-volumes" >> /mount1/empty.txt
 cat /mount1/empty.txt
@@ -64,6 +66,8 @@ cat /mount1/empty.txt
 ```
 
 생성된 두번째 컨테이너 (Container2)의 Shell에 접속해서 Container1 에서 생성한 텍스트 값이 있는지 확인해 봅니다.
+
+<figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
 ```
 cat /mount2/empty.txt
@@ -78,15 +82,13 @@ cat /mount2/empty.txt
 
 `hostPath` 볼륨은 호스트 노드의 파일시스템에 있는 파일이나 디렉터리를 파드에 마운트하는 방식입니다. hostPath는 호스트 내의 Pod들이 볼륨을 공유하는 방식이기 때문에 Worker Node가 삭제되면 데이터도 삭제됩니다.
 
-
-
 이미 생성된 Node들 중에서 1개의 노드를 선택해서 새로운 라벨링을 부여합니다.
 
 아래는 구성 예제입니다.
 
 ```
 kubectl get nodes -l nodegroup-type=managed-frontend-workloads
-kubectl label nodes ip-10-11-1-159.ap-northeast-2.compute.internal hostpath=true
+kubectl label nodes {host-path-nodes} hostpath=true
 kubectl get nodes -l hostpath=true
 
 ```
@@ -126,7 +128,9 @@ kubectl -n hostpath get pods -o wide
 
 ```
 
-&#x20;container1에 shell로 접근해서 새로운 Text 파일을 만들어 봅니다.
+&#x20;container1에 shell로 접근해서 새로운 Text 파일을 만들어 봅니다. 아래와 같이 k9s를 통해서 Container1에 Shell로 접속합니다.
+
+<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
 ```
 echo "This is hostpath-mount-01" >> /hostpath-mount/hostpath.txt
@@ -183,6 +187,23 @@ Session Manager를 통해서 접속이 가능합니다.
 <figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (1) (5).png" alt=""><figcaption></figcaption></figure>
+
+아래와 같은 방법으로도 확인이 가능합니다.
+
+```
+ # EC2 IP와 instance id 조회
+ ~/environment/useful-shell/aws_ec2_ext.sh
+
+```
+
+나온 결과의 실제 EC2 Node IP를 확인하고, Session Manager로 접속해 봅니다.
+
+```
+ # host-path로 Labeling되어 있는 EC2의 instanace id로 접근
+ aws ssm start-session --target {instance-id}
+```
+
+아래와 같이 EC2 콘솔에서 값을 조회해 봅니다.
 
 ```
 cat /tmp/hostpath.txt
