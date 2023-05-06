@@ -1,4 +1,4 @@
-# 볼륨
+# 볼륨/CSI
 
 ## 소개
 
@@ -228,7 +228,65 @@ _퍼시스턴트볼륨클레임_ (PVC)은 사용자의 스토리지에 대한 �
 
 
 
+## 스토리지 클래스 <a href="#storage-classes" id="storage-classes"></a>
 
+클러스터에 이미 있는 스토리지 클래스를 확인합니다.
+
+```
+kubectl get storageclass
+
+```
+
+다음과 같은 결과를 확인 할 수 있습니다.
+
+```
+$ kubectl get storageclass
+NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  18h
+```
+
+최초 Worker Node를 배포할 때 생성한 기본 Storage Class 입니다.
+
+## Amazon EBS CSI 드라이버 구성
+
+클러스터를 처음 생성할 때 Amazon EBS CSI 드라이버가 설치되지 않습니다. 드라이버를 사용하려면 Amazon EKS 추가 기능 또는 자체 관리형 추가 기능으로 드라이버를 추가해야 합니다.
+
+Amazon EBS CSI 드라이버 구성을 위해서는 아래와 같은 내용을 참고합니다.
+
+* Amazon EBS CSI 플러그 인이 사용자를 대신하여 AWS API를 호출하려면 IAM 권한이 필요합니다.
+* Fargate에서 Amazon EBS CSI 컨트롤러를 실행할 수 있지만 Fargate pods에 볼륨을 탑재할 수는 없습니다.
+* Amazon EKS 클러스터에서는 Amazon EBS CSI 드라이버의 알파 기능을 지원하지 않습니다.
+
+## Service Account 대한 EBS CSI 드라이버 IAM 역할 생성 <a href="#csi-iam-role" id="csi-iam-role"></a>
+
+Amazon EBS CSI 플러그 인이 사용자를 대신하여 AWS API를 호출하려면 IAM 권한이 필요합니다.
+
+플러그 인이 배포되면 `ebs-csi-controller-sa`라는 서비스 계정을 생성하고 해당 계정을 사용하도록 구성됩니다. 이 서비스 계정은 필요한 Kubernetes 권한이 할당되어 있는 Kubernetes `clusterrole`에 바인딩됩니다.
+
+Service Account에 대한 EBS CSI 드라이버 IAM Role 생성과 연계를 위해서 OIDC(Open ID Connection)이 구성되어 있어야 합니다.
+
+```
+eksctl utils associate-iam-oidc-provider \
+    --cluster ${ekscluster_name} \
+    --approve
+
+```
+
+`eksctl`을 사용하여 Amazon EBS CSI 플러그 인 IAM 역할 생성합니다.
+
+```
+#eksctl을 사용하여 Amazon EBS CSI 플러그 인 IAM 역할 생성
+eksctl create iamserviceaccount \
+  --region ${AWS_REGION}\
+  --name ebs-csi-controller-sa \
+  --namespace kube-system \
+  --cluster ${ekscluster_name} \
+  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+  --approve \
+  --role-only \
+  --role-name AmazonEKS_EBS_CSI_DriverRole
+ 
+```
 
 
 

@@ -63,7 +63,7 @@
   * [VPC Advanced](eks-networking/vpc-advanced.md)
   * [External SNAT (TBD)](eks-networking/external-snat.md)
 * [9.EKS Storage](eks-storage/README.md)
-  * [볼륨](eks-storage/volume.md)
+  * [볼륨/CSI](eks-storage/volume.md)
   * [Stateful Container-EBS](eks-storage/stateful-container.md)
   * [Stateful Container-EFS (TBD)](eks-storage/stateful-container-efs.md)
 * [10.EKS Security](eks-security/README.md)
