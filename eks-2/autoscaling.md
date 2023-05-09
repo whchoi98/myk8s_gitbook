@@ -263,7 +263,7 @@ K8s 버전과 Autoscaler를 위한 CA version을 동일하게 사용합니다.
 
 ```
 export K8S_VERSION=$(kubectl version --short | grep 'Server Version:' | sed 's/[^0-9.]*\([0-9.]*\).*/\1/' | cut -d. -f1,2)
-export AUTOSCALER_VERSION="1.22.0"
+export AUTOSCALER_VERSION="1.23.0"
 echo $K8S_VERSION
 echo $AUTOSCALER_VERSION
 ```
