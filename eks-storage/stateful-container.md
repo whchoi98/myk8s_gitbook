@@ -1,104 +1,35 @@
+---
+description: 'Update : 2023-05-06'
+---
+
 # Stateful Container-EBS
 
-## AWS EBS CSI Driver 구성
+### EBS CSI 구성확인
 
-참조 URL : [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/ebs-csi.html](https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/ebs-csi.html)
-
-[Amazon EBS CSI(Container Storage Interface) 드라이버](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)에서는 Amazon EKS 클러스터가 영구 볼륨(Persistant Volume, PV)을 위해 Amazon EBS 볼륨의 수명 주기를 관리할 수 있게 해주는 CSI 인터페이스를 제공합니다.
-
-{% hint style="info" %}
-이 드라이버는 Kubernetes 버전 1.14 이상에서만 지원됩니다. Amazon EKS 클러스터 및 노드. Fargate에서는 드라이버가 지원되지 않습니다. Amazon EKS 클러스터에서는 Amazon EBS CSI 드라이버의 알파 기능을 지원하지 않습니다. 이 드라이버는 베타 릴리스 버전이며, Amazon EKS에서 프로덕션용으로 테스트를 완료하여 지원됩니다. 세부 정보는 변경될 수 있지만 드라이버에 대한 지원은 종료되지 않습니.&#x20;
-{% endhint %}
-
-### 1.IAM 정책 구성
-
-CSI 드라이버는 Kubernetes Pod 세트로 배포됩니다. 이러한 포드에는 볼륨 생성 및 삭제, 클러스터를 구성하는 EC2 worker node에 볼륨 연결과 같은 EBS API 작업을 수행 할 수있는 권한이 있어야합니다.
-
-[Amazon EBS CSI(Container Storage Interface) 드라이버](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)는 Amazon EKS 클러스터가 PV (Persistant Volume) 볼륨을 위해 Amazon EBS 볼륨의 Life Cycle 관리할 수 있게 해주는 CSI 인터페이스를 제공합니다.
-
-먼저 정책 JSON 문서를 다운로드하고이 문서에서 IAM 정책을 생성하십시오.
-
-* CSI driver를 위한 IAM Policy 샘플 다운로드
-* IAM Policy 생성&#x20;
+[**볼륨/CSI**](stateful-container.md#csi) 에서 생성된 각 노드별 CSI DaemonSet, CSI Contorller 가 생성되어 있는지 확인해 봅니다.
 
 ```
-export EBS_CSI_POLICY_NAME="Amazon_EBS_CSI_Driver"
-mkdir ${HOME}/environment/ebs_statefulset
-cd ${HOME}/environment/ebs_statefulset
-curl -sSL -o ebs-csi-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/master/docs/example-iam-policy.json
-export EBS_CNI_POLICY_NAME="Amazon_EBS_CSI_Driver"
-
-aws iam create-policy \
-  --region ${AWS_REGION} \
-  --policy-name ${EBS_CNI_POLICY_NAME} \
-  --policy-document file://${HOME}/environment/ebs_statefulset/ebs-csi-policy.json
-    
-  export EBS_CNI_POLICY_ARN=$(aws --region ${AWS_REGION} iam list-policies --query 'Policies[?PolicyName==`'$EBS_CNI_POLICY_NAME'`].Arn' --output text)
-  echo $EBS_CNI_POLICY_ARN
-  
-```
-
-### 2. Kubernetes 서비스 계정에 대한 IAM 역할 구성
-
-IAM 역할을 Kubernetes 서비스 계정과 연결할 수 있습니다. 그러면 이 서비스 계정은 해당 서비스 계정을 사용하는 모든 포드의 컨테이너에 AWS 권한을 제공 할 수 있습니다. 이 기능을 사용하면 해당 노드의 포드가 AWS API를 호출 할 수 있도록 더 이상 Amazon EKS 노드 IAM 역할에 대한 확장 권한을 제공 할 필요가 없습니다.
-
-`eksctl`가 만든 IAM 정책이 포함 된 IAM 역할을 생성하고, 이를 `ebs-csi-controller-irsa`CSI 드라이버가 사용할 Kubernetes 서비스 계정과 연결합니다 .
-
-```
-# 앞서서 이 과정을 빈번하게 수행했습니다. 만약 수행했다면 이미 연결되어 있다고 출력될 것입니다.
-eksctl utils associate-iam-oidc-provider --region=$AWS_REGION --cluster=eksworkshop --approve
-
-eksctl create iamserviceaccount --cluster eksworkshop \
-  --name ebs-csi-controller-irsa \
-  --namespace kube-system \
-  --attach-policy-arn $EBS_CNI_POLICY_ARN \
-  --override-existing-serviceaccounts \
-  --approve
-  
-```
-
-아래와 같이 IAM 대시보드에서 확인 할 수 있습니다.
-
-![](<../.gitbook/assets/image (114).png>)
-
-### 3. EBS CSI 드라이버 구성 및 배치.&#x20;
-
-Helm을 통해서 EBS CSI 드라이버를 다운로드 받습니다.
-
-```
-# add the aws-ebs-csi-driver as a helm repo
-helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
-
-# search for the driver
-helm search  repo aws-ebs-csi-driver
+kubectl -n kube-system get pods | grep csi
+kubectl -n kube-system get pods ebs-csi-controller-6bd865f7dd-68x72 -o jsonpath={..spec.containers[*].name} | xargs -n1
 
 ```
 
-배포를 합니다.
+CSI 내부에는 6개의 Container가 동작하고 있습니다.
 
 ```
-helm upgrade --install aws-ebs-csi-driver \
-  --namespace kube-system \
-  --set serviceAccount.controller.create=false \
-  --set serviceAccount.snapshot.create=false \
-  --set enableVolumeScheduling=true \
-  --set enableVolumeResizing=true \
-  --set enableVolumeSnapshot=true \
-  --set serviceAccount.snapshot.name=ebs-csi-controller-irsa \
-  --set serviceAccount.controller.name=ebs-csi-controller-irsa \
-  aws-ebs-csi-driver/aws-ebs-csi-driver
-```
-
-## &#x20;스토리지 클래스 생성.&#x20;
-
-클러스터가 사용할 스토리지 클래스를 정의해야 하고, PV 클레임에 대한 기본 스토리지 클래스를 정의해야 합니다.
-
-![](<../.gitbook/assets/image (93).png>)
-
-스토리지 클래스를 정의합니다.
+ebs-plugin csi-provisioner csi-attacher csi-snapshotter csi-resizer liveness-probe
 
 ```
-cat << EoF > ${HOME}/environment/ebs_statefulset/mysql-storageclass.yaml
+
+## 스토리지 클래스 생성.&#x20;
+
+동적 볼륨 프로비저닝을 사용하면 필요에 따라 스토리지 볼륨을 생성할 수 있습니다. StorageClass는 동적 프로비저닝이 호출될 때 사용해야 하는 프로비저너(csi-provisioner)에 전달해야 하는 매개변수를 정의하기 위해 미리 생성되어야 합니다.
+
+먼저 클러스터가 사용할 스토리지 클래스를 정의해야 하고, PV 클레임에 대한 기본 스토리지 클래스를 정의해야 합니다.
+
+스토리지 클래스를 아래와 같이 구성해 두었습니다.
+
+```
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
@@ -106,18 +37,22 @@ metadata:
 provisioner: ebs.csi.aws.com # Amazon EBS CSI driver
 parameters:
   type: gp2
-  encrypted: 'true' # EBS volumes will always be encrypted by default
+  encrypted: 'true' 
+volumeBindingMode: WaitForFirstConsumer 
 reclaimPolicy: Delete
 mountOptions:
 - debug
-EoF
-
 ```
+
+* provisioner - `ebs.csi.aws.com`.
+* volume type - GP2
+* encrypted - EBS 볼륨 암호화
+* volumeBindingMode - WaitForFirstConsumer (Pod가 생성된 후 동일한 AZ에 상주하도록 persistent Volume이 프로비저닝되도록 하기 위해 volumeBindingMode는 WaitForFirstConsumer로 구성)
 
 Storage Class를 생성합니다.
 
 ```
-kubectl create -f ${HOME}/environment/ebs_statefulset/mysql-storageclass.yaml
+kubectl apply -f ${HOME}/environment/myeks/ebs_statefulset/mysql-storageclass.yaml
 
 ```
 
@@ -132,16 +67,17 @@ kubectl describe storageclass mysql-gp2
 
 ```
 whchoi:~/environment/ebs_statefulset $ kubectl describe storageclass mysql-gp2
-Name:                  mysql-gp2
-IsDefaultClass:        No
-Annotations:           <none>
+Name:            mysql-gp2
+IsDefaultClass:  No
+Annotations:     kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"storage.k8s.io/v1","kind":"StorageClass","metadata":{"annotations":{},"name":"mysql-gp2"},"mountOptions":["debug"],"parameters":{"encrypted":"true","type":"gp2"},"provisioner":"ebs.csi.aws.com","reclaimPolicy":"Delete","volumeBindingMode":"WaitForFirstConsumer"}
+
 Provisioner:           ebs.csi.aws.com
 Parameters:            encrypted=true,type=gp2
 AllowVolumeExpansion:  <unset>
 MountOptions:
   debug
 ReclaimPolicy:      Delete
-VolumeBindingMode:  Immediate
+VolumeBindingMode:  WaitForFirstConsumer
 Events:             <none>
 ```
 
@@ -159,6 +95,8 @@ volumeClaimTemplates:
           storage: 10Gi
 ```
 
+##
+
 ## ConfigMap 생성
 
 컨피그맵은 key-vlaue Pair로 기밀이 아닌 데이터를 저장하는 데 사용하는 API 오브젝트입니다. [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)는 [볼륨](https://kubernetes.io/ko/docs/concepts/storage/volumes/) 내에서 환경 변수, 커맨드-라인 인수 또는 구성 파일로 컨피그맵을 사용할 수 있습니다.
@@ -174,12 +112,16 @@ kubectl create namespace mysql
 
 ```
 
-Configmap을 생성합니다.&#x20;
+Configmap을 생성합니다.
 
 ```
-cd ${HOME}/environment/ebs_statefulset
+kubectl apply -f ~/environment/myeks/ebs_statefulset/mysql-configmap.yaml 
 
-cat << EoF > ${HOME}/environment/ebs_statefulset/mysql-configmap.yaml
+```
+
+configmap은 아래와 같이 구성되어 있습니다.
+
+```
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -196,23 +138,26 @@ data:
     # Apply this config only on followers.
     [mysqld]
     super-read-only
-EoF
+```
+
+ConfigMap은 master.cnf, slave.cnf를 저장하고 StatefulSet에 정의된 leader 및 follower pod를 초기화할 때 전달합니다. master.cnf는 데이터 변경 기록을 제공하기 위해 바이너리 로그 옵션(log-bin)이 있는 MySQL leader pod용입니다. 팔로어 서버로 전송됩니다. slave.cnf는 super-read-only 옵션이 있는 follower 포드용입니다.
+
+## Service 생성
+
+Kubernetes Service는 Pod의 논리적 집합들과 액세스하는 정책을 정의합니다. serviceSpec에서 유형을 지정하고, 다양한 방식으로 서비스를 노출할 수 있습니다. StatefulSet는 현재 포드의 도메인을 제어하고 안정적인 DNS 항목으로 각 포드에 직접 도달하기 위해 헤드리스 서비스가 필요합니다. clusterIP에 "None"을 지정하면 헤드리스 서비스를 생성할 수 있습니다.
+
+이것은 Amazon Aurora 에서 Endpoint 를 기반으로 Cluster를 구성하는 것과 유사합니다.
+
+아래와 같이 Service를 Apply 합니다.
+
+```
+kubectl apply -f ${HOME}/environment/myeks/ebs_statefulset/mysql-services.yaml
 
 ```
 
-Configmap을 생성합니다.
+실제 yaml을 확인해 봅니다. (mysql-services.yaml)
 
 ```
-kubectl create -f ${HOME}/environment/ebs_statefulset/mysql-configmap.yaml
-
-```
-
-## MySql을 위한 Service 생성
-
-Staetefulset 멤버를 위한 Headless service 구성과 Client 접속을 위한 구성의 Service 매니페스트를 구성합니다.
-
-```
-cat << EoF > ${HOME}/environment/ebs_statefulset/mysql-services.yaml
 # Headless service for stable DNS entries of StatefulSet members.
 apiVersion: v1
 kind: Service
@@ -248,12 +193,7 @@ EoF
 
 ```
 
-mysql, mysql-read를 생성합니다.
-
-```
-kubectl create -f ${HOME}/environment/ebs_statefulset/mysql-services.yaml
-
-```
+mysql service는 DNS 확인용이므로 StatefulSet 컨트롤러에 의해 포드가 배치될 때 pod-name.mysql을 사용하여 포드를 확인할 수 있습니다. mysql-read는 모든 follower에 대한 로드 밸런싱을 수행하는 클라이언트 서비스입니다.
 
 ## StatefuleSet 구성
 

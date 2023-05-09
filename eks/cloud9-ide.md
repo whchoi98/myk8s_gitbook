@@ -130,15 +130,11 @@ EKS를 위한 kubectl 바이너리를 다운로드합니다. 아래 kubectl vers
 
 (참조 - [https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html))
 
-{% hint style="info" %}
-Kubernetes 버전 1.23 출시부터 공식적으로 Amazon EKS AMI에는 containerd가 유일한 런타임으로 포함됩니다. Kubernetes 버전 1.18–1.21은 Docker를 기본 런타임으로 사용합니다.
-{% endhint %}
-
-kubectl 바이너리 버전은 1.22.6 설치합니다.&#x20;
+kubectl 바이너리 버전은 1.23.17 설치합니다.&#x20;
 
 ```
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.22.6/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.17/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
 source <(kubectl completion bash)
@@ -200,20 +196,6 @@ K9s의 최신 버전을 아래 링크에서 확인합니다.
 
 {% embed url="https://github.com/derailed/k9s/releases" %}
 
-```
-# K9s 0.26.7 기준 설치 방법 
-K9S_VERSION=v0.26.7
-curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_x86_64.tar.gz | sudo tar xfz - -C /usr/local/bin k9s
-
-```
-
-설치가 완료되면 정상 작동하는지 확인합니다.
-
-```
-k9s
-
-```
-
 아래에서 처럼 구성하면 최신 버전을 설치할 수 있습니다.
 
 ```
@@ -222,7 +204,12 @@ curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Li
 
 ```
 
+설치가 완료되면 k9s를 실행해 봅니다. 아직까지는 Kubernetes Cluster를 구성하지 않았기 때문에, 내용을 확인 할 수 없습니다.
 
+```
+k9s
+
+```
 
 ### 14.Kube krew 설치
 
