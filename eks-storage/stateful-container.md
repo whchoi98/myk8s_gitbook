@@ -184,10 +184,6 @@ mysql service는 DNS 확인용이므로 StatefulSet 컨트롤러에 의해 포�
 mysql-statefulset.yml을 기반으로 StatefuleSet을 구성합니다.
 
 ```
-cd ${HOME}/environment/ebs_statefulset
-wget https://eksworkshop.com/beginner/170_statefulset/statefulset.files/mysql-statefulset.yaml
-kubectl apply -f ${HOME}/environment/ebs_statefulset/mysql-statefulset.yaml
-
 kubectl apply -f ${HOME}/environment/myeks/ebs_statefulset/mysql-statefulset.yaml
 
 ```
@@ -233,7 +229,7 @@ whchoi98:~/environment/myeks (master) $ kubectl -n mysql get pvc -l app=mysql
 NAME           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 data-mysql-0   Bound    pvc-c08c7ae2-e3da-46a8-8910-54ac87e0ee20   10Gi       RWO            mysql-gp2      4m58s
 data-mysql-1   Bound    pvc-f68bfe62-2ce3-4371-b89a-def75716a106   10Gi       RWO            mysql-gp2      4m11s
-data-mysql-2   Bound    pvc-8057ab7e-ffd8-41af-a6cd-72eb178d3e4e   10Gi       RWO            mysql-gp2      3m16s
+            mysql-gp2      3m16s
 ```
 
 EC2 대시보드의 볼륨에서도 동일한 결과를 확인 할 수 있습니다.
@@ -244,7 +240,7 @@ EC2 대시보드의 볼륨에서도 동일한 결과를 확인 할 수 있습니
 
 ### 1.SQL 테스팅.
 
-다음 명령을 실행하여 **mysql-client** 를 통 일부 데이터를 **mysql-0.mysql** 에 보낼 수 있습니다 .
+다음 명령을 실행하여 **mysql-client** 를 사용해서 일부 데이터를 **mysql-0.mysql** 에 보낼 수 있습니다 .
 
 ```
 kubectl -n mysql run mysql-client --image=mysql:5.7 -i --rm --restart=Never --\
@@ -397,3 +393,39 @@ data-mysql-1   Bound    pvc-b492e2aa-1539-447f-a79e-f2316a80dea3   10Gi       RW
 data-mysql-2   Bound    pvc-ba84a117-2dc0-455b-ae2a-206466191114   10Gi       RWO            mysql-gp2      8m35s
 ```
 
+기본적으로 PersistentVolumeClaim을 삭제하면 연결된 영구 볼륨이 삭제됩니다. 볼륨을 유지하고 싶다면, "data-mysql-2"라는 PersistentVolumeClaim과 연결된 PersistentVolume의 reclaim 정책을 "Retain"으로 변경합니다.
+
+```
+export pv=$(kubectl -n mysql  get pvc data-mysql-2 -o json | jq --raw-output '.spec.volumeName')
+echo data-mysql-2 PersistentVolume name: ${pv}
+kubectl -n mysql patch pv ${pv} -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+kubectl get persistentvolume
+
+```
+
+이제 PersistentVolumeClaim data-mysql-2를 삭제해도 AWS EC2 콘솔에서 상태가 "사용 가능" 상태인 EBS 볼륨을 계속 볼 수 있습니다.&#x20;
+
+```
+$ kubectl get persistentvolume
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS   REASON   AGE
+pvc-2817c371-ad84-4ebf-a44f-0bec4b269c99   10Gi       RWO            Delete           Bound    ebs-pv-test/ebs-pvc-01   ebs-sc-01               45m
+pvc-79a9f9c3-7fb3-4956-b2ea-786f00a47244   10Gi       RWO            Retain           Bound    mysql/data-mysql-2       mysql-gp2               7m42s
+pvc-db4bb2a0-b053-4a4b-95ce-9282eb005489   10Gi       RWO            Delete           Bound    mysql/data-mysql-1       mysql-gp2               15m
+pvc-e8864866-abe0-451c-bf3e-f72b6b53ea9e   10Gi       RWO            Delete           Bound    mysql/data-mysql-0       mysql-gp2               16m
+```
+
+reclaim 정책을 다시 "Delete"로 변경합니다.
+
+```
+kubectl patch pv ${pv} -p '{"spec":{"persistentVolumeReclaimPolicy":"Delete"}}'
+unset pv
+kubectl get persistentvolume
+```
+
+아래와 같이 PVC를 삭제하면 PV는 삭제 됩니다. mtsql-2 pvc를 삭제합니다.
+
+```
+kubectl -n mysql delete pvc data-mysql-2
+kubectl get persistentvolume
+
+```
