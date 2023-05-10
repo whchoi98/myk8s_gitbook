@@ -95,26 +95,17 @@ kubectl get configmap -n kube-system aws-auth -o yaml > ~/environment/rbac/aws-a
 IAM 사용자 "rbac-user" 매핑을 기존 configMap에 추가합니다.
 
 ```
-cat << EoF >> ~/environment/rbac/aws-auth.yaml
-data:
-  mapUsers: |
-    - userarn: arn:aws:iam::${ACCOUNT_ID}:user/rbac-user
-      username: rbac-user
-EoF
+eksctl create iamidentitymapping \
+  --cluster ${ekscluster_name} \
+  --arn arn:aws:iam::${ACCOUNT_ID}:user/rbac-user \
+  --username rbac-user
 
 ```
 
 생성한 aws-auth.yml을 확인 합니다.
 
 ```
-cat ~/environment/rbac/aws-auth.yaml
-
-```
-
-Configmap을 적용합니다.
-
-```
-kubectl apply -f ~/environment/rbac/aws-auth.yaml
+kubectl get configmap -n kube-system aws-auth -o yaml
 
 ```
 
@@ -161,6 +152,8 @@ rbac-user로 정의하는 환경 변수를 설정 해제하려면 아래 명령�
 ```
 unset AWS_SECRET_ACCESS_KEY
 unset AWS_ACCESS_KEY_ID
+# 환경변수 설정이 해제되고 MASTER 권한으로 변경되었는지 확인합니다.
+kubectl -n rbac-test get pods
 
 ```
 
@@ -297,6 +290,8 @@ kubectl edit configmaps -n kube-system aws-auth
 data:
   mapUsers: |
     []
+
+
 ```
 
 ConfigMap을 적용하고 aws-auth.yaml 파일을 삭제합니다.
