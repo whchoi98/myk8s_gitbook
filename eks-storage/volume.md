@@ -136,7 +136,7 @@ kubectl -n hostpath get pods -o wide
 
 &#x20;container1에 shell로 접근해서 새로운 Text 파일을 만들어 봅니다. 아래와 같이 k9s를 통해서 Container1에 Shell로 접속합니다.
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9) (1).png" alt=""><figcaption></figcaption></figure>
 
 ```
 echo "This is hostpath-mount-01" >> /hostpath-mount/hostpath.txt
