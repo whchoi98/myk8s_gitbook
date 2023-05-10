@@ -81,27 +81,11 @@ VolumeBindingMode:  WaitForFirstConsumer
 Events:             <none>
 ```
 
-mysql-gp2 를 storageClassName으로 선언할 것입니다.
-
-```
-volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: mysql-gp2
-      resources:
-        requests:
-          storage: 10Gi
-```
-
-##
+mysql-gp2가 storageClassName으로 선언되었습니다.
 
 ## ConfigMap 생성
 
-컨피그맵은 key-vlaue Pair로 기밀이 아닌 데이터를 저장하는 데 사용하는 API 오브젝트입니다. [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)는 [볼륨](https://kubernetes.io/ko/docs/concepts/storage/volumes/) 내에서 환경 변수, 커맨드-라인 인수 또는 구성 파일로 컨피그맵을 사용할 수 있습니다.
-
-컨피그맵을 사용하면 [컨테이너 이미지](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-image)에서 환경별 구성을 분리하여, 애플리케이션을 쉽게 이식할 수 있습니다.
+컨피그맵은 key-vlaue Pair로 기밀이 아닌 데이터를 저장하는 데 사용하는 API 오브젝트입니다. [파드](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod-overview/)는 [볼륨](https://kubernetes.io/ko/docs/concepts/storage/volumes/) 내에서 환경 변수, 커맨드-라인 인수 또는 구성 파일로 컨피그맵을 사용할 수 있습니다. 이러한 컨피그맵을 사용하면 [컨테이너 이미지](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-image)에서 환경별 구성을 분리하여, 애플리케이션을 쉽게 이식할 수 있습니다.
 
 ### 1.namespace /configmap 생성
 
@@ -203,6 +187,8 @@ mysql-statefulset.yml을 기반으로 StatefuleSet을 구성합니다.
 cd ${HOME}/environment/ebs_statefulset
 wget https://eksworkshop.com/beginner/170_statefulset/statefulset.files/mysql-statefulset.yaml
 kubectl apply -f ${HOME}/environment/ebs_statefulset/mysql-statefulset.yaml
+
+kubectl apply -f ${HOME}/environment/myeks/ebs_statefulset/mysql-statefulset.yaml
 
 ```
 
