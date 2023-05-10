@@ -60,7 +60,7 @@ kubectl -n empty get pods
 <figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
 
 ```
-echo "This is empty-volumes" >> /mount1/empty.txt
+echo "This is empty-volumes by pod1" >> /mount1/empty.txt
 cat /mount1/empty.txt
 
 ```
@@ -71,12 +71,18 @@ cat /mount1/empty.txt
 
 ```
 cat /mount2/empty.txt
+echo "This is empty-volumes by pod2" >> /mount2/empty.txt
+```
 
+첫번째 컨테이너(Container1) Shell에 접속해서 추가된 값이 보이는지 확인합니다.
+
+<figure><img src="../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
+
+```
+cat /mount1/empty.txt
 ```
 
 임시 볼륨은 Pod내에서만 존재하기 때문에 Pod가 삭제되면 더 이상 데이터는 보존되지 않습니다.
-
-
 
 ## 2.hostPath
 
@@ -228,7 +234,7 @@ _퍼시스턴트볼륨클레임_ (PVC)은 사용자의 스토리지에 대한 �
 
 
 
-### 3.1 스토리지 클래스 <a href="#storage-classes" id="storage-classes"></a>
+### 3.1 스토리지 클래스 확인 <a href="#storage-classes" id="storage-classes"></a>
 
 클러스터에 이미 있는 스토리지 클래스를 확인합니다.
 
@@ -413,6 +419,88 @@ export EBS_DRIVER_UPDATE_VERSION=v1.18.0-eksbuild.1
 eksctl update addon --name aws-ebs-csi-driver --version ${EBS_DRIVER_UPDATE_VERSION} --cluster ${ekscluster_name} --force
 
 ```
+
+
+
+### 3.6 스토리지 클래스 생성
+
+EBS CSI-Driver 를 기반으로 하는 Storage Class 를 구성해 봅니다. 스토리지클래스는 관리자가 제공하는 스토리지의 클래스들을 설명할 수 있는 방법을 제공합니다. 클래스는 서비스의 품질 수준, 백업 정책, 클러스터 관리자가 정한 임의의 정책에 매핑될 수 있습니다.
+
+아래와 같이 간단하게 새로운 EBS Storage Class를 생성합니다.
+
+```
+mkdir ~/environment/ebs_csi
+
+#Storage Class 생성
+cat <<EoF > ~/environment/ebs_csi/ebs_csi_test01.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc-01
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+EoF
+
+#storage class 생성과 확인
+kubectl apply -f ~/environment/ebs_csi/ebs_csi_test01.yaml
+kubectl get sc
+
+```
+
+`volumeBindingMode` 필드는 [볼륨 바인딩과 동적 프로비저닝](https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/#%ED%94%84%EB%A1%9C%EB%B9%84%EC%A0%80%EB%8B%9D)의 시작 시기를 제어합니다. 설정되어 있지 않으면, `Immediate` 모드가 기본으로 사용된다.
+
+`Immediate` 모드는 퍼시스턴트볼륨클레임이 생성되면 볼륨 바인딩과 동적 프로비저닝이 즉시 발생하는 것을 나타냅니다. 토폴로지 제약이 있고 클러스터의 모든 노드에서 전역적으로 접근할 수 없는 스토리지 백엔드의 경우, 파드의 스케줄링 요구 사항에 대한 파악없이 퍼시스턴트볼륨이 바인딩되거나 프로비저닝되며, 이로 인해 스케줄되지 않은 파드가 발생할 수 있습니다.
+
+`WaitForFirstConsumer` 모드를 지정해서 이 문제를 해결할 수 있는데 이 모드는 퍼시스턴트볼륨클레임을 사용하는 파드가 생성될 때까지 퍼시스턴트볼륨의 바인딩과 프로비저닝을 지연시킵니다. 퍼시스턴트볼륨은 파드의 스케줄링 제약 조건에 의해 지정된 토폴로지에 따라 선택되거나 프로비저닝 됩니다. 여기에는 [리소스 요구 사항](https://kubernetes.io/ko/docs/concepts/configuration/manage-resources-containers/), [노드 셀렉터](https://kubernetes.io/ko/docs/concepts/scheduling-eviction/assign-pod-node/#%EB%85%B8%EB%93%9C-%EC%85%80%EB%A0%89%ED%84%B0-nodeselector), [파드 어피니티(affinity)와 안티-어피니티(anti-affinity)](https://kubernetes.io/ko/docs/concepts/scheduling-eviction/assign-pod-node/#%EC%96%B4%ED%94%BC%EB%8B%88%ED%8B%B0-affinity-%EC%99%80-%EC%95%88%ED%8B%B0-%EC%96%B4%ED%94%BC%EB%8B%88%ED%8B%B0-anti-affinity) 그리고 [테인트(taint)와 톨러레이션(toleration)](https://kubernetes.io/ko/docs/concepts/scheduling-eviction/taint-and-toleration/)이 포함됩니다.
+
+
+
+3.7 PVC 생성
+
+
+
+```
+kubectl create namespace ebs_pvc
+
+# PVC 생apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-claim
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+ ## 새롭게 생성한 storage class 이름을 지정한다.
+  storageClassName: ebs-sc
+  resources:
+    requests:
+      storage: 4Gi
+ 
+ ## pvc-pod.yml
+ apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-pod
+  namespace: default
+spec:
+  containers:
+  - name: app
+    image: centos
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo $(date -u) >> /data/out.txt; sleep 5; done"]
+    volumeMounts:
+    - name: persistent-storage
+      mountPath: /data
+  volumes:
+  - name: persistent-storage
+    persistentVolumeClaim:
+    ## 위에서 생성한 PVC 이름을 지정한다.
+      claimName: ebs-claim
+```
+
+
 
 
 
