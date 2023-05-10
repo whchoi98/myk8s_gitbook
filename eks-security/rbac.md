@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2021-04-09'
+description: 'Update : 2023-05-11'
 ---
 
 # RBAC
@@ -285,20 +285,9 @@ rm /tmp/create_output.json
 기존 aws-auth.yaml 파일을 편집하여 기존 configMap에서 **`rbac-user`** 매핑을 제거합니다.
 
 ```
-kubectl edit configmaps -n kube-system aws-auth
-
-data:
-  mapUsers: |
-    []
-
-
-```
-
-ConfigMap을 적용하고 aws-auth.yaml 파일을 삭제합니다.
-
-```
-kubectl apply -f aws-auth.yaml
-rm aws-auth.yaml
+eksctl delete iamidentitymapping \
+  --cluster ${ekscluster_name} \
+  --arn arn:aws:iam::${ACCOUNT_ID}:user/rbac-user
 
 ```
 
