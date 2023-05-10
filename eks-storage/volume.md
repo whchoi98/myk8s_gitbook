@@ -432,7 +432,7 @@ EBS CSI-Driver 를 기반으로 하는 Storage Class 를 구성해 봅니다. �
 mkdir ~/environment/ebs_csi
 
 #Storage Class 생성
-cat <<EoF > ~/environment/ebs_csi/ebs_csi_test01.yaml
+cat <<EoF > ~/environment/ebs_csi/ebs_csi_sc_test01.yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -444,7 +444,7 @@ volumeBindingMode: WaitForFirstConsumer
 EoF
 
 #storage class 생성과 확인
-kubectl apply -f ~/environment/ebs_csi/ebs_csi_test01.yaml
+kubectl apply -f ~/environment/ebs_csi/ebs_csi_sc_test01.yaml
 kubectl get sc
 
 ```
@@ -459,46 +459,83 @@ kubectl get sc
 
 3.7 PVC 생성
 
-
+PVC 를 생성합니다.
 
 ```
-kubectl create namespace ebs_pvc
+kubectl create namespace ebs-pv-test
+# PVC 생성
 
-# PVC 생apiVersion: v1
+cat <<EoF > ~/environment/ebs_csi/ebs_csi_sc_pvc.yaml
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ebs-claim
-  namespace: default
+  name: ebs-pvc-01
+  namespace: ebs-pv-test
 spec:
   accessModes:
     - ReadWriteOnce
- ## 새롭게 생성한 storage class 이름을 지정한다.
-  storageClassName: ebs-sc
+   storageClassName: ebs-sc-01
   resources:
     requests:
-      storage: 4Gi
- 
- ## pvc-pod.yml
- apiVersion: v1
-kind: Pod
+      storage: 10Gi
+EoF 
+
+kubectl apply -f ~/environment/ebs_csi/ebs_csi_sc_pvc.yaml
+```
+
+앞서 생성한 PVC를 이용해서 PV를 사용하는 Pod를 생성합니다.
+
+<pre><code>
+#PoD 생성
+
+cat &#x3C;&#x3C;EoF > ~/environment/ebs_csi/ebs_csi_test_pod.yaml
+<strong>apiVersion: v1
+</strong>kind: Deployment
 metadata:
   name: pvc-pod
-  namespace: default
+  namespace: ebs_pv_test
 spec:
-  containers:
-  - name: app
-    image: centos
-    command: ["/bin/sh"]
-    args: ["-c", "while true; do echo $(date -u) >> /data/out.txt; sleep 5; done"]
+ spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ebs-pv-test-01
+  template:
+    metadata:
+      labels:
+        app: ebs-pv-test-01
+    spec:
+      containers:
+      - image: whchoi98/network-multitool
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo $(date -u) >> /data/out.txt; sleep 5; done"]
+        name: ebs-pv-test-01
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      nodeSelector:
+        nodegroup-type: "managed-frontend-workloads"
     volumeMounts:
     - name: persistent-storage
       mountPath: /data
   volumes:
   - name: persistent-storage
     persistentVolumeClaim:
-    ## 위에서 생성한 PVC 이름을 지정한다.
       claimName: ebs-claim
-```
+
+
+</code></pre>
 
 
 
