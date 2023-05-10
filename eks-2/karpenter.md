@@ -280,8 +280,8 @@ Karpenter Node들을 위한 IAM Role을 생성합니다. karpenter node를 위�
 mkdir /home/ec2-user/environment/karpenter
 export KARPENTER_CF="/home/ec2-user/environment/karpenter/k-node-iam-role.yaml"
 echo ${KARPENTER_CF}
-curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-eksctl/cloudformation.yaml  > $KARPENTER_CF
-sed -i 's/\${ClusterName}/k-eksworkshop/g' $KARPENTER_CF
+curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-karpenter/cloudformation.yaml  > $KARPENTER_CF
+## sed -i 's/\${ClusterName}/k-eksworkshop/g' $KARPENTER_CF
 
 ## 구성한 Node Role Template을 생성합니다.
 aws cloudformation deploy \
