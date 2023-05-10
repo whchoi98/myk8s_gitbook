@@ -36,7 +36,7 @@ aws iam put-role-policy --role-name eksworkshop-CodeBuildServiceRole --policy-na
 아래와 같이 개인 Github 계정에서 샘플 애플리케이션 리포지토리를 생성합니다. \
 리포지토리 이름, 설명으로 양식을 채우고 아래와 같이 README로 리포지토리 초기화를 확인하고 리포지토리 생성을 클릭합니다.
 
-<figure><img src="../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1) (2).png" alt=""><figcaption></figcaption></figure>
 
 위의 단계와 동일하게 Kubernetes 매니페스트 리포지토리를 만듭니다. 아래와 같이 양식을 작성하고 저장소 생성을 클릭합니다.
 

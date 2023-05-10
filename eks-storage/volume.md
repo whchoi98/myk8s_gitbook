@@ -457,7 +457,7 @@ kubectl get sc
 
 
 
-3.7 PVC 생성
+### 3.7 PV, PVC 생성
 
 PVC 를 생성합니다.
 
@@ -465,7 +465,7 @@ PVC 를 생성합니다.
 kubectl create namespace ebs-pv-test
 # PVC 생성
 
-cat <<EoF > ~/environment/ebs_csi/ebs_csi_sc_pvc.yaml
+cat <<EoF > ~/environment/ebs_csi/ebs_csi_sc_pvc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -474,28 +474,29 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-   storageClassName: ebs-sc-01
+  storageClassName: ebs-sc-01
   resources:
     requests:
       storage: 10Gi
-EoF 
+EoF
 
-kubectl apply -f ~/environment/ebs_csi/ebs_csi_sc_pvc.yaml
+kubectl apply -f ~/environment/ebs_csi/ebs_csi_sc_pvc.yaml
+kubectl -n ebs-pv-test get pvc
 ```
 
 앞서 생성한 PVC를 이용해서 PV를 사용하는 Pod를 생성합니다.
 
-<pre><code>
+```
+
 #PoD 생성
 
-cat &#x3C;&#x3C;EoF > ~/environment/ebs_csi/ebs_csi_test_pod.yaml
-<strong>apiVersion: v1
-</strong>kind: Deployment
+cat <<EoF > ~/environment/ebs_csi/ebs_csi_test_pod.yaml
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: pvc-pod
-  namespace: ebs_pv_test
+  namespace: ebs-pv-test
 spec:
- spec:
   replicas: 1
   selector:
     matchLabels:
@@ -514,32 +515,33 @@ spec:
         ports:
         - containerPort: 80
           protocol: TCP
-        readinessProbe:
-          tcpSocket:
-            port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        livenessProbe:
-          tcpSocket:
-            port: 80
-          initialDelaySeconds: 15
-          periodSeconds: 20
+        volumeMounts:
+        - name: persistent-storage
+          mountPath: /data
       nodeSelector:
         nodegroup-type: "managed-frontend-workloads"
-    volumeMounts:
-    - name: persistent-storage
-      mountPath: /data
-  volumes:
-  - name: persistent-storage
-    persistentVolumeClaim:
-      claimName: ebs-claim
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: ebs-pvc-01
+EoF
+
+kubectl apply -f ~/environment/ebs_csi/ebs_csi_test_pod.yaml
+kubectl -n ebs-pv-test get pv,pvc,pod
+
+```
 
 
-</code></pre>
 
+생성된 Pod의 Container에서 데이터 상태를 확인해 봅니다.
 
+<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
 
+```
+# cat /data/out.txt 
+```
 
+pod 를 삭제 후에 다시 Pod를 생성했을 때의 값을 비교해 봅니다.
 
 
 

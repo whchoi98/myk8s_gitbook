@@ -99,7 +99,7 @@ ECR Repository 에 Image 가 Push 되면 ECR 자체적으로 취약점 Scanning 
 
 "eks-security-prod" Repository 의 경우에는 아래와 같이 "See Findings" 링크가 있는 것을 확인할 수 있습니다. 해당 링크를 클릭하여 탐지된 취약점 리스트를 확인하도록 하겠습니다.
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
 
 정상적인 경우 아래와 같이 Enhanced Scanning 기능을 통해 해당 Container Image 에 포함되어 있는 "Log4j" 취약점을 포함한 다양한 취약점들이 탐지된 것을 확인할 수 있습니다.\
 
