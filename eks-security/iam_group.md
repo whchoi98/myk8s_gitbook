@@ -220,7 +220,7 @@ kubernetes 사용자 DevUser 에게 development namespace 전체 액세스 권�
 ```
 cat << EOF | kubectl apply -f - -n development
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: dev-role
 rules:
@@ -253,7 +253,7 @@ rules:
       - "update"
 ---
 kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: dev-role-binding
 subjects:
@@ -272,7 +272,7 @@ kubernetes 사용자 InteUser 에게 development namespace 전체 액세스 권�
 ```
 cat << EOF | kubectl apply -f - -n integration
 kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: integ-role
 rules:
@@ -305,7 +305,7 @@ rules:
       - "update"
 ---
 kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: integ-role-binding
 subjects:
@@ -365,7 +365,7 @@ kubectl get cm -n kube-system aws-auth -o yaml
 eksctl을 활용하여 클러스터에서 관리되는 모든 ID 목록을 가져올 수 있습니다.
 
 ```
-eksctl get iamidentitymapping --cluster eksworkshop
+eksctl get iamidentitymapping --cluster ${ekscluster_name}
 
 ```
 
@@ -413,6 +413,7 @@ aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/IntUser.json)
 aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/IntUser.json)
 
 EoF
+
 ```
 
 이제 만들어진 계정으로 전환하면서, 계정, 권한 ,역할 등을 점검해 봅니다.
@@ -420,6 +421,20 @@ EoF
 ```
 export KUBECONFIG=/tmp/kubeconfig-dev && eksctl utils write-kubeconfig eksworkshop
 cat $KUBECONFIG | yq e '.users.[].user.exec.args += ["--profile", "dev"]' - -- | sed 's/eksworkshop./eksworkshop-dev./g' | sponge $KUBECONFIG
+
+```
+
+
+
+```
+export KUBECONFIG=/tmp/kubeconfig-integ && eksctl utils write-kubeconfig --cluster=${ekscluster_name}
+cat $KUBECONFIG | yq e '.users.[].user.exec.args += ["--profile", "integ"]' - -- | sed 's/eksworkshop-eksctl./eksworkshop-eksctl-integ./g' | sponge $KUBECONFIG
+
+```
+
+```
+export KUBECONFIG=/tmp/kubeconfig-integ && eksctl utils write-kubeconfig --cluster=${ekscluster_name}
+cat $KUBECONFIG | yq e '.users.[].user.exec.args += ["--profile", "integ"]' - -- | sed 's/eksworkshop-eksctl./eksworkshop-eksctl-integ./g' | sponge $KUBECONFIG
 
 ```
 

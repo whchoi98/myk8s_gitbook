@@ -173,16 +173,19 @@ kubectl은 Bash 및 Zsh에 대한 자동 완성 지원을 제공하므로 입력
 
 ## 기타 유틸리티 설치
 
-### 10.GNU gettext,jq,bash 자동완성 설치
+### 10.GNU gettext,jq,bash 자동완성, yq 설치
 
-```
-sudo yum -y install jq gettext bash-completion moreutils
+<pre><code>sudo yum -y install jq gettext bash-completion moreutils
 for command in kubectl jq envsubst aws
   do
-    which $command &>/dev/null && echo "$command in path" || echo "$command NOT FOUND"
+    which $command &#x26;>/dev/null &#x26;&#x26; echo "$command in path" || echo "$command NOT FOUND"
   done
-  
-```
+ 
+<strong>  echo 'yq() {
+</strong>  docker run --rm -i -v "${PWD}":/workdir mikefarah/yq "$@"
+}' | tee -a ~/.bashrc &#x26;&#x26; source ~/.bashrc
+ 
+</code></pre>
 
 {% hint style="info" %}
 **jq**는 커맨드라인에서 JSON을 조작할 수 있는 도구입니다. 프로그래밍 언어는 아니지만 JSON 데이터를 다루기 위한 다양한 기능들을 제공합니다. kubectl, aws cli의 결과들 중에서 복잡한 중첩 JSON구조  내에서 키를 찾을 때 유용합니다.
