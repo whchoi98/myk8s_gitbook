@@ -65,7 +65,7 @@
 * [9.EKS Storage](eks-storage/README.md)
   * [볼륨/CSI](eks-storage/volume.md)
   * [Stateful Container-EBS](eks-storage/stateful-container.md)
-  * [Stateful Container-EFS (TBD)](eks-storage/stateful-container-efs.md)
+  * [Stateful Container-EFS](eks-storage/stateful-container-efs.md)
 * [10.EKS Security](eks-security/README.md)
   * [이미지 보안](eks-security/undefined.md)
   * [RBAC](eks-security/rbac.md)
