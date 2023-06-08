@@ -73,7 +73,7 @@ aws cloudformation deploy \
 export k_ekscluster_name=k-eksworkshop
 export k_public_mgmd_node="frontend"
 export k_private_mgmd_node="backend"
-export KARPENTER_VERSION="v0.27.3"
+export KARPENTER_VERSION="v0.27.5"
 echo ${k_ekscluster_name}
 echo ${k_public_mgmd_node}
 echo ${k_private_mgmd_node}
