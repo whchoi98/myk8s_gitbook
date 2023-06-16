@@ -115,7 +115,7 @@ ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다.
 ```
 ## ALB Load Balancer Controller 의 IAM Policy Download
 # cd ~/environment/myeks/alb-controller/
-# export ALB_CONTROLLER_VERSION=2.4.1
+# export ALB_CONTROLLER_VERSION=2.4.7
 # curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v${ALB_CONTROLLER_VERSION}/docs/install/iam_policy.json
 ```
 
@@ -127,7 +127,7 @@ AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 cd ~/environment/myeks/alb-controller
 aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
-    --policy-document file://./iam_policy_v2.4.1.json
+    --policy-document file://./iam_policy_v2.4.7.json
 
 ```
 
