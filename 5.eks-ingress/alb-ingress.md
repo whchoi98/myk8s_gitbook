@@ -207,7 +207,7 @@ secrets:
 아래와 같이 Cert Manager (인증서 관리자)를 설치합니다.
 
 ```
-export CERTMGR_VERSION=1.9.1
+export CERTMGR_VERSION=1.12.2
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v${CERTMGR_VERSION}/cert-manager.yaml
 kubectl -n cert-manager get pods
 
@@ -263,7 +263,7 @@ spec:
 
 ```
 cd ~/environment/myeks/alb-controller
-kubectl apply -f v2_4_4_full.yaml
+kubectl apply -f v2_5_2_full.yaml
 kubectl -n kube-system get pods | grep balancer
 
 ```
