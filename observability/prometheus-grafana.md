@@ -50,13 +50,56 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 
 ```
 
+Prometheus와 Grafana를 설치할 볼륨을 구성합니다.
+
+```
+mkdir ~/environment/ebs_csi
+
+#Storage Class 생성
+cat <<EoF > ~/environment/ebs_csi/ebs_csi_sc_obs.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc-obs
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+EoF
+
+#storage class 생성과 확인
+kubectl apply -f ~/environment/ebs_csi/ebs_csi_sc_obs.yaml
+kubectl get sc
+
+kubectl create namespace ebs-pv-obs
+# PVC 생성
+
+cat <<EoF > ~/environment/ebs_csi/ebs_csi_sc_obs_pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-pvc-obs
+  namespace: ebs-pv-obs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ebs-sc-obs
+  resources:
+    requests:
+      storage: 10Gi
+EoF
+
+kubectl apply -f ~/environment/ebs_csi/ebs_csi_sc_obs_pvc.yaml
+kubectl -n ebs-pv-test get pvc
+```
+
 아래와 같이 prometheus namespace를 만들고, helm을 통해 설치합니다.&#x20;
 
 ```
 kubectl create namespace prometheus
 helm upgrade -i prometheus prometheus-community/prometheus \
     --namespace prometheus \
-    --set alertmanager.persistentVolume.storageClass="gp2",server.persistentVolume.storageClass="gp2"
+    --set alertmanager.persistentVolume.storageClass="ebs-sc-obs",server.persistentVolume.storageClass="ebs-sc-obs"
 ```
 
 아래와 같은 결과를 얻을 수 있습니다.
@@ -228,7 +271,7 @@ helm repo add grafana https://grafana.github.io/helm-charts
 ```
 helm install grafana grafana/grafana \
     --namespace grafana \
-    --set persistence.storageClassName="gp2" \
+    --set persistence.storageClassName="ebs-sc-obs" \
     --set persistence.enabled=true \
     --set adminPassword='1234Qwer' \
     --values ${HOME}/environment/grafana/grafana.yaml \
