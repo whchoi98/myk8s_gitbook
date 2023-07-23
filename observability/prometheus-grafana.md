@@ -250,24 +250,14 @@ helm install grafana grafana/grafana \
     --set persistence.enabled=true \
     --set adminPassword='1234Qwer' \
     --values ${HOME}/environment/grafana/grafana.yaml \
-    --set service.type=LoadBalancer
+    --set service.type=LoadBalancer \
+    --set service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="internet-facing"
 
 ```
 
 아래와 같이 helm을 통해 설치된 결과를 확인 할 수 있습니다.&#x20;
 
 ```
-$ helm install grafana grafana/grafana \
->     --namespace grafana \
->     --set persistence.storageClassName="gp2" \
->     --set persistence.enabled=true \
->     --set adminPassword='1234Qwer' \
->     --values ${HOME}/environment/grafana/grafana.yaml \
->     --set service.type=LoadBalancer
-W0619 03:59:14.014204   23344 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
-W0619 03:59:14.022486   23344 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
-W0619 03:59:14.208545   23344 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
-W0619 03:59:14.214443   23344 warnings.go:70] policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+
 NAME: grafana
 LAST DEPLOYED: Sun Jun 19 03:59:13 2022
 NAMESPACE: grafana
@@ -355,9 +345,9 @@ kubectl -n grafana get svc grafana  | tail -n 1 | awk '{ print "grafana URL = ht
 
 이제 생성된 Grafana 에서 배포된 Cluster들에 대해서 모니터링을 합니다.
 
-좌측 상단 메뉴의 "Dashboards" 를 선택하고 +Import를 선택합니다.
+우측 상단 메뉴의 "+" 를 선택하고 Import dashboard를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (243) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (29).png" alt=""><figcaption></figcaption></figure>
 
 Import 값을 "3119"를 선택하고, Load를 선택합니다.
 

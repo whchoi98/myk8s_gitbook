@@ -28,7 +28,7 @@ EC2 - 다음: 권한
 AdministratorAccess
 ```
 
-![](<../.gitbook/assets/image (29).png>)
+![](<../.gitbook/assets/image (29) (1).png>)
 
 역할 이름 생성 및 정책 연결을 확인합니다.
 
