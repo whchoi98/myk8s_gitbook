@@ -111,9 +111,8 @@ Yaml 파일에 정의된 Service의 NodePort는 EKS Node에서 허용되지 않�
 Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 * TCP 30080-30090 허용
-* HTTP, HTTPS, ICMP, SSH 허용&#x20;
 
-![](<../.gitbook/assets/image (225) (1) (1) (1) (1) (1) (1) (1) (1).png>)
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 아래와 같이 Security Group이 생성됩니다.
 

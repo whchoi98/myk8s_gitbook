@@ -36,7 +36,7 @@ aws ecr create-repository --repository-name eks-security-shared
 \
 ECR Repository 가 정상적으로 생성되었는지 확인합니다.
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
 ## 3. Enhanced Scanning
 

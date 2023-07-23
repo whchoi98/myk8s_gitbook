@@ -31,7 +31,11 @@ Cloud9 의 이름과 Description을 설정합니다.
 * Instance type : m5.large
 * cost-saving : Never
 
-![](<../.gitbook/assets/image (210).png>)
+<div align="left">
+
+<img src="../.gitbook/assets/image (210).png" alt="">
+
+</div>
 
 ### Task2. SSH Key 구성 및 패키지 설치
 
