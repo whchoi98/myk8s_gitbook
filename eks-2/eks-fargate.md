@@ -12,17 +12,16 @@ AWS Fargate를 사용하면 더 이상 컨테이너를 실행하기 위해 가�
 * 모든 Selector에 대해 네임스페이스를 정의해야 합니다.&#x20;
 * 레이블 필드는 Key / Value로 구성됩니다. Selector가 일치하는 포드는 Fargate에서 예약됩니다. 일반적으로 사용자 애플리케이션 워크로드를 kube-system 또는 default 이외의 네임스페이스에 배포하여 EKS에 배포된 포드 간의 상호 작용을 관리하는 보다 세분화된 기능을 갖는 것이 좋습니다.
 * &#x20;fargate 네임스페이스를 대상으로 하는 모든 포드를 대상으로 하는 application이라는 새 Fargate 프로필을 생성합니다.
-*
 
-    포드 실행 역할 - 클러스터가 AWS Fargate에 Pods를 생성하는 경우 Fargate 인프라에서 실행 중인 `kubelet`이 사용자를 대신하여 AWS API를 호출해야 합니다. 예를 들어, Amazon ECR에서 컨테이너 이미지를 가져오기 위해 호출해야 합니다. Amazon EKS Pod 실행 역할은 이 작업을 수행할 수 있는 IAM 권한을 제공합니다.
+Fargate 구성요소
 
-    Fargate 프로파일을 생성할 때 Pod와 함께 사용할 Pods 실행 역할을 지정해야 합니다. 이 역할은 권한 부여를 위해 클러스터의 Kubernetes [역할 기반 액세스 컨트롤](https://kubernetes.io/docs/admin/authorization/rbac/)
+*   포드 실행 역할 - 클러스터가 AWS Fargate에 Pods를 생성하는 경우 Fargate 인프라에서 실행 중인 `kubelet`이 사용자를 대신하여 AWS API를 호출해야 합니다. 예를 들어, Amazon ECR에서 컨테이너 이미지를 가져오기 위해 호출해야 합니다. Amazon EKS Pod 실행 역할은 이 작업을 수행할 수 있는 IAM 권한을 제공합니다.
 
-    * (RBAC)에 추가됩니다. 이렇게 하면 Fargate 인프라에서 실행 중인 `kubelet`이 Amazon EKS 클러스터에 등록되어 클러스터에 노드로 표시될 수 있습니다. 자세한 내용은 [Amazon EKS Pod 실행 IAM 역할](https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/pod-execution-role.html) 섹션을 참조하세요.
-    * 서브넷 - 이 프로파일을 사용하는 Pods를 시작할 서브넷의 ID입니다. 현재 Fargate에서 실행 중인 Pods에는 퍼블릭 IP 주소가 할당되지 않습니다. 따라서 이 파라미터에 대해서는 인터넷 게이트웨이로 가는 직접 경로가 없는 프라이빗 서브넷만 허용됩니다.
-    * 셀렉터 - 이 Fargate 프로파일을 사용하기 위해 Pods에 대해 매칭하는 선택기입니다. Fargate 프로파일에 선택기를 최대 5개까지 지정할 수 있습니다. 셀렉터에는 다음 구성 요소가 있습니다.
-      * 네임스페이스 - 셀렉터에 대한 네임스페이스를 지정해야 합니다. 셀렉터는 이 네임스페이스에서 생성된 Pods만 일치시킵니다. 그러나 여러 셀렉터를 생성하여 여러 네임스페이스를 대상으로 지정할 수 있습니다.
-      * 레이블 - 선택적으로 셀렉터에 대해 일치시킬 Kubernetes 레이블을 지정할 수 있습니다. 셀렉터는 셀렉터에 지정된 모든 레이블이 있는 Pods와 일치합니다.
+    Fargate 프로파일을 생성할 때 Pod와 함께 사용할 Pods 실행 역할을 지정해야 합니다. 이 역할은 권한 부여를 위해 클러스터의 Kubernetes [역할 기반 액세스 컨트롤](https://kubernetes.io/docs/admin/authorization/rbac/) (RBAC)에 추가됩니다. 이렇게 하면 Fargate 인프라에서 실행 중인 `kubelet`이 Amazon EKS 클러스터에 등록되어 클러스터에 노드로 표시될 수 있습니다. 자세한 내용은 [Amazon EKS Pod 실행 IAM 역할](https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/pod-execution-role.html) 섹션을 참조하세요.
+* 서브넷 - 이 프로파일을 사용하는 Pods를 시작할 서브넷의 ID입니다. 현재 Fargate에서 실행 중인 Pods에는 퍼블릭 IP 주소가 할당되지 않습니다. 따라서 이 파라미터에 대해서는 인터넷 게이트웨이로 가는 직접 경로가 없는 프라이빗 서브넷만 허용됩니다.
+* 셀렉터 - 이 Fargate 프로파일을 사용하기 위해 Pods에 대해 매칭하는 선택기입니다. Fargate 프로파일에 선택기를 최대 5개까지 지정할 수 있습니다. 셀렉터에는 다음 구성 요소가 있습니다.
+  * 네임스페이스 - 셀렉터에 대한 네임스페이스를 지정해야 합니다. 셀렉터는 이 네임스페이스에서 생성된 Pods만 일치시킵니다. 그러나 여러 셀렉터를 생성하여 여러 네임스페이스를 대상으로 지정할 수 있습니다.
+  * 레이블 - 선택적으로 셀렉터에 대해 일치시킬 Kubernetes 레이블을 지정할 수 있습니다. 셀렉터는 셀렉터에 지정된 모든 레이블이 있는 Pods와 일치합니다.
 
 ## EKS Fargate 구성
 
@@ -156,7 +155,7 @@ EKS Fargate는 완전관리형 형태로 제공되기 때문에, EC2 대시보�
 
 Amazon Elastic Kubernetes Service 의 **`Cluster - Computing`** 대시보드에서 확인이 가능합니다.
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 AWS Fargate 고려 사항
 

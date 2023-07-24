@@ -186,7 +186,7 @@ Stack의 세부정보를 아래와 같이 입력합니다.
 
 Cloudformation이 완료 되면 아래와 같이 확인할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (4) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4) (1) (2).png" alt=""><figcaption></figcaption></figure>
 
 Codepipeline으로 이동해서 진행상황을 살펴 봅니다.
 

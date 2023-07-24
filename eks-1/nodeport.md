@@ -112,7 +112,7 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 * TCP 30080-30090 허용
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
 아래와 같이 Security Group이 생성됩니다.
 

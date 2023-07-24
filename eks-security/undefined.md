@@ -18,7 +18,7 @@ AWS Management Console 의 [ECR 메뉴 ](https://ap-northeast-2.console.aws.amaz
 
 
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 ## 2. ECR 생성
 
@@ -36,7 +36,7 @@ aws ecr create-repository --repository-name eks-security-shared
 \
 ECR Repository 가 정상적으로 생성되었는지 확인합니다.
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4) (1).png" alt=""><figcaption></figcaption></figure>
 
 ## 3. Enhanced Scanning
 
