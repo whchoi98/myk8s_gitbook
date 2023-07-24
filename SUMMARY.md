@@ -52,6 +52,7 @@
   * [테인트와 톨러레이션 (TBD)](eks-2/taints\_tolerations.md)
   * [스케쥴링 - AutoScaling 구성](eks-2/autoscaling.md)
   * [스케쥴링-Karpenter](eks-2/karpenter.md)
+  * [EKS Fargate](eks-2/eks-fargate.md)
 * [7.Observability](observability/README.md)
   * [K8s Dashboard 배포](observability/k8s-dashboard.md)
   * [Prometheus-Grafana](observability/prometheus-grafana.md)

@@ -18,7 +18,7 @@ AWS Management Console 의 [ECR 메뉴 ](https://ap-northeast-2.console.aws.amaz
 
 
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ## 2. ECR 생성
 
