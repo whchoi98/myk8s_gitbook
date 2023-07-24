@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2023-01-27'
+description: 'Update : 2023-07-23'
 ---
 
 # Prometheus-Grafana
@@ -35,9 +35,7 @@ Pull 방식으로 지표정보를 읽어올때는 각 서버에 설치된 Export
 * [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공. 프로메테우스로부터 alert를 전달받아 이를 적절한 포맷으로 가공하여 notify 해주는 역할 수행.
 * node-exporter : 모니터링 대상이 프로메테우스의 데이터 포맷을 지원하지 않는 경우에는 별도의 에이전트를 설치해야 지표를 얻어올 수 있는데 이 에이전트를 Exporter라고 합니다 . 쿠버네티스 컨테이너 모니터링을 진행할 경우 node-exporter를 사용합니다 .&#x20;
 
-
-
-![](<../.gitbook/assets/image (225) (1) (1) (1) (1) (1).png>)
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption><p>[출처 - <a href="https://prometheus.io/docs/introduction/overview/">https://prometheus.io/docs/introduction/overview/</a>]</p></figcaption></figure>
 
 ## Prometheus 구성
 
