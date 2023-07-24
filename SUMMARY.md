@@ -59,6 +59,7 @@
   * [EFK기반 로깅](observability/efk-logging.md)
   * [Container Insights](observability/container-insights.md)
   * [X-Ray기반 추적](observability/xray.md)
+  * [Loki](observability/loki.md)
 * [8. EKS Networking](eks-networking/README.md)
   * [Multus](eks-networking/untitled.md)
   * [VPC Advanced](eks-networking/vpc-advanced.md)

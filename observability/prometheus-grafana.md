@@ -349,7 +349,7 @@ kubectl -n grafana get svc grafana  | tail -n 1 | awk '{ print "grafana URL = ht
 
 Import 값을 "3119"를 선택하고, Load를 선택합니다.
 
-![](<../.gitbook/assets/image (86).png>)
+![](<../.gitbook/assets/image (86) (1).png>)
 
 DataSource를 Prometheus를 선택합니다.
 
@@ -357,7 +357,7 @@ DataSource를 Prometheus를 선택합니다.
 
 아래와 같이 다양한 Cluster 내부의 정보를 확인 할 수 있습니다.
 
-![](<../.gitbook/assets/image (84).png>)
+![](<../.gitbook/assets/image (84) (1).png>)
 
 ### 8.Pod Monitoring 구성
 
