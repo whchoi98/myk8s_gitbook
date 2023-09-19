@@ -141,7 +141,10 @@ helm install 명령을 통해 nginx를 설치해 봅니다.
 
 ```
 kubectl create namespace helm-test
-helm install helm-nginx bitnami/nginx --namespace helm-test
+helm install helm-nginx bitnami/nginx \
+--namespace helm-test \
+--set service.type=LoadBalancer \
+--set service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="internet-facing"
 
 ```
 
@@ -425,6 +428,7 @@ crystal:
 frontend:
   image: brentley/ecsdemo-frontend
 EoF
+
 ```
 
 helmdemo에 사용할 namespace를 생성합니다.
