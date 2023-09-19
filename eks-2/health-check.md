@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2020-11-11'
+description: 'Update : 2023-09-19'
 ---
 
 # 고가용성 Health Check 구성
@@ -65,6 +65,7 @@ spec:
       initialDelaySeconds: 5
       periodSeconds: 5
 EoF
+
 ```
 
 생성된 매니페스트를 사용하여 포드를 생성합니다.
@@ -73,6 +74,7 @@ EoF
 kubectl create namespace healthchecks
 kubectl apply -f ~/environment/healthchecks/liveness-app.yaml
 kubectl -n healthchecks get pod liveness-app
+
 ```
 
 출력 결과 예제
@@ -247,12 +249,14 @@ EoF
 
 ```
 kubectl -n healthchecks apply -f ~/environment/healthchecks/readiness-deployment.yaml
+
 ```
 
 아래 명령을 통해 App배포와 Replica 상태를 확인해 봅니다.
 
 ```
 kubectl -n healthchecks get pods -l app=readiness-deployment
+
 ```
 
 ```
@@ -283,6 +287,7 @@ kubectl -n healthchecks exec -it  {pod-name} -- rm /tmp/healthy
 
 ```
 kubectl -n healthchecks get pods -l app=readiness-deployment
+
 ```
 
 ```
@@ -313,7 +318,7 @@ Replicas:               3 desired | 3 updated | 3 total | 2 available | 1 unavai
 앞서 Pod에서 삭제한 디렉토리를 다시 생성합니다.
 
 ```
-kubectl -n healthchecks exec -it readiness-deployment-589b548d5-xnmcm -- touch /tmp/healthy
+kubectl -n healthchecks exec -it {pod-name} -- touch /tmp/healthy
 ```
 
 디렉토리를 생성한 후 Pod의 상태와 Replica 가용 숫자를 확인해 봅니다.
