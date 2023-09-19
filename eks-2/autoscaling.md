@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2022-04-12'
+description: 'Update : 2023-09-19'
 ---
 
 # 스케쥴링 - AutoScaling 구성
@@ -72,6 +72,7 @@ kubectl -n metric-test autoscale deployment php-apache --cpu-percent=50 --min=1 
 
 ```
 kubectl -n metric-test get hpa
+
 ```
 
 ```
@@ -518,6 +519,7 @@ kubectl -n autoscaler apply -f ~/environment/cluster-autoscaler/nginx.yaml
 
 ```
 kubectl -n autoscaler  get deployment/nginx-to-scaleout
+
 ```
 
 아래와 같은 출력 결과를 확인 해 볼 수 있습니다.

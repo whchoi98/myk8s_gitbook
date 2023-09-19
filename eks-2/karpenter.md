@@ -511,7 +511,9 @@ helm install my-release christianknell/kube-ops-view \
 --namespace kube-tools \
 --set service.type=LoadBalancer \
 --set nodeSelector.nodegroup-type=${k_public_mgmd_node} \
---set rbac.create=True
+--set rbac.create=True \
+--set service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="internet-facing"
+
 
 ```
 
