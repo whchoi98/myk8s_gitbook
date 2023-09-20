@@ -89,7 +89,8 @@ helm install grafana grafana/grafana \
     --set adminPassword='1234Qwer' \
     --values ${HOME}/environment/grafana/grafana.yaml \
     --set service.type=LoadBalancer \
-    --set service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="inte
+    --set service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-type"="external" \
+    --set service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="internet-facing"
 ```
 
 ### 2.Loki-Stack 구성 및 설치
