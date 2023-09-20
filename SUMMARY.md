@@ -70,6 +70,7 @@
   * [Stateful Container-EFS](eks-storage/stateful-container-efs.md)
 * [10.EKS Security](eks-security/README.md)
   * [이미지 보안](eks-security/undefined.md)
+  * [OPA Gatekeeper](eks-security/opa-gatekeeper.md)
   * [RBAC](eks-security/rbac.md)
   * [IAM 그룹 기반 관리](eks-security/iam\_group.md)
   * [IRSA (IAM Roles for Service Account)](eks-security/service\_account.md)

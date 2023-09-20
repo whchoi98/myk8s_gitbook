@@ -1,10 +1,16 @@
+---
+description: 'Update : 2023-09-21'
+---
+
 # 이미지 보안
 
 ## ECR Advanced Scanner
 
 ## 1. ECR 환경 설정
 
-Container Image 보안 관련 실습을 진행하기에 앞서 ECR 에서 제공하는 Image Scanning 기능과 관련하여 환경 설정을 진행하도록 하겠습니다. 아래의 명령을 실행하여 ECR 의 Scanning 과 관련할 설정을 변경하도록 합니다. 아래의 설정은 ECR Repository 에 Image 가 Push 되면 Enhanced Scanning Mode 를 사용하도록하며 Scanning 의 대상이 되는 Image 를 Filter(prod)로 제한하는 내용을 담고 있습니다.
+Container Image 보안 관련 실습을 진행하기에 앞서 ECR 에서 제공하는 Image Scanning 기능과 관련하여 환경 설정을 진행합니다. 아래의 명령을 실행하여 ECR 의 Scanning 과 관련할 설정을 변경하도록 합니다.&#x20;
+
+아래의 설정은 ECR Repository 에 Image 가 Push 되면 Enhanced Scanning Mode 를 사용하도록하며 Scanning 의 대상이 되는 Image 를 Filter(prod)로 제한하는 내용을 담고 있습니다.
 
 ```
 aws ecr put-registry-scanning-configuration \
@@ -18,7 +24,7 @@ AWS Management Console 의 [ECR 메뉴 ](https://ap-northeast-2.console.aws.amaz
 
 
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (2).png" alt=""><figcaption></figcaption></figure>
 
 ## 2. ECR 생성
 
@@ -40,7 +46,7 @@ ECR Repository 가 정상적으로 생성되었는지 확인합니다.
 
 ## 3. Enhanced Scanning
 
-단계 1에서 설정한 ECR Registry 의 Enhanced Scanning 기능을 확인하기 위하여 Container Image 를 Push 하여 해당 Container Image 의 취약점을 진단하는지 확인하는 과정을 실습하도록 하겠습니다. 먼저, ECR Repository 에 Push 할 Container Image 를 Cloud9 으로 Pull 합니다. 아래의 명령을 이용하여 Log4j 취약점을 포함하고 있는 Container Image 를 Pull 한 후 ECR Repository 에 Push 하기 위하여 Tag 를 설정하도록 합니다.
+단계 1에서 설정한 ECR Registry 의 Enhanced Scanning 기능을 확인하기 위하여 Container Image 를 Push 하여 해당 Container Image 의 취약점을 진단하는지 확인하는 과정을 실습합니다. 먼저, ECR Repository 에 Push 할 Container Image 를 Cloud9 으로 Pull 합니다. 아래의 명령을 이용하여 Log4j 취약점을 포함하고 있는 Container Image 를 Pull 한 후 ECR Repository 에 Push 하기 위하여 Tag 를 설정하도록 합니다.
 
 {% hint style="warning" %}
 주의 !!! 실습에 사용한 Container Image 는 취약점을 포함하고 있으므로 절대 실제 운영환경에서는 사용하면 안됩니다.

@@ -800,5 +800,5 @@ kubectl -n tetris get svc tetris | tail -n 1 | awk '{ print "tetris-game URL = h
 
 NLB는 배포시간이 5분 정도 소요 됩니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (1) (1) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (2) (1).png" alt=""><figcaption></figcaption></figure>
 
