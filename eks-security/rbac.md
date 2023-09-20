@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2023-05-11'
+description: 'Update : 2023-09-21'
 ---
 
 # RBAC
@@ -109,11 +109,23 @@ kubectl get configmap -n kube-system aws-auth -o yaml
 
 ```
 
+아래와 같이 새롭게 추가된 것을 확인 할 수 있습니다.
+
+```
+  mapUsers: |
+    - userarn: arn:aws:iam::300861432382:user/rbac-user
+      username: rbac-user
+```
+
+
+
 ### 3. 신규 사용자 테스트
 
 지금까지 EKS Cluster 운영은 관리자로 클러스터에 액세스했습니다. 이제 새로 생성 된 rbac-user로 클러스터에 액세스하면 어떻게되는지 살펴 보겠습니다.
 
-다음 명령을 실행하여 rbac-user의 AWS IAM 사용자 환경 변수를 실행해서, 기존 sts 정보와 새로운 sts 정보를 비교해 봅니다.
+다음 명령을 실행하여 기존 권한을 "master\_sts.txt"로 확인해 보고, rbac-user로 권한을 변경합니다.
+
+기존 sts 정보와 새로운 sts 정보를 비교해 봅니다.
 
 ```
 aws sts get-caller-identity > ~/environment/rbac/master_sts.txt
@@ -123,29 +135,42 @@ aws sts get-caller-identity > ~/environment/rbac/rbacuser_sts.txt
 
 ```
 
-rbac-user의 컨텍스트에서 호출을하고 있으므로 , kubectl 명령 권한에 문제가 발생합니다.
+```
+#master sts
+{
+    "UserId": "AROAUMDF5EI7KFXSND2T5:i-0ee8ebb7ae4b880de",
+    "Account": "300861432382",
+    "Arn": "arn:aws:sts::300861432382:assumed-role/eksworkshop-admin/i-0ee8ebb7ae4b880de"
+}
+
+#rabcuser sts
+{
+    "UserId": "AIDAUMDF5EI7CPY5HK32C",
+    "Account": "300861432382",
+    "Arn": "arn:aws:iam::300861432382:user/rbac-user"
+}
+
+```
+
+rbac-user의 컨텍스트에서 호출을하고 있으므로 , 아래 명령을 실행하면 kubectl 명령 권한에 문제가 발생합니다.
 
 ```
 kubectl get pods -n rbac-test
 
 ```
 
-user를 생성하는 것만으로는 해당 사용자에게 클러스터의 리소스에 대한 액세스 권한이 부여되지 않습니다. 이를 해결려면 Role 정의한 다음 사용자를 해당 Role 바인딩해야합니다.
+아래와 같은 메세지로 에러가 발생합니다.
+
+```
+$ kubectl get pods -n rbac-test
+Error from server (Forbidden): pods is forbidden: User "rbac-user" cannot list resource "pods" in API group "" in the namespace "rbac-test"
+```
 
 ## Role & Binding&#x20;
 
 ### 1.Role/RoleBinding&#x20;
 
 새 사용자 rbac-user가 있지만 아직 어떤 역할에도 바인딩되지 않았습니다. 그렇게하려면 기본 관리자 사용자로 다시 전환해야합니다. 아래에서 처럼 kubectl API 조회가 되지 않습니다.
-
-```
-kubectl -n rbac-test get pods
-```
-
-```
-whchoi:~/environment $ kubectl get all
-Error from server (Forbidden): pods is forbidden: User "rbac-user" cannot list resource "pods" in API group "" in the namespace "default"
-```
 
 rbac-user로 정의하는 환경 변수를 설정 해제하려면 아래 명령을 실행합니다.&#x20;
 
@@ -162,6 +187,17 @@ kubectl -n rbac-test get pods
 ```
 aws sts get-caller-identity
 
+```
+
+관리자권한 모드로 전환된 것을 확인할 수 있습니다.
+
+```
+$ aws sts get-caller-identity
+{
+    "UserId": "AROAUMDF5EI7KFXSND2T5:i-0ee8ebb7ae4b880de",
+    "Account": "300861432382",
+    "Arn": "arn:aws:sts::300861432382:assumed-role/eksworkshop-admin/i-0ee8ebb7ae4b880de"
+}
 ```
 
 이제 다시 관리자 모드로 전환되었으므로 모든 kubectl 조회가 가능하지만, "rbac-user"에게  해당 네임 스페이스에 대해서만 pod-reader라는 Role을 만들어 봅니다.  pod-reader의 Role은 rbac-test namespace에 대한 조회와 deploy등의 권한을 가지게 됩니다.
@@ -232,6 +268,17 @@ aws sts get-caller-identity
 
 ```
 
+아래와 같이 rabc user로 권한이 전환된 것을 확인할 수 있습니다.
+
+```
+$ aws sts get-caller-identity
+{
+    "UserId": "AIDAUMDF5EI7CPY5HK32C",
+    "Account": "300861432382",
+    "Arn": "arn:aws:iam::300861432382:user/rbac-user"
+}
+```
+
 rbac-user로서 다음을 실행하여 rbac 네임 스페이스에서 Pod 정보를 조회해 봅니다.
 
 ```
@@ -270,9 +317,28 @@ kubectl delete namespace rbac-test
 
 ```
 
+아래 명령을 실행해서 정상적으로 Admin 권한으로 복귀되었는지 확인합니다.
+
+```
+aws sts get-caller-identity
+
+```
+
+아래와 같은 결과를 확인합니다.
+
+```
+$ aws sts get-caller-identity
+{
+    "UserId": "AROAUMDF5EI7KFXSND2T5:i-0ee8ebb7ae4b880de",
+    "Account": "300861432382",
+    "Arn": "arn:aws:sts::300861432382:assumed-role/eksworkshop-admin/i-0ee8ebb7ae4b880de"
+}
+```
+
 rbac-user 에 대한 모든 정보와 configMap을 삭제하려면 아래를 수행합니다.삭제 하지 않더라도 랩 수행에는 이슈가 없습니다.
 
 ```
+cd ~/environment/rbac
 rm rbacuser_creds.sh
 rm rbacuser-role.yaml
 rm rbacuser-role-binding.yaml
