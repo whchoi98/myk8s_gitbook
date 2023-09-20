@@ -66,7 +66,7 @@ kubectl logs -l control-plane=controller-manager -n gatekeeper-system
 
 ## Container Image 제한하기
 
-### 1.Container Image 사용제한하기
+### 4.Container Image 사용제한하기
 
 1. 등록된 Container Image 만을 허용
 2. Priviledge 권한이 부여된 Container 실행 차단
@@ -246,7 +246,7 @@ kubectl get constraint -o yaml k8senforceallowlistedimages
     - falco
 ```
 
-### 2.Container Image 사용제한 확인
+### 5.Container Image 사용제한 확인
 
 Container Image 사용제한을 위한 OPA Gatekeeper 정책이 모두 적용된 상태입니다. 이제 적용된 정책을 Pod 생성을 통해 검증해 봅니다.
 
@@ -321,7 +321,7 @@ kubectl apply -f ~/environment/opa/pod-with-valid-image.yaml
 
 정상적으로 배포되는 것을 확인 할 수 있습니다.
 
-3.Container Image 사용제한 정책 삭제
+### 6.Container Image 사용제한 정책 삭제
 
 LAB 진행을 위해 아래와 같이 생성된 정책을 삭제 합니다.
 
@@ -329,5 +329,455 @@ LAB 진행을 위해 아래와 같이 생성된 정책을 삭제 합니다.
 kubectl delete -f ~/environment/opa/pod-with-valid-image.yaml
 kubectl delete -f ~/environment/opa/constraint-image.yaml
 kubectl delete -f ~/environment/opa/constraint-template-image.yaml 
+
+```
+
+## Privilege Container 사용 제한하기
+
+### 7.Priviliege Container 사용 제한 정책 생성
+
+```
+cat  << EOF > ~/environment/opa/constraint-template-privileged.yaml
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: enforceprivilegecontainer
+spec:
+  crd:
+    spec:
+      names:
+        kind: enforceprivilegecontainer
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package enforceprivilegecontainer
+
+        violation[{"msg": msg, "details": {}}] {
+            c := input_containers[_]
+            c.securityContext.privileged
+            msg := sprintf("Privileged container is not allowed: %v, securityContext: %v", [c.name, c.securityContext])
+        }
+
+        input_containers[c] {
+            c := input.review.object.spec.containers[_]
+        }
+
+        input_containers[c] {
+            c := input.review.object.spec.initContainers[_]
+        }
+EOF
+
+```
+
+아래의 명령을 실행하여 "Constraint" 를 생성합니다. 이 "Constraint" 에서는 정책 적용의 대상이 "Pod" 로 지정합니다.
+
+```
+cat  << EOF > ~/environment/opa/constraint-privileged.yaml
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: enforceprivilegecontainer
+metadata:
+  name: privileged-container-security
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+EOF
+
+```
+
+아래의 명령을 실행하여 "ConstraintTemplate", "constraint"를 적용합니다.
+
+```
+kubectl apply -f ~/environment/opa/constraint-template-privileged.yaml
+kubectl apply -f ~/environment/opa/constraint-privileged.yaml
+
+```
+
+아래의 명령을 실행하여 "ConstraintTemplate", "constraint"를 확인합니다.
+
+```
+kubectl get constrainttemplate
+kubectl get constraint
+
+```
+
+아래의 명령을 실행하여 생성된 "ConstraintTemplate" 의 내용을 확인합니다.
+
+```
+kubectl get constrainttemplate -o yaml enforceprivilegecontainer
+
+```
+
+아래와 같이 Pod에 Privileged 에 대한 정책이 적용된 것을 확인 할 수 있습니다.
+
+```
+  targets:
+  - rego: |
+      package enforceprivilegecontainer
+
+      violation[{"msg": msg, "details": {}}] {
+          c := input_containers[_]
+          c.securityContext.privileged
+          msg := sprintf("Privileged container is not allowed: %v, securityContext: %v", [c.name, c.securityContext])
+      }
+
+```
+
+아래의 명령을 실행하여 생성된 "Constraint" 의 내용을 확인합니다.
+
+```
+kubectl get constraint -o yaml privileged-container-security
+
+```
+
+아래와 같이 Pod에 적용되는 것을 확인할 수 있습니다.
+
+```
+spec:
+  match:
+    kinds:
+    - apiGroups:
+      - ""
+      kinds:
+      - Pod
+```
+
+### 8.Priviliege Container 사용제한 확인
+
+"privileged: true" 를 통해 Privilege 권한을 허용한 Container 를 이용하는 Pod 을 배포하기 위한 YAML 파일입니다. 아래의 명령을 실행하여 Privilege Container Pod 배포를 위한 YAML 파일을 생성합니다.
+
+```
+cat  << EOF > ~/environment/opa/privileged-container.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: privileged-container
+  labels:
+    role: privileged-container
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: privileged-container
+    securityContext:
+      privileged: true
+  restartPolicy: Always
+EOF
+
+```
+
+아래 명령을 통해 앞서 생성한 Pod를 배포합니다.
+
+```
+kubectl apply -f ~/environment/opa/privileged-container.yaml
+
+```
+
+아래와 같이 허용되지 않은 Privileged를 사용한 Pod 의 배포는 Error 와 함께 차단되는 것을 확인할 수 있습니다.
+
+```
+$ kubectl apply -f ~/environment/opa/privileged-container.yaml
+Error from server (Forbidden): error when creating "/home/ec2-user/environment/opa/privileged-container.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [privileged-container-security] Privileged container is not allowed: privileged-container, securityContext: {"privileged": true}
+```
+
+"privileged:" 값이 "false" 로 처리되어 있는 Pod 을 배포해 봅니다.
+
+&#x20;아래의 명령을 실행하여 YAML 파일을 생성합니다.
+
+```
+cat  << EOF > ~/environment/opa/unprivileged-container.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: unprivileged-container
+  labels:
+    role: unprivileged-container
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: unprivileged-container
+    securityContext:
+      privileged: false
+  restartPolicy: Always
+EOF
+
+```
+
+아래 명령을 통해 앞서 생성한 Pod를 배포합니다.
+
+```
+kubectl apply -f ~/environment/opa/unprivileged-container.yaml
+
+```
+
+정상적으로 배포되는 것을 확인할 수 있습니다.
+
+### 9.Container Image 사용제한 정책 삭제
+
+LAB 진행을 위해 아래와 같이 생성된 정책을 삭제 합니다.
+
+```
+kubectl delete -f ~/environment/opa/unprivileged-container.yaml
+kubectl delete -f ~/environment/opa/constraint-privileged.yaml
+kubectl delete -f ~/environment/opa/constraint-template-privileged.yaml
+
+```
+
+## Repository 사용 제한하기
+
+### 10.Repository 사용 제한 정책 생성
+
+실습 진행 과정에 필요한 Image 를 Repository 에 등록하기 위해 nginx image 를 다운로드한 후 이전 과정에서 생성환 "eks-security-shared" Repository 에 업로드할 수 있도록 Tag 를 부여합니다.
+
+```
+docker pull public.ecr.aws/docker/library/nginx
+docker tag public.ecr.aws/docker/library/nginx $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/eks-security-shared
+
+```
+
+아래와 같이 ECR 에 로그인합니다.
+
+```
+aws ecr get-login-password --region $AWS_REGION | \
+docker login --username AWS --password-stdin \
+$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+```
+
+아래와 같이 정상적으로 로그인 되어야 합니다.
+
+```
+$ aws ecr get-login-password --region $AWS_REGION | \
+> docker login --username AWS --password-stdin \
+> $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+WARNING! Your password will be stored unencrypted in /home/ec2-user/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
+아래의 명령을 실행하여 nginx image 를 "eks-security-shared" Repository 에 업로드합니다.
+
+```
+docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/eks-security-shared
+
+```
+
+아래의 명령을 실행하여 Repository 를 제한하는 "ConstraintTemplate" 을 생성하도록 합니다.
+
+```
+cat  << EOF > ~/environment/opa/constraint-template-repository.yaml
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: allowedrepos
+  annotations:
+    description: >-
+      Requires container images to begin with a string from the specified list.
+spec:
+  crd:
+    spec:
+      names:
+        kind: AllowedRepos
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            repos:
+              description: The list of prefixes a container image is allowed to have.
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package allowedrepos
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          satisfied := [good | repo = input.parameters.repos[_] ; good = startswith(container.image, repo)]
+          not any(satisfied)
+          msg := sprintf("container <%v> has an invalid image repo <%v>, allowed repos are %v", [container.name, container.image, input.parameters.repos])
+        }
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.initContainers[_]
+          satisfied := [good | repo = input.parameters.repos[_] ; good = startswith(container.image, repo)]
+          not any(satisfied)
+          msg := sprintf("initContainer <%v> has an invalid image repo <%v>, allowed repos are %v", [container.name, container.image, input.parameters.repos])
+        }
+
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.ephemeralContainers[_]
+          satisfied := [good | repo = input.parameters.repos[_] ; good = startswith(container.image, repo)]
+          not any(satisfied)
+          msg := sprintf("ephemeralContainer <%v> has an invalid image repo <%v>, allowed repos are %v", [container.name, container.image, input.parameters.repos])
+        }
+EOF
+
+```
+
+"ConstraintTemplate" 의 적용대상을 "Pod" 으로 지정하고 각 Pod 의 Container 가 사용할 수 있는 Repository 를 지정하는 "Constraint" 파일을 아래의 명령을 이용하여 생성합니다.
+
+```
+cat  << EOF > ~/environment/opa/constraint-repository.yaml
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: AllowedRepos
+metadata:
+  name: allowed-repo
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces:
+      - "default"
+  parameters:
+    repos:
+      - "$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/"
+EOF
+
+```
+
+아래의 명령으로 생성된 "ConstraintTemplate" 을 적용합니다.
+
+```
+kubectl apply -f ~/environment/opa/constraint-template-repository.yaml
+
+```
+
+아래의 명령을 이용하여 생성된 "Constraint" 를 적용합니다.
+
+```
+kubectl apply -f ~/environment/opa/constraint-repository.yaml
+
+```
+
+"ConstraintTemplate"와 "Constraint"를 확인합니다.
+
+```
+kubectl get constrainttemplate
+kubectl get constraint
+
+```
+
+아래의 명령을 실행하여 생성된 "ConstraintTemplate" 를 확인합니다.
+
+```
+kubectl get constrainttemplate -o yaml allowedrepos
+
+```
+
+아래의 명령을 실행하여 생성된 "Constraint" 를 확인합니다.
+
+```
+kubectl get constraint -o yaml allowed-repo
+
+```
+
+아래와 같이 허용된 Repository를 확인할 수 있습니다.
+
+```
+spec:
+  match:
+    kinds:
+    - apiGroups:
+      - ""
+      kinds:
+      - Pod
+    namespaces:
+    - default
+  parameters:
+    repos:
+    - 300861432382.dkr.ecr.ap-northeast-2.amazonaws.com/
+```
+
+### 11.Repository 사용 제한 확인
+
+아래와 같이 Default Repository 에서 nginx image 를 사용하도록 하는 Pod 을 생성하는 YAML 파일을 생성합니다.
+
+```
+cat  << EOF > ~/environment/opa/disallowed-repository.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-disallowed
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      resources:
+        limits:
+          cpu: "100m"
+          memory: "30Mi"
+EOF
+
+```
+
+아래의 명령을 이용하여 Pod 을 배포합니다.
+
+```
+kubectl apply -f ~/environment/opa/disallowed-repository.yaml
+
+```
+
+등로되지 않은 Repository 를 이용한 Pod 의 배포는 아래와 같은 Error 와 함께 차단되는 것을 확인할 수 있습니다.
+
+```
+$ kubectl apply -f ~/environment/opa/disallowed-repository.yaml
+error: the path "/home/ec2-user/environment/opa/disallowed-repository.yaml" does not exist
+```
+
+등록된 ECR Repository 를 사용하도록 하는 YAML 파일을 생성합니다.
+
+```
+cat  << EOF > ~/environment/opa/allowed-repository.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-allowed
+spec:
+  containers:
+    - name: shared-nginx
+      image: $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/eks-security-shared
+      command:
+        - sleep
+        - "3600"
+      resources:
+        limits:
+          cpu: "100m"
+          memory: "30Mi"
+EOF
+
+```
+
+아래의 명령으로 등록된 Repository 를 사용하는 Pod 이 정상적으로 배포되는지 확인합니다.
+
+```
+kubectl apply -f ~/environment/opa/allowed-repository.yaml
+
+```
+
+정상적으로 ECR Repository 를 사용하는 Pod 은 배포되는 것을 확인합니다.
+
+### 12.Repository 사용제한 정책 삭제
+
+LAB 진행을 위해 아래와 같이 생성된 정책을 삭제 합니다.
+
+```
+kubectl delete -f ~/environment/opa/allowed-repository.yaml
+kubectl delete -f ~/environment/opa/constraint-repository.yaml
+kubectl delete -f ~/environment/opa/constraint-template-repository.yaml
 
 ```
