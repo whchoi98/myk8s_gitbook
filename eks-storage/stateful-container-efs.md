@@ -2,7 +2,7 @@
 description: 'Update : 2023-05-11'
 ---
 
-# Stateful Container-EFS (TBD)
+# Stateful Container-EFS
 
 ## EFS 소개
 
@@ -79,7 +79,7 @@ AWS Management Console의 EFS 대시보드에서 탑재 대상의 상태를 확�
 
 **`Amazon EFS - 파일 시스템 - 네트워크`**
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9) (2).png" alt=""><figcaption></figcaption></figure>
 
 ## EFS CSI 드라이버 생성
 

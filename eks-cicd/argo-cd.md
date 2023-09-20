@@ -264,7 +264,7 @@ Application이 ArgoCD에 배포되었습니다. 이제 애플리케이션과 동
 https://github.com/{github-userid}/ecsdemo-nodejs/blob/master/kubernetes/deployment.yaml
 ```
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (5).png" alt=""><figcaption></figcaption></figure>
 
 변경후 _**`Commit Chaged`**_ 를 선택합니다.
 

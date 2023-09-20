@@ -78,7 +78,7 @@
   * [Calico 네트워크 정책](eks-security/calico-networking.md)
 * [11.EKS CI/CD](eks-cicd/README.md)
   * [Code Pipeline기반 CI/CD](eks-cicd/cicd-w-codepipeline.md)
-  * [Jenkins 배포 (TBD)](eks-cicd/jenkins-deploy.md)
+  * [Jenkins 기반 CI](eks-cicd/jenkins-deploy.md)
   * [WEAVE Flux 기반 GitOps (TBD)](eks-cicd/gitops-w-weave-flux.md)
   * [Argo 기반 CD](eks-cicd/argo-cd.md)
 * [12.EKS Service Mesh](eks-security/eks-service-mesh/README.md)

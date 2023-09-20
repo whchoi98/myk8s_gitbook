@@ -18,7 +18,7 @@ AWS Management Console 의 [ECR 메뉴 ](https://ap-northeast-2.console.aws.amaz
 
 
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ## 2. ECR 생성
 
@@ -95,7 +95,7 @@ ECR Repository 에 Image 가 Push 되면 ECR 자체적으로 취약점 Scanning 
 
 "eks-security-sandbox" Repository 의 경우 아래와 같이 "Scanning" 이 꺼져있는 것을 확인할 수 있습니다. 즉, "eks-security-sandbox" Repository 에 Push 되는 Container Image 들은 취약점 Scanning 이 적용되지 않는다는 것을 알 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (7) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (7) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 "eks-security-prod" Repository 의 경우에는 아래와 같이 "See Findings" 링크가 있는 것을 확인할 수 있습니다. 해당 링크를 클릭하여 탐지된 취약점 리스트를 확인하도록 하겠습니다.
 

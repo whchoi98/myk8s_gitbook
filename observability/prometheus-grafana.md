@@ -35,7 +35,7 @@ Pull 방식으로 지표정보를 읽어올때는 각 서버에 설치된 Export
 * [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공. 프로메테우스로부터 alert를 전달받아 이를 적절한 포맷으로 가공하여 notify 해주는 역할 수행.
 * node-exporter : 모니터링 대상이 프로메테우스의 데이터 포맷을 지원하지 않는 경우에는 별도의 에이전트를 설치해야 지표를 얻어올 수 있는데 이 에이전트를 Exporter라고 합니다 . 쿠버네티스 컨테이너 모니터링을 진행할 경우 node-exporter를 사용합니다 .&#x20;
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption><p>[출처 - <a href="https://prometheus.io/docs/introduction/overview/">https://prometheus.io/docs/introduction/overview/</a>]</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4) (2).png" alt=""><figcaption><p>[출처 - <a href="https://prometheus.io/docs/introduction/overview/">https://prometheus.io/docs/introduction/overview/</a>]</p></figcaption></figure>
 
 ## Prometheus 구성
 
@@ -189,7 +189,7 @@ kubectl port-forward -n prometheus deploy/prometheus-server 8081:9090 &
 
 Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
 
-![](<../.gitbook/assets/image (16) (1).png>)
+![](<../.gitbook/assets/image (16) (1) (1).png>)
 
 생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
 
@@ -346,7 +346,7 @@ kubectl -n grafana get svc grafana  | tail -n 1 | awk '{ print "grafana URL = ht
 
 우측 상단 메뉴의 "+" 를 선택하고 Import dashboard를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (29).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (29) (1).png" alt=""><figcaption></figcaption></figure>
 
 Import 값을 "3119"를 선택하고, Load를 선택합니다.
 
