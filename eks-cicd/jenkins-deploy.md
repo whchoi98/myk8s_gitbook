@@ -107,6 +107,8 @@ Jenkins URL을 설정 합니다. 해당 실습에서는 Jenkins Node 의 IPv4 �
 
 <figure><img src="../.gitbook/assets/image (26).png" alt=""><figcaption></figcaption></figure>
 
+### Job 생성하기
+
 새로운 Job 을 생성 합니다.
 
 <figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
@@ -146,6 +148,8 @@ Job에 의해 ECR 에 image가 push 되었는지 확인
 
 <figure><img src="../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
 
+### Webhook 연동하기
+
 GitHub Repository에 Webhook을 설정합니다.
 
 * Payload URL : `젠킨스주소/github-webhook/`
@@ -162,7 +166,7 @@ Git Repository 에 commit 후 trigger에 의해 빌드가 되었는지 확인
 
 <figure><img src="../.gitbook/assets/image (19).png" alt=""><figcaption></figcaption></figure>
 
-#### Kubectl 을 통한 배포과정 추가
+### Kubectl 을 통한 배포과정 추가하기
 
 Jenkins Node에서 kubectl 을 통해 EKS Cluster에 새롭게 빌드 된 이미지를 배포하기
 
