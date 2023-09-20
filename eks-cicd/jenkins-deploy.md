@@ -57,7 +57,7 @@ sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
 sudo yum upgrade
 
 # install java (amazon linux 2)
-sudo yum upgrade
+sudo yum upgrade -y
 sudo amazon-linux-extras install java-openjdk11 -y
 
 # install git
