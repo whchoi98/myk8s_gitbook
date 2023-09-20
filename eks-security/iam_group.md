@@ -12,6 +12,8 @@ EKS에서 아래와 같은 역할을 규정하고 , IAM에서 역할을 구성�
 
 아래 역할은 EKS 클러스터 내에서 인증하는 데만 사용되기 때문에 AWS 권한이 필요하지 않습니다. EKS 클러스터에 액세스하기 위해 일부 IAM 그룹이 , 이러 역할을 맡도록 허용하는 데만 사용합니다.
 
+아래와 같이 새로운 3개의 Role을 생성합니다.
+
 ```
 POLICY=$(echo -n '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::'; echo -n "$ACCOUNT_ID"; echo -n ':root"},"Action":"sts:AssumeRole","Condition":{}}]}')
 
@@ -150,7 +152,11 @@ aws iam list-groups
 
 ```
 
+IAM에서 그룹을 선택하고, 아래와 같이 정책이 Mapping되었는지 확인해 봅니다.
+
 ![](<../.gitbook/assets/image (201).png>)
+
+<figure><img src="../.gitbook/assets/image (250).png" alt=""><figcaption></figcaption></figure>
 
 ## IAM User 생성
 
@@ -188,9 +194,10 @@ LAB에서만 사용하는 방식으로, access-key등을 별도의 파일로 저
 {% endhint %}
 
 ```
-aws iam create-access-key --user-name AdminUser | tee /tmp/AdminUser.json
-aws iam create-access-key --user-name DevUser | tee /tmp/DevUser.json
-aws iam create-access-key --user-name IntUser | tee /tmp/IntUser.json
+mkdir ~/environment/iam-group
+aws iam create-access-key --user-name AdminUser | tee ~/environment/iam-group/AdminUser.json
+aws iam create-access-key --user-name DevUser | tee ~/environment/iam-group/DevUser.json
+aws iam create-access-key --user-name IntUser | tee ~/environment/iam-group/IntUser.json
 
 ```
 
@@ -401,16 +408,16 @@ EoF
 cat << EoF >> ~/.aws/credentials
 
 [eksAdmin]
-aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/AdminUser.json)
-aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/AdminUser.json)
+aws_access_key_id=$(jq -r .AccessKey.AccessKeyId ~/environment/iam-group/AdminUser.json)
+aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey ~/environment/iam-group/AdminUser.json)
 
 [eksDev]
-aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/DevUser.json)
-aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/DevUser.json)
+aws_access_key_id=$(jq -r .AccessKey.AccessKeyId ~/environment/iam-group/DevUser.json)
+aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey ~/environment/iam-group/DevUser.json)
 
 [eksInteg]
-aws_access_key_id=$(jq -r .AccessKey.AccessKeyId /tmp/IntUser.json)
-aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey /tmp/IntUser.json)
+aws_access_key_id=$(jq -r .AccessKey.AccessKeyId ~/environment/iam-group/IntUser.json)
+aws_secret_access_key=$(jq -r .AccessKey.SecretAccessKey ~/environment/iam-group/IntUser.json)
 
 EoF
 
@@ -419,7 +426,7 @@ EoF
 이제 만들어진 계정으로 전환하면서, 계정, 권한 ,역할 등을 점검해 봅니다.
 
 ```
-export KUBECONFIG=/tmp/kubeconfig-dev && eksctl utils write-kubeconfig eksworkshop
+export KUBECONFIG=/tmp/kubeconfig-dev && eksctl utils write-kubeconfig --cluster=${ekscluster_name}
 cat $KUBECONFIG | yq e '.users.[].user.exec.args += ["--profile", "dev"]' - -- | sed 's/eksworkshop./eksworkshop-dev./g' | sponge $KUBECONFIG
 
 ```
@@ -440,12 +447,15 @@ cat $KUBECONFIG | yq e '.users.[].user.exec.args += ["--profile", "integ"]' - --
 
 ```
 aws sts get-caller-identity --profile dev
-kubectl run --generator=run-pod/v1 nginx-dev --image=nginx -n development
+kubectl run nginx-dev --image=nginx -n development
 kubectl get pods -n development
 
 ```
 
 ```
-aws sts get-caller-identity --profile integ
+aws sts get-caller-identity --profile dev
+kubectl run nginx-dev --image=nginx -n development
+kubectl get pods -n development
+
 
 ```
