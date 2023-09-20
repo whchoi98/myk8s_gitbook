@@ -65,13 +65,11 @@ sudo yum install git -y
 
 # install docker
 sudo yum install docker -y
-sudo chmod 777 /var/run/docker.sock
 sudo systemctl start docker
+sudo chmod 777 /var/run/docker.sock
 
 # install jenkins
 sudo yum install jenkins -y
-sudo systemctl start docker
-
 
 # enable & start the jenkins service
 sudo systemctl enable jenkins
