@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2023-01-27'
+description: 'Update : 2023-09-21'
 ---
 
 # Argo 기반 CD
@@ -26,7 +26,7 @@ Argo CD는 실행 중인 애플리케이션을 지속적으로 모니터링하�
 
 
 
-Argo CD는 **3가지 컨포넌트**로 구성되어 있습니다.
+Argo CD는 **3가지 컴포넌트**로 구성되어 있습니다.
 
 * 실행 중인 애플리케이션을 **지속적으로 모니터링**
 * **현재 라이브 상태를 원하는 대상 상태(Git 저장소에 지정된 대로)와 주기적으로 비교**
@@ -35,7 +35,7 @@ Argo CD는 **3가지 컨포넌트**로 구성되어 있습니다.
 * 라이브 상태를 원하는 대상 상태로 자동 또는 수동으로 다시 동기화 하는 기능을 제공
 * **API Server**
   * API 서버는 Web UI, CLI 및 외부에서 사용할 수 있도록 gRPC와 REST API를 제공
-* Repository Server
+* **Repository Server**
   * Application manifest 파일을 가지고 있는 Git 저장소의 로컬 캐시를 유지 관리
   * Git 저장소에 저장된 manifest 파일을 생성하는 역할
 * **Application Controller**
