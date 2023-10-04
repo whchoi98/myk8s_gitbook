@@ -90,7 +90,7 @@
     * [istio 모니터링](eks-service-mesh/istio/istio-2.md)
     * [Page 1](eks-service-mesh/istio/page-1.md)
   * [App Mesh (TBD)](eks-security/eks-service-mesh/app-mesh.md)
-* [12.Tip](tip/README.md)
+* [Tip](tip/README.md)
   * [shell](tip/shell.md)
   * [git\_source](tip/git-source.md)
   * [aws cli](tip/aws-cli.md)
