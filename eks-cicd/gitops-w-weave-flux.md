@@ -36,11 +36,11 @@ aws iam put-role-policy --role-name eksworkshop-CodeBuildServiceRole --policy-na
 아래와 같이 개인 Github 계정에서 샘플 애플리케이션 리포지토리를 생성합니다. \
 리포지토리 이름, 설명으로 양식을 채우고 아래와 같이 README로 리포지토리 초기화를 확인하고 리포지토리 생성을 클릭합니다.
 
-<figure><img src="../.gitbook/assets/image (3) (1) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (108).png" alt=""><figcaption></figcaption></figure>
 
 위의 단계와 동일하게 Kubernetes 매니페스트 리포지토리를 만듭니다. 아래와 같이 양식을 작성하고 저장소 생성을 클릭합니다.
 
-<figure><img src="../.gitbook/assets/image (7) (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (302).png" alt=""><figcaption></figcaption></figure>
 
 CodePipeline이 GitHub에서 Callback을 수신하려면 개인 액세스 토큰을 생성해야 합니다.
 
@@ -52,15 +52,15 @@ Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 
 
 
-<figure><img src="../.gitbook/assets/image (9) (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (332).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (7) (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (235).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (6) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (325).png" alt=""><figcaption></figcaption></figure>
 
 personal access token 생성을 확인하고, 복사해 둡니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (20) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (98).png" alt=""><figcaption></figcaption></figure>
 
 ### 3.WEAVE FLUX 설치
 
@@ -144,21 +144,21 @@ GitHub 쓰기 접근을 허용하는 SSH 키를 취득하기 우해 fluxctl을 �
 
 * Github k8s-config repo - settings - Deploy Keys 선택
 
-<figure><img src="../.gitbook/assets/image (24) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (99).png" alt=""><figcaption></figcaption></figure>
 
 Add deploy key를 선택합니다.
 
 * Add deploy key 선택
 
-<figure><img src="../.gitbook/assets/image (8) (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (93).png" alt=""><figcaption></figcaption></figure>
 
 앞서 복사해 둔 fluxctl identity --k8s-fwd-ns flux 값을 붙여 넣고, Add Key를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (28) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (91).png" alt=""><figcaption></figcaption></figure>
 
 아래와 같이 Deploy Keys에 추가 됩니다.
 
-<figure><img src="../.gitbook/assets/image (3) (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (113).png" alt=""><figcaption></figcaption></figure>
 
 ### 4.CODEPIPELINE으로 이미지 생성
 
@@ -172,7 +172,7 @@ Cloudformation yaml 은 아래 링크를 실행합니다.
 https://s3.amazonaws.com/eksworkshop.com/templates/main/weave_flux_pipeline.cfn.yml
 ```
 
-<figure><img src="../.gitbook/assets/image (19) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (311).png" alt=""><figcaption></figcaption></figure>
 
 Stack의 세부정보를 아래와 같이 입력합니다.
 
@@ -182,21 +182,21 @@ Stack의 세부정보를 아래와 같이 입력합니다.
 * repository : eks-example (default - 앞서 설정한 Repo 이름)
 * Branch : main
 
-<figure><img src="../.gitbook/assets/image (17) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (87).png" alt=""><figcaption></figcaption></figure>
 
 Cloudformation이 완료 되면 아래와 같이 확인할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (4) (1) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (96).png" alt=""><figcaption></figcaption></figure>
 
 Codepipeline으로 이동해서 진행상황을 살펴 봅니다.
 
-<figure><img src="../.gitbook/assets/image (18) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (73).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (1) (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (94).png" alt=""><figcaption></figcaption></figure>
 
 현재 리포지토리에 코드가 없기 때문에 이미지 빌드가 실패했을 것입니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (25) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (225).png" alt=""><figcaption></figcaption></figure>
 
 GitHub 리포지토리(eks-example)에 샘플 애플리케이션을 추가합니다. GitHub 사용자 이름을 대체하는 리포지토리를 복제합니다.
 
@@ -230,13 +230,13 @@ git push
 
 아래와 같이 CodePipeline에서 다시 진행되는 것을 확인해 볼 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (16) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (306).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (13) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (90).png" alt=""><figcaption></figcaption></figure>
 
 ECR로 이동해서 정상적으로 Private Repo에 등록되었는지도 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (312).png" alt=""><figcaption></figcaption></figure>
 
 ### 5.Manifest 파일 배포
 

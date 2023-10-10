@@ -20,7 +20,7 @@ Argo CD는 지정된 대상 환경에서 원하는 애플리케이션 상태의 
 
 Argo CD는 아래와 같은 아키텍쳐로 구성됩니다.
 
-<figure><img src="../.gitbook/assets/image (9) (1) (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (125).png" alt=""><figcaption></figcaption></figure>
 
 Argo CD는 실행 중인 애플리케이션을 지속적으로 모니터링하고 현재 원하는 대상 상태(Git 저장소에 지정된 대로)와 비교하는 kubernetes 컨트롤러와 같은 형태로 구현됩니다. Argo CD는 라이브 상태를 원하는 대상 상태로 다시 자동 또는 수동으로 동기화하는 기능을 제공하면서 , 현재 상태와 원하는 상태의 차이점을 리포팅하고 시각화합니다. Git 리포지토리에서 원하는 대상 상태에 대한 모든 수정 사항은 지정된 대상 환경에 자동으로 적용되고 반영될 수 있습니다.
 
@@ -128,11 +128,11 @@ Context 'a81830f78562145b3bca329b3a7699cb-1011047444.ap-northeast-2.elb.amazonaw
 https://github.com/brentley/ecsdemo-nodejs.git 
 ```
 
-<figure><img src="../.gitbook/assets/image (5) (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (112).png" alt=""><figcaption></figcaption></figure>
 
 사용자의 Github에 Fork된 Repo로 이동하고, Repo를 복사해 둡니다.
 
-<figure><img src="../.gitbook/assets/image (8) (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (336).png" alt=""><figcaption></figcaption></figure>
 
 복사한 URL은 아래와 같은 형식입니다.
 
@@ -203,7 +203,7 @@ apps   Deployment  default         ecsdemo-nodejs  OutOfSync  Missing
 
 UI에서도 동일한 값을 확인 할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (2) (1) (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (119).png" alt=""><figcaption></figcaption></figure>
 
 애플리케이션이 아직 배포되지 않았기 때문에 애플리케이션이 OutOfSync 상태에 있음을 알 수 있습니다. 이제 애플리케이션을 동기화합니다.
 
@@ -248,7 +248,7 @@ GROUP  KIND        NAMESPACE       NAME            STATUS  HEALTH   HOOK  MESSAG
 apps   Deployment  default         ecsdemo-nodejs  Synced  Healthy        deployment.apps/ecsdemo-nodejs unchanged
 ```
 
-<figure><img src="../.gitbook/assets/image (28).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (110).png" alt=""><figcaption></figcaption></figure>
 
 ## Application Update&#x20;
 
@@ -264,12 +264,12 @@ Application이 ArgoCD에 배포되었습니다. 이제 애플리케이션과 동
 https://github.com/{github-userid}/ecsdemo-nodejs/blob/master/kubernetes/deployment.yaml
 ```
 
-<figure><img src="../.gitbook/assets/image (1) (1) (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (326).png" alt=""><figcaption></figcaption></figure>
 
 변경후 _**`Commit Chaged`**_ 를 선택합니다.
 
 이제 다시 Argo CD에서 상태를 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image (9) (1) (2) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (88).png" alt=""><figcaption></figcaption></figure>
 
 Argo CD의 UI에서 주요 메뉴들을 선택해서 실제 어떻게 Report 되는지를 살펴봅니다. \

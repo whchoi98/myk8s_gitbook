@@ -20,7 +20,7 @@ nodeport type의 service는 클러스터에서 실행되는 서비스를 Node의
 * 공인 IP/Port로 접근한 트래픽은 Node(EC2)의 IPTable 규칙에 의해 Cluster IP/Port로 이동합니다.&#x20;
 * IPTable 규칙에 의해 PoD 분산하게 됩니다.
 
-![](<../.gitbook/assets/image (230) (1).png>)
+![](<../.gitbook/assets/image (343).png>)
 
 아래와 같이 새로운 Namespace와 Pod를 생성합니다.
 
@@ -97,7 +97,7 @@ node-test-01-svc   NodePort   172.20.177.168   <none>        8080:30080/TCP   37
 
 아래와 같은 구성이 배포되었습니다. 외부에 Node IP:30080 으로 노출되어 있으며, Cluster 8080으로 Forwarding됩니다. 이후 Iptable에 의해 Pod들로 80 Port로 로드밸런싱됩니다.
 
-![](<../.gitbook/assets/image (227).png>)
+![](<../.gitbook/assets/image (369).png>)
 
 pod shell로 접속해서 Service A Record를 확인해 봅니다.
 
@@ -112,13 +112,13 @@ Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
 * TCP 30080-30090 허용
 
-<figure><img src="../.gitbook/assets/image (4) (2) (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (250).png" alt=""><figcaption></figcaption></figure>
 
 아래와 같이 Security Group이 생성됩니다.
 
-![](<../.gitbook/assets/image (217) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (463).png>)
 
-![](<../.gitbook/assets/image (218) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (36).png>)
 
 Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니다. 해당 EC2 대시보드에서 인스턴스를 선택합니다. 이 랩에서는 "eksworkshop-managed-ng-public-01-Node"에 배포됩니다.
 
@@ -128,7 +128,7 @@ Pod가 배포된 Node를 AWS 관리콘솔 - EC2 대시보드에서 선택합니�
 eksworkshop-managed-ng-public-01-Node
 ```
 
-<figure><img src="../.gitbook/assets/image (3) (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (135).png" alt=""><figcaption></figcaption></figure>
 
 eksworkshop-managed-ng-public-01-Node 들의 EIP를 확인합니다.
 
@@ -261,7 +261,7 @@ kubectl get nodes -o wide
 
 이제 해당 인스턴스의 공인 IP로 브라우저를 통해서 접근해서 서비스를 확인해 봅니다. Node의 IP 주소는 EC2 서비스 대시 보드에서 확인 할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (2) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (175).png" alt=""><figcaption></figcaption></figure>
 
 eksworkshop-managed-ng-public-01-node 들의 EIP를 확인합니다.
 
@@ -284,7 +284,7 @@ node공인ip주소:30081
 
 아래와 같은 결과를 확인할 수 있습니다. Pod를 1개 배포했기 때문에 1개의 Pod로 라우팅 되는 것을 확인할 수 있습니다.
 
-![](<../.gitbook/assets/image (225) (1) (1) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (453).png>)
 
 이제 Pod를 3개로 늘려서 서비스를 확인해 봅니다.
 

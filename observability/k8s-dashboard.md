@@ -164,11 +164,11 @@ kubernetes dashboard는 ClusterIP 타입으로 서비스 배포됩니다. Cluste
 
 Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
 
-![](<../.gitbook/assets/image (16) (1) (1).png>)
+![](<../.gitbook/assets/image (397).png>)
 
 생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
 
-![](<../.gitbook/assets/image (2) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (268).png>)
 
 생성된 윈도우에서 아래 Path를 URL뒤에 복사해서 뒤에 붙여 넣습니다.
 
@@ -178,11 +178,11 @@ api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/prox
 
 앞서 생성한 eks-admin 토큰 값을 Kubernettes Dashboard에 입력합니다.
 
-![](<../.gitbook/assets/image (27).png>)
+![](<../.gitbook/assets/image (283).png>)
 
 정상적으로 생성된 것을 확인합니다.
 
-![](<../.gitbook/assets/image (165).png>)
+![](<../.gitbook/assets/image (252).png>)
 
 앞서 생성해 두었던 K9s로 어떤 namespace에 생성되었는지 살펴보고, 어떤 PoD들이 생성되었는지 확인해 봅니다.
 

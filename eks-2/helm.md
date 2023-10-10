@@ -18,7 +18,7 @@ description: 'update : 2023-09-19 /1h'
 
 헬름은 쿠버네티스 내부에  charts를 설치하고, 각 설치에 대해 새로운 release를 생성하고, 새로운 차트를 찾기 위해 헬름 차트 repositories를 검색할 수 있습니다.
 
-![참조 - https://devopscube.com/install-configure-helm-kubernetes/](<../.gitbook/assets/image (47).png>)
+![참조 - https://devopscube.com/install-configure-helm-kubernetes/](<../.gitbook/assets/image (29).png>)
 
 Helm Chart의 구조는 아래와 같습니다.
 
@@ -29,7 +29,7 @@ Helm Chart의 구조는 아래와 같습니다.
 
 아래와 같은 구성으로 LAB을 진행합니다.
 
-![Helm LAB 목표 구성도](<../.gitbook/assets/image (191).png>)
+![Helm LAB 목표 구성도](<../.gitbook/assets/image (44).png>)
 
 아래와 같은 순서대로 구성합니다.
 
@@ -199,11 +199,11 @@ echo "NGINX URL: http://$SERVICE_IP/"
 
 해당 주소로 접속해 봅니다.
 
-![](<../.gitbook/assets/image (46).png>)
+![](<../.gitbook/assets/image (355).png>)
 
 EC2 대시보드에서 ELB가 정상적으로 생성된 것을 확인 할 수 있습니다.
 
-![](<../.gitbook/assets/image (45).png>)
+![](<../.gitbook/assets/image (384).png>)
 
 설치된 helm list를 확인합니다.
 
@@ -305,7 +305,7 @@ ELB 삭제 시간으로 3분 정도 소요됩니다.
 
 아래와 같은 구성으로 LAB을 진행합니다.
 
-![ Helm Chart 기반의 App배포](<../.gitbook/assets/image (188).png>)
+![ Helm Chart 기반의 App배포](<../.gitbook/assets/image (387).png>)
 
 ### 6.Chart 만들기
 
@@ -707,7 +707,7 @@ ecsdemo-frontend   LoadBalancer   172.20.185.71   a79963b6877134227a0c6e5760d57b
 
 정상적으로 서비스에 접속되는 것을 확인 할 수 있습니다.
 
-![](<../.gitbook/assets/image (52).png>)
+![](<../.gitbook/assets/image (391).png>)
 
 helm list에도 정상적으로 등록되어 있는지 확인합니다.
 
@@ -937,11 +937,11 @@ aws s3 mb s3://${s3chartmuseum}
 
 AWS 서비스 - S3&#x20;
 
-![](<../.gitbook/assets/image (190).png>)
+![](<../.gitbook/assets/image (266).png>)
 
 버킷이름은 고유해야 합니다.
 
-![](<../.gitbook/assets/image (189).png>)
+![](<../.gitbook/assets/image (186).png>)
 
 dkfo아래와 같이 Cloud9  IDE에서 aws cli로 실행하여, S3 버킷을&#x20;
 
@@ -968,19 +968,19 @@ Cloud9 IDE의 Security Group에서 Chartmuseum으로 사용될 서비스 포트�
 
 * EC2 - 인스턴스 - Cloud9 인스턴스 선택 - 퍼블릭 IPv4 주소&#x20;
 
-![](<../.gitbook/assets/image (228) (1) (1).png>)
+![](<../.gitbook/assets/image (46).png>)
 
 * EC2 - 인스턴스 -Cloud9 인스턴스 선택 - 보안 - 보안 그룹  선택
 
-![](<../.gitbook/assets/image (231) (1).png>)
+![](<../.gitbook/assets/image (70).png>)
 
 * 인바운드 규칙 편집 선택&#x20;
 
-![](<../.gitbook/assets/image (230) (1) (1).png>)
+![](<../.gitbook/assets/image (337).png>)
 
 * TCP 8888 포트 추가 / 소스 Anywhere-IPv4&#x20;
 
-![](<../.gitbook/assets/image (223) (1).png>)
+![](<../.gitbook/assets/image (210).png>)
 
 helm repo list에 정상적으로 등록되었는지 확인합니다.
 
@@ -998,7 +998,7 @@ curl http://169.254.169.254/latest/meta-data/public-ipv4
 
 ```
 
-![](<../.gitbook/assets/image (48).png>)
+![](<../.gitbook/assets/image (340).png>)
 
 ### 2. Chart 패키징 및 업로드.
 
@@ -1145,7 +1145,7 @@ ecsdemo-nodejs     ClusterIP      172.20.238.125   <none>                       
 
 ELB DNS 레코드로 접속해 봅니다.
 
-![](<../.gitbook/assets/image (51).png>)
+![](<../.gitbook/assets/image (274).png>)
 
 {% hint style="info" %}
 Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html)

@@ -6,7 +6,7 @@ description: 'Update : 2021-10-21'
 
 ## EFK 소개
 
-![](<../.gitbook/assets/image (87).png>)
+![](<../.gitbook/assets/image (279).png>)
 
 Fluent Bit는 다양한 소스에서 데이터 / 로그를 수집하고 통합하여 여러 대상으로 보낼 수 있는 오픈 소스 및 다중 플랫폼 **로그 프로세서 및 Forwarder** 입니다. Docker 및 Kubernetes 환경 과 완벽하게 호환 됩니다.Fluent Bit는 **C** 로 작성되었으며 약 30 개의 확장을 지원하는 플러그 가능 아키텍처가 있습니다. 빠르고 가벼우 며 TLS를 통한 네트워크 운영에 필요한 보안을 제공합니다. (참조 - [https://fluentbit.io](https://fluentbit.io/))
 
@@ -194,11 +194,11 @@ aws es create-elasticsearch-domain \
 
 AWS Console 에서 Elasticsearch를 검색합니다. AWS ES를 배포하게 되면 아래와 같이 "로드 중"으로 도메인 상태가 표기 됩니다.
 
-![](<../.gitbook/assets/image (90).png>)
+![](<../.gitbook/assets/image (446).png>)
 
 정상적으로 도메인 상태가 표기되기 까지는 15분 이상 소요됩니다.
 
-![](<../.gitbook/assets/image (77).png>)
+![](<../.gitbook/assets/image (435).png>)
 
 {% hint style="danger" %}
 ElasticSearch 도메인 상태가 정상일 때까지 , 다음 단계를 수행하지 마십시요.
@@ -210,7 +210,7 @@ ElasticSearch 도메인 상태가 정상일 때까지 , 다음 단계를 수행�
 
 Endpoint URL은 아래에서 확인이 가능합니다.
 
-![](<../.gitbook/assets/image (85).png>)
+![](<../.gitbook/assets/image (208).png>)
 
 ```
 # Need to retrieve the Fluent Bit Role ARN, ES_Endpoint
@@ -298,11 +298,11 @@ Kibana password: ${ES_DOMAIN_PASSWORD}"
 
 앞서 변수에 저장한 값을 통해 URL, user id, Pwd를 확인하고 , 브라우져에서 접속합니다.
 
-![](<../.gitbook/assets/image (68).png>)
+![](<../.gitbook/assets/image (213).png>)
 
-![](<../.gitbook/assets/image (79).png>)
+![](<../.gitbook/assets/image (296).png>)
 
-![](<../.gitbook/assets/image (71).png>)
+![](<../.gitbook/assets/image (223).png>)
 
 &#x20;index pattern에 아래 값을 입
 
@@ -310,13 +310,13 @@ Kibana password: ${ES_DOMAIN_PASSWORD}"
 *fluent-bit*
 ```
 
-![](<../.gitbook/assets/image (89).png>)
+![](<../.gitbook/assets/image (364).png>)
 
 Time Filter field name에서 "@timestamp"를 선택하고, "Create Index Pattern"을 선택합니다.
 
-![](<../.gitbook/assets/image (78).png>)
+![](<../.gitbook/assets/image (52).png>)
 
-![](<../.gitbook/assets/image (80).png>)
+![](<../.gitbook/assets/image (490).png>)
 
 
 

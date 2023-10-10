@@ -57,7 +57,7 @@ kubectl -n empty get pods
 생성된 첫번째 컨테이너 (Container 1)의 Shell에 접속해서 아래 명령을 수행합니다. \
 (앞서 설치한 K9를 활용해서 접속할 수 있습니다.)
 
-<figure><img src="../.gitbook/assets/image (7) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (102).png" alt=""><figcaption></figcaption></figure>
 
 ```
 echo "This is empty-volumes by pod1" >> /mount1/empty.txt
@@ -67,7 +67,7 @@ cat /mount1/empty.txt
 
 생성된 두번째 컨테이너 (Container2)의 Shell에 접속해서 Container1 에서 생성한 텍스트 값이 있는지 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image (11) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (123).png" alt=""><figcaption></figcaption></figure>
 
 ```
 cat /mount2/empty.txt
@@ -76,7 +76,7 @@ echo "This is empty-volumes by pod2" >> /mount2/empty.txt
 
 첫번째 컨테이너(Container1) Shell에 접속해서 추가된 값이 보이는지 확인합니다.
 
-<figure><img src="../.gitbook/assets/image (12) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (86).png" alt=""><figcaption></figcaption></figure>
 
 ```
 cat /mount1/empty.txt
@@ -136,7 +136,7 @@ kubectl -n hostpath get pods -o wide
 
 &#x20;container1에 shell로 접근해서 새로운 Text 파일을 만들어 봅니다. 아래와 같이 k9s를 통해서 Container1에 Shell로 접속합니다.
 
-<figure><img src="../.gitbook/assets/image (9) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (79).png" alt=""><figcaption></figcaption></figure>
 
 ```
 echo "This is hostpath-mount-01" >> /hostpath-mount/hostpath.txt
@@ -190,9 +190,9 @@ echo "This is hostpath-mount-02" >> /hostpath-mount/hostpath.txt
 
 Session Manager를 통해서 접속이 가능합니다.
 
-<figure><img src="../.gitbook/assets/image (10) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (335).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (116).png" alt=""><figcaption></figcaption></figure>
 
 아래와 같은 방법으로도 확인이 가능합니다.
 
@@ -400,7 +400,7 @@ eksctl create addon --region ${AWS_REGION} --name aws-ebs-csi-driver --cluster $
 
 EKS 메뉴의 Add-ons(추가기능)을 확인하면, 아래와 같이 정상적으로 EBS CSI Driver가 추가된 것을 확인 할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (8) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (103).png" alt=""><figcaption></figcaption></figure>
 
 Amazon EBS CSI 추가 기능의 최신 버전을 확인합니다.
 
@@ -535,7 +535,7 @@ kubectl -n ebs-pv-test get pv,pvc,pod
 
 생성된 Pod의 Container에서 데이터 상태를 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image (3) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (321).png" alt=""><figcaption></figcaption></figure>
 
 ```
 # cat /data/out.txt 

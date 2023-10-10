@@ -12,7 +12,7 @@ description: 'update : 2023-05-06 / 15min'
 
 IAM 서비스 대쉬보드 접속 및 역할(Role) 생성을 합니다. AWS 서비스에서 IAM을 선택하고, "역할 만들기"를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (4) (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (61).png" alt=""><figcaption></figcaption></figure>
 
 ### 2.역할(Role)을 만듭니다.
 
@@ -20,7 +20,7 @@ EC2 - 다음: 권한
 
 역할 만들기 단계에서 EC2를 선택하고, "다음:권한"을 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (1) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (423).png" alt=""><figcaption></figcaption></figure>
 
 권한정책 연결에서 `"AdministratorAccess"`를 선택합니다.
 
@@ -28,7 +28,7 @@ EC2 - 다음: 권한
 AdministratorAccess
 ```
 
-![](<../.gitbook/assets/image (29) (1) (1).png>)
+![](<../.gitbook/assets/image (476).png>)
 
 역할 이름 생성 및 정책 연결을 확인합니다.
 
@@ -38,27 +38,27 @@ AdministratorAccess
 eksworkshop-admin
 ```
 
-![](<../.gitbook/assets/image (33).png>)
+![](<../.gitbook/assets/image (65).png>)
 
 ### 3.Cloud9 권한 설정.
 
 Cloud9 상단 좌측 메뉴에서 EC2 대쉬보드로 접속을 선택하거나, AWS 서비스에서 EC2 대쉬보드로 접속합니다.
 
-![](<../.gitbook/assets/image (31).png>)
+![](<../.gitbook/assets/image (347).png>)
 
 EC2 대쉬보드의 인스턴스에는 이미 생성된 Cloud9 EC2 인스턴스가 보입니다.
 
 "작업"-"보안"-"IAM 역할 연결/바꾸기"를 선택합니다.&#x20;
 
-![](../.gitbook/assets/eks\_cloud9\_iam\_role\_change.png)
+![](<../.gitbook/assets/eks\_cloud9\_iam\_role\_change (1).png>)
 
 앞서 생성한 IAM 역할 **"eksworkshop-admin"**을 선택합니다.&#x20;
 
-![](<../.gitbook/assets/image (12) (1).png>)
+![](<../.gitbook/assets/image (38).png>)
 
 정상적으로 Cloud9 IDE의 IAM 역할이 정상적으로 연결되었는지 확인합니다.
 
-![](<../.gitbook/assets/image (216) (1).png>)
+![](<../.gitbook/assets/image (455).png>)
 
 ### 4. 기존자격 증명 파일 제거
 
@@ -75,11 +75,11 @@ aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-ac
 
 Cloud9에서 설정 환경을 아래와 같이 선택합니다.
 
-![](<../.gitbook/assets/image (4) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (68).png>)
 
 Cloud9 설정환경에서 "AWS managed temporary credential"을 비활성합니다.
 
-<figure><img src="../.gitbook/assets/image (3) (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (419).png" alt=""><figcaption></figcaption></figure>
 
 ### 5. Cloud9 IDE 역할 점검
 
@@ -194,7 +194,7 @@ aws ec2 import-key-pair --key-name "eksworkshop" --public-key-material fileb://.
 
 AWS KMS(Key Management Service)를 사용하면 손쉽게 암호화 키를 생성 및 관리하고 다양한 AWS 서비스와 애플리케이션에서의 사용을 제어할 수 있습니다. AWS KMS는 FIPS 140-2에 따라 검증되었거나 검증 과정에 있는 하드웨어 보안 모듈을 사용하여 키를 보호하는 안전하고 복원력 있는 서비스입니다. 또한, AWS KMS는 AWS CloudTrail과도 통합되어 모든 키 사용에 관한 로그를 제공함으로써 각종 규제 및 규정 준수 요구 사항을 충족할 수 있게 지원합니다.&#x20;
 
-![](<../.gitbook/assets/image (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (51).png>)
 
 EKS에서는 K8s와 Key를 통한 인증이 많이 일어납니다. 안전한 관리를 위해 Option으로 구성할 수 있습니다.
 
@@ -218,7 +218,7 @@ echo $MASTER_ARN
 
 정상적으로 Key가 생성되었는지 **`AWS 관리 콘솔 - KMS - 고객관리형 키`**에서 확인합니다.
 
-![](<../.gitbook/assets/image (142).png>)
+![](<../.gitbook/assets/image (146).png>)
 
 출력 결과 예제
 

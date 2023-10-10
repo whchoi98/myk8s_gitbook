@@ -21,7 +21,7 @@ Prometheus와 동일하게 Loki는 작동이 간단하고 비용 효율적으로
 * Kubernetes Pod 로그에 이상적 구조 : Loki는 Pod 레이블과 같은 메타데이터를 자동으로 스크랩하고 인덱싱하기 때문에 Kubernetes 포드로그를 저장하는데 적합한 구조입니다.
 * Grafana 기본 지원 : Loki는 Version 6.0 부터 Grafana에서 기본 지원을 제공합니다.
 
-<figure><img src="../.gitbook/assets/image (249).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (195).png" alt=""><figcaption></figcaption></figure>
 
 ## Loki 기반 로깅 스택의 구성 요소
 
@@ -29,7 +29,7 @@ Prometheus와 동일하게 Loki는 작동이 간단하고 비용 효율적으로
 * Loki - 로그를 저장하고 쿼리를 처리하는 메인 서버.
 * Grafana - 로그 쿼리 및 표시를 위한 플랫폼
 
-<figure><img src="../.gitbook/assets/image (37).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (129).png" alt=""><figcaption></figcaption></figure>
 
 Loki는 Prometheus 와 유사하지만 로그에 대한 다차원 레이블 기반 접근방식을 사용해서 인덱싱하고 종속성이 없는 운영하기 쉬운 단일 바이너리 시스템을 제공합니다. Loki와 Prometheus 의 주요 차이점은 무엇에 집중하고 있는지에 대한 차이에 있습니다.
 
@@ -201,20 +201,20 @@ http://loki-stack.loki.svc.cluster.local:3100
 
 아래와 같이 DataSource 메뉴를 선택하고 "Add New DataSource" 를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (92).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (165).png" alt=""><figcaption></figcaption></figure>
 
 DataSource 중에 "Loki"를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (86).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (159).png" alt=""><figcaption></figcaption></figure>
 
 Settings 메뉴에서 HTTP URL에 앞서 복사한 주소를 입력합니다.
 
 "Save\&Test" 를 선택하고 완료합니다.
 
-<figure><img src="../.gitbook/assets/image (40).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (140).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (84).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (153).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (41).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (142).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (121).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (187).png" alt=""><figcaption></figcaption></figure>

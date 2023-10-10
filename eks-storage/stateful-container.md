@@ -234,7 +234,7 @@ data-mysql-1   Bound    pvc-f68bfe62-2ce3-4371-b89a-def75716a106   10Gi       RW
 
 EC2 대시보드의 볼륨에서도 동일한 결과를 확인 할 수 있습니다.
 
-![](<../.gitbook/assets/image (200).png>)
+![](<../.gitbook/assets/image (381).png>)
 
 ## SQL Test&#x20;
 

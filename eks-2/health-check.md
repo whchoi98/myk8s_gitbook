@@ -35,7 +35,7 @@ kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지
 
 아래 그림에서 1번의 구성과 같은 컨셉으로을 이번 LAB에서 구성할 것입니다.
 
-![참조 - https://kubernetes.io/blog/2018/10/01/health-checking-grpc-servers-on-kubernetes/](<../.gitbook/assets/image (65).png>)
+![참조 - https://kubernetes.io/blog/2018/10/01/health-checking-grpc-servers-on-kubernetes/](<../.gitbook/assets/image (299).png>)
 
 ### 1.Liveness Probe 구성을 포함한 App 배포
 

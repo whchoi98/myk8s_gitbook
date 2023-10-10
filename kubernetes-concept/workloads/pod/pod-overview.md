@@ -25,7 +25,7 @@ _파드_ 는 쿠버네티스 애플리케이션의 기본 실행 단위이다. �
 
 단일 파드 내부에서 함께 배치되고 관리되는 컨테이너 그룹은 상대적으로 심화된 사용 예시임에 유의하자. 컨테이너가 강하게 결합된 특별한 인스턴스의 경우에만 이 패턴을 사용하는게 좋다. 예를 들어, 공유 볼륨 내부 파일의 웹 서버 역할을 하는 컨테이너와 원격 소스로부터 그 파일들을 업데이트하는 분리된 "사이드카" 컨테이너가 있는 경우 아래 다이어그램의 모습일 것이다.
 
-![](<../../../.gitbook/assets/image (3) (1) (1).png>)
+![](<../../../.gitbook/assets/image (72).png>)
 
 몇몇의 파드는 [init containers](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-init-container) 뿐만 아니라 [app containers](https://kubernetes.io/ko/docs/reference/glossary/?all=true#term-app-container) 도 가진다. 초기 컨테이너는 앱 컨테이너 시작이 완료되기 전에 동작한다.
 

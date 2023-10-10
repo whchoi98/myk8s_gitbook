@@ -76,7 +76,7 @@ echo "http://${GATEWAY_URL}/productpage"
 
 웹 브라우져를 계속 해서 접근해 보거나, 아래 CURL명령을 Cloud9 창에서 실행합니다.&#x20;
 
-![](<../../.gitbook/assets/image (235) (1).png>)
+![](<../../.gitbook/assets/image (412).png>)
 
 아래 Curl을 반복 실행해 봅니다.&#x20;
 
@@ -134,9 +134,9 @@ Subset은 기본결과는 review v1로 표기되고, 로그인 사용자가 "jas
 
 웹 브라우저에서는 jason으로 로그인 하면 아래와 같이 review-v2 로 로그인 됩니다.&#x20;
 
-![](<../../.gitbook/assets/image (233).png>)
+![](<../../.gitbook/assets/image (394).png>)
 
-![](<../../.gitbook/assets/image (225).png>)
+![](<../../.gitbook/assets/image (351).png>)
 
 아래 Curl을 반복 실행해 봅니다. Curl 에서는 review-v1 이 계속 출력됩니다.&#x20;
 
@@ -209,9 +209,9 @@ spec:
 
 제품 페이지와 리뷰 서비스 사이의 제한 시간은 6초입니다.
 
-![](<../../.gitbook/assets/image (238) (1).png>)
+![](<../../.gitbook/assets/image (76).png>)
 
-![](<../../.gitbook/assets/image (226) (1).png>)
+![](<../../.gitbook/assets/image (415).png>)
 
 추가적으로 복원력을 테스트하기 위해 테스트 사용자 jason에 대한 rating 마이크로 서비스에 HTTP 중단을 도입합니다. 페이지에 "Ratings service is currently unavailable"라는 메시지가 즉시 표시됩니다.
 
@@ -258,9 +258,9 @@ Subset은 v1으로 설정되고 기록된 사용자 이름이 'jason'과 일치�
 
 테스트하려면 페이지 오른쪽 상단에서 로그인을 클릭하고 사용자 이름에 jason을 사용하여 빈 비밀번호로 로그인합니다. jason으로 오류 메시지가 표시됩니다.
 
-![](<../../.gitbook/assets/image (239) (1) (1).png>)
+![](<../../.gitbook/assets/image (368).png>)
 
-![](<../../.gitbook/assets/image (237) (1) (1).png>)
+![](<../../.gitbook/assets/image (367).png>)
 
 ### 6. Traffic Shaping
 
@@ -276,7 +276,7 @@ kubectl -n bookinfo \
 
 브라우저에서 Bookinfo 사이트를 엽니다. 페이지의 리뷰 부분은 새로 고침 횟수에 상관없이 별점 없이 표시됩니다.
 
-![](<../../.gitbook/assets/image (228).png>)
+![](<../../.gitbook/assets/image (71).png>)
 
 아래 명령을 통해서 트래픽의 50%를 리뷰:v1에서 리뷰:v3으로 전송할 수 있습니다.&#x20;
 
@@ -313,9 +313,9 @@ Subnet은 모든 review 요청에 대해 review-v1에 대한 트래픽의 50% �
 
 테스트하려면 브라우저를 계속 새로고침하면 아래처럼 review-v1 및 review-v3만 표시됩니다.
 
-![](<../../.gitbook/assets/image (236) (1) (1).png>)
+![](<../../.gitbook/assets/image (176).png>)
 
-![](<../../.gitbook/assets/image (219) (1).png>)
+![](<../../.gitbook/assets/image (403).png>)
 
 reviews-v3 마이크로서비스가 안정적이라고 판단되면, 트래픽의 100%를 이 마이크로서비스로 라우팅할 수 있습니다.
 
@@ -326,5 +326,5 @@ kubectl -n bookinfo apply -f ${HOME}/environment/istio-${ISTIO_VERSION}/samples/
 
 이제 /productpage를 새로고침하면 항상 review-v3(빨간색 별 등급)이 표시됩니다.
 
-![](<../../.gitbook/assets/image (224) (1).png>)
+![](<../../.gitbook/assets/image (402).png>)
 

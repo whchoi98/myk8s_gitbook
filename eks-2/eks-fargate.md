@@ -159,7 +159,7 @@ EKS Fargate는 완전관리형 형태로 제공되기 때문에, EC2 대시보�
 
 Amazon Elastic Kubernetes Service 의 **`Cluster - Computing`** 대시보드에서 확인이 가능합니다.
 
-<figure><img src="../.gitbook/assets/image (29).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (303).png" alt=""><figcaption></figcaption></figure>
 
 AWS Fargate 고려 사항
 

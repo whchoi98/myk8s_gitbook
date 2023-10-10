@@ -45,7 +45,7 @@ aws iam create-role \
 
 IAM에서 아래와 같이 생성되었습니다.
 
-![](<../.gitbook/assets/image (202).png>)
+![](<../.gitbook/assets/image (379).png>)
 
 ## **IAM Group 생성**&#x20;
 
@@ -154,9 +154,9 @@ aws iam list-groups
 
 IAM에서 그룹을 선택하고, 아래와 같이 정책이 Mapping되었는지 확인해 봅니다.
 
-![](<../.gitbook/assets/image (201).png>)
+![](<../.gitbook/assets/image (80).png>)
 
-<figure><img src="../.gitbook/assets/image (250).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (499).png" alt=""><figcaption></figcaption></figure>
 
 ## IAM User 생성
 
@@ -203,7 +203,7 @@ aws iam create-access-key --user-name IntUser | tee ~/environment/iam-group/IntU
 
 각 IAM 콘솔에서 확인해 봅니다.
 
-![](<../.gitbook/assets/image (203).png>)
+![](<../.gitbook/assets/image (214).png>)
 
 ## RBAC 구성
 

@@ -16,7 +16,7 @@ Multus는 Pod에 멀 네트워크 인터페이스를 첨부할 수 있는 Kubern
 
 이 랩에서는 아래에서 처럼 Multus 구성을 위한 EKS Cluster를 구성합니다.&#x20;
 
-![](<../.gitbook/assets/image (230) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (468).png>)
 
 ### Task1. Cloud9 구성
 
@@ -24,7 +24,7 @@ AWS 서비스에서 Cloud9을 선택하고, `"Environments"`를 설정합니다.
 
 Cloud9 의 이름과 Description을 설정합니다.
 
-![](<../.gitbook/assets/image (211).png>)
+![](<../.gitbook/assets/image (273).png>)
 
 인스턴스 타입과 운영체제, 그리고 절전모드 환경을 선택합니다. 절전모드 환경은 기본 30분입니다. 아래와 같이 변경합니다.
 
@@ -33,7 +33,7 @@ Cloud9 의 이름과 Description을 설정합니다.
 
 <div align="left">
 
-<img src="../.gitbook/assets/image (210).png" alt="">
+<img src="../.gitbook/assets/image (69).png" alt="">
 
 </div>
 
@@ -126,17 +126,17 @@ aws s3 ls s3://$bucket_name/cfn/templates/nodegroup/
 
 EKS Multus 구성을 위한 VPC를 구성합니다. S3에서 앞서 배포되어 있는 eks\_infra.yaml의 Object URL을 복사합니다
 
-![](<../.gitbook/assets/image (227) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (314).png>)
 
 **`CloudFormation - 스택 - 스택생성`**  을 선택합니다. 앞서 복사해 둔 eks-infra.yaml 의 Object URL을 Cloudformation S3 URL에 입력하고, 스택을 배포합니다.
 
-![](<../.gitbook/assets/image (226) (1) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (272).png>)
 
 Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니다.&#x20;
 
-![](<../.gitbook/assets/image (230) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (152).png>)
 
-![](<../.gitbook/assets/image (219) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (342).png>)
 
 * Stack Name : eks-multus-cluster
 * Availability Zone : ap-northeast-2a, ap-northeast-2b
@@ -166,7 +166,7 @@ aws s3api put-object-acl --bucket $bucket_name --key lambda_function.zip --acl p
 
 S3에 업로드한 EKS Nodegroup용 Cloudformation Stack yaml 파일의 Object URL을 복사해 둡니다.
 
-![](<../.gitbook/assets/image (207).png>)
+![](<../.gitbook/assets/image (489).png>)
 
 Cloudformation 에서 새로운 Stack을 배포합니다.
 
@@ -174,11 +174,11 @@ Cloudformation 에서 새로운 Stack을 배포합니다.
 
 Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니다.&#x20;
 
-![](<../.gitbook/assets/image (226) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (449).png>)
 
-![](<../.gitbook/assets/image (228) (1) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (154).png>)
 
-![](<../.gitbook/assets/image (229) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (427).png>)
 
 * Stack Name : ng1
 * Cluster Name : eks-multus-cluster
@@ -200,7 +200,7 @@ Cloudformation Stack의 세부정보를 아래 예를 참조해서 입력합니�
 
 Bastion Host 에서 EKS 제어를 위해, 기본 설정을 합니다. EC2 대시보드를 선택하고, "MyBastionHost"를 선택하고, Public IPv4를 복사하고 SSH로 접속합니다
 
-![](<../.gitbook/assets/image (218) (1).png>)
+![](<../.gitbook/assets/image (413).png>)
 
 아래와 같이 접속한 Bastion Host에 Kubectl 을 설치합니다. &#x20;
 
@@ -266,7 +266,7 @@ data:
 
 rolearn 부분을 확인하기 위해서 ,  nodegroup 스택의 출력에서 NodeInstanceRole 의 값을 확인해서 rolearn을 수정합니다.&#x20;
 
-![](<../.gitbook/assets/image (224) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (255).png>)
 
 변경된 aws-auth-cm.yaml 파일을 업데이트 합니다.&#x20;
 

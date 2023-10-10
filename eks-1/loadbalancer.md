@@ -22,7 +22,7 @@ Traffic 흐름은 다음과 같습니다.
 * CLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (237).png>)
+![](<../.gitbook/assets/image (358).png>)
 
 ### 3. CLB Service 시험
 
@@ -66,7 +66,7 @@ clb-test-01-svc   LoadBalancer   172.20.81.6   aa4ad3c7607774968a7f13c1940554c1-
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.&#x20;
 
-![](<../.gitbook/assets/image (219).png>)
+![](<../.gitbook/assets/image (344).png>)
 
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다. (Option)
 
@@ -175,7 +175,7 @@ metadata:
 * eksdemo-crystal service type: Cluster-IP&#x20;
 * eksdemo-nodejs service type: Cluster-IP&#x20;
 
-![](<../.gitbook/assets/image (232).png>)
+![](<../.gitbook/assets/image (59).png>)
 
 ### 4. FrontEnd 어플리케이션 배포와 서비스 구성.
 
@@ -229,7 +229,7 @@ kubectl -n clb-test get svc ecsdemo-frontend | tail -n 1 | awk '{ print "CLB-FRO
 
 출력결과 예시
 
-![](<../.gitbook/assets/image (151).png>)
+![](<../.gitbook/assets/image (462).png>)
 
 앞서 설치해 둔 K9s 유틸리티를 통해서 , 현재 배포된 Pod들의 상태를 확인해 봅니다.
 
@@ -273,7 +273,7 @@ kubectl -n clb-test scale deployment ecsdemo-crystal --replicas=3
 
 ```
 
-![](<../.gitbook/assets/image (153).png>)
+![](<../.gitbook/assets/image (292).png>)
 
 k9s 를 통해 Pod의 구성을 확인합니다.
 
@@ -281,7 +281,7 @@ k9s 를 통해 Pod의 구성을 확인합니다.
 LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위해서 Cloud9 에서 Terminal을 하나 더 열고 K9s를 실행 시켜 두는 것이 좋습니다.
 {% endhint %}
 
-![](<../.gitbook/assets/image (155).png>)
+![](<../.gitbook/assets/image (53).png>)
 
 ### 6. Loadbalancer 확인.
 
@@ -289,7 +289,7 @@ LAB 을 진행하면서, Pod의 배포 상황을 계속 모니터링하기 위�
 
 CLB의 DNS Name을 복사해서 Web Browser에서 입력합니다.
 
-![](<../.gitbook/assets/image (147).png>)
+![](<../.gitbook/assets/image (160).png>)
 
 {% hint style="info" %}
 service 매니페스트에서 Service Type을 LoadBalancer로 지정하면, Default로 Classic LB가 구성됩니다. 또한 별도로 Service Type을 지정하지 않으면, ClusterIP로 지정됩니다.
@@ -388,7 +388,7 @@ kubectl -n mario get svc mario | tail -n 1 | awk '{ print "mario URL = http://"$
 
 3\~4분 뒤에 웹 브라우저를 통해 위 명령에서 실행된 URL을 접속하면 , CLB를 통해서 아래와 같이 게임이 실행됩니다.
 
-<figure><img src="../.gitbook/assets/image (1) (3) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (300).png" alt=""><figcaption></figcaption></figure>
 
 * "s" - 게임시작
 * 방향키로 각 스테이지 이동
@@ -422,7 +422,7 @@ Traffic 흐름은 다음과 같습니다.
 * NLB는 NodePort로 LB 처리 (NodePort는 임의로 할당 됩니다.)
 * NodePort는 ClusterIP로 Forwarding되고 IPTable에 의해 분산 처리 됩니다.
 
-![](<../.gitbook/assets/image (224).png>)
+![](<../.gitbook/assets/image (405).png>)
 
 ### 10. NLB Service 시험
 
@@ -460,7 +460,7 @@ nlb-test-01-svc   LoadBalancer   172.20.221.81   aaa7c67484fd94ea8a2b6bf1fa09101
 
 아래와 같이 구성됩니다 . nodeport는 별도의 지정이 없으면 생성할때 자동으로 지정됩니다.
 
-![](<../.gitbook/assets/image (234) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (201).png>)
 
 아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
 
@@ -510,9 +510,9 @@ iptables -t nat -nL KUBE-SERVICES
 
 NLB는 "externalTrafficPolicy: Local"을 지원합니다. 외부의 소스 IP를 그대로 보존하여, Node로 유입된 Traffic을 Node 내의 PoD로 전달합니다.&#x20;
 
-![](<../.gitbook/assets/image (229).png>)
+![](<../.gitbook/assets/image (353).png>)
 
-![](<../.gitbook/assets/image (230).png>)
+![](<../.gitbook/assets/image (349).png>)
 
 아래와 같이 새롭게 서비스와  PoD를 배포하고 확인해 봅니다.&#x20;
 
@@ -584,7 +584,7 @@ iptables -t nat -nL KUBE-SERVICES
 
 다음과 같은 구성을 통해서 NLB 서비스를 구현해 봅니다.&#x20;
 
-![](<../.gitbook/assets/image (183).png>)
+![](<../.gitbook/assets/image (417).png>)
 
 * namespace : nlb-test
 * ecsdemo-frontend service type : nlb (external)
@@ -661,7 +661,7 @@ NAME               TYPE           CLUSTER-IP      EXTERNAL-IP                   
 ecsdemo-frontend   LoadBalancer   172.20.55.163   a68e1e3f279654af99a680bff29f6685-43ae3919758c9316.elb.ap-northeast-2.amazonaws.com   80:31784/TCP   55s   app=ecsdemo-frontend
 ```
 
-![](<../.gitbook/assets/image (148).png>)
+![](<../.gitbook/assets/image (456).png>)
 
 앞서 설치해 둔 K9s 유틸리티를 통해서 , 현재 배포된 Pod들의 상태를 확인해 봅니다.
 
@@ -707,11 +707,11 @@ kubectl -n nlb-test scale deployment ecsdemo-crystal --replicas=3
 
 ```
 
-![](<../.gitbook/assets/image (156).png>)
+![](<../.gitbook/assets/image (327).png>)
 
 k9s 를 통해 Pod의 구성을 확인합니다.
 
-![](<../.gitbook/assets/image (154).png>)
+![](<../.gitbook/assets/image (55).png>)
 
 ### 13. Tetris 어플리케이션 배포
 
@@ -800,5 +800,5 @@ kubectl -n tetris get svc tetris | tail -n 1 | awk '{ print "tetris-game URL = h
 
 NLB는 배포시간이 5분 정도 소요 됩니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (1) (1) (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (318).png" alt=""><figcaption></figcaption></figure>
 

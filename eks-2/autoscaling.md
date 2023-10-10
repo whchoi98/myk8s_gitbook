@@ -6,7 +6,7 @@ description: 'Update : 2023-09-19'
 
 
 
-![](<../.gitbook/assets/image (57).png>)
+![](<../.gitbook/assets/image (438).png>)
 
 ## HPA 구성 - Pod 레벨 확장성&#x20;
 
@@ -120,7 +120,7 @@ k9s -n metric-test
 
 ```
 
-![](<../.gitbook/assets/image (55).png>)
+![](<../.gitbook/assets/image (401).png>)
 
 앞서 Shell을 실행했던 Cloud9 IDE 창에서 Shell을 종료합니다. 그리고 다시 Replica가 줄어드는지를 확인합니다. 수분 이후에 Pod수는 줄어들게 됩니다.&#x20;
 
@@ -133,7 +133,7 @@ php-apache   Deployment/php-apache   0%/50%    1         10        10         16
 php-apache   Deployment/php-apache   0%/50%    1         10        1          16m
 ```
 
-![](<../.gitbook/assets/image (62).png>)
+![](<../.gitbook/assets/image (373).png>)
 
 ## CA 구성과 클러스터 확장 - Node 레벨 확장
 
@@ -563,11 +563,11 @@ nginx-to-scaleout-5c74d46fd6-lprfm   0/1     Pending             0          0s  
 
 **`EC2 - Auto Scaling Group`**&#x20;
 
-![](<../.gitbook/assets/image (231) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (141).png>)
 
 **`EC2 - 인스턴스`**&#x20;
 
-![](<../.gitbook/assets/image (226) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (237).png>)
 
 아래와 같이 replica를 1로 원복 시킵니다.
 

@@ -35,7 +35,7 @@ Pull 방식으로 지표정보를 읽어올때는 각 서버에 설치된 Export
 * [alertmanager](https://github.com/prometheus/alertmanager) : alert 제공. 프로메테우스로부터 alert를 전달받아 이를 적절한 포맷으로 가공하여 notify 해주는 역할 수행.
 * node-exporter : 모니터링 대상이 프로메테우스의 데이터 포맷을 지원하지 않는 경우에는 별도의 에이전트를 설치해야 지표를 얻어올 수 있는데 이 에이전트를 Exporter라고 합니다 . 쿠버네티스 컨테이너 모니터링을 진행할 경우 node-exporter를 사용합니다 .&#x20;
 
-<figure><img src="../.gitbook/assets/image (4) (2).png" alt=""><figcaption><p>[출처 - <a href="https://prometheus.io/docs/introduction/overview/">https://prometheus.io/docs/introduction/overview/</a>]</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (107).png" alt=""><figcaption><p>[출처 - <a href="https://prometheus.io/docs/introduction/overview/">https://prometheus.io/docs/introduction/overview/</a>]</p></figcaption></figure>
 
 ## Prometheus 구성
 
@@ -189,11 +189,11 @@ kubectl port-forward -n prometheus deploy/prometheus-server 8081:9090 &
 
 Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다. 메뉴에서 보이지 않는 경우 Tools - Preview - Preview Running Application을 선택합니다.
 
-![](<../.gitbook/assets/image (16) (1) (1).png>)
+![](<../.gitbook/assets/image (397).png>)
 
 생선된 Preview 브라우져에서 새로운 윈도우를 선택합니다.
 
-![](<../.gitbook/assets/image (2) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (268).png>)
 
 전체 화면 창에서 아래와 같이 마지막에 URL을 추가합니다.
 
@@ -203,7 +203,7 @@ Cloud9의 상단 메뉴 Preview - Preview Running Application을 선택합니다
 
 아래와 같은 결과를 브라우져에서 확인할 수 있습니다.Status 메뉴에서 다양한 결과를 확인 할 수 있습니다.
 
-![](<../.gitbook/assets/image (66).png>)
+![](<../.gitbook/assets/image (362).png>)
 
 ## Grafana 구성
 
@@ -336,7 +336,7 @@ kubectl -n grafana get svc grafana  | tail -n 1 | awk '{ print "grafana URL = ht
 --set adminPassword='1234Qwer'
 ```
 
-![](<../.gitbook/assets/image (82).png>)
+![](<../.gitbook/assets/image (491).png>)
 
 ## DashBoard 구성
 
@@ -346,19 +346,19 @@ kubectl -n grafana get svc grafana  | tail -n 1 | awk '{ print "grafana URL = ht
 
 우측 상단 메뉴의 "+" 를 선택하고 Import dashboard를 선택합니다.
 
-<figure><img src="../.gitbook/assets/image (29) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (437).png" alt=""><figcaption></figcaption></figure>
 
 Import 값을 "3119"를 선택하고, Load를 선택합니다.
 
-![](<../.gitbook/assets/image (86) (1).png>)
+![](<../.gitbook/assets/image (181).png>)
 
 DataSource를 Prometheus를 선택합니다.
 
-![](<../.gitbook/assets/image (75).png>)
+![](<../.gitbook/assets/image (495).png>)
 
 아래와 같이 다양한 Cluster 내부의 정보를 확인 할 수 있습니다.
 
-![](<../.gitbook/assets/image (84) (1).png>)
+![](<../.gitbook/assets/image (190).png>)
 
 ### 8.Pod Monitoring 구성
 
@@ -366,19 +366,19 @@ DataSource를 Prometheus를 선택합니다.
 
 좌측 상단 메뉴의 "+" 를 선택하고 Import를 선택합니다.
 
-![](<../.gitbook/assets/image (73).png>)
+![](<../.gitbook/assets/image (482).png>)
 
 Import 값을 "6417"를 선택하고, Load를 선택합니다.
 
-![](<../.gitbook/assets/image (83).png>)
+![](<../.gitbook/assets/image (284).png>)
 
 Name : Kubernetes Pods Monitoring , Change uid, 데이터 소스 : Prometheus 를 선택하고, Import를 선택합니다.
 
-![](<../.gitbook/assets/image (76).png>)
+![](<../.gitbook/assets/image (375).png>)
 
 Pod들 중심으로 모니터링을 할 수 있습니다.
 
-![](<../.gitbook/assets/image (70).png>)
+![](<../.gitbook/assets/image (231).png>)
 
 ### 9. Grafana Labs Dashboard 활용하기
 
@@ -388,7 +388,7 @@ Pod들 중심으로 모니터링을 할 수 있습니다.
 
 아래와 같이 Filter를 통해서 유용한 Dashboard를 가져옵니다. (Name : kubernetes, Data Source : Prometheus)
 
-![](<../.gitbook/assets/image (69).png>)
+![](<../.gitbook/assets/image (227).png>)
 
 * Kubernetes Deployment Statefulset Daemonset metrics
 
@@ -396,7 +396,7 @@ Pod들 중심으로 모니터링을 할 수 있습니다.
 8588
 ```
 
-![](<../.gitbook/assets/image (72).png>)
+![](<../.gitbook/assets/image (134).png>)
 
 * Kubernetes Cluster
 
@@ -404,7 +404,7 @@ Pod들 중심으로 모니터링을 할 수 있습니다.
 7249
 ```
 
-![](<../.gitbook/assets/image (88).png>)
+![](<../.gitbook/assets/image (220).png>)
 
 * 1 Kubernetes cluster overview
 
@@ -412,7 +412,7 @@ Pod들 중심으로 모니터링을 할 수 있습니다.
 11802
 ```
 
-![](<../.gitbook/assets/image (81).png>)
+![](<../.gitbook/assets/image (224).png>)
 
 Kubernetes / Networking / Pod
 
@@ -420,7 +420,7 @@ Kubernetes / Networking / Pod
 12661
 ```
 
-![](<../.gitbook/assets/image (74).png>)
+![](<../.gitbook/assets/image (486).png>)
 
 kubernetes 한국어 대쉬보드
 
@@ -428,4 +428,4 @@ kubernetes 한국어 대쉬보드
 13770
 ```
 
-![](<../.gitbook/assets/image (223) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (248).png>)

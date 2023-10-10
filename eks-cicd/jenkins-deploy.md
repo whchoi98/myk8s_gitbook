@@ -16,19 +16,19 @@ description: 'Update : 2023-09-20'
 
 ECR 콘솔로 이동 합니다.
 
-<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
 새로운 리포지토리를 생성합니다.
 
 * Name : jenkins-ci-test
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
-
 <figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
 푸시 명령 보기 버튼을 클릭하여 나오는 명령어를 복사 해놓습니다.
 
-<figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
 
 ### Jenkins 설치 <a href="#role" id="role"></a>
 
@@ -87,11 +87,11 @@ cat /var/lib/jenkins/secrets/initialAdminPassword
 
 eksworkshop-jenkins-01-Node 의 퍼블릭 IPv4 DNS 로 접속해 Jenkins Getting Started 페이지로 이동합니다.
 
-<figure><img src="../.gitbook/assets/image (23).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (24).png" alt=""><figcaption></figcaption></figure>
 
 이전 절차에서 복사해둔 initialAdminPassword 를 붙여넣습니다.
 
-<figure><img src="../.gitbook/assets/image (22).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (23).png" alt=""><figcaption></figcaption></figure>
 
 Install Suggested Plugins 클릭합니다.
 
@@ -99,21 +99,21 @@ Install Suggested Plugins 클릭합니다.
 
 새로운 관리자 계정을 생성 합니다.
 
-<figure><img src="../.gitbook/assets/image (25).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (26).png" alt=""><figcaption></figcaption></figure>
 
 Jenkins URL을 설정 합니다. 해당 실습에서는 Jenkins Node 의 IPv4 도메인으로 설정합니다.
 
-<figure><img src="../.gitbook/assets/image (26).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (27).png" alt=""><figcaption></figcaption></figure>
 
 ### Job 생성하기
 
 새로운 Job 을 생성 합니다.
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
 
 jenkins-ci-test 이름의 Freestyle project를 생성 합니다.
 
-<figure><img src="../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
 
 Configure > Source Code Management 에서 Git 선택 후 Repository URL 입력 합니다.
 
@@ -121,11 +121,11 @@ Configure > Source Code Management 에서 Git 선택 후 Repository URL 입력 �
 
 Jenkins Credential Provider 에서 [Code Pipeline 기반 CI/CD 의 Repo 구성 절차](https://whchoi98.gitbook.io/k8s/eks-cicd/cicd-w-codepipeline#repo) 해두었던 Token 값을 Password에 입력합니다. Username은 GitHub 아이디를 입력합니다.
 
-<figure><img src="../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
 
 Build Triggers 를 Github hook trigger for GITScm polling 으로 설정 합니다.
 
-<figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
 
 Build Steps의 Command에 ECR 절차에서 복사해두었던 푸시 명령어를 아래와 같이 복사합니다.
 
@@ -140,11 +140,11 @@ docker push $IMAGE_NAME
 
 Build Now로 Build가 잘 동작하는지 테스트 해봅니다.
 
-<figure><img src="../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
 
 Job에 의해 ECR 에 image가 push 되었는지 확인
 
-<figure><img src="../.gitbook/assets/image (14).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (15).png" alt=""><figcaption></figcaption></figure>
 
 ### Webhook 연동하기
 
@@ -152,17 +152,17 @@ GitHub Repository에 Webhook을 설정합니다.
 
 * Payload URL : `젠킨스주소/github-webhook/`
 
-<figure><img src="../.gitbook/assets/image (17).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (18).png" alt=""><figcaption></figcaption></figure>
 
 GitHub 에디터 기능을 통해 소스코드(main.go)를 수정 합니다.
 
-<figure><img src="../.gitbook/assets/image (15).png" alt=""><figcaption></figcaption></figure>
-
 <figure><img src="../.gitbook/assets/image (16).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (17).png" alt=""><figcaption></figcaption></figure>
 
 Git Repository 에 commit 후 trigger에 의해 빌드가 되었는지 확인
 
-<figure><img src="../.gitbook/assets/image (19).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (20).png" alt=""><figcaption></figcaption></figure>
 
 ### Kubectl 을 통한 배포과정 추가하기
 
@@ -206,9 +206,9 @@ kubectl get nodes
 
 Configure > Build Steps 에서 Add build step 클릭 후 Execute shell 클릭
 
-<figure><img src="../.gitbook/assets/image (20).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (21).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
 
 ```
 sed -i "s/CONTAINER_IMAGE/103787587884.dkr.ecr.ap-northeast-2.amazonaws.com\/jenkins-ci-test:$BUILD_NUMBER/" hello-k8s.yml
@@ -221,11 +221,11 @@ kubectl get all --selector=app=hello-k8s
 
 github repository로 돌아가 다시 소스코드 수정 후 commit.
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
 
 이미지 빌드 확인
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
 
 

@@ -194,7 +194,7 @@ ip-10-11-90-157.ap-northeast-2.compute.internal   Ready    <none>   5m30s   v1.2
 
 다음과 같은 구성도가 완성되었습니다.
 
-![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (205).png>)
 
 
 

@@ -42,7 +42,7 @@ aws cloudformation deploy \
 
 Cloudformation Stack 이 완료된 것을 확인합니다.
 
-![](<../.gitbook/assets/image (224) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (370).png>)
 
 ### 4.Output 정보 확인
 
@@ -52,9 +52,9 @@ Cloudformation을 통해 생성된 VPC의 자원들을 기반으로, eksctl 을 
 
 이 값을 확인해 봅니다. (다음 단원에서 aws cli 통해서 Cloud9 인스턴스 홈 디렉토리에 결과값을 txt 파일로 저장할 것입니다.)
 
-![](<../.gitbook/assets/image (160).png>)
+![](<../.gitbook/assets/image (144).png>)
 
 구성이 완료되면 다음과 같은 VPC가 구성됩니다.
 
-![](<../.gitbook/assets/image (221) (1) (1) (1) (1) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (416).png>)
 

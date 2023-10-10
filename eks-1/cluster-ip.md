@@ -16,9 +16,9 @@ Service의 종류는 아래와 같습니다.
 
 아래 그림에서 처럼 Service의 기본은 CLUSTER-IP 방식입니다. 외부로 노출되지 않으며, Service에는  Pod Container의 포트를 기술해 줍니다.
 
-![](<../.gitbook/assets/image (238).png>)
+![](<../.gitbook/assets/image (380).png>)
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (169).png" alt=""><figcaption></figcaption></figure>
 
 ## CoreDNS와 Service
 
@@ -70,7 +70,7 @@ k9s -n cluster-test-01
 
 ```
 
-<figure><img src="../.gitbook/assets/image (16) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (183).png" alt=""><figcaption></figcaption></figure>
 
 ip a 와 /etc/resolve.conf를 조회해 봅니다.
 
@@ -195,7 +195,7 @@ ClusterIP service의 A Record는
 
 &#x20;**`"ClusterIP Metadata.name"."namesapce".svc.cluster.local.`** 의 형식을 사용하게 됩니다.
 
-![](<../.gitbook/assets/image (239).png>)
+![](<../.gitbook/assets/image (77).png>)
 
 ClusterTest01 로 접속후, "cluster-test-01-svc" ClusterIP Service A Record를 확인합니다. curl을 통해서 Loadbalancing이 정상적으로 이뤄지는지 curl을 통해서 확인해 봅니다.
 

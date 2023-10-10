@@ -65,7 +65,7 @@ aws iam create-access-key --user-name rbac-user | tee /tmp/create_output.json
 
 생성한 사용자를 IAM 콘솔에서 확인해 봅니다.
 
-![](<../.gitbook/assets/image (199).png>)
+![](<../.gitbook/assets/image (265).png>)
 
 Cluster를 생성한 Admin(Cloud9 EC2)과 새로운 rbac-user 간에 쉽게 전환할 수 있도록 아래 처럼 shell을 작성해 둡니다.
 

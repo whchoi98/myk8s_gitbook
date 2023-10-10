@@ -94,13 +94,13 @@ https://github.com/rnzsgh/eks-workshop-sample-api-service-go
 
 아래와 같이 이동한 Repo에서 Fork 를 수행합니다.
 
-![](<../.gitbook/assets/image (216).png>)
+![](<../.gitbook/assets/image (264).png>)
 
-<figure><img src="../.gitbook/assets/image (246).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (109).png" alt=""><figcaption></figcaption></figure>
 
 자신의 계정으로 분기된 Repo는 아래와 같습니다.&#x20;
 
-![](<../.gitbook/assets/image (223).png>)
+![](<../.gitbook/assets/image (458).png>)
 
 ### 4. Github access token 구성&#x20;
 
@@ -116,15 +116,15 @@ Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 * repo를 선택합니다
 * 하단의 Generate token을 선택합니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (242).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (170).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (95).png" alt=""><figcaption></figcaption></figure>
 
-![](<../.gitbook/assets/image (231).png>)
+![](<../.gitbook/assets/image (451).png>)
 
 personal access token 생성을 확인하고, 복사해 둡니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (244).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (105).png" alt=""><figcaption></figcaption></figure>
 
 ## CodePipeline 구성
 
@@ -147,7 +147,7 @@ https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.y
 
 ```
 
-![](<../.gitbook/assets/image (225) (1) (1).png>)
+![](<../.gitbook/assets/image (243).png>)
 
 * 스택 이름 : eksworkshop-codepipeline
 * Username : github 계정
@@ -158,7 +158,7 @@ https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.y
 * IAM kubectl IAM Role : EksWorkshopCodeBuildKubectlRole
 * EKS cluster name: eksworkshop
 
-![](<../.gitbook/assets/image (235) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (469).png>)
 
 다음 단계를 계속 진행해서 , Cloudformation을 완료합니다.
 
@@ -170,15 +170,15 @@ https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.y
 
 eks-workshop-codepipeline으로 시작하는 CodePipeline이 표시됩니다. 이 링크를 클릭하면 세부 정보를 볼 수 있습니다.
 
-![](<../.gitbook/assets/image (234) (2).png>)
+![](<../.gitbook/assets/image (174).png>)
 
 Codepipeline에서 진행중이거나, 완료된 Pipeline을 선택하면 Build 상태를 확인 할 수 있습니다.&#x20;
 
-![](<../.gitbook/assets/image (232) (1) (1).png>)
+![](<../.gitbook/assets/image (444).png>)
 
-<figure><img src="../.gitbook/assets/image (4) (1) (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (104).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (1) (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (115).png" alt=""><figcaption></figcaption></figure>
 
 5분 정도 이후에, kubectl을 통해서 정상적인 배포가 이뤄졌는지 확인해 봅니다.&#x20;
 
@@ -200,25 +200,25 @@ https://github.com/개인계정/eks-workshop-sample-api-service-go
 
 ```
 
-![](<../.gitbook/assets/image (235) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (271).png>)
 
-![](<../.gitbook/assets/image (218).png>)
+![](<../.gitbook/assets/image (74).png>)
 
 
 
-![](<../.gitbook/assets/image (235) (1) (1).png>)
+![](<../.gitbook/assets/image (57).png>)
 
 Commit Changes에서 Commit을 합니다.&#x20;
 
-![](<../.gitbook/assets/image (225) (1).png>)
+![](<../.gitbook/assets/image (322).png>)
 
 GitHub에서 변경 사항을 수정하고 커밋하면 약 1분 안에 AWS Management Console CodePipeline에서 트리거된 새 빌드가 실행되는 것을 볼 수 있습니다.
 
-![](<../.gitbook/assets/image (238) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (276).png>)
 
 Build 상태를 통해서 , 빌드의 상세사항을 확인 할 수 있습니다.&#x20;
 
-![](<../.gitbook/assets/image (237) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (166).png>)
 
 kubectl 명령을 통해 Service URL을 확인하고, 업데이트 현황을 확인합니다.
 
@@ -229,4 +229,4 @@ kubectl get services hello-k8s -o wide
 
 아래는 변경된 메세지가 포함된 결과입니다.&#x20;
 
-![](<../.gitbook/assets/image (236) (1) (1) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (345).png>)

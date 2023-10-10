@@ -1,10 +1,10 @@
 # VPC Advanced
 
-## EKS VPC CNI 소개 . 
+## EKS VPC CNI 소개 .&#x20;
 
 Amazon EKS는 Kubernetes용 Amazon VPC 컨테이너 네트워크 인터페이스(CNI) 플러그인을 통해 기본 VPC 네트워킹을 지원합니다. 이 CNI 플러그인을 사용하면 Kubernetes 포드에서 VPC 네트워크에서와 마찬가지로 포드 내 동일한 IP 주소를 보유합니다. CNI 플러그인은 [GitHub](https://github.com/aws/amazon-vpc-cni-k8s)에서 유지 관리하는 오픈 소스 프로젝트입니다. Amazon VPC CNI 플러그인은 AWS의 Amazon EKS 및 자체 관리형 Kubernetes 클러스터에서 사용할 수 있도록 완벽하게 지원됩니다.
 
-Amazon EKS는 공식적으로 [Amazon VPC CNI 플러그인](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/pod-networking.html)만 지원합니다. 그러나 Amazon EKS는 업스트림 Kubernetes를 실행하며 Kubernetes 준수 인증을 받았으므로 대체 CNI 플러그인은 Amazon EKS 클러스터에서 작동합니다. 프로덕션 환경에서 대체 CNI 플러그인을 사용하려는 경우 상용 지원을 받거나 오픈 소스 CNI 플러그인 프로젝트를 문제 해결하고 수정을 제공할 수 있는 전문 지식을 내부적으로 보유하는 것이 좋습니다.
+Amazon EKS는 공식적으로 [Amazon VPC CNI 플러그인](https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/pod-networking.html)만 지원합니다. 그러나 Amazon EKS는 업스트림 Kubernetes를 실행하며 Kubernetes 준수 인증을 받았으므로 대체 CNI 플러그인은 Amazon EKS 클러스터에서 작동합니다. 프로덕션 환경에서 대체 CNI 플러그인을 사용하려는 경우 상용 지원을 받거나 오픈 소스 CNI 플러그인 프로젝트를 문제 해결하고 수정을 제공할 수 있는 전문 지식을 내부적으로 보유하는 것이 좋습니다.
 
 | 파트너        | 제품                                            | 설명서                                                                                         |
 | ---------- | --------------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -12,7 +12,7 @@ Amazon EKS는 공식적으로 [Amazon VPC CNI 플러그인](https://docs.aws.ama
 | Isovalent  | [Cilium](https://cilium.io/contact-us-eks/)   | [설치 지침](https://docs.cilium.io/en/v1.7/gettingstarted/k8s-install-eks/)                     |
 | Weaveworks | [Weave Net](https://www.weave.works/contact/) | [설치 지침](https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-installing-on-eks)  |
 
-![](<../.gitbook/assets/image (117).png>)
+![](<../.gitbook/assets/image (230).png>)
 
 CNI 플러그인은 Kubernetes 노드에 VPC IP 주소를 할당하고 각 노드의 포드에 대한 필수 네트워킹을 구성하는 역할을 합니다. ​플러그인에는 두 가지 기본 구성 요소가 있습니다.
 
@@ -28,14 +28,14 @@ maxPods = (number of interfaces - 1) * (max IPv4 addresses per interface - 1) + 
 {% hint style="warning" %}
 AWS EKS VPC CNI 구성은 ENI에 할당된 Secondary IP 를 Pod가 동일하게 할당받습니다. 따라서 인스턴스 유형별 네트워크 인터페이스당 IP 주소의 한계를 그대로 가지고 갑니다.
 
-[https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI)
+[https://docs.aws.amazon.com/ko\_kr/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI](https://docs.aws.amazon.com/ko\_kr/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI)
 {% endhint %}
 
 ## VPC CNI 모니터링.
 
 아래 주요 명령을 통해서, ENI Secondary IP가 Pod에 매핑된 현황을 볼 수 있습니다.
 
-kubectl을 통한 Pod와 Node간의 연결과 IP 할당을 확인합니다. 
+kubectl을 통한 Pod와 Node간의 연결과 IP 할당을 확인합니다.&#x20;
 
 ```
 kubectl get pods --all-namespaces -o wide
@@ -115,7 +115,7 @@ curl http://localhost:61679/v1/enis | python -m json.tool
 
 ### 1.VPC ID를 변수 저장.
 
-**VPC_ID** 변수에 VPC를 연결하기 위 다음 명령을 실행합니다.
+**VPC\_ID** 변수에 VPC를 연결하기 위 다음 명령을 실행합니다.
 
 ```
 export VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop | jq -r '.Vpcs[].VpcId')
@@ -145,9 +145,9 @@ whchoi98:~/environment $ aws ec2 associate-vpc-cidr-block --vpc-id $VPC_ID --cid
 }
 ```
 
-![](<../.gitbook/assets/image (113).png>)
+![](<../.gitbook/assets/image (41).png>)
 
-### 3.서브넷 생성. 
+### 3.서브넷 생성.&#x20;
 
 AWS 리전의 모든 가용 영역을 나열하려면 다음 명령을 실행합니다.
 
@@ -207,7 +207,7 @@ aws ec2 create-tags --resources $CUST_SNET3 --tags Key=kubernetes.io/role/elb,Va
 
 아래와 같은 결과를 VPC 대쉬보드에서 확인 할 수 있습니다. 3개의 새로운 서브넷이 생성되고, 태그가 추가되었습니다.
 
-![](<../.gitbook/assets/image (97).png>)
+![](<../.gitbook/assets/image (234).png>)
 
 ### 4. 서브넷에 라우팅 테이블 연결.
 
@@ -224,7 +224,7 @@ aws ec2 associate-route-table --route-table-id $RTASSOC_ID --subnet-id $CUST_SNE
 
 정상적으로 Public Routing Table에 추가 되었는지 확인합니다.
 
-![](<../.gitbook/assets/image (132).png>)
+![](<../.gitbook/assets/image (360).png>)
 
 ### 5.CNI Plugin 구성.
 
@@ -256,7 +256,7 @@ kubectl set env ds aws-node -n kube-system AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG=tr
 
 ```
 
-정상적으로 라벨이 추가 되었는지 확인합니다. 
+정상적으로 라벨이 추가 되었는지 확인합니다.&#x20;
 
 ```
  kubectl describe daemonset aws-node -n kube-system | grep -A5 Environment
@@ -275,9 +275,9 @@ whchoi98:~/environment/myeks (master) $ kubectl describe daemonset aws-node -n k
       AWS_VPC_K8S_CNI_CUSTOM_NETWORK_CFG:  true
 ```
 
-### 6.CRD 생성. 
+### 6.CRD 생성.&#x20;
 
-[CRD](broken-reference)는 앞서 소개한 Chapter를 확인합니다. 
+[CRD](broken-reference)는 앞서 소개한 Chapter를 확인합니다.&#x20;
 
 ENIConfig CRD에 대한 Customer Resource를 생성합니다. 이때 반드시 ENIConfig CRD가 준비되어 있어야 합니다.
 
@@ -340,13 +340,13 @@ sg-0db3cb147dca2658b
 
 VPC/EC2 대시보드를 통해서도 확인이 가능합니다.
 
-![](<../.gitbook/assets/image (94).png>)
+![](<../.gitbook/assets/image (477).png>)
 
 
 
-![](<../.gitbook/assets/image (108).png>)
+![](<../.gitbook/assets/image (447).png>)
 
-![](<../.gitbook/assets/image (131).png>)
+![](<../.gitbook/assets/image (297).png>)
 
 출력된 서브넷과 Security를 Custom Resource로 생성합니다.
 

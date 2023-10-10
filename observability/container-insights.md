@@ -87,7 +87,7 @@ my-wordpress-mariadb   ClusterIP      172.20.3.221   <none>
 
 External IP (ELB 주소)로 접속합니다.
 
-![](<../.gitbook/assets/image (133).png>)
+![](<../.gitbook/assets/image (320).png>)
 
 아래와 같이 URL에 대해 변수에 저장합니다.
 
@@ -108,9 +108,9 @@ Password: $ADMIN_PASSWORD
 
 Admin URL에 접속하고 출력된 결과를 입력합니다.
 
-![](<../.gitbook/assets/image (103).png>)
+![](<../.gitbook/assets/image (43).png>)
 
-![](<../.gitbook/assets/image (137).png>)
+![](<../.gitbook/assets/image (139).png>)
 
 ## Container Insight 설치.
 
@@ -187,7 +187,7 @@ whchoi98:~/environment $ aws iam list-attached-role-policies --role-name $PUB_RO
             "PolicyArn": "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 ```
 
-![](<../.gitbook/assets/image (127).png>)
+![](<../.gitbook/assets/image (138).png>)
 
 ### 2. Container Insight 설치
 
@@ -219,17 +219,17 @@ CloudWatch 대쉬보드 - Container Insight에 접속해서 각 주요 기능을
 
 Cloudwatch - Container Insight - Resource
 
-![](<../.gitbook/assets/image (110).png>)
+![](<../.gitbook/assets/image (261).png>)
 
 Container Insight - container map
 
-![](<../.gitbook/assets/image (136).png>)
+![](<../.gitbook/assets/image (286).png>)
 
-![](<../.gitbook/assets/image (105).png>)
+![](<../.gitbook/assets/image (204).png>)
 
 Container Insight - Performance Dashboards
 
-![](<../.gitbook/assets/image (129).png>)
+![](<../.gitbook/assets/image (460).png>)
 
 
 
@@ -292,17 +292,17 @@ siege -c 200 -i http://$my_wordpress_url --time=30M -q
 
 CloudWatch - Container Insights 에서 다양한 지표를 확인해 봅니다.
 
-![](<../.gitbook/assets/image (139).png>)
+![](<../.gitbook/assets/image (411).png>)
 
-![](<../.gitbook/assets/image (98).png>)
+![](<../.gitbook/assets/image (209).png>)
 
 my-wordpress pod의 성능 지표를 5분 단위로 확인해 봅니다.
 
-![](<../.gitbook/assets/image (135).png>)
+![](<../.gitbook/assets/image (390).png>)
 
 my-wordpress service의 성능 지표를 5분 단위로 확인해 봅니다.
 
-![](<../.gitbook/assets/image (122).png>)
+![](<../.gitbook/assets/image (386).png>)
 
 ### 2.Pod Logging 확인
 
@@ -310,19 +310,19 @@ wordpress pod에 대한 application log와 performace log를 확인합니다.
 
 Cloudwatch - Performanc monitoring - EKS Pods - filter : my-wordpress - 컨테이너 성능 wordpress 선
 
-![](<../.gitbook/assets/image (124).png>)
+![](<../.gitbook/assets/image (263).png>)
 
 Pod의 application log를 확인하기 위해서, Query 를 실행합니다.
 
-![](<../.gitbook/assets/image (119).png>)
+![](<../.gitbook/assets/image (414).png>)
 
-![](<../.gitbook/assets/image (120).png>)
+![](<../.gitbook/assets/image (478).png>)
 
 Pod performance log를 확인하기 위해서, Query 를 실행합니다.
 
-![](<../.gitbook/assets/image (116).png>)
+![](<../.gitbook/assets/image (81).png>)
 
-![](<../.gitbook/assets/image (106).png>)
+![](<../.gitbook/assets/image (383).png>)
 
 {% hint style="info" %}
 Fluentd 는 JSON 파일을 디버깅을 위해 손쉽게 파싱을 하거나, 사용자가 정의한 어플리케이션 대시 보드를 만들 수 있도록 다양한 필드를 확인 할 수 있습니다.

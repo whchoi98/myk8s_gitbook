@@ -10,7 +10,7 @@ EKS 콘솔을 통해서, 생성된 EKS Cluster를 확인 할 수 있습니다.
 
 각 계정의 User로 로그인 한 경우, 아래에서 처럼 eks cluster에 대한 정보를 확인 할 수 없습니다. 이것은 권한이 없기 때문입니다. User의 권한을 Cloud9에서 추가해 줍니다. &#x20;
 
-![](<../.gitbook/assets/image (234).png>)
+![](<../.gitbook/assets/image (377).png>)
 
 ## configmap 인증 정보 수정
 
@@ -158,23 +158,23 @@ eksctl get iamidentitymapping --cluster ${ekscluster_name}
 
 EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드들을 확인할 수 있습니다. 생성한 클러스터를 선택합니다
 
-![](<../.gitbook/assets/image (219) (1) (1).png>)
+![](<../.gitbook/assets/image (350).png>)
 
 컴퓨팅을 선택하고, 생성된 WorkerNode들을 확인해 봅니다
 
-![](<../.gitbook/assets/image (234) (1).png>)
+![](<../.gitbook/assets/image (67).png>)
 
 EKS Cluster내에 생성된 워크로드들을 확인해 볼 수 있습니다.
 
-![](<../.gitbook/assets/image (236) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (339).png>)
 
-<figure><img src="../.gitbook/assets/image (6) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (158).png" alt=""><figcaption></figcaption></figure>
 
 managed Node type과 Self Managed Node Type의 차이를 확인할 수 있습니다
 
 Kuernetes의 Resource들을 선택하고 확인해 봅니다.&#x20;
 
-![](<../.gitbook/assets/image (237) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (48).png>)
 
 이제 아래와 같은 EKS Cluster가 완성되었습니다. kubectl 명령을 통해 확인해 봅니다.
 
@@ -190,7 +190,7 @@ kubectl get nodes -o wide
 
 ```
 
-![](<../.gitbook/assets/image (180).png>)
+![](<../.gitbook/assets/image (287).png>)
 
 다음 섹션에서 워크로드들을 생성한 이후 EKS Cluster 메뉴에서 확인해 봅니다.
 

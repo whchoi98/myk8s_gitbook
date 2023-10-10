@@ -44,7 +44,7 @@ AWS 로드 밸런서 컨트롤러는 Kubernetes 클러스터의 AWS Elastic Load
 
 
 
-![참조 - https://aws.amazon.com/ko/blogs/opensource/kubernetes-ingress-aws-alb-ingress-controller/](<../.gitbook/assets/image (21) (1) (1).png>)
+![참조 - https://aws.amazon.com/ko/blogs/opensource/kubernetes-ingress-aws-alb-ingress-controller/](<../.gitbook/assets/image (207).png>)
 
 Reference - [https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) , [https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases](https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases),\
 [https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/)
@@ -72,7 +72,7 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 * ALB는 각 노드로 로드밸런싱 합니다
 * Kube-API에 의해 업데이트 된 정보를 가지고 ALB에서 Loadbalancing 처리를 합니다.&#x20;
 
-![](<../.gitbook/assets/image (230) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (245).png>)
 
 아래와 같은 구성 단계로 ALB Loadbalancer Controller를 구성합니다.
 
@@ -106,7 +106,7 @@ aws iam list-open-id-connect-providers
 
 ```
 
-![](<../.gitbook/assets/image (197).png>)
+![](<../.gitbook/assets/image (481).png>)
 
 ### 8. AWS Load Balancer 컨트롤러에 대한 IAM 정책 다운로드 (생략)
 
@@ -152,7 +152,7 @@ aws iam create-policy \
 
 아래와 같이 IAM - 정책 메뉴에서 새롭게 생성된 정책을 확인할 수 있습니다.&#x20;
 
-![](<../.gitbook/assets/image (196).png>)
+![](<../.gitbook/assets/image (323).png>)
 
 ### 10. AWS LoadBalancer Controller IAM 역할 및 Service Account 생성
 
@@ -521,17 +521,17 @@ Cache-Control: max-age=0
 
 아래와 같이 ALB Ingress가 구성되었습니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (4) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (307).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (2) (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (164).png" alt=""><figcaption></figcaption></figure>
 
-![](<../.gitbook/assets/image (228) (1) (1) (1).png>)
+![](<../.gitbook/assets/image (498).png>)
 
 
 
 ALB Ingress Controller는 Target Group을 IP기반으로 Pod에 직접 배포할 수 있습니다.&#x20;
 
-![](<../.gitbook/assets/image (222).png>)
+![](<../.gitbook/assets/image (440).png>)
 
 IP Mode로 아래와 같이 배포해 봅니다.&#x20;
 
@@ -546,7 +546,7 @@ kubectl -n alb-ing-02 apply -f ~/environment/myeks/ingress/v1.22/alb-ing-02-serv
 
 아래와 같이 구성되었습니다.
 
-![](<../.gitbook/assets/image (229) (1) (1).png>)
+![](<../.gitbook/assets/image (324).png>)
 
 아래와 같은 명령으로 결과를 확인 할 수 있습니다.
 
@@ -559,7 +559,7 @@ kubectl -n alb-ing-02 get ingress -o wide
 
 아래와 같이 ALB 구성의 Target Group이 PoD IP로 등록됩니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (1) (5) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (122).png" alt=""><figcaption></figcaption></figure>
 
 아래와 같은 결과를 확인하고 ingress LB의 외부 A Record를 확인합니다.&#x20;
 
@@ -740,7 +740,7 @@ NAME               CLASS    HOSTS   ADDRESS                                     
 ecsdemo-frontend   <none>   *       k8s-albtest-ecsdemof-ee882fe5b1-1732413705.ap-northeast-2.elb.amazonaws.com   80      2m34s
 ```
 
-![](<../.gitbook/assets/image (195).png>)
+![](<../.gitbook/assets/image (49).png>)
 
 ### 14. 2048 Game 어플리케이션 배포
 
@@ -783,5 +783,5 @@ kubectl -n game-2048 get ingress ingress-2048 | tail -n 1 | awk '{ print "game-2
 
 ```
 
-![](<../.gitbook/assets/image (7) (2).png>)
+![](<../.gitbook/assets/image (193).png>)
 

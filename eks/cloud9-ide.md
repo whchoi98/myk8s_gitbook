@@ -14,9 +14,9 @@ AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 �
 
 AWS 서비스에서 Cloud9을 선택하고, `"Environments"`를 설정합니다.
 
-<figure><img src="../.gitbook/assets/image (8) (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (422).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (313).png" alt=""><figcaption></figcaption></figure>
 
 Cloud9 의 이름과 Description을 설정합니다.
 
@@ -29,7 +29,7 @@ Cloud9 의 이름과 Description을 설정합니다.
 * **`Instance Type - Other Instance Type - m5.2xlarge`**
 * **`Cost-Saving setting - Never`**
 
-<figure><img src="../.gitbook/assets/image (2) (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (177).png" alt=""><figcaption></figcaption></figure>
 
 {% hint style="info" %}
 Cloud9 하단의 설정 메뉴 중에 Network Setting은 변경하지 않으면, 자동으로 VPC Default로 설정되며 Cloud9 인스턴스는 해당 Default VPC의 public subnet에 자동으로 설치됩니다.
@@ -39,9 +39,9 @@ Cloud9 하단의 설정 메뉴 중에 Network Setting은 변경하지 않으면,
 
 Cloud9 터미널에 접속하여, EKS Workshop 터미널  IDE 환경을 살펴봅니다.
 
-<figure><img src="../.gitbook/assets/image (3) (2) (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (429).png" alt=""><figcaption></figcaption></figure>
 
-![](<../.gitbook/assets/image (10) (1).png>)
+![](<../.gitbook/assets/image (277).png>)
 
 ### 4. Cloud9 Volume 증설
 

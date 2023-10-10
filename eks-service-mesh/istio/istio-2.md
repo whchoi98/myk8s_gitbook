@@ -55,23 +55,23 @@ $(kubectl -n istio-system get pod -l app=kiali -o jsonpath='{.items[0].metadata.
 
 Kiali 대시보드를 열기 위해, 아래 처럼 Cloud9 환경에서 "Preview Running Application"을 클릭합니다.&#x20;
 
-![](<../../.gitbook/assets/image (237) (1).png>)
+![](<../../.gitbook/assets/image (399).png>)
 
 새로운 창을 확대해서, 실행 시킵니다.&#x20;
 
-![](<../../.gitbook/assets/image (239) (1).png>)
+![](<../../.gitbook/assets/image (60).png>)
 
 아래와 같이 확인 할 수 있습니다.&#x20;
 
 * Graph
 
-![](<../../.gitbook/assets/image (220).png>)
+![](<../../.gitbook/assets/image (361).png>)
 
 * Workloads
 
-![](<../../.gitbook/assets/image (226).png>)
+![](<../../.gitbook/assets/image (382).png>)
 
-![](<../../.gitbook/assets/image (236) (1).png>)
+![](<../../.gitbook/assets/image (400).png>)
 
 5\. Grafana Dashboard 런칭
 
@@ -86,4 +86,4 @@ kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=gr
 
 Grafana 대시보드를 열기 위해, 아래 처럼 Cloud9 환경에서 "Preview Running Application"을 클릭합니다.&#x20;
 
-![](<../../.gitbook/assets/image (240).png>)
+![](<../../.gitbook/assets/image (434).png>)

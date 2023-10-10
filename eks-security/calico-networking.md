@@ -6,7 +6,7 @@ description: 'Update : 2020-11-17'
 
 ## Calico 네트워킹 소개
 
-![](../.gitbook/assets/image%20%28125%29.png)
+![](<../.gitbook/assets/image (424).png>)
 
 Calico는 컨테이너, 가상 머신 및 기본 호스트 기반 워크로드를 위한 오픈 소스 네트워킹 및 네트워크 보안 솔루션입니다. Calico는 Kubernetes, OpenShift, Docker EE, OpenStack 및 베어 메탈 서비스를 포함한 광범위한 플랫폼을 지원합니다.
 
@@ -24,26 +24,26 @@ Calico는 유연한 네트워킹 기능과 보안 기능을 결합하여 네이�
 
 [`aws/amazon-vpc-cni-k8s` GitHub 프로젝트](https://github.com/aws/amazon-vpc-cni-k8s)에서 Calico 매니페스트를 적용합니다. 이 매니페스트는 `kube-system` 네임스페이스에 데몬 세트를 생성합니다.
 
-```text
+```
 kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.7/config/v1.7/calico.yaml
 ```
 
-calico 매니페스트 파일의 주요 내용을 살펴 봅니다. 
+calico 매니페스트 파일의 주요 내용을 살펴 봅니다.&#x20;
 
-```text
+```
 more calico.yaml
 ```
 
 정상적으로 설치되었는 지 확인합니다.
 
-```text
+```
 kubectl get daemonsets -n kube-system
 
 ```
 
 아래와 같이 결과를 확인 할 수 있습니다. 모든 노드에 분산 설치되기 위해 Daemonset으로 설치 되었습니다.
 
-```text
+```
 whchoi98:~/environment/myeks (master) $ kubectl get daemonsets -n kube-system                                                                           
 NAME          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
 aws-node      6         6         6       6            6           <none>                        8d
@@ -53,15 +53,16 @@ kube-proxy    6         6         6       6            6           <none>
 
 ## Calico 기반의 네트워크 정책 구성.
 
-### 1.데모 앱 배포. 
+### 1.데모 앱 배포.&#x20;
 
 이 랩에서는 EKS Cluster에 새로운 Namespace, front-end, back-end, Client, UI 서비스 등을 만들고, 상호간의 네트워크 통신을 허용 또는 제어하는 네트워크 정책을 생성합니다. 또한 각 서비스간에 사용 가능한 송/수신 경로를 보여주는 UI를 포함하고 있습니다.
 
-* name space : stars
+*   name space : stars
 
-  * Pod : frontend , backend 각 1개
-  * replicationcontroller : frontend, backend 1개에 설정
-  * service : frontend, backend에 ClusterIP type으로 설정
+    * Pod : frontend , backend 각 1개
+    * replicationcontroller : frontend, backend 1개에 설정
+    * service : frontend, backend에 ClusterIP type으로 설정
+
 
 * name space : management-ui
   * Pod : management-ui
@@ -72,7 +73,7 @@ kube-proxy    6         6         6       6            6           <none>
   * replicationcontroller : client에 1개 설정
   * service : client에 ClusterIP type으로 설정
 
-```text
+```
 cd ~/environment/myeks
 git pull origin master
 mkdir ~/environment/calico_resources
@@ -89,7 +90,7 @@ kubectl -n client get all -o wide
 
 아래와 같은 출력 결과를 확인 할 수 있습니다.
 
-```text
+```
 whchoi98:~/environment/calico_resources $ kubectl -n stars get all -o wide
 NAME                 READY   STATUS    RESTARTS   AGE     IP             NODE                                               NOMINATED NODE   READINESS GATES
 pod/backend-4z6z5    1/1     Running   0          9m58s   10.11.123.18   ip-10-11-114-132.ap-northeast-2.compute.internal   <none>           <none>
@@ -125,7 +126,7 @@ service/client   ClusterIP   172.20.86.231   <none>        9000/TCP   14m   role
 
 각 매니페스트 파일을 참조하십시요
 
-```text
+```
 ind: Namespace
 apiVersion: v1
 metadata:
@@ -134,7 +135,7 @@ metadata:
 
 frontend.yaml
 
-```text
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -173,7 +174,7 @@ spec:
 
 backend.yaml
 
-```text
+```
 apiVersion: v1
 kind: Service
 metadata:
@@ -212,7 +213,7 @@ spec:
 
 management-ui.yaml 파일
 
-```text
+```
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -255,7 +256,7 @@ spec:
 
 client yaml 파일
 
-```text
+```
 kind: Namespace
 apiVersion: v1
 metadata:
@@ -302,21 +303,21 @@ spec:
 
 management UI Pod는 External IP로 LB Service를 제공하고 있습니다. 아래와 같은 명령을 통해서 External IP를 확인합니다.
 
-```text
+```
 export ELB_SERVICE_URL=$(kubectl get svc -n management-ui management-ui --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
 echo "ELB SERVICE URL = $ELB_SERVICE_URL"
 ```
 
 출력 결과는 아래와 같습니다.
 
-```text
+```
 whchoi98:~/environment/calico_resources $ echo "ELB SERVICE URL = $ELB_SERVICE_URL"
 ELB SERVICE URL = a927c1a56c9a144aba431cdb58b9c5a7-1577995596.ap-northeast-2.elb.amazonaws.com
 ```
 
 해당 웹 사이트는 Client App , Front end App, Back end App 간의 트래픽 허용 상태를 제공해 줍니다.
 
-![](../.gitbook/assets/image%20%28107%29.png)
+![](<../.gitbook/assets/image (50).png>)
 
 ### 3.네트워크 정책 적용
 
@@ -324,7 +325,7 @@ Network Policy를 적용해서 Pod간의 제어를 확인해 봅니다.
 
 먼저 stars, client namespace 에 deny 정책을 업데이트 합니다.
 
-```text
+```
 cd ~/environment/myeks/calico_demo/
 kubectl apply -n stars -f default-deny.yaml
 kubectl apply -n client -f default-deny.yaml
@@ -332,7 +333,7 @@ kubectl apply -n client -f default-deny.yaml
 
 default-deny.yaml을 확인해 봅니다.
 
-```text
+```
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -344,18 +345,18 @@ spec:
 
 다시 아래 management-ui 로 접속해 봅니다.
 
-```text
+```
 whchoi98:~/environment/calico_resources $ echo "ELB SERVICE URL = $ELB_SERVICE_URL"
 ELB SERVICE URL = a927c1a56c9a144aba431cdb58b9c5a7-1577995596.ap-northeast-2.elb.amazonaws.com
 ```
 
 ELB 주소로 접속하면, All deny로 출력되는 결과가 없습니다.
 
-![](../.gitbook/assets/image%20%28100%29.png)
+![](<../.gitbook/assets/image (84).png>)
 
 다시 정책을 허용합니다.
 
-```text
+```
 kubectl apply -f allow-ui.yaml
 kubectl apply -f allow-ui-client.yaml
 
@@ -363,13 +364,13 @@ kubectl apply -f allow-ui-client.yaml
 
 아래에서 처럼 이제 management-ui로는 접속이 가능합니다. 하지만 Frontend, Backend, Client Pod간에는 통신되지 않습니다.
 
-![](../.gitbook/assets/image%20%28112%29.png)
+![](<../.gitbook/assets/image (63).png>)
 
 아래 매니페스트 파일을 확인해 봅니다.
 
 namespace : stars 의 frontend, backend pod는 management-ui에 연결이 가능하도록 합니다.
 
-```text
+```
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -387,7 +388,7 @@ spec:
 
 namespace : client 의 client pod는 management-ui에 연결이 가능하도록 합니다.
 
-```text
+```
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -405,13 +406,13 @@ spec:
 
 이제 Client에서 Front end로 유입되는 트래픽을 허용합니다.
 
-```text
+```
 kubectl apply -f frontend-policy.yaml
 ```
 
 아래에서 매니페스트 파일을 통해 상세 내용을 확인 할 수 있습니다.
 
-```text
+```
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -433,17 +434,17 @@ spec:
 
 다시 management-ui 로 접속해 보면 트래픽 허용되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28115%29.png)
+![](<../.gitbook/assets/image (459).png>)
 
 이제 frontend에서 backend로 유입되는 트래픽을 허용합니다.
 
-```text
+```
 kubectl apply -f backend-policy.yaml
 ```
 
 아래에서 매니페스트 파일을 통해 상세 내용을 확인 할 수 있습니다.
 
-```text
+```
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -465,7 +466,7 @@ spec:
 
 다시 management-ui 로 접속해 보면 트래픽 허용되는 것을 확인 할 수 있습니다.
 
-![](../.gitbook/assets/image%20%28134%29.png)
+![](<../.gitbook/assets/image (168).png>)
 
 
 
@@ -473,9 +474,7 @@ spec:
 
 
 
- 
+&#x20;
 
- 
-
-
+&#x20;
 
