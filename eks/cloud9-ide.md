@@ -130,11 +130,11 @@ EKS를 위한 kubectl 바이너리를 다운로드합니다. 아래 kubectl vers
 
 (참조 - [https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html))
 
-kubectl 바이너리 버전은 1.23.17 설치합니다.&#x20;
+kubectl 바이너리 버전은 1.25.12 설치합니다.&#x20;
 
 ```
 cd ~
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.23.17/bin/linux/amd64/kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.25.12/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
 source <(kubectl completion bash)

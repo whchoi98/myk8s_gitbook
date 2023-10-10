@@ -411,11 +411,11 @@ eksctl get addon --name aws-ebs-csi-driver --cluster ${ekscluster_name}
 
 최신버전으로 업데이트하려면, **`UPDATE AVAILABLE`** 에서 출력된 값으로 업데이트를 시도합니다.
 
-아래 예제는 **`v1.18.0-eksbuild.1`** 로 업그레이드하는 예제입니다.
+아래 예제는 **`v1.23.1-eksbuild.1`**  로 업그레이드하는 예제입니다.
 
 ```
 #Addon 기반 업데이트
-export EBS_DRIVER_UPDATE_VERSION=v1.18.0-eksbuild.1
+export EBS_DRIVER_UPDATE_VERSION=v1.23.1-eksbuild.1
 eksctl update addon --name aws-ebs-csi-driver --version ${EBS_DRIVER_UPDATE_VERSION} --cluster ${ekscluster_name} --force
 
 ```

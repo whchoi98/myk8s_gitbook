@@ -16,6 +16,10 @@ description: 'update : 2022-10-22 / 20min'
 
 아래와 같이 eksctl을 Cloud9에 설치하고 버전을 확인합니다.
 
+eksctl 버전이 낮은 경우에는 EKS 최신버전을 설치할 경우 , 원할하게 설치 되지 않을 수 있습니다.
+
+([https://github.com/eksctl-io/eksctl/releases](https://github.com/eksctl-io/eksctl/releases))
+
 ```
 # eksctl 설정 
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
