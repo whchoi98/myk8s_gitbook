@@ -4,7 +4,7 @@ description: 'Last Update : 2021-10-05'
 
 # Kubernetes
 
-해당 블로그는 Kubernetes에 대한 전반적인 개념과 아키텍쳐 소개를 다룹니다.
+해당 블로그는 Kubernetes에 대한 전반적인 개념과 아키텍쳐 소개를 다룹니다..
 
 Kubernetes 개념은 kubernetes.io 공식 블로그에 포스팅 된 문서를 의역한 내용이며, kubernetes.io 의 원문을 우선합니다.
 
