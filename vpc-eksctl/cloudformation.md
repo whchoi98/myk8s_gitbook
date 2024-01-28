@@ -10,10 +10,6 @@ AWS CloudFormation에서는 클라우드 환경에서 AWS 및 타사 애플리�
 
 ## Cloudformation 기반의 VPC 구성
 
-{% hint style="info" %}
-생성되는 VPC에서는 NAT Gateway가 3개 사용됩니다. NAT Gateway는 3개의 EIP를 사용합니다. 사용 중인 계정에 EIP 할당 숫자는 최대 5개 입니다. EIP가 3개 이상 여유가 있어야 배포가 가능합니다.&#x20;
-{% endhint %}
-
 ### 1.VPC yaml 다운로드
 
 eksworkshop에서 사용할 다양한 yaml file을 git에서 내려받습니다. Cloud9에서 아래와 같이 실행합니다.
