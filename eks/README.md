@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2022-09-10 / 40min'
+description: 'Update : 2024-01-28 / 20min'
 ---
 
 # 2.EKS 환경 구성

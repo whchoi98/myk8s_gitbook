@@ -1,5 +1,5 @@
 ---
-description: 'update : 2023-05-06 /15min'
+description: 'update : 2024-01-28 /10min'
 ---
 
 # Cloud9 IDE 환경 구성

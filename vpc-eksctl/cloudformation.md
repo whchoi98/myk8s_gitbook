@@ -21,7 +21,6 @@ eksworkshop에서 사용할 다양한 yaml file을 git에서 내려받습니다.
 ```
 cd ~/environment
 git clone https://github.com/whchoi98/myeks
-git clone https://github.com/whchoi98/useful-shell
 
 ```
 
