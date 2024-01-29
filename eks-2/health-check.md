@@ -243,6 +243,7 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 3
 EoF
+
 ```
 
 생성된 매니페스트를 사용하여 포드를 생성합니다.

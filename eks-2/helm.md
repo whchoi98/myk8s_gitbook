@@ -41,11 +41,11 @@ Helm Chart의 구조는 아래와 같습니다.
 
 ### 1.Helm 설치
 
-헬름은 헬름 최신 버전을 자동으로 가져와서 [로컬에 설치](https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)하는 인스톨러 스크립트를 제공합니다. 이 스크립트를 받아서 로컬에서 실행할 수 있습니다.&#x20;
+헬름은 헬름 최신 버전을 자동으로 가져와서 [로컬에 설치](https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)하는 인스톨러 스크립트를 제공합니다. 이 스크립트를 받아서 로컬에서 실행할 수 있습니다.  이미 사전 구성에서 설치되어 있습니다.
 
 ```
 cd ~/environment
-curl -L https://git.io/get_helm.sh | bash -s -- --version v3.8.2
+curl -L https://git.io/get_helm.sh | bash -s -- --version v3.13.2
 
 ```
 

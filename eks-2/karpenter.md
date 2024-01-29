@@ -67,21 +67,25 @@ aws cloudformation deploy \
 
 아래와 같이 Karpenter 설치를 위한 환경변수들을 추가로 설정합니다.
 
+Karpenter Version Check - [https://github.com/aws/karpenter-provider-aws/releases](https://github.com/aws/karpenter-provider-aws/releases)
+
 ```
 ### make env for the karpenter test      
-
-export k_ekscluster_name=k-eksworkshop
-export k_public_mgmd_node="frontend"
-export k_private_mgmd_node="backend"
+export KARPENTER_AWS_REGION=ap-northeast-1
+export K_EKSCLUSTER_NAME=K1
+export K_PUBLIC_MGMD_NODE="frontend"
+export K_PRIVATE_MGMD_NODE="backend"
 export KARPENTER_VERSION="v0.27.5"
-echo ${k_ekscluster_name}
-echo ${k_public_mgmd_node}
-echo ${k_private_mgmd_node}
+export EKS_VERSION=1.25
+echo ${K_EKSCLUSTER_NAME}
+echo ${K_PUBLIC_MGMD_NODE}
+echo ${K_PRIVATE_MGMD_NODE}
 echo ${KARPENTER_VERSION}
-echo "export k_ekscluster_name=${k_ekscluster_name}" | tee -a ~/.bash_profile
-echo "export k_public_mgmd_node=${k_public_mgmd_node}" | tee -a ~/.bash_profile
-echo "export k_private_mgmd_node=${k_private_mgmd_node}" | tee -a ~/.bash_profile
-#echo "export eks_version=${eks_version}" | tee -a ~/.bash_profile
+echo "export KARPENTER_AWS_REGION=${KARPENTER_AWS_REGION}" | tee -a ~/.bash_profile
+echo "export K_EKSCLUSTER_NAME=${K_EKSCLUSTER_NAME}" | tee -a ~/.bash_profile
+echo "export K_PUBLIC_MGMD_NODE=${K_PUBLIC_MGMD_NODE}" | tee -a ~/.bash_profile
+echo "export K_PRIVATE_MGMD_NODE=${K_PRIVATE_MGMD_NODE}" | tee -a ~/.bash_profile
+#echo "export EKS_VERSION=${EKS_VERSION}" | tee -a ~/.bash_profile
 echo "export KARPENTER_VERSION=${KARPENTER_VERSION}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
@@ -93,28 +97,22 @@ eksctl을 사용해서 새로운 Cluster를 생성하기 위해, 앞서 구성�
 ### VPC 정보 
 cd ~/environment/
 #VPC ID export
-export k_vpc_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop --region ap-northeast-1| jq -r '.Vpcs[].VpcId')
-echo $k_vpc_ID
-
-#Subnet ID, CIDR, Subnet Name export
-aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)'
-aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' >> k_vpc_subnet.txt
+export K_VPC_ID=$(aws ec2 describe-vpcs --filters Name=tag:Name,Values=eksworkshop --region ap-northeast-1| jq -r '.Vpcs[].VpcId')
 
 # VPC, Subnet ID 환경변수 저장 
-export k_PublicSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet01/{print $1}')
-export k_PublicSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet02/{print $1}')
-export k_PublicSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet03/{print $1}')
-export k_PrivateSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet01/{print $1}')
-export k_PrivateSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet02/{print $1}')
-export k_PrivateSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$k_vpc_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet03/{print $1}')
-echo "export k_vpc_ID=${k_vpc_ID}" | tee -a ~/.bash_profile
-echo "export k_PublicSubnet01=${k_PublicSubnet01}" | tee -a ~/.bash_profile
-echo "export k_PublicSubnet02=${k_PublicSubnet02}" | tee -a ~/.bash_profile
-echo "export k_PublicSubnet03=${k_PublicSubnet03}" | tee -a ~/.bash_profile
-echo "export k_PrivateSubnet01=${k_PrivateSubnet01}" | tee -a ~/.bash_profile
-echo "export k_PrivateSubnet02=${k_PrivateSubnet02}" | tee -a ~/.bash_profile
-echo "export k_PrivateSubnet03=${k_PrivateSubnet03}" | tee -a ~/.bash_profile
-#echo "export publicKeyPath=${publicKeyPath}" | tee -a ~/.bash_profile
+export K_PublicSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$K_VPC_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet01/{print $1}')
+export K_PublicSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$K_VPC_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet02/{print $1}')
+export K_PublicSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$K_VPC_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PublicSubnet03/{print $1}')
+export K_PrivateSubnet01=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$K_VPC_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet01/{print $1}')
+export K_PrivateSubnet02=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$K_VPC_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet02/{print $1}')
+export K_PrivateSubnet03=$(aws ec2 describe-subnets --filter Name=vpc-id,Values=$K_VPC_ID --region ap-northeast-1 | jq -r '.Subnets[]|.SubnetId+" "+.CidrBlock+" "+(.Tags[]|select(.Key=="Name").Value)' | awk '/eksworkshop-PrivateSubnet03/{print $1}')
+echo "export K_VPC_ID=${K_VPC_ID}" | tee -a ~/.bash_profile
+echo "export K_PublicSubnet01=${K_PublicSubnet01}" | tee -a ~/.bash_profile
+echo "export K_PublicSubnet02=${K_PublicSubnet02}" | tee -a ~/.bash_profile
+echo "export K_PublicSubnet03=${K_PublicSubnet03}" | tee -a ~/.bash_profile
+echo "export K_PrivateSubnet01=${K_PrivateSubnet01}" | tee -a ~/.bash_profile
+echo "export K_PrivateSubnet02=${K_PrivateSubnet02}" | tee -a ~/.bash_profile
+echo "export K_PrivateSubnet03=${K_PrivateSubnet03}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
 ```
@@ -124,6 +122,7 @@ source ~/.bash_profile
 새로운 Cluster 구성을 위해 yaml 파일을 생성합니다.
 
 ```
+
 ### create cluster yaml file for the karpenter      
 
 cat << EOF > ~/environment/myeks/karpenter_cluster.yaml
@@ -132,56 +131,53 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: ${k_ekscluster_name}
+  name: ${K_EKSCLUSTER_NAME}
   region: ${KARPENTER_AWS_REGION}
-  version: "${eks_version}"  
+  version: "${EKS_VERSION}"  
   tags:
-    karpenter.sh/discovery: ${k_ekscluster_name}
+    karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}
 
 vpc: 
-  id: ${k_vpc_ID}
+  id: ${K_VPC_ID}
   subnets:
     public:
       k_PublicSubnet01:
         az: ${KARPENTER_AWS_REGION}a
-        id: ${k_PublicSubnet01}
+        id: ${K_PublicSubnet01}
       k_PublicSubnet02:
         az: ${KARPENTER_AWS_REGION}c
-        id: ${k_PublicSubnet02}
+        id: ${K_PublicSubnet02}
       k_PublicSubnet03:
         az: ${KARPENTER_AWS_REGION}d
-        id: ${k_PublicSubnet03}
+        id: ${K_PublicSubnet03}
     private:
       k_PrivateSubnet01:
         az: ${KARPENTER_AWS_REGION}a
-        id: ${k_PrivateSubnet01}
+        id: ${K_PrivateSubnet01}
       k_PrivateSubnet02:
         az: ${KARPENTER_AWS_REGION}c
-        id: ${k_PrivateSubnet02}
+        id: ${K_PrivateSubnet02}
       k_PrivateSubnet03:
         az: ${KARPENTER_AWS_REGION}d
-        id: ${k_PrivateSubnet03}
+        id: ${K_PrivateSubnet03}
 secretsEncryption:
   keyARN: ${K_MASTER_ARN}
 
 managedNodeGroups:
   - name: public
-    instanceType: ${instance_type}
+    instanceType: ${INSTANCE_TYPE}
     subnets:
-      - ${k_PublicSubnet01}
-      - ${k_PublicSubnet02}
-      - ${k_PublicSubnet03}
+      - ${K_PublicSubnet01}
+      - ${K_PublicSubnet02}
+      - ${K_PublicSubnet03}
     desiredCapacity: 3
     minSize: 3
     maxSize: 6
-    volumeSize: 200
+    volumeSize: 20
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "${k_public_mgmd_node}"
-    ssh: 
-        publicKeyPath: "${publicKeyPath}"
-        allow: true
+      nodegroup-type: "${K_PUBLIC_MGMD_NODE}"
     iam:
       attachPolicyARNs:
       withAddonPolicies:
@@ -192,23 +188,20 @@ managedNodeGroups:
         efs: true
         
   - name: private
-    instanceType: ${instance_type}
+    instanceType: ${INSTANCE_TYPE}
     subnets:
-      - ${k_PrivateSubnet01}
-      - ${k_PrivateSubnet02}
-      - ${k_PrivateSubnet03}
+      - ${K_PrivateSubnet01}
+      - ${K_PrivateSubnet02}
+      - ${K_PrivateSubnet03}
     desiredCapacity: 3
     privateNetworking: true
     minSize: 3
-    maxSize: 9
-    volumeSize: 200
+    maxSize: 6
+    volumeSize: 20
     volumeType: gp3 
     amiFamily: AmazonLinux2
     labels:
-      nodegroup-type: "${k_private_mgmd_node}"
-    ssh: 
-        publicKeyPath: "${publicKeyPath}"
-        allow: true
+      nodegroup-type: "${K_PRIVATE_MGMD_NODE}"
     iam:
       attachPolicyARNs:
       withAddonPolicies:
@@ -218,8 +211,24 @@ managedNodeGroups:
         fsx: true
         efs: true
 
-EOF
+cloudWatch:
+    clusterLogging:
+        enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
+addons:
+- name: vpc-cni
+  attachPolicyARNs:
+    - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+- name: coredns
+  version: latest
+- name: kube-proxy
+  version: latest
+- name: aws-ebs-csi-driver
+  wellKnownPolicies:
+    ebsCSIController: true
+- name: eks-pod-identity-agent
+
+EOF
 
 ```
 
@@ -245,7 +254,7 @@ Karpenter 시험 환경 구성을 위해 아래와 같이 환경변수를 구성
 
 ```
 ### Karpenter Cluster Endpoint 변수 설정
-export K_CLUSTER_ENDPOINT="$(aws eks describe-cluster --name ${k_ekscluster_name} --query "cluster.endpoint" --region ap-northeast-1 --output text)"
+export K_CLUSTER_ENDPOINT="$(aws eks describe-cluster --name ${K_EKSCLUSTER_NAME} --query "cluster.endpoint" --region ap-northeast-1 --output text)"
 echo "export K_CLUSTER_ENDPOINT=${K_CLUSTER_ENDPOINT}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
@@ -254,9 +263,9 @@ source ~/.bash_profile
 Subnet에 karpenter 환경을 위한 새로운 Tag를 설정합니다. Tag가 설정된 Subnet에 배포될 것입니다.
 
 ```
-aws ec2 create-tags --resources "$k_PublicSubnet01" --tags Key="karpenter.sh/discovery",Value="${k_ekscluster_name}" --region ap-northeast-1
-aws ec2 create-tags --resources "$k_PublicSubnet02" --tags Key="karpenter.sh/discovery",Value="${k_ekscluster_name}" --region ap-northeast-1
-aws ec2 create-tags --resources "$k_PublicSubnet03" --tags Key="karpenter.sh/discovery",Value="${k_ekscluster_name}" --region ap-northeast-1
+aws ec2 create-tags --resources "$K_PublicSubnet01" --tags Key="karpenter.sh/discovery",Value="${K_EKSCLUSTER_NAME}" --region ap-northeast-1
+aws ec2 create-tags --resources "$K_PublicSubnet02" --tags Key="karpenter.sh/discovery",Value="${K_EKSCLUSTER_NAME}" --region ap-northeast-1
+aws ec2 create-tags --resources "$K_PublicSubnet03" --tags Key="karpenter.sh/discovery",Value="${K_EKSCLUSTER_NAME}" --region ap-northeast-1
 
 ```
 
@@ -267,7 +276,7 @@ kubernetes와 IAM간 인증을 위해 OIDC Provider를 생성합니다. &#x20;
 ```
 eksctl utils associate-iam-oidc-provider \
     --region ${KARPENTER_AWS_REGION} \
-    --cluster ${k_ekscluster_name} \
+    --cluster ${K_EKSCLUSTER_NAME} \
     --approve
     
 ```
@@ -279,29 +288,30 @@ Karpenter Node들을 위한 IAM Role을 생성합니다. karpenter node를 위�
 mkdir /home/ec2-user/environment/karpenter
 export KARPENTER_CF="/home/ec2-user/environment/karpenter/k-node-iam-role.yaml"
 echo ${KARPENTER_CF}
-curl -fsSL https://karpenter.sh/"${KARPENTER_VERSION}"/getting-started/getting-started-with-karpenter/cloudformation.yaml  > $KARPENTER_CF
-## sed -i 's/\${ClusterName}/k-eksworkshop/g' $KARPENTER_CF
+curl -fsSL https://raw.githubusercontent.com/aws/karpenter-provider-aws/"${KARPENTER_VERSION}"/website/content/en/preview/getting-started/getting-started-with-karpenter/cloudformation.yaml  > $KARPENTER_CF
+## sed -i 's/\${ClusterName}/$CLUSTER_NAME}/g' $KARPENTER_CF
 
 ## 구성한 Node Role Template을 생성합니다.
 aws cloudformation deploy \
   --region ${KARPENTER_AWS_REGION} \
-  --stack-name "Karpenter-${k_ekscluster_name}" \
+  --stack-name "Karpenter-${K_EKSCLUSTER_NAME}" \
   --template-file "${KARPENTER_CF}" \
   --capabilities CAPABILITY_NAMED_IAM \
-  --parameter-overrides "ClusterName=${k_ekscluster_name}"
+  --parameter-overrides "ClusterName=${K_EKSCLUSTER_NAME}"
   
 ```
 
 Karpenter Node들을 위해 생성된 IAM Role을 eksctl을 통해 kubernetes 권한에 Mapping 합니다.&#x20;
 
 ```
+### IAM Role을 eksctl을 통해 kubernetes 권한에 Mapping
 eksctl create iamidentitymapping \
   --region ${KARPENTER_AWS_REGION} \
   --username system:node:{{EC2PrivateDNSName}} \
-  --cluster ${k_ekscluster_name} \
-  --arn "arn:aws:iam::${ACCOUNT_ID}:role/KarpenterNodeRole-${k_ekscluster_name}" \
+  --cluster ${K_EKSCLUSTER_NAME} \
+  --arn "arn:aws:iam::${ACCOUNT_ID}:role/KarpenterNodeRole-${K_EKSCLUSTER_NAME}" \
   --group system:bootstrappers \
-  --group system:nodes
+  --group system:nodes 
 
 ```
 
@@ -396,17 +406,18 @@ eksctl로 Kubernetes Service Account를 생성하고, 앞서 생성한 IAM Role�
 
 eksctl create iamserviceaccount \
   --region ${KARPENTER_AWS_REGION} \
-  --cluster "${k_ekscluster_name}" --name karpenter --namespace karpenter \
-  --role-name "${k_ekscluster_name}-karpenter" \
-  --attach-policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${k_ekscluster_name}" \
+  --cluster "${K_EKSCLUSTER_NAME}" --name karpenter --namespace karpenter \
+  --role-name "${K_EKSCLUSTER_NAME}-karpenter" \
+  --attach-policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/KarpenterControllerPolicy-${K_EKSCLUSTER_NAME}" \
   --role-only \
   --override-existing-serviceaccounts \
   --approve
 
 # KARPENTER IAM ROLE ARN을 변수에 저장해 둡니다. 
-export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${k_ekscluster_name}-karpenter"
+export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${K_EKSCLUSTER_NAME}-karpenter"
 echo ${KARPENTER_IAM_ROLE_ARN}
 echo "export export KARPENTER_IAM_ROLE_ARN=${KARPENTER_IAM_ROLE_ARN}" | tee -a ~/.bash_profile
+source ~/.bash_profile
 
 ```
 
@@ -414,11 +425,11 @@ echo "export export KARPENTER_IAM_ROLE_ARN=${KARPENTER_IAM_ROLE_ARN}" | tee -a ~
 
 Helm을 사용하여 Karpenter Pod를 클러스터에 배포합니다.&#x20;
 
-Helm Chart 를 설치하기 전에 Repo를 Helm에 추가해야 하므로 다음 명령을 실행하여 Repo를 추가합니다.
+Helm Chart 를 설치하기 전에 Repo를 Helm에 추가해야 하므로 다음 명령을 실행하여 Repo를 추가합니다. 사전 준비 단계에서 이미 설치되었으므로 생략합니다.
 
 ```
 cd ~/environment
-curl -L https://git.io/get_helm.sh | bash -s -- --version v3.8.2
+#curl -L https://git.io/get_helm.sh | bash -s -- --version v3.13.2
 
 helm repo add karpenter https://charts.karpenter.sh/
 helm repo update
@@ -431,10 +442,10 @@ Cluster의 상세 정보 및 Karpenter Role ARN을 전달하는  Helm Chart를 �
 docker logout public.ecr.aws
 helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --version ${KARPENTER_VERSION} --namespace karpenter --create-namespace \
   --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${KARPENTER_IAM_ROLE_ARN} \
-  --set settings.aws.clusterName=${k_ekscluster_name} \
+  --set settings.aws.clusterName=${K_EKSCLUSTER_NAME} \
   --set settings.aws.clusterEndpoint=${K_CLUSTER_ENDPOINT} \
-  --set settings.aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${k_ekscluster_name} \
-  --set settings.aws.interruptionQueueName=${k_ekscluster_name} \
+  --set settings.aws.defaultInstanceProfile=KarpenterNodeInstanceProfile-${K_EKSCLUSTER_NAME} \
+  --set settings.aws.interruptionQueueName=${K_EKSCLUSTER_NAME} \
   --wait
 
 ```
@@ -473,9 +484,9 @@ spec:
       cpu: 1000
   provider:
     subnetSelector:
-      karpenter.sh/discovery: ${k_ekscluster_name}
+      karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}
     securityGroupSelector:
-      karpenter.sh/discovery: ${k_ekscluster_name}
+      karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}
   ttlSecondsAfterEmpty: 30
 EOF
 
@@ -510,7 +521,7 @@ helm repo update
 helm install my-release christianknell/kube-ops-view \
 --namespace kube-tools \
 --set service.type=LoadBalancer \
---set nodeSelector.nodegroup-type=${k_public_mgmd_node} \
+--set nodeSelector.nodegroup-type=${K_PUBLIC_MGMD_NODE} \
 --set rbac.create=True \
 --set service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="internet-facing"
 
@@ -635,9 +646,9 @@ spec:
       cpu: 1000
   provider:
     subnetSelector:
-      karpenter.sh/discovery: ${k_ekscluster_name}
+      karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}
     securityGroupSelector:
-      karpenter.sh/discovery: ${k_ekscluster_name}
+      karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}
   ttlSecondsAfterEmpty: 30
 EOF
 

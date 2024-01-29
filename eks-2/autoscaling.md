@@ -160,7 +160,7 @@ aws autoscaling \
     --auto-scaling-group-name ${ASG_NAME} \
     --min-size 3 \
     --desired-capacity 3 \
-    --max-size 4
+    --max-size 6
     
 ```
 
@@ -184,7 +184,7 @@ Amazon EKS 클러스터의 서비스 계정(Service Account)와 IAM 역할을 IR
 
 ```
 eksctl utils associate-iam-oidc-provider \
-    --cluster ${ekscluster_name} \
+    --cluster ${EKSCLUSTER_NAME} \
     --approve
 
 ```
@@ -227,7 +227,7 @@ aws iam create-policy   \
 eksctl create iamserviceaccount \
     --name cluster-autoscaler \
     --namespace kube-system \
-    --cluster ${ekscluster_name} \
+    --cluster ${EKSCLUSTER_NAME}  \
     --attach-policy-arn "arn:aws:iam::${ACCOUNT_ID}:policy/k8s-asg-policy" \
     --approve \
     --override-existing-serviceaccounts
@@ -264,7 +264,8 @@ K8s 버전과 Autoscaler를 위한 CA version을 동일하게 사용합니다.
 
 ```
 export K8S_VERSION=$(kubectl version --short | grep 'Server Version:' | sed 's/[^0-9.]*\([0-9.]*\).*/\1/' | cut -d. -f1,2)
-export AUTOSCALER_VERSION="1.23.1"
+#export AUTOSCALER_VERSION="1.23.1"
+export AUTOSCALER_VERSION="1.26.2"
 echo $K8S_VERSION
 echo $AUTOSCALER_VERSION
 ```
@@ -435,7 +436,7 @@ spec:
             - --cloud-provider=aws
             - --skip-nodes-with-local-storage=false
             - --expander=least-waste
-            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${ekscluster_name}
+            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${EKSCLUSTER_NAME}
           volumeMounts:
             - name: ssl-certs
               mountPath: /etc/ssl/certs/ca-certificates.crt
