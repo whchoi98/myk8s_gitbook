@@ -35,7 +35,7 @@ Fargate 구성요소
 
 <pre><code><strong>#eks fargate profile 생성
 </strong><strong>eksctl create fargateprofile \
-</strong>  --cluster $ekscluster_name \
+</strong>  --cluster ${EKSCLUSTER_NAME} \
   --name fargate-game-2048 \
   --namespace fargate-game-2048
 
@@ -47,7 +47,7 @@ Fargate 포드 실행 역할은 이를 수행할 수 있는 IAM 권한을 제공
 
 ```
 eksctl get fargateprofile \
-  --cluster $ekscluster_name \
+  --cluster ${EKSCLUSTER_NAME} \
   -o yaml
   
 ```
