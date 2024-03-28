@@ -93,7 +93,7 @@ IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을
 source ~/.bash_profile
 eksctl utils associate-iam-oidc-provider \
     --region ${AWS_REGION} \
-    --cluster ${ekscluster_name} \
+    --cluster ${EKSCLUSTER_NAME} \
     --approve
     
 ```
@@ -101,7 +101,7 @@ eksctl utils associate-iam-oidc-provider \
 다음과 같이 Cloud9 Console 또는 IAM 서비스 메뉴에서 생성된 OIDC를 확인 할 수 있습니다.
 
 ```
-aws eks describe-cluster --name ${ekscluster_name} --query "cluster.identity.oidc.issuer" --output text
+aws eks describe-cluster --name ${EKSCLUSTER_NAME} --query "cluster.identity.oidc.issuer" --output text
 aws iam list-open-id-connect-providers
 
 ```
@@ -160,7 +160,7 @@ aws iam create-policy \
 
 ```
 eksctl create iamserviceaccount \
---cluster=${ekscluster_name} \
+--cluster=${EKSCLUSTER_NAME} \
 --namespace=kube-system \
 --name=aws-load-balancer-controller \
 --attach-policy-arn=arn:aws:iam::${ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy \
