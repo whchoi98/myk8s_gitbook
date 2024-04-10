@@ -63,7 +63,7 @@ Argo CD CLI를 설치합니다. API 서버와 Interactive하게 운영하려면 
 
 ```
 sudo curl --silent --location -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.4.7/argocd-linux-amd64
-sudo chmod +x /usr/local/bin/argocd
+sudo chmod 755 /usr/local/bin/argocd
 
 ```
 
@@ -203,6 +203,8 @@ apps   Deployment  default         ecsdemo-nodejs  OutOfSync  Missing
 
 UI에서도 동일한 값을 확인 할 수 있습니다.
 
+<figure><img src="../.gitbook/assets/image (511).png" alt=""><figcaption></figcaption></figure>
+
 <figure><img src="../.gitbook/assets/image (119).png" alt=""><figcaption></figcaption></figure>
 
 애플리케이션이 아직 배포되지 않았기 때문에 애플리케이션이 OutOfSync 상태에 있음을 알 수 있습니다. 이제 애플리케이션을 동기화합니다.
@@ -214,32 +216,34 @@ argocd app sync ecsdemo-nodejs
 
 2\~3분 이후 Synced 된 상태와 Heathy 상태로 전환된 것을 확인 할 수 있습니다.
 
+* operation 과 Health Status 를 확인해 봅니다.
+
 ```
 $ argocd app sync ecsdemo-nodejs
 TIMESTAMP                  GROUP        KIND   NAMESPACE                      NAME    STATUS   HEALTH        HOOK  MESSAGE
-2023-01-31T00:05:33+00:00            Service  ecsdemo-nodejs        ecsdemo-nodejs    Synced  Healthy              
-2023-01-31T00:05:33+00:00   apps  Deployment     default            ecsdemo-nodejs    Synced  Healthy              
-2023-01-31T00:05:34+00:00            Service  ecsdemo-nodejs        ecsdemo-nodejs    Synced  Healthy              service/ecsdemo-nodejs unchanged
-2023-01-31T00:05:34+00:00   apps  Deployment     default            ecsdemo-nodejs    Synced  Healthy              deployment.apps/ecsdemo-nodejs unchanged
+2024-04-10T17:14:46+00:00            Service  ecsdemo-nodejs        ecsdemo-nodejs    Synced  Healthy              
+2024-04-10T17:14:46+00:00   apps  Deployment     default            ecsdemo-nodejs    Synced  Healthy              
+2024-04-10T17:14:46+00:00            Service  ecsdemo-nodejs        ecsdemo-nodejs    Synced  Healthy              service/ecsdemo-nodejs unchanged
+2024-04-10T17:14:46+00:00   apps  Deployment     default            ecsdemo-nodejs    Synced  Healthy              deployment.apps/ecsdemo-nodejs unchanged
 
 Name:               ecsdemo-nodejs
 Project:            default
 Server:             https://kubernetes.default.svc
 Namespace:          ecsdemo-nodejs
-URL:                https://a81830f78562145b3bca329b3a7699cb-1011047444.ap-northeast-2.elb.amazonaws.com/applications/ecsdemo-nodejs
+URL:                https://a789961eb82e34825a3b66ee39dee3d5-1295411879.ap-northeast-2.elb.amazonaws.com/applications/ecsdemo-nodejs
 Repo:               https://github.com/whchoi98/ecsdemo-nodejs.git
 Target:             
 Path:               kubernetes
 SyncWindow:         Sync Allowed
 Sync Policy:        <none>
-Sync Status:        Synced to  (c63f795)
+Sync Status:        Synced to  (95cad14)
 Health Status:      Healthy
 
 Operation:          Sync
-Sync Revision:      c63f79569c15ac032241ea98479801f061e75aac
+Sync Revision:      95cad1467942af867234f3b7f8d4bc0140fbf67a
 Phase:              Succeeded
-Start:              2023-01-31 00:05:33 +0000 UTC
-Finished:           2023-01-31 00:05:33 +0000 UTC
+Start:              2024-04-10 17:14:46 +0000 UTC
+Finished:           2024-04-10 17:14:46 +0000 UTC
 Duration:           0s
 Message:            successfully synced (all tasks run)
 
@@ -248,13 +252,13 @@ GROUP  KIND        NAMESPACE       NAME            STATUS  HEALTH   HOOK  MESSAG
 apps   Deployment  default         ecsdemo-nodejs  Synced  Healthy        deployment.apps/ecsdemo-nodejs unchanged
 ```
 
-<figure><img src="../.gitbook/assets/image (110).png" alt=""><figcaption></figcaption></figure>
+ArgoCD 콘솔에서도 동일하게 확인할 수 있습니다.
+
+<figure><img src="../.gitbook/assets/image (512).png" alt=""><figcaption></figcaption></figure>
 
 ## Application Update&#x20;
 
 Application이 ArgoCD에 배포되었습니다. 이제 애플리케이션과 동기화된 github 저장소를 업데이트 해 봅니다.
-
-
 
 ### 5.Application Update
 
@@ -270,6 +274,14 @@ https://github.com/{github-userid}/ecsdemo-nodejs/blob/master/kubernetes/deploym
 
 이제 다시 Argo CD에서 상태를 확인해 봅니다.
 
-<figure><img src="../.gitbook/assets/image (88).png" alt=""><figcaption></figcaption></figure>
+ArgoCD 화면에서 Sync를 선택하고, 아래와 같이 추가로 Sync 시킵니다.
+
+<div align="left">
+
+<figure><img src="../.gitbook/assets/image (513).png" alt="" width="375"><figcaption></figcaption></figure>
+
+</div>
+
+<figure><img src="../.gitbook/assets/image (516).png" alt=""><figcaption></figcaption></figure>
 
 Argo CD의 UI에서 주요 메뉴들을 선택해서 실제 어떻게 Report 되는지를 살펴봅니다. \
