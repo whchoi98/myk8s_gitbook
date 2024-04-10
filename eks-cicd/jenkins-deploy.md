@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2023-09-20'
+description: 'Update : 2024-04-10'
 ---
 
 # Jenkins 기반 CI
@@ -8,9 +8,9 @@ description: 'Update : 2023-09-20'
 
 [Jenkins](https://jenkins.io/)는 Java로 작성된 오픈 소스 지속적 통합 도구로서, 소프트웨어 개발을 위한 사용자 지정 통합 서비스를 제공합니다. 많은 개발 팀에서 사용하는 서버 기반 시스템입니다. 소프트웨어 개발 수명 주기(SDLC)를 가속화하고자 한다면 Jenkins를 사용해야 합니다. Jenkins를 사용하면 다양한 환경으로 빌드, 배포 및 테스트를 통합하고 개발 팀이 대기하는 시간을 줄일 수 있습니다. 그뿐만 아니라 지속적으로 통합할 수 있으므로 Jenkins는 빠른 반복 주기를 사용하는 민첩한 방법론과 데브옵스에 매우 적합합니다. AWS는 Jenkins와 같은 애플리케이션을 실행하는 데 적합한 안정적이고 확장 가능하며 안전한 인프라 리소스를 제공합니다. AWS 컴퓨팅에서 Jenkins를 실행함으로써 사용한 만큼만 비용을 지불하고 특정 요구 사항에 맞춰 용량을 확장하거나 축소할 수 있습니다.
 
-해당 모듈은 [Code Pipeline 기반 CI/CD 의 Repo 구성 절차](https://whchoi98.gitbook.io/k8s/eks-cicd/cicd-w-codepipeline#repo)가 완료 되어 있다는 것을 전제로 합니다.
+**해당 모듈은** [**Code Pipeline 기반 CI/CD 의 Repo 구성 절차**](https://whchoi98.gitbook.io/k8s/eks-cicd/cicd-w-codepipeline#repo)**가 완료 되어 있다는 것을 전제로 합니다.**
 
-### Elastic Container Registry 생성 <a href="#role" id="role"></a>
+### 2. Elastic Container Registry 생성 <a href="#role" id="role"></a>
 
 ECR 콘솔로 이동 합니다.
 
@@ -30,7 +30,7 @@ ECR 콘솔로 이동 합니다.
 
 <figure><img src="../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
 
-### Jenkins 설치 <a href="#role" id="role"></a>
+### 3. Jenkins 설치 <a href="#role" id="role"></a>
 
 #### Jenkins Node를  아래와 같이 생성합니다. <a href="#id-2.-aws-auth-configmap" id="id-2.-aws-auth-configmap"></a>
 
@@ -63,6 +63,17 @@ ECR 콘솔로 이동 합니다.
 
 #### Jenkins Node 세팅 <a href="#id-2.-aws-auth-configmap" id="id-2.-aws-auth-configmap"></a>
 
+Cloud9 터미널에서 아래와 같이 실행해서, Jenkins Node로 접근합니다.
+
+```
+aws ec2 describe-instances --filters 'Name=tag:Name,Values=eksworkshop-jenkins-01-Node' 'Name=instance-state-name,Values=running' | jq -r '.Reservations[].Instances[].InstanceId'
+export Jenkins_Node=$(aws ec2 describe-instances --filters 'Name=tag:Name,Values=eksworkshop-jenkins-01-Node' 'Name=instance-state-name,Values=running' | jq -r '.Reservations[].Instances[].InstanceId')
+echo "export Jenkins_Node=${Jenkins_Node}"| tee -a ~/.bash_profile
+source ~/.bash_profile
+aws ssm start-session --target $Jenkins_Node
+
+```
+
 SSM을 사용해 Jenkins Node에 연결합니다. 아래의 명령어들을 실행합니다.
 
 ```sh
@@ -93,35 +104,62 @@ sudo systemctl start jenkins
 
 # check jenkins status
 systemctl status jenkins
+
 ```
 
 initialAdminPassword 확인하여 Copy 합니다.
 
 ```sh
-cat /var/lib/jenkins/secrets/initialAdminPassword
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
 ```
 
 eksworkshop-jenkins-01-Node 의 퍼블릭 IPv4 DNS 로 접속해 Jenkins Getting Started 페이지로 이동합니다.
+
+```
+aws ec2 describe-instances --filters "Name=tag:Name,Values=eksworkshop-jenkins-01-Node" --query 'Reservations[].Instances[].PublicIpAddress' --output text
+export Jenkins_Node_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=eksworkshop-jenkins-01-Node" --query 'Reservations[].Instances[].PublicIpAddress' --output text)
+echo $Jenkins_Node_IP:8080
+
+```
 
 <figure><img src="../.gitbook/assets/image (24).png" alt=""><figcaption></figcaption></figure>
 
 이전 절차에서 복사해둔 initialAdminPassword 를 붙여넣습니다.
 
+
+
 <figure><img src="../.gitbook/assets/image (23).png" alt=""><figcaption></figcaption></figure>
 
 Install Suggested Plugins 클릭합니다.
 
+5\~7분 Plugins 설치 시간이 소요됩니다.
 
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 새로운 관리자 계정을 생성 합니다.
 
-<figure><img src="../.gitbook/assets/image (26).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 Jenkins URL을 설정 합니다. 해당 실습에서는 Jenkins Node 의 IPv4 도메인으로 설정합니다.
 
+```
+export Jenkins_Node_Domain=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=eksworkshop-jenkins-01-Node" --query 'Reservations[].Instances[].PublicDnsName' --output text)
+echo $Jenkins_Node_Domain:8080
+
+```
+
 <figure><img src="../.gitbook/assets/image (27).png" alt=""><figcaption></figcaption></figure>
 
-### Job 생성하기
+Jenkins를 시작합니다.
+
+<div align="left">
+
+<figure><img src="../.gitbook/assets/image (2).png" alt="" width="375"><figcaption></figcaption></figure>
+
+</div>
+
+### 4.Job 생성하기
 
 새로운 Job 을 생성 합니다.
 
@@ -152,7 +190,7 @@ docker build --tag $IMAGE_NAME .
 docker push $IMAGE_NAME
 ```
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Build Now로 Build가 잘 동작하는지 테스트 해봅니다.
 
@@ -224,7 +262,7 @@ Configure > Build Steps 에서 Add build step 클릭 후 Execute shell 클릭
 
 <figure><img src="../.gitbook/assets/image (21).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
 
 ```
 sed -i "s/CONTAINER_IMAGE/103787587884.dkr.ecr.ap-northeast-2.amazonaws.com\/jenkins-ci-test:$BUILD_NUMBER/" hello-k8s.yml
@@ -237,7 +275,7 @@ kubectl get all --selector=app=hello-k8s
 
 github repository로 돌아가 다시 소스코드 수정 후 commit.
 
-<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 이미지 빌드 확인
 
