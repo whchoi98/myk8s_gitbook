@@ -94,7 +94,7 @@ https://github.com/whchoi98/eks-workshop-sample-api-service-go
 
 아래와 같이 이동한 Repo에서 Fork 를 수행합니다.
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (109).png" alt=""><figcaption></figcaption></figure>
 
@@ -239,3 +239,13 @@ kubectl get services hello-k8s -o wide
 아래는 변경된 메세지가 포함된 결과입니다.&#x20;
 
 ![](<../.gitbook/assets/image (345).png>)
+
+Jenkins 기반 CI 랩을 수행하기 위해서, 아래 작업을 통해 Codepipeline을 삭제합니다.
+
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+
+```
+kubectl delete pods hello-k8s-86cffd459c-xxxxx
+kubectl delete svc hello-k8s
+```
+
