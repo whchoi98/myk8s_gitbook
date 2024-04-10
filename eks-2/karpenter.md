@@ -515,29 +515,42 @@ Deployment 하기 전에 웹브라우저에서 앞서 생성한 kube-ops-view를
 아래 kube-ops-view를 먼저 설치합니다.
 
 ```
-kubectl create namespace kube-tools
-helm repo add christianknell https://christianknell.github.io/helm-charts
-helm repo update
-helm install my-release christianknell/kube-ops-view \
---namespace kube-tools \
---set service.type=LoadBalancer \
---set nodeSelector.nodegroup-type=${K_PUBLIC_MGMD_NODE} \
---set rbac.create=True \
---set service.annotations."service\.beta\.kubernetes\.io/aws-load-balancer-scheme"="internet-facing"
-
+#Kube-ops-view 설치
+helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
+helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --namespace kube-tools
+kubectl patch svc -n kube-tools kube-ops-view -p '{"spec":{"type":"LoadBalancer"}}'
+kubectl -n kube-tools get svc kube-ops-view
 
 ```
 
 kube-ops-view 의 FQDN LB 주소를 확인하고 접속해 봅니다.&#x20;
 
 ```
-kubectl -n kube-tools get svc my-release-kube-ops-view  | tail -n 1 | awk '{ print "my-release-kube-ops-view URL = http://"$4 }'
- 
+kubectl -n kube-tools get svc kube-ops-view | tail -n 1 | awk '{ print "kube-ops-view URL = http://"$4":8080" }'
+
 ```
 
 아래와 같은 현재 Node와 Pod의 구성 배치도를 확인 할 수 있습니다.&#x20;
 
 <figure><img src="../.gitbook/assets/image (117).png" alt=""><figcaption></figcaption></figure>
+
+아래와 같이 eks-node-viewer를 설치합니다.
+
+```
+#go 설치
+yum install -y go
+#EKS Node Viewer 설치 (2~3분 이상 소요)
+go install github.com/awslabs/eks-node-viewer/cmd/eks-node-viewer@v0.5.0
+
+#새로운 터미널에서 실행
+cd ~/go/bin
+./eks-node-viewer
+
+```
+
+아래와 같이 새로운 터미널에서 노드의 상태를 확인 할 수 있습니다.
+
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 Karpenter는 이제 활성화되었으며 노드 프로비저닝을 시작할 준비가 되었습니다. Deployment를 사용하여 Pod를 만들고 Karpenter가 노드를 프로비저닝하는 것을 확인해 봅니다.자동 노드 프로비저닝 이 배포는 [pause image](https://www.ianlewis.org/en/almighty-pause-container)를 사용하고 replica가  없는 상태에서 시작합니다.
 
@@ -606,6 +619,8 @@ kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 kube-ops-view 에서도 신규 노드가 할당된 것을 확인 할 수 있습니다.
 
 <figure><img src="../.gitbook/assets/image (118).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 ### 8. 자동 노드 프로비저닝 2
 
