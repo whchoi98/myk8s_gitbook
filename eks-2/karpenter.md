@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2023-01-27'
+description: 'Update: 2024-04-10'
 ---
 
 # 스케쥴링-Karpenter
