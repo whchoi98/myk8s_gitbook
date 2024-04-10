@@ -4,11 +4,9 @@ description: 'Update : 2023-09-20'
 
 # Jenkins 기반 CI
 
-### Jenkins 소개  <a href="#ci-cd" id="ci-cd"></a>
+### 1. Jenkins 소개  <a href="#ci-cd" id="ci-cd"></a>
 
 [Jenkins](https://jenkins.io/)는 Java로 작성된 오픈 소스 지속적 통합 도구로서, 소프트웨어 개발을 위한 사용자 지정 통합 서비스를 제공합니다. 많은 개발 팀에서 사용하는 서버 기반 시스템입니다. 소프트웨어 개발 수명 주기(SDLC)를 가속화하고자 한다면 Jenkins를 사용해야 합니다. Jenkins를 사용하면 다양한 환경으로 빌드, 배포 및 테스트를 통합하고 개발 팀이 대기하는 시간을 줄일 수 있습니다. 그뿐만 아니라 지속적으로 통합할 수 있으므로 Jenkins는 빠른 반복 주기를 사용하는 민첩한 방법론과 데브옵스에 매우 적합합니다. AWS는 Jenkins와 같은 애플리케이션을 실행하는 데 적합한 안정적이고 확장 가능하며 안전한 인프라 리소스를 제공합니다. AWS 컴퓨팅에서 Jenkins를 실행함으로써 사용한 만큼만 비용을 지불하고 특정 요구 사항에 맞춰 용량을 확장하거나 축소할 수 있습니다.
-
-### Prerequisite <a href="#role" id="role"></a>
 
 해당 모듈은 [Code Pipeline 기반 CI/CD 의 Repo 구성 절차](https://whchoi98.gitbook.io/k8s/eks-cicd/cicd-w-codepipeline#repo)가 완료 되어 있다는 것을 전제로 합니다.
 
@@ -34,26 +32,34 @@ ECR 콘솔로 이동 합니다.
 
 ### Jenkins 설치 <a href="#role" id="role"></a>
 
-#### Jenkins Node 생성 <a href="#id-2.-aws-auth-configmap" id="id-2.-aws-auth-configmap"></a>
+#### Jenkins Node를  아래와 같이 생성합니다. <a href="#id-2.-aws-auth-configmap" id="id-2.-aws-auth-configmap"></a>
+
+* Name - eksworkshop-jenkins-01-Node
+* OS Image - Amazon Linux 2 AMI
 
 <figure><img src="../.gitbook/assets/image (507).png" alt=""><figcaption></figcaption></figure>
 
+* Instance Type : t3.xlarge
+
 <figure><img src="../.gitbook/assets/image (508).png" alt=""><figcaption></figcaption></figure>
+
+* VPC - eksworkshop
+* Subnet - eksworkshop-PublicSubnet01
+* Public Ip - Enable
+* Firewall (Security Groups) - Create Security Group
+* Security Group Name - Jenkins-SG
+* Security Group Rule 1
+  * Type : HTTP
+  * Source Type : Anywhere
+* Security Group Rule 2
+  * Type : 8080
+  * Source Type : Anywhere
 
 <figure><img src="../.gitbook/assets/image (509).png" alt=""><figcaption></figcaption></figure>
 
+* IAM Instance Profile : c9\_profile
+
 <figure><img src="../.gitbook/assets/image (510).png" alt=""><figcaption></figcaption></figure>
-
-* Node Name : eksworkshop-jenkins-01-Node
-* Amazon Linux 2
-* 보안그룹
-  * Inbound
-    * HTTP
-    * TCP 8080&#x20;
-* IAM  i: eksworkshop-admin
-* Subnet - eksworkshop-PublicSubnet01 / 퍼블릭 IP 할당
-
-
 
 #### Jenkins Node 세팅 <a href="#id-2.-aws-auth-configmap" id="id-2.-aws-auth-configmap"></a>
 
