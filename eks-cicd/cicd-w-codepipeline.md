@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2022-04-19'
+description: 'Update : 2024-04-10'
 ---
 
 # Code Pipeline기반 CI/CD
@@ -88,13 +88,13 @@ GitHub에 로그인하고 샘플 서비스를 자신의 계정으로 분기합�
 Sample repo&#x20;
 
 ```
-https://github.com/rnzsgh/eks-workshop-sample-api-service-go
+https://github.com/whchoi98/eks-workshop-sample-api-service-go
 
 ```
 
 아래와 같이 이동한 Repo에서 Fork 를 수행합니다.
 
-![](<../.gitbook/assets/image (264).png>)
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (109).png" alt=""><figcaption></figcaption></figure>
 
@@ -109,6 +109,12 @@ CodePipeline이 GitHub에서 Callback을 수신하려면 개인 액세스 토큰
 일단 생성되면 액세스 토큰을 보안 영역에 저장하고 재사용할 수 있으므로 이 단계는 처음 실행하는 동안이나 새 키를 생성해야 할 때만 필요합니다.&#x20;
 
 개인 Github 계정에서 "settings"를 선택합니다.&#x20;
+
+<div align="left">
+
+<figure><img src="../.gitbook/assets/image (505).png" alt="" width="301"><figcaption></figcaption></figure>
+
+</div>
 
 Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 
@@ -162,6 +168,8 @@ https://s3.amazonaws.com/eksworkshop.com/templates/main/ci-cd-codepipeline.cfn.y
 
 다음 단계를 계속 진행해서 , Cloudformation을 완료합니다.
 
+1분 후에 Cloudformation Stack 이 완성됩니다. (Stack Name : eksworkshop-codepipeline)
+
 ### 6.Codepipeline 확인
 
 관리 콘솔에서 CodePipeline을 엽니다.&#x20;
@@ -186,6 +194,7 @@ Codepipeline에서 진행중이거나, 완료된 Pipeline을 선택하면 Build 
 kubectl describe deployment hello-k8s
 kubectl describe service hello-k8s
 kubectl get services hello-k8s -o wide
+kubectl get svc hello-k8s | tail -n 1 | awk '{ print "hello-k8s URL = http://"$4"" }'
 
 ```
 

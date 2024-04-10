@@ -307,7 +307,7 @@ replicaset.apps/grafana-69f4d986f6   1         1         1       48s
 service를 확인합니다.
 
 ```
-kubectl get svc -n grafana grafana
+kubectl -n grafana get svc grafana | tail -n 1 | awk '{ print "grafana URL = http://"$4}'
 
 ```
 

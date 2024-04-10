@@ -136,7 +136,7 @@ docker build --tag $IMAGE_NAME .
 docker push $IMAGE_NAME
 ```
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Build Now로 Build가 잘 동작하는지 테스트 해봅니다.
 
