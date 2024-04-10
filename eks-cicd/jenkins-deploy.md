@@ -26,7 +26,9 @@ ECR 콘솔로 이동 합니다.
 
 <figure><img src="../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
-푸시 명령 보기 버튼을 클릭하여 나오는 명령어를 복사 해놓습니다.
+새로운 ECR Repository를 완성하고, 아래에서 처럼 푸시 명령 보기 버튼을 클릭하여 나오는 명령어를 복사 해놓습니다.
+
+<figure><img src="../.gitbook/assets/image (506).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
 
@@ -34,13 +36,21 @@ ECR 콘솔로 이동 합니다.
 
 #### Jenkins Node 생성 <a href="#id-2.-aws-auth-configmap" id="id-2.-aws-auth-configmap"></a>
 
+<figure><img src="../.gitbook/assets/image (507).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (508).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (509).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../.gitbook/assets/image (510).png" alt=""><figcaption></figcaption></figure>
+
 * Node Name : eksworkshop-jenkins-01-Node
 * Amazon Linux 2
 * 보안그룹
   * Inbound
     * HTTP
     * TCP 8080&#x20;
-* IAM 역할 : eksworkshop-admin
+* IAM  i: eksworkshop-admin
 * Subnet - eksworkshop-PublicSubnet01 / 퍼블릭 IP 할당
 
 
