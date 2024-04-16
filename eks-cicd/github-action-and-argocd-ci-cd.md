@@ -22,7 +22,7 @@ description: 'Update : 2024-04-16'
 3.  `k8s-manifest-repo` 라는 이름으로 github 레파지토리를 생성 합니다. 이 레파지토리는 kubernetes manifests 들을 저장하는 레파지토리입니다.
 
     <figure><img src="../.gitbook/assets/Screenshot 2024-04-16 at 5.24.26 PM (1).png" alt=""><figcaption></figcaption></figure>
-4. User profile > Settings > Developer settings > Personal access tokens 탭의 Tokens (classic)을 클릭합니다. 그리고 우측 상단에 위치한 Generate new token을 선택 합니다. Note 에 test-eks-workshop 라고 입력 하고 Select scopes 에서 repo, workflow 를 선택 합니다. 그리고 화면 아래에서 Generate token 을 클릭 합니다.
+4. **User profile > Settings > Developer settings > Personal access tokens** 탭의 **Tokens (classic)**을 클릭합니다. 그리고 우측 상단에 위치한 **Generate new token**을 선택 합니다. **Note** 에 `test-eks-workshop` 라고 입력 하고 **Select scopes** 에서 **repo**, **workflow** 를 선택 합니다. 그리고 화면 아래에서 **Generate token** 을 클릭 합니다.
 
 <figure><img src="../.gitbook/assets/Screenshot 2024-04-16 at 3.49.35 PM.png" alt=""><figcaption></figcaption></figure>
 
@@ -50,7 +50,7 @@ aws ecr create-repository \\
 
 ```sh
 cd /home/ec2-user/environment
-git clone <https://github.com/joozero/amazon-eks-frontend.git>
+git clone https://github.com/joozero/amazon-eks-frontend.git
 cd ~/environment/amazon-eks-frontend
 rm -rf .git
 git init
@@ -58,13 +58,13 @@ git init
 
 8. 스크립트의 **your-github-username**를 실습자의 환경에 맞게 수정하여 환경변수를 설정합니다.
 
-```jsx
+```sh
 export GITHUB_USERNAME=your-github-username
 ```
 
 9. 위에서 생성한 `front-app-repo` 에 애플리케이션 소스코드를 push합니다.
 
-```jsx
+```sh
 cd ~/environment/amazon-eks-frontend
 git init
 git add .
@@ -86,7 +86,7 @@ push 과정에서 필요한 **username**은 **github username**, **password**는
 만약 push 과정에서, username, password 를 매번 넣어야 하는 상황이 번거롭다면 아래와 같이 cache 설정을 통해 지정 된 시간(기본 15분) 동안 cache 기반으로 로그인 가능 합니다. 이 때 아래의 USERNAME 및 EMAIL 값은 실습자의 환경에 맞게 수정하여 입력합니다.
 {% endhint %}
 
-```jsx
+```sh
 git config --global user.name USERNAME
 git config --global user.email EMAIL
 git config credential.helper store
@@ -137,25 +137,25 @@ EOF
 
 12. 만들어진 파일을 통해 IAM policy를 생성 합니다. 이때 policy 이름으로 `ecr-policy` 를 사용 합니다.
 
-```jsx
+```sh
 aws iam create-policy --policy-name ecr-policy --policy-document file://ecr-policy.json
 ```
 
 13. 생성한 ecr-policy를 새로 생성한 IAM user 에게 할당 합니다.
 
-```jsx
+```sh
 aws iam attach-user-policy --user-name github-action --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/ecr-policy
 ```
 
 14. 이번 실습에서는 Github Action이 빌드된 애플리케이션을 Docker Image로 만들어 ECR로 push 합니다. 이 과정에서 AWS credential 을 사용 합니다. 이를 위해 앞서 `github-action`이라는 IAM User를 생성 했습니다. 이제 아래 명령어를 실행하여 해당 User의 Access Key, Secret Key를 생성하도록 하겠습니다.
 
-```jsx
+```sh
 aws iam create-access-key --user-name github-action
 ```
 
 아래와 같은 출력 결과 중 `"SecretAccessKey"`, `"AccessKeyId"`값을 따로 기록해둡니다. 이 값은 향후에 사용 합니다.
 
-```jsx
+```sh
 {
   "AccessKey": {
     "UserName": "github-action",
@@ -181,13 +181,13 @@ aws iam create-access-key --user-name github-action
     <figure><img src="../.gitbook/assets/Untitled (5) (1).png" alt=""><figcaption></figcaption></figure>
 18. 이제 Github Action에서 사용할 빌드 스크립트를 생성하도록 하겠습니다. 먼저 .github 및 workflows 디렉터리를 생성합니다.
 
-    ```jsx
+    ```sh
     cd ~/environment/amazon-eks-frontend
     mkdir -p ./.github/workflows
     ```
 19. front-app Repo의 소스코드를 checkout 하고, build 한 다음, docker container 로 만들어 ECR 로 push 하는 과정을 담고 있는 github action build 스크립트를 작성 합니다. 이 때 `$IMAGE_TAG` 값은 빌드 마다 랜덤한 값으로 만들어 이미지에 부착하여 ECR로 push 합니다.
 
-    ```jsx
+    ```sh
     cd ~/environment/amazon-eks-frontend/.github/workflows
     cat > build.yaml <<EOF
 
@@ -247,7 +247,7 @@ aws iam create-access-key --user-name github-action
     ```
 20. 이제 변경한 코드를 `front-app-repo` 로 push 하여 github action workflow를 동작 시킵니다. 위에서 작성한 build.yaml 을 기반으로 github action이 동작 합니다.
 
-    ```jsx
+    ```sh
     cd ~/environment/amazon-eks-frontend
     git add .
     git commit -m "Add github action build script"
@@ -270,7 +270,7 @@ aws iam create-access-key --user-name github-action
 Kustomize 는 쿠버네티스 manifest 를 사용자 입맛에 맞도록 정의 하는데 도움을 주는 도구 입니다. 여기서 "사용자 입맛에 맞도록 정의"에 포함 되는 경우는, 모든 리소스에 동일한 네임스페이스를 정의 하거나, 동일한 네임 접두사/접미사를 준다거나, 동일한 label 을 주거나, 이미지 태그 값을 변경 하는 것들이 있을 수 있습니다. Kustomize 에 관한 자세한 내용은 [다음 ](https://kustomize.io/)을 참고 하세요.
 {% endhint %}
 
-```jsx
+```sh
 cd ~/environment
 git clone https://github.com/$GITHUB_USERNAME/k8s-manifest-repo.git
 mkdir -p ./k8s-manifest-repo/base
@@ -284,7 +284,7 @@ mkdir -p ./k8s-manifest-repo/overlays/dev
 
 2. kubernetes manifest 파일을 생성하도록 하겠습니다. 이 때, 이미지 값에는 **demo-frontend** 리포지토리 URI 값이 잘 들어갔는지 확인합니다.
 
-```jsx
+```sh
 cd ~/environment/k8s-manifest-repo/base
 
 cat <<EOF> frontend-deployment.yaml
@@ -314,7 +314,7 @@ EOF
 
 ```
 
-```jsx
+```sh
 cat <<EOF> frontend-service.yaml
 ---
 apiVersion: v1
@@ -343,7 +343,7 @@ EOF
 
 아래와 같이 kustomize.yaml 파일을 만듭니다. 이 파일을 통해 kustomize을 통해 관리/변경할 kubernetes manifest 대상을 정의합니다.
 
-```jsx
+```sh
 cd ~/environment/k8s-manifest-repo/base
 cat <<EOF> kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -356,7 +356,7 @@ EOF
 
 4. 이제 위에서 정의한 kubernetes manifest 대상에 어떤 값들을 입맛에 맞게 적용할지 를 결정 하기 위한 파일을 만듭니다. 먼저 fronted-deployment.yaml 을 위한 설정 값을 정의 하겠습니다.
 
-```jsx
+```sh
 cd ~/environment/k8s-manifest-repo/overlays/dev
 cat <<EOF> front-deployment-patch.yaml
 apiVersion: apps/v1
@@ -380,7 +380,7 @@ EOF
 
 5. 다음은 frontend-service.yaml 을 위한 설정 값을 정의 하겠습니다.
 
-```jsx
+```sh
 cd ~/environment/k8s-manifest-repo/overlays/dev
 cat <<EOF> front-service-patch.yaml
 apiVersion: v1
@@ -400,7 +400,7 @@ EOF
 
 6. 마지막으로 위에서 설정 한 파일들(값)을 사용하고 애플리케이션 빌드에 따라 만들어진 새로운 **Image Tag** 를 사용하겠다고 정의 하겠습니다. 구체적으로는, `name` 에 지정된 image는 `newName`의 image와 `newTag`의 값으로 사용 하겠다는 의미 입니다. 이를 활용해 `newTag` 값을 변경해 새로운 배포가 이루어질 때 마다 이를 kubernetes 클러스터에 반영 할 수 있습니다. 아래 명령을 실행 합니다.
 
-```jsx
+```sh
 cd ~/environment/k8s-manifest-repo/overlays/dev
 cat <<EOF> kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -422,7 +422,7 @@ EOF
 
 7. 생성한 kubernetes manifests 및 kustomize 관련 파일들을 `k8s-manifest-repo` 에 push합니다.
 
-```jsx
+```sh
 cd ~/environment/k8s-manifest-repo/
 git add .
 git commit -m "first commit"
@@ -432,14 +432,14 @@ git push -u origin main
 
 8. 다음을 실행 하여 ArgoCD를 eks cluster 에 설치 합니다.
 
-```jsx
+```sh
 kubectl create namespace argocd
 kubectl apply -n argocd -f <https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml>
 ```
 
 9. ArgoCD 는 GUI 뿐만 아니라 CLI도 제공 합니다. 아래를 실행하여 ArgoCD CLI 를 설치 합니다.
 
-```jsx
+```sh
 cd ~/environment
 VERSION=$(curl --silent "<https://api.github.com/repos/argoproj/argo-cd/releases/latest>" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\\1/')
 
@@ -451,20 +451,20 @@ sudo chmod +x /usr/local/bin/argocd
 
 10. ArgoCD 서버는 기본적으로 퍼블릭하게 노출되지 않습니다. 여기에서는 편의상 로드 밸런서를 사용하여 외부에 노출 시킵니다. LoadBalancer가 생성될 때까지 2\~3분 정도 소요됩니다.
 
-```jsx
+```sh
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
 
 11. 아래 명령을 통해서 Argo CD 서버의 주소를 변수에 저장해 둡니다.
 
-```jsx
+```sh
 export ARGOCD_SERVER=`kubectl get svc argocd-server -n argocd -o json | jq --raw-output .status.loadBalancer.ingress[0].hostname`
 echo $ARGOCD_SERVER
 ```
 
 12. ArgoCD의 기본 Username은 `admin` 이고, 아래 명령어를 실행하여 `admin` 유저의 초기 password를 확인할 수 있습니다.
 
-```jsx
+```sh
 ARGO_PWD=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 echo $ARGO_PWD
 ```
@@ -477,13 +477,13 @@ echo $ARGO_PWD
 
 Cloud9 터미널에서 다음 명령어를 실행하여 CLI에서도 로그인을 진행할 수 있습니다.
 
-```jsx
+```sh
 argocd login $ARGOCD_SERVER --username admin --password $ARGO_PWD --insecure
 ```
 
 위의 명령어를 실행하면 다음과 같이 CLI 환경에서 로그인이 된 것을 확인할 수 있습니다.
 
-```jsx
+```sh
 $ argocd login $ARGOCD_SERVER --username admin --password $ARGO_PWD --insecure
 'admin:login' logged in successfully
 Context 'a81830f78562145b3bca329b3a7699cb-1011047444.ap-northeast-2.elb.amazonaws.com' updated
@@ -492,14 +492,14 @@ Context 'a81830f78562145b3bca329b3a7699cb-1011047444.ap-northeast-2.elb.amazonaw
 
 14. 클러스터 컨텍스트를 사용하여 ArgoCD CLI와 연결합니다.
 
-```jsx
+```sh
 CONTEXT_NAME=`kubectl config view -o jsonpath='{.current-context}'`
 argocd cluster add $CONTEXT_NAME -y
 ```
 
 위 명령어 실행 결과는 아래와 같습니다.
 
-```jsx
+```sh
 $ argocd cluster add $CONTEXT_NAME -y
 WARNING: This will create a service account `argocd-manager` on the cluster referenced by context `i-0fd091734070b9f6f@eksworkshop.ap-northeast-2.eksctl.io` with full cluster level privileges. Do you want to continue [y/N]? y
 INFO[0003] ServiceAccount "argocd-manager" created in namespace "kube-system" 
@@ -510,19 +510,19 @@ Cluster '<https://095783B7DF46A1EA53103B1201579207.gr7.ap-northeast-2.eks.amazon
 
 15. ArgoCD의 애플리케이션을 구성하고 `k8s-manifest-repo` 에 연결합니다.
 
-```jsx
+```sh
 argocd app create eksworkshop-cd-pipeline --repo <https://github.com/${GITHUB_USERNAME}/k8s-manifest-repo.git> --path overlays/dev --dest-server <https://kubernetes.default.svc> --dest-namespace default --revision main
 ```
 
 16. 이제 애플리케이션이 설정되었으므로 배포된 애플리케이션 상태를 argo cd cli로 확인합니다.
 
-```jsx
+```sh
 argocd app get eksworkshop-cd-pipeline
 ```
 
 다음과 같이 출력됩니다.
 
-```jsx
+```sh
 $ argocd app get eksworkshop-cd-pipeline
 Name:               argocd/eksworkshop-cd-pipeline
 Project:            default
@@ -550,7 +550,7 @@ UI에서도 동일한 값을 확인할 수 있습니다.
 
 17. 앞서 생성한 github action build 스크립트에 kustomize를 이용하여 컨테이너 image tag 정보를 업데이트 한 후 _**k8s-manifest-repo**_에 commit/push 하는 단계를 추가 해야 합니다. 추가된 단계가 정상적으로 동작 하면, **ArgoCD**가 _**k8s-manifest-repo**_를 지켜 보고 있다가 새로운 변경 사항이 발생 되었음을 알아채고, **kustomize build** 작업을 수행하여 새로운 **kubernetes manifest** (\*새로운 image tag를 포함한)를 eks 클러스터에 배포 합니다.
 
-```jsx
+```sh
 cd ~/environment/amazon-eks-frontend/.github/workflows
 cat <<EOF>> build.yaml
 
