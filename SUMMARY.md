@@ -83,6 +83,7 @@
   * [Jenkins 기반 CI](eks-cicd/jenkins-deploy.md)
   * [WEAVE Flux 기반 GitOps (TBD)](eks-cicd/gitops-w-weave-flux.md)
   * [Argo 기반 CD](eks-cicd/argo-cd.md)
+  * [Github Action & ArgoCD 기반 CI/CD](eks-cicd/github-action-and-argocd-ci-cd.md)
 * [12.EKS Service Mesh](eks-service-mesh/README.md)
   * [Istio](eks-service-mesh/istio/README.md)
     * [Istio 소개](eks-service-mesh/istio/istio\_overview.md)
