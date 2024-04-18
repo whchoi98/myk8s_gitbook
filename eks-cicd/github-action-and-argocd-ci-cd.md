@@ -215,8 +215,8 @@ aws iam create-access-key --user-name github-action
           - name: Configure AWS credentials
             uses: aws-actions/configure-aws-credentials@v1
             with:
-              aws-access-key-id: \\${{ secrets.AWS_ACCESS_KEY_ID }}
-              aws-secret-access-key: \\${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              aws-access-key-id: \${{ secrets.AWS_ACCESS_KEY_ID }}
+              aws-secret-access-key: \${{ secrets.AWS_SECRET_ACCESS_KEY }}
               aws-region: $AWS_REGION
 
           - name: Login to Amazon ECR
@@ -226,23 +226,24 @@ aws iam create-access-key --user-name github-action
           - name: Get image tag(verion)
             id: image
             run: |
-              VERSION=\\$(echo \\${{ github.sha }} | cut -c1-8)
-              echo VERSION=\\$VERSION
-              echo "::set-output name=version::\\$VERSION"
+              VERSION=\$(echo \${{ github.sha }} | cut -c1-8)
+              echo VERSION=\$VERSION
+              echo "::set-output name=version::\$VERSION"
 
           - name: Build, tag, and push image to Amazon ECR
             id: image-info
             env:
-              ECR_REGISTRY: \\${{ steps.login-ecr.outputs.registry }}
+              ECR_REGISTRY: \${{ steps.login-ecr.outputs.registry }}
               ECR_REPOSITORY: demo-frontend
-              IMAGE_TAG: \\${{ steps.image.outputs.version }}
+              IMAGE_TAG: \${{ steps.image.outputs.version }}
             run: |
-              echo "::set-output name=ecr_repository::\\$ECR_REPOSITORY"
-              echo "::set-output name=image_tag::\\$IMAGE_TAG"
-              docker build -t \\$ECR_REGISTRY/\\$ECR_REPOSITORY:\\$IMAGE_TAG .
-              docker push \\$ECR_REGISTRY/\\$ECR_REPOSITORY:\\$IMAGE_TAG
+              echo "::set-output name=ecr_repository::\$ECR_REPOSITORY"
+              echo "::set-output name=image_tag::\$IMAGE_TAG"
+              docker build -t \$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG .
+              docker push \$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG
 
     EOF
+
 
     ```
 20. 이제 변경한 코드를 `front-app-repo` 로 push 하여 github action workflow를 동작 시킵니다. 위에서 작성한 build.yaml 을 기반으로 github action이 동작 합니다.
@@ -441,7 +442,7 @@ kubectl apply -n argocd -f <https://raw.githubusercontent.com/argoproj/argo-cd/s
 
 ```sh
 cd ~/environment
-VERSION=$(curl --silent "<https://api.github.com/repos/argoproj/argo-cd/releases/latest>" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\\1/')
+VERSION=$(curl --silent "<https://api.github.com/repos/argoproj/argo-cd/releases/latest>" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
 
 sudo curl --silent --location -o /usr/local/bin/argocd <https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64>
 
@@ -562,16 +563,16 @@ cat <<EOF>> build.yaml
         with:
           repository: $GITHUB_USERNAME/k8s-manifest-repo
           ref: main
-          token: \\${{ secrets.ACTION_TOKEN }}
+          token: \${{ secrets.ACTION_TOKEN }}
           path: k8s-manifest-repo
 
       - name: Update Kubernetes resources
         run: |
-          echo \\${{ steps.login-ecr.outputs.registry }}
-          echo \\${{ steps.image-info.outputs.ecr_repository }}
-          echo \\${{ steps.image-info.outputs.image_tag }}
+          echo \${{ steps.login-ecr.outputs.registry }}
+          echo \${{ steps.image-info.outputs.ecr_repository }}
+          echo \${{ steps.image-info.outputs.image_tag }}
           cd k8s-manifest-repo/overlays/dev/
-          kustomize edit set image \\${{ steps.login-ecr.outputs.registry}}/\\${{ steps.image-info.outputs.ecr_repository }}=\\${{ steps.login-ecr.outputs.registry}}/\\${{ steps.image-info.outputs.ecr_repository }}:\\${{ steps.image-info.outputs.image_tag }}
+          kustomize edit set image \${{ steps.login-ecr.outputs.registry}}/\${{ steps.image-info.outputs.ecr_repository }}=\${{ steps.login-ecr.outputs.registry}}/\${{ steps.image-info.outputs.ecr_repository }}:\${{ steps.image-info.outputs.image_tag }}
           cat kustomization.yaml
 
       - name: Commit files
