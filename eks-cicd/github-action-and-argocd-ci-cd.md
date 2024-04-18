@@ -215,8 +215,8 @@ aws iam create-access-key --user-name github-action
           - name: Configure AWS credentials
             uses: aws-actions/configure-aws-credentials@v1
             with:
-              aws-access-key-id: \${{ secrets.AWS_ACCESS_KEY_ID }}
-              aws-secret-access-key: \${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
               aws-region: $AWS_REGION
 
           - name: Login to Amazon ECR
@@ -226,21 +226,21 @@ aws iam create-access-key --user-name github-action
           - name: Get image tag(verion)
             id: image
             run: |
-              VERSION=\$(echo \${{ github.sha }} | cut -c1-8)
-              echo VERSION=\$VERSION
-              echo "::set-output name=version::\$VERSION"
+              VERSION=$(echo \${{ github.sha }} | cut -c1-8)
+              echo VERSION=$VERSION
+              echo "::set-output name=version::$VERSION"
 
           - name: Build, tag, and push image to Amazon ECR
             id: image-info
             env:
-              ECR_REGISTRY: \${{ steps.login-ecr.outputs.registry }}
+              ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
               ECR_REPOSITORY: demo-frontend
-              IMAGE_TAG: \${{ steps.image.outputs.version }}
+              IMAGE_TAG: ${{ steps.image.outputs.version }}
             run: |
-              echo "::set-output name=ecr_repository::\$ECR_REPOSITORY"
-              echo "::set-output name=image_tag::\$IMAGE_TAG"
-              docker build -t \$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG .
-              docker push \$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG
+              echo "::set-output name=ecr_repository::$ECR_REPOSITORY"
+              echo "::set-output name=image_tag::$IMAGE_TAG"
+              docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+              docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     EOF
 
