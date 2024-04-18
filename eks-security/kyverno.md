@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2023-10-10'
+description: 'Update : 2024-04-15'
 ---
 
 # Kyverno
@@ -37,7 +37,7 @@ Kyverno(그리스어 "통치")는 Kubernetes를 위해 특별히 설계된 정�
 
 ## Kyverno 설치
 
-Helm을 기반으로 Kyverno를 설치합니다.
+Helm을 기반으로 Kyverno를 설치합니다.&#x20;
 
 ```
 # kyverno 레포지토리 추가
@@ -49,7 +49,81 @@ helm repo update
 Kyverno를 설치합니다.
 
 ```
-helm install kyverno kyverno/kyverno -n kyverno --create-namespace --set replicaCount=3
+#Kyverno 설치
+helm install kyverno kyverno/kyverno -n kyverno --create-namespace \
+--set admissionController.replicas=3 \
+--set backgroundController.replicas=2 \
+--set cleanupController.replicas=2 \
+--set reportsController.replicas=2
 
+```
+
+
+
+```
+#kyverno가 정상적으로 설치되었는지 확인합니다.
+kubectl -n kyverno get pods
+
+```
+
+
+
+```
+#default namespace를 사용할때 정책 위반 이벤트가 발생하도록 설정합니다.
+kubectl apply -f ~/environment/myeks/kyverno/policy/disallow-default-namespace.yaml
+
+```
+
+
+
+```
+#default namespace를 사용할때 정책 위반 이벤트가 발생합니다.
+kubectl create deployment nginx --image=nginx:latest
+kubectl describe pods nginx-xxxx --show-events=true
+```
+
+
+
+```
+# 정책 위반을 확인해 봅니다.
+kubectl describe pods nginx-xxxx --show-events=true
+```
+
+
+
+```
+#아래와 같이 정책 위반을 확인 할 수 있습니다.
+  Warning  PolicyViolation  3m45s  kyverno-admission  policy disallow-default-namespace/validate-namespace fail: validation error: Using 'default' namespace is not allowed. rule validate-namespace failed at path /metadata/namespace/
+  Warning  PolicyViolation  3m15s  kyverno-scan       policy disallow-default-namespace/validate-namespace fail: validation error: Using 'default' namespace is not allowed. rule validate-namespace failed at path /metadata/namespace/
+  Normal   Scheduled        3m45s  default-scheduler  Successfully assigned default/nginx-6d666844f6-jfcd6 to ip-10-11-41-182.ap-northeast-2.compute.internal
+```
+
+
+
+\~/environment/kyverno/test-disallow-default-namespace.yaml 에서 validationFailureAction: audit 을 validationFailureAction: enforce 로 변경합니다.
+
+```
+validationFailureAction: enforce
+```
+
+생성된 nginx pod를 삭제하고, 다시 생성해 봅니다.
+
+```
+kubectl delete pods nginx-xxxx
+kubectl create deployment nginx --image=nginx:latest
+```
+
+아래와 같은 메세지가 발생하면서, 생성되지 않습니다.
+
+```
+$ kubectl create deployment nginx --image=nginx:latest
+error: failed to create deployment: admission webhook "validate.kyverno.svc-fail" denied the request: 
+
+resource Deployment/default/nginx was blocked due to the following policies 
+
+disallow-default-namespace:
+  validate-podcontroller-namespace: 'validation error: Using ''default'' namespace
+    is not allowed for pod controllers. rule validate-podcontroller-namespace failed
+    at path /metadata/namespace/'
 ```
 
