@@ -512,7 +512,7 @@ Cluster 'https://095783B7DF46A1EA53103B1201579207.gr7.ap-northeast-2.eks.amazona
 15. ArgoCD의 애플리케이션을 구성하고 `k8s-manifest-repo` 에 연결합니다.
 
 ```sh
-argocd app create eksworkshop-cd-pipeline --repo <https://github.com/${GITHUB_USERNAME}/k8s-manifest-repo.git> --path overlays/dev --dest-server <https://kubernetes.default.svc> --dest-namespace default --revision main
+argocd app create eksworkshop-cd-pipeline --repo https://github.com/${GITHUB_USERNAME}/k8s-manifest-repo.git --path overlays/dev --dest-server https://kubernetes.default.svc --dest-namespace default --revision main
 ```
 
 16. 이제 애플리케이션이 설정되었으므로 배포된 애플리케이션 상태를 argo cd cli로 확인합니다.
