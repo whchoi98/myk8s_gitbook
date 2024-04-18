@@ -113,7 +113,13 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 ```
 
-eksworkshop-jenkins-01-Node 의 퍼블릭 IPv4 DNS 로 접속해 Jenkins Getting Started 페이지로 이동합니다.
+이제 아래 명령어를 수행하여 Session Manager 접속을 종료하여 eksworkshop-jenkins-01-Node 터미널에서 빠져나옵니다.
+
+```
+exit
+```
+
+Cloud9 터미널에서 다음의 eksworkshop-jenkins-01-Node 의 퍼블릭 IPv4 DNS 로 접속해 Jenkins Getting Started 페이지로 이동합니다.
 
 ```
 aws ec2 describe-instances --filters "Name=tag:Name,Values=eksworkshop-jenkins-01-Node" --query 'Reservations[].Instances[].PublicIpAddress' --output text
