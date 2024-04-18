@@ -16,7 +16,7 @@ ECR 콘솔로 이동 합니다.
 
 <figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption></figcaption></figure>
 
-새로운 리포지토리를 생성합니다.
+아래와 같은 이름을 가진 신규 ECR 리포지토리를 생성합니다.
 
 * Name : jenkins-ci-test
 
@@ -32,10 +32,10 @@ ECR 콘솔로 이동 합니다.
 
 ### 3. Jenkins 설치 <a href="#role" id="role"></a>
 
-#### Jenkins Node를  아래와 같이 생성합니다. <a href="#id-2.-aws-auth-configmap" id="id-2.-aws-auth-configmap"></a>
+#### Jenkins Node를  아래와 같이 설정하여 생성합니다. <a href="#id-2.-aws-auth-configmap" id="id-2.-aws-auth-configmap"></a>
 
 * Name - eksworkshop-jenkins-01-Node
-* OS Image - Amazon Linux 2 AMI
+* OS Image - Amazon Linux 2 AMI (HVM) - Kernel 5.10, SSD Volume Type
 
 <figure><img src="../.gitbook/assets/image (507).png" alt=""><figcaption></figcaption></figure>
 
@@ -43,11 +43,11 @@ ECR 콘솔로 이동 합니다.
 
 <figure><img src="../.gitbook/assets/image (508).png" alt=""><figcaption></figcaption></figure>
 
-* VPC - eksworkshop
-* Subnet - eksworkshop-PublicSubnet01
-* Public Ip - Enable
-* Firewall (Security Groups) - Create Security Group
-* Security Group Name - Jenkins-SG
+* VPC: eksworkshop
+* Subnet: eksworkshop-PublicSubnet01
+* Public IP: Enable
+* Firewall (Security Groups): Create Security Group
+* Security Group Name / Description: Jenkins-SG
 * Security Group Rule 1
   * Type : HTTP
   * Source Type : Anywhere
@@ -81,7 +81,6 @@ SSM을 사용해 Jenkins Node에 연결합니다. 아래의 명령어들을 실�
 sudo yum update –y
 sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
-sudo yum upgrade
 
 # install java (amazon linux 2)
 sudo yum upgrade -y
