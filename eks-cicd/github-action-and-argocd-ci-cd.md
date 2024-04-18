@@ -168,7 +168,7 @@ aws iam create-access-key --user-name github-action
 
 ```
 
-15. Github의 `front-app-repo` 레파지토리로 돌아가 **Settings > Secrets and variables** 를 선택 한 후, 화면 우측의 **New repository secret** 을 클릭 합니다.
+15. Github의 `front-app-repo` 레파지토리로 돌아가 **Settings > Secrets and variables > Actions** 를 선택 한 후, 화면 우측의 **New repository secret** 을 클릭 합니다.
 
     <figure><img src="../.gitbook/assets/Screenshot 2024-04-16 at 3.36.39 PM (2).png" alt=""><figcaption></figcaption></figure>
 16. 아래 화면 같이 **Name**에는 `ACTION_TOKEN` **Value** 에는 앞서 복사한 Github의 personal access token 값을 넣은 후 **Add secret** 을 클릭 합니다.
@@ -226,7 +226,7 @@ aws iam create-access-key --user-name github-action
           - name: Get image tag(verion)
             id: image
             run: |
-              VERSION=$(echo \${{ github.sha }} | cut -c1-8)
+              VERSION=$(echo ${{ github.sha }} | cut -c1-8)
               echo VERSION=$VERSION
               echo "::set-output name=version::$VERSION"
 
@@ -435,16 +435,16 @@ git push -u origin main
 
 ```sh
 kubectl create namespace argocd
-kubectl apply -n argocd -f <https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml>
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
 9. ArgoCD 는 GUI 뿐만 아니라 CLI도 제공 합니다. 아래를 실행하여 ArgoCD CLI 를 설치 합니다.
 
 ```sh
 cd ~/environment
-VERSION=$(curl --silent "<https://api.github.com/repos/argoproj/argo-cd/releases/latest>" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+VERSION=$(curl --silent "https://api.github.com/repos/argoproj/argo-cd/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/1/')
 
-sudo curl --silent --location -o /usr/local/bin/argocd <https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64>
+sudo curl --silent --location -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64
 
 sudo chmod +x /usr/local/bin/argocd
 
@@ -506,7 +506,7 @@ WARNING: This will create a service account `argocd-manager` on the cluster refe
 INFO[0003] ServiceAccount "argocd-manager" created in namespace "kube-system" 
 INFO[0003] ClusterRole "argocd-manager-role" created    
 INFO[0003] ClusterRoleBinding "argocd-manager-role-binding" created 
-Cluster '<https://095783B7DF46A1EA53103B1201579207.gr7.ap-northeast-2.eks.amazonaws.com>' added
+Cluster 'https://095783B7DF46A1EA53103B1201579207.gr7.ap-northeast-2.eks.amazonaws.com' added
 ```
 
 15. ArgoCD의 애플리케이션을 구성하고 `k8s-manifest-repo` 에 연결합니다.
@@ -549,7 +549,7 @@ UI에서도 동일한 값을 확인할 수 있습니다.
 
 <figure><img src="../.gitbook/assets/Screenshot 2024-04-16 at 9.54.29 PM.png" alt=""><figcaption></figcaption></figure>
 
-17. 앞서 생성한 github action build 스크립트에 kustomize를 이용하여 컨테이너 image tag 정보를 업데이트 한 후 _**k8s-manifest-repo**_에 commit/push 하는 단계를 추가 해야 합니다. 추가된 단계가 정상적으로 동작 하면, **ArgoCD**가 _**k8s-manifest-repo**_를 지켜 보고 있다가 새로운 변경 사항이 발생 되었음을 알아채고, **kustomize build** 작업을 수행하여 새로운 **kubernetes manifest** (\*새로운 image tag를 포함한)를 eks 클러스터에 배포 합니다.
+17. 앞서 생성한 github action build 스크립트에 kustomize를 이용하여 컨테이너 image tag 정보를 업데이트 한 후 _**k8s-manifest-repo**_에 commit/push 하는 단계를 추가 해야 합니다.&#x20;
 
 ```sh
 cd ~/environment/amazon-eks-frontend/.github/workflows
@@ -586,6 +586,19 @@ cat <<EOF>> build.yaml
 EOF
 
 ```
+
+아래 명령어를 실행하여 build.yaml의 변경사항을 Github에 push합니다.
+
+```
+cd ~/environment/amazon-eks-frontend/.github/workflows
+git add .
+git commit -m "Add image tag update stage"
+git push origin main
+```
+
+추가된 단계가 정상적으로 동작 하면, **ArgoCD**가 _**k8s-manifest-repo**_를 지켜 보고 있다가 새로운 변경 사항이 발생 되었음을 알아채고, **kustomize build** 작업을 수행하여 새로운 **kubernetes manifest** (\*새로운 image tag를 포함한)를 eks 클러스터에 배포 합니다.
+
+
 
 새로운 Image Tag가 정상 반영 되었는지 살펴 보겠습니다. _**k8s-manifest-repo**_의 commit history를 통해 변경된 Image Tag 정보를 확인 합니다.
 
