@@ -1,5 +1,5 @@
 ---
-description: 'update : 2024-01-28 /10min'
+description: 'update : 2024-06-16 /10min'
 ---
 
 # Cloud9 IDE 환경 구성
@@ -91,7 +91,7 @@ source ~/.bash_profile
 
 * kubectl - 쿠버네티스 커맨드 라인 도구인 [kubectl](https://kubernetes.io/docs/user-guide/kubectl/)을 사용하면, 쿠버네티스 클러스터에 대해 명령을 실행할 수 있습니. kubectl을 사용하여 애플리케이션을 배포하고, 클러스터 리소스를 검사 및 관리하며 로그를 볼 수 있다습니다. kubectl 작업의 전체 목록에 대해서는, [kubectl 개요](https://kubernetes.io/ko/docs/reference/kubectl/overview/)를 참고합니다.\
   (참조 - [https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html))\
-  이 LAB에서는 kubectl 바이너리 버전은 1.25.12 설치합니다.&#x20;
+  이 LAB에서는 kubectl 바이너리 버전은 1.27.13 설치합니다.&#x20;
 
 ```
 # 최신버전 다운로드
@@ -113,6 +113,6 @@ curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s ht
 
 2.AWS CLI 2.0 업그레이드 및 자동완성 설치
 
-3\. Cloud9에 Kubectl 설치 (1.21.5기준)
+3\. Cloud9에 Kubectl 설치 (1.27.13기준)
 
 4\. 기타 유틸리티 설치
