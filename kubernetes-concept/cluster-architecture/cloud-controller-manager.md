@@ -14,9 +14,9 @@
 
 ## 디자인
 
-![&#xCFE0;&#xBC84;&#xB124;&#xD2F0;&#xC2A4; &#xCEF4;&#xD3EC;&#xB10C;&#xD2B8;](https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png)
+![쿠버네티스 컴포넌트](https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png)
 
-클라우드 컨트롤러 매니저는 컨트롤 플레인에서 복제된 프로세스의 집합으로 실행된다\(일반적으로, 파드의 컨테이너\). 각 클라우드 컨트롤러 매니저는 단일 프로세스에 여러 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)를 구현한다.
+클라우드 컨트롤러 매니저는 컨트롤 플레인에서 복제된 프로세스의 집합으로 실행된다(일반적으로, 파드의 컨테이너). 각 클라우드 컨트롤러 매니저는 단일 프로세스에 여러 [컨트롤러](https://kubernetes.io/ko/docs/concepts/architecture/controller/)를 구현한다.
 
 > **참고:** 또한 사용자는 클라우드 컨트롤러 매니저를 컨트롤 플레인의 일부가 아닌 쿠버네티스 [애드온](https://kubernetes.io/docs/concepts/cluster-administration/addons/)으로 실행할 수도 있다.
 
@@ -29,7 +29,7 @@
 노드 컨트롤러는 클라우드 인프라스트럭처에 새 서버가 생성될 때 [노드](https://kubernetes.io/ko/docs/concepts/architecture/nodes/) 오브젝트를 생성하는 역할을 한다. 노드 컨트롤러는 클라우드 공급자의 사용자 테넌시 내에서 실행되는 호스트에 대한 정보를 가져온다. 노드 컨트롤러는 다음 기능들을 수행한다.
 
 1. 컨트롤러가 클라우드 공급자 API를 통해 찾아내는 각 서버에 대해 노드 오브젝트를 초기화한다.
-2. 클라우드 관련 정보\(예를 들어, 노드가 배포되는 지역과 사용 가능한 리소스\(CPU, 메모리 등\)\)를 사용해서 노드 오브젝트에 어노테이션과 레이블을 작성한다.
+2. 클라우드 관련 정보(예를 들어, 노드가 배포되는 지역과 사용 가능한 리소스(CPU, 메모리 등))를 사용해서 노드 오브젝트에 어노테이션과 레이블을 작성한다.
 3. 노드의 호스트 이름과 네트워크 주소를 가져온다.
 4. 노드의 상태를 확인한다. 노드가 응답하지 않는 경우, 이 컨트롤러는 사용자가 이용하는 클라우드 공급자의 API를 통해 서버가 비활성화됨 / 삭제됨 / 종료됨인지 확인한다. 노드가 클라우드에서 삭제된 경우, 컨트롤러는 사용자의 쿠버네티스 클러스터에서 노드 오브젝트를 삭제한다.
 
@@ -89,7 +89,7 @@
 
 ### 그 외의 것들
 
-클라우드 컨트롤러 매니저의 핵심 구현을 위해 이벤트 오브젝트를 생성하고, 안전한 작동을 보장하기 위해 서비스어카운트\(ServiceAccounts\)를 생성해야 한다.
+클라우드 컨트롤러 매니저의 핵심 구현을 위해 이벤트 오브젝트를 생성하고, 안전한 작동을 보장하기 위해 서비스어카운트(ServiceAccounts)를 생성해야 한다.
 
 `v1/Event`:
 
@@ -101,9 +101,9 @@
 
 * Create
 
-클라우드 컨트롤러 매니저의 [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) 클러스터롤\(ClusterRole\)은 다음과 같다.
+클라우드 컨트롤러 매니저의 [RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) 클러스터롤(ClusterRole)은 다음과 같다.
 
-```text
+```
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -165,5 +165,4 @@ rules:
   - update
 ```
 
-###  <a id="&#xB2E4;&#xC74C;-&#xB0B4;&#xC6A9;"></a>
-
+### &#x20;<a href="#undefined" id="undefined"></a>

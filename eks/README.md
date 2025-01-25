@@ -1,10 +1,10 @@
 ---
-description: 'Update : 2024-01-28 / 20min'
+description: 'Update : 2025-01-25 / 20min'
 ---
 
-# 2.EKS 환경 구성
+# 1.EKS 환경 구성
 
-#### EKS 설치를 위한 환경 구성을 위해 Cloud IDE 서비스인 Cloud9을 설치하고, 역할을 부여합니다. 또한 EKS 를 구성하고 모니터링을 위한 다양한 Pakage를 설치합니다.
+#### EKS 설치를 위한 환경 구성을 위해 IDE 서비스인 code-server를 설치하고, 역할을 부여합니다. 또한 EKS 를 구성하고 모니터링을 위한 다양한 Pakage를 설치합니다.
 
 #### 인증 강화를 위해 KMS기반의 Key를 구성하여, 인증과 역할에 대한 보안을 강화합니다.
 

@@ -16,7 +16,7 @@
 
 컨테이너의 _호스트네임_ 은 컨테이너가 동작 중인 파드의 이름과 같다. 그것은 `hostname` 커맨드 또는 libc의 [`gethostname`](http://man7.org/linux/man-pages/man2/gethostname.2.html) 함수 호출을 통해서 구할 수 있다.
 
-파드 이름과 네임스페이스는 [다운워드\(Downward\) API](https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/)를 통해 환경 변수로 구할 수 있다.
+파드 이름과 네임스페이스는 [다운워드(Downward) API](https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/)를 통해 환경 변수로 구할 수 있다.
 
 Docker 이미지에 정적으로 명시된 환경 변수와 마찬가지로, 파드 정의에서의 사용자 정의 환경 변수도 컨테이너가 사용할 수 있다.
 
@@ -26,10 +26,9 @@ Docker 이미지에 정적으로 명시된 환경 변수와 마찬가지로, 파
 
 _bar_ 라는 이름의 컨테이너에 매핑되는 _foo_ 라는 이름의 서비스에 대해서는, 다음의 형태로 변수가 정의된다.
 
-```text
+```
 FOO_SERVICE_HOST=<서비스가 동작 중인 호스트>
 FOO_SERVICE_PORT=<서비스가 동작 중인 포트>
 ```
 
 서비스에 지정된 IP 주소가 있고 [DNS 애드온](http://releases.k8s.io/master/cluster/addons/dns/)이 활성화된 경우, DNS를 통해서 컨테이너가 서비스를 사용할 수 있다.
-

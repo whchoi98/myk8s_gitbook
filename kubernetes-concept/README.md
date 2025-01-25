@@ -2,9 +2,9 @@
 description: 'update : 2020-11-15'
 ---
 
-# 1.Kubernetes 개념
+# Kubernetes 개념
 
-#### 해당 Chapter 에서는 Kubernetes.io  공식사이트의 내용을 담고 있습니다.\(참조 원문 : [https://kubernetes.io/](https://kubernetes.io/)\)
+#### 해당 Chapter 에서는 Kubernetes.io  공식사이트의 내용을 담고 있습니다.(참조 원문 : [https://kubernetes.io/](https://kubernetes.io/))
 
 [Overview](overview.md#undefined)
 
@@ -29,4 +29,3 @@ description: 'update : 2020-11-15'
 [Cluster Admin](cluster-admin.md)
 
 [Extending Kubernetes](extending-kubernetes.md)
-

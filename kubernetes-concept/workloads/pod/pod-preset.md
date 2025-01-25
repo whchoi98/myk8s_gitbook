@@ -4,7 +4,7 @@
 
 **FEATURE STATE:** `Kubernetes v1.6 [alpha]`
 
-이 페이지는 파드프리셋\(PodPreset\)에 대한 개요를 제공한다. 파드프리셋은 파드 생성 시간에 파드에 특정 정보를 주입하기 위한 오브젝트이다. 해당 정보에는 시크릿, 볼륨, 볼륨 마운트, 환경 변수가 포함될 수 있다.
+이 페이지는 파드프리셋(PodPreset)에 대한 개요를 제공한다. 파드프리셋은 파드 생성 시간에 파드에 특정 정보를 주입하기 위한 오브젝트이다. 해당 정보에는 시크릿, 볼륨, 볼륨 마운트, 환경 변수가 포함될 수 있다.
 
 ## 파드 프리셋 이해하기
 
@@ -17,17 +17,17 @@
 클러스터에서 파드 프리셋을 사용하기 위해서는 다음 사항이 반드시 이행되어야 한다.
 
 1. API 타입 `settings.k8s.io/v1alpha1/podpreset`을 활성화하였다. 예를 들면, 이것은 API 서버의 `--runtime-config` 옵션에 `settings.k8s.io/v1alpha1=true`을 포함하여 완료할 수 있다. minikube에서는 클러스터가 시작할 때 `--extra-config=apiserver.runtime-config=settings.k8s.io/v1alpha1=true` 플래그를 추가한다.
-2. 어드미션 컨트롤러 `PodPreset`을 활성화하였다. 이것을 이루는 방법 중 하나는 API 서버를 위해서 명시된 `--enable-admission-plugins` 옵션에 `PodPreset`을 포함하는 것이다. minikube에서는 클러스터가 시작할 때
+2.  어드미션 컨트롤러 `PodPreset`을 활성화하였다. 이것을 이루는 방법 중 하나는 API 서버를 위해서 명시된 `--enable-admission-plugins` 옵션에 `PodPreset`을 포함하는 것이다. minikube에서는 클러스터가 시작할 때
 
-   ```text
-   --extra-config=apiserver.enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,PodPreset
-   ```
+    ```
+    --extra-config=apiserver.enable-admission-plugins=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota,PodPreset
+    ```
 
-   플래그를 추가한다.
+    플래그를 추가한다.
 
-## 동작 방법 
+## 동작 방법&#x20;
 
-쿠버네티스는 어드미션 컨트롤러\(`PodPreset`\)를 제공한다. 어드미션 컨트롤러가 활성화되면, 파드 프리셋을 파드 생성 요청에 적용한다. 파드 생성 요청이 발생하면, 시스템은 다음의 내용을 수행한다.
+쿠버네티스는 어드미션 컨트롤러(`PodPreset`)를 제공한다. 어드미션 컨트롤러가 활성화되면, 파드 프리셋을 파드 생성 요청에 적용한다. 파드 생성 요청이 발생하면, 시스템은 다음의 내용을 수행한다.
 
 1. 사용 가능한 모든 `PodPresets`을 검색한다.
 2. `PodPreset`의 레이블 셀렉터들 중 하나라도 생성되는 파드의 레이블과 일치하는 것이 있는지 확인한다.
@@ -42,9 +42,8 @@
 > 파드 프리셋은 적절한 경우 파드 스펙의 다음 필드를 수정할 수도 있다.
 >
 > * `.spec.containers` 필드
-> * `initContainers` 필드\(쿠버네티스 버전 1.14.0 이후에서 필요\)
+> * `initContainers` 필드(쿠버네티스 버전 1.14.0 이후에서 필요)
 
 ### 특정 파드의 파드 프리셋 비활성화하기
 
 어떠한 파드 프리셋 변이에 의해서도 파드에 변경이 일어나지 않게 하고 싶은 경우가 있을 것이다. 이 경우에는, 다음과 같은 양식으로 어노테이션을 파드 스펙에 추가한다. `podpreset.admission.kubernetes.io/exclude: "true"`.
-

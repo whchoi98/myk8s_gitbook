@@ -1,6 +1,6 @@
 # 컨테이너 라이프사이클 훅
 
-## 컨테이너 라이프사이클 훅\(Hook\)
+## 컨테이너 라이프사이클 훅(Hook)
 
 이 페이지는 kubelet이 관리하는 컨테이너가 관리 라이프사이클 동안의 이벤트에 의해 발동되는 코드를 실행하기 위해서 컨테이너 라이프사이클 훅 프레임워크를 사용하는 방법에 대해서 설명한다.
 
@@ -18,7 +18,7 @@ Angular와 같이, 컴포넌트 라이프사이클 훅을 가진 많은 프로�
 
 `PreStop`
 
-이 훅은 API 요청이나 활성 프로브\(liveness probe\) 실패, 선점, 자원 경합 등의 관리 이벤트로 인해 컨테이너가 종료되기 직전에 호출된다. 컨테이너가 이미 terminated 또는 completed 상태인 경우에는 preStop 훅 요청이 실패한다. 그것은 동기적인 동작을 의미하는, 차단\(blocking\)을 수행하고 있으므로, 컨테이너를 삭제하기 위한 호출이 전송되기 전에 완료되어야한다. 파라미터는 핸들러에 전달되지 않는다.
+이 훅은 API 요청이나 활성 프로브(liveness probe) 실패, 선점, 자원 경합 등의 관리 이벤트로 인해 컨테이너가 종료되기 직전에 호출된다. 컨테이너가 이미 terminated 또는 completed 상태인 경우에는 preStop 훅 요청이 실패한다. 그것은 동기적인 동작을 의미하는, 차단(blocking)을 수행하고 있으므로, 컨테이너를 삭제하기 위한 호출이 전송되기 전에 완료되어야한다. 파라미터는 핸들러에 전달되지 않는다.
 
 종료 동작에 더 자세한 대한 설명은 [파드의 종료](https://kubernetes.io/ko/docs/concepts/workloads/pods/pod/#%ED%8C%8C%EB%93%9C%EC%9D%98-%EC%A2%85%EB%A3%8C)에서 찾을 수 있다.
 
@@ -35,7 +35,7 @@ Angular와 같이, 컴포넌트 라이프사이클 훅을 가진 많은 프로�
 
 훅 핸들러 호출은 해당 컨테이너를 포함하고 있는 파드의 맥락과 동기적으로 동작한다. 이것은 `PostStart` 훅에 대해서, 훅이 컨테이너 엔트리포인트와는 비동기적으로 동작함을 의미한다. 그러나, 만약 해당 훅이 너무 오래 동작하거나 어딘가에 걸려 있다면, 컨테이너는 `running` 상태에 이르지 못한다.
 
-이러한 동작은 `PreStop` 훅에 대해서도 비슷하게 일어난다. 만약 훅이 실행되던 도중에 매달려 있다면, 파드의 단계\(phase\)는 `Terminating` 상태에 머물고 해당 훅은 파드의 `terminationGracePeriodSeconds`가 끝난 다음에 종료된다. 만약 `PostStart` 또는 `PreStop` 훅이 실패하면, 그것은 컨테이너를 종료시킨다.
+이러한 동작은 `PreStop` 훅에 대해서도 비슷하게 일어난다. 만약 훅이 실행되던 도중에 매달려 있다면, 파드의 단계(phase)는 `Terminating` 상태에 머물고 해당 훅은 파드의 `terminationGracePeriodSeconds`가 끝난 다음에 종료된다. 만약 `PostStart` 또는 `PreStop` 훅이 실패하면, 그것은 컨테이너를 종료시킨다.
 
 사용자는 훅 핸들러를 가능한 한 가볍게 만들어야 한다. 그러나, 컨테이너가 멈추기 전 상태를 저장하는 것과 같이, 오래 동작하는 커맨드가 의미 있는 경우도 있다.
 
@@ -49,7 +49,7 @@ Angular와 같이, 컴포넌트 라이프사이클 훅을 가진 많은 프로�
 
 훅 핸들러의 로그는 파드 이벤트로 노출되지 않는다. 만약 핸들러가 어떠한 이유로 실패하면, 핸들러는 이벤트를 방송한다. `PostStart`의 경우, 이것은 `FailedPostStartHook` 이벤트이며, `PreStop`의 경우, 이것은 `FailedPreStopHook` 이벤트이다. 이 이벤트는 `kubectl describe pod <파드_이름>`를 실행하면 볼 수 있다. 다음은 이 커맨드 실행을 통한 이벤트 출력의 몇 가지 예다.
 
-```text
+```
 Events:
   FirstSeen  LastSeen  Count  From                                                   SubObjectPath          Type      Reason               Message
   ---------  --------  -----  ----                                                   -------------          --------  ------               -------
@@ -63,4 +63,3 @@ Events:
   38s        37s       2      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}                         Warning   FailedSync           Error syncing pod, skipping: failed to "StartContainer" for "main" with RunContainerError: "PostStart handler: Error executing in Docker Container: 1"
   1m         22s       2      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Warning   Failed
 ```
-
