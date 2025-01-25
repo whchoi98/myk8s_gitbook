@@ -146,7 +146,9 @@ cat ~/ec2_vscode/vscode_pwd.sh
 
 아래와 같이 Cloud9 에 필요한 도구들을 설치합니다.
 
-```
+```bash
+mkdir ~/environment/
+cd ~/environment/
 git clone https://github.com/whchoi98/useful-shell.git
 ~/environment/useful-shell/c9-tool-set.sh
 
@@ -170,7 +172,7 @@ source ~/.bash_profile
 
 * kubectl - 쿠버네티스 커맨드 라인 도구인 [kubectl](https://kubernetes.io/docs/user-guide/kubectl/)을 사용하면, 쿠버네티스 클러스터에 대해 명령을 실행할 수 있습니. kubectl을 사용하여 애플리케이션을 배포하고, 클러스터 리소스를 검사 및 관리하며 로그를 볼 수 있다습니다. kubectl 작업의 전체 목록에 대해서는, [kubectl 개요](https://kubernetes.io/ko/docs/reference/kubectl/overview/)를 참고합니다.\
   (참조 - [https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html))\
-  이 LAB에서는 kubectl 바이너리 버전은 1.27.13 설치합니다.&#x20;
+  이 LAB에서는 kubectl 바이너리 버전은 1.29.10을 설치합니다.&#x20;
 
 ```
 # 최신버전 다운로드
@@ -180,11 +182,11 @@ curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s ht
 
 :dart: 추가 참조 URL - [https://docs.aws.amazon.com/ko\_kr/eks/latest/userguide/install-kubectl.html](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/install-kubectl.html)
 
-* eksctl - `eksctl`은 관리형 Kubernetes 서비스 인 EKS에서 클러스터를 생성하기위한 간단한 CLI 도구입니다. Go로 작성되었으며 CloudFormation을 사용하며 [Weaveworks](https://www.weave.works/) 가 작성했으며 단 하나의 명령으로 몇 분 안에 기본 클러스터를 만듭니다. 이것은 EKS를 구성하기 위한 도구 이며,  AWS 관리콘솔에서 제공하는 EKS UI, CDK, Terraform, Rancher 등 다양한 도구로도 구성이 가능합니다.
-* K9s - K9s는 쿠버네티스 클러스터와 상호작용을 통해 직관적인 UI 터미널을 제공합니다. 이 도구를 통해서 쿠버네티스 자원들을 쉽게 탐색하고 관리할 수 있도록 도움을 줍니다.(참조 - [https://github.com/derailed/k9s](https://github.com/derailed/k9s))
-* jq - **jq**는 커맨드라인에서 JSON을 조작할 수 있는 도구입니다. 프로그래밍 언어는 아니지만 JSON 데이터를 다루기 위한 다양한 기능들을 제공합니다. kubectl, aws cli의 결과들 중에서 복잡한 중첩 JSON구조  내에서 키를 찾을 때 유용합니다.
-* kube krew - kube krew는 Mac OS brew, CentOS yum, Ubuntu apt 처럼 Kube에 관련된 좋은 유틸리티를 제공하고 있습니다.
-* kube ctx - kubectx는 다중의 Kubecluster 가 존재할 때 전환이 쉽도록 도와주는 훌륭한 도구입니다. kubectx를 설치합니다.
+* eksctl - eksctl은 Amazon EKS (Elastic Kubernetes Service) 클러스터를 손쉽게 생성, 관리, 및 삭제할 수 있도록 설계된 CLI 도구입니다. eksctl은 Kubernetes 클러스터를 AWS에서 구축하고 운영하는 데 필요한 대부분의 작업을 자동화하며, Kubernetes 사용자의 생산성을 크게 향상시켜 줍니다. &#x20;
+* K9s - K9s는 Kubernetes 클러스터를 관리하고 모니터링하기 위한 터미널 기반의 UI 도구입니다. Kubernetes 리소스와 상호작용하기 위해 설계되었으며, kubectl 명령어의 대안으로 사용할 수 있는 효율적이고 직관적인 CLI 인터페이스를 제공합니다.(참조 - [https://github.com/derailed/k9s](https://github.com/derailed/k9s))
+* jq - jq는 JSON 데이터 처리 및 조작을 위해 설계된 경량 명령줄 도구입니다. JSON 데이터를 파싱, 필터링, 변환, 포맷팅, 그리고 분석하는 데 유용하며, 특히 스크립트나 터미널 기반 워크플로에서 활용도가 높습니다.jq는 단순하면서도 강력한 도구로, 특히 JSON 데이터 처리와 조작이 필요한 모든 상황에서 큰 도움을 줍니다. REST API 응답 분석, 로그 처리, 클라우드 서비스와의 연동 작업 등 다양한 작업에서 꼭 필요한 필수 도구입니다.
+* kube krew - Krew는 Kubernetes 커맨드라인 도구인 kubectl의 플러그인을 쉽게 검색, 설치, 관리할 수 있도록 해주는 플러그인 매니저입니다. Krew를 사용하면 Kubernetes 클러스터와 상호작용하기 위해 다양한 플러그인을 간단한 명령어로 설치하고 관리할 수 있습니다.Krew는 Kubernetes 작업의 효율성을 극대화할 수 있는 필수 도구입니다. kubectl 명령어를 더욱 강력하고 확장성 있게 만들어주는 도구이므로, Kubernetes를 사용하는 모든 사용자에게 적극 추천합니다
+* kube ctx - kubectl ctx 또는 **kube-ctx**는 Kubernetes 클러스터와 컨텍스트/네임스페이스를 빠르게 전환할 수 있도록 설계된 경량 명령줄 도구입니다. Kubernetes는 다중 클러스터와 컨텍스트를 관리할 수 있는 기능을 제공하며, kube-ctx는 이를 더욱 쉽게 관리할 수 있도록 도와줍니다.
 
 ## **EKS 환경 구성 요약**
 
@@ -192,7 +194,7 @@ curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s ht
 
 2.AWS CLI 2.0 업그레이드 및 자동완성 설치
 
-3\. Code Server에 Kubectl 설치 (1.27.13기준)
+3\. Code Server에 Kubectl 설치 (1.29.10기준)
 
 4\. 기타 유틸리티 설치
 
