@@ -1,8 +1,8 @@
 # Table of contents
 
-* [Kubernetes](README.md)
+* [Amazon EKS](README.md)
 * [1.EKS 환경 구성](eks/README.md)
-  * [Cloud9 IDE 환경 구성](eks/cloud9-ide.md)
+  * [IDE 환경 구성](eks/cloud9-ide.md)
   * [인증/자격증명 및 환경 구성](eks/env-auth.md)
 * [3.VPC구성과 eksctl 기반 설치](vpc-eksctl/README.md)
   * [Cloudformation 구성](vpc-eksctl/cloudformation.md)

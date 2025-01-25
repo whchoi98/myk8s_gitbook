@@ -1,19 +1,19 @@
 ---
-description: 'update : 2024-01-28 / 10min'
+description: 'update : 2025-01-25 / 10min'
 ---
 
 # 인증/자격증명 및 환경 구성
 
 ## 인증 및 자격증명 환경 구성
 
-### 1. Cloud9 IDE 역할 점검
+### 1. IDE 역할 점검
 
-Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다. \
+IDE 터미널이 올바른 IAM 역할을 사용하고 있는지 확인합니다. \
 (앞서 선언한 IAM Role 이름을 "c9\_role"으로 선언하지 않은 경우에는 다른 이름으로 변경합니다.)
 
 ```
-# Cloud9 이 올바른 IAM 역할을 사용하고 있는지 확인합니다. 
-aws sts get-caller-identity --region ap-northeast-2 --query Arn | grep c9_role -q && echo "IAM role valid" || echo "IAM role NOT valid"
+# IDE 터미널이 올바른 IAM 역할을 사용하고 있는지 확인합니다. 
+aws sts get-caller-identity --region ap-northeast-2 --query Arn | grep ec2vscodeserver -q && echo "IAM role valid" || echo "IAM role NOT valid"
 # 실제 Role을 확인해 봅니다.
 aws sts get-caller-identity --region ap-northeast-2
 

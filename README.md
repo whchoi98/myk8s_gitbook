@@ -1,16 +1,12 @@
 ---
-description: 'Last Update : 2021-10-05'
+description: 'Last Update : 2025-01-25'
 ---
 
-# Kubernetes
+# Amazon EKS
 
-해당 블로그는 Kubernetes에 대한 전반적인 개념과 아키텍쳐 소개를 다룹니다..
-
-Kubernetes 개념은 kubernetes.io 공식 블로그에 포스팅 된 문서를 의역한 내용이며, kubernetes.io 의 원문을 우선합니다.
+해당 블로그는 Amazon EKS에 대한 전반적인 개념과 아키텍쳐 소개를 다룹니다..
 
 AWS EKS에 대한 설치와 구성 및 관리, 네트워크, 스토리지 ,보안, CI/CD, 서비스등에 대한 다양한 Hands On Lab을 상세하게 소개합니다.
-
-### [Kubernetes 개념](kubernetes-concept/)
 
 ### [EKS 환경과 구성](eks/) (40min)
 
