@@ -144,7 +144,7 @@ Install Suggested Plugins 클릭합니다.
 
 새로운 관리자 계정을 생성 합니다.
 
-<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Jenkins URL을 설정 합니다. 해당 실습에서는 Jenkins Node 의 IPv4 도메인으로 설정합니다.
 
@@ -158,11 +158,7 @@ echo $Jenkins_Node_Domain:8080
 
 Jenkins를 시작합니다.
 
-<div align="left">
-
-<figure><img src="../.gitbook/assets/image (2) (1).png" alt="" width="375"><figcaption></figcaption></figure>
-
-</div>
+<div align="left"><figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt="" width="375"><figcaption></figcaption></figure></div>
 
 ### 4.Job 생성하기
 
@@ -180,9 +176,9 @@ Configure > Source Code Management 에서 Git 선택 후 Repository URL 입력 �
 
 Jenkins Credential Provider 에서 [Code Pipeline 기반 CI/CD 의 Repo 구성 절차](https://whchoi98.gitbook.io/k8s/eks-cicd/cicd-w-codepipeline#repo) 해두었던 Token 값을 Password에 입력합니다. Username은 GitHub 아이디를 입력합니다.
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
 
@@ -199,7 +195,7 @@ docker build --tag $IMAGE_NAME .
 docker push $IMAGE_NAME
 ```
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Build Now로 Build가 잘 동작하는지 테스트 해봅니다.
 
@@ -207,9 +203,9 @@ Build Now로 Build가 잘 동작하는지 테스트 해봅니다.
 
 Job에 의해 ECR 에 image가 push 되었는지 확인합니다.
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (15).png" alt=""><figcaption></figcaption></figure>
 
@@ -280,7 +276,7 @@ Configure > Build Steps 에서 Add build step 클릭 후 Execute shell 클릭
 
 <figure><img src="../.gitbook/assets/image (21).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (3) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ```
 sed -i "s/CONTAINER_IMAGE/103787587884.dkr.ecr.ap-northeast-2.amazonaws.com\/jenkins-ci-test:$BUILD_NUMBER/" hello-k8s.yml
@@ -293,11 +289,11 @@ kubectl get all --selector=app=hello-k8s
 
 github repository로 돌아가 다시 소스코드 수정 후 commit.
 
-<figure><img src="../.gitbook/assets/image (2) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 이미지 빌드 확인
 
-<figure><img src="../.gitbook/assets/image (4) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 
 

@@ -2,7 +2,7 @@
 description: 'update : 2025-01-25 /10min'
 ---
 
-# Cloud9 IDE 환경 구성
+# IDE 환경 구성
 
 ## CodeServer 설치 <a href="#id-1.vscode" id="id-1.vscode"></a>
 
@@ -212,7 +212,7 @@ AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 �
 
 Cloud9을 실행하기 위해 아래와 같이 AWS 관리콘솔에서 **`"Cloudshell"`** 을 사용해서 구성합니다.
 
-<figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 아래와 같이 iam user와 패스워드, user를 위한 Policy를 생성해서 연결합니다.
 

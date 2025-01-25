@@ -1,22 +1,22 @@
 ---
-description: 'update : 2024-01-27 / 20min'
+description: 'update : 2025-01-25 / 20min'
 ---
 
 # eksctl 구성
 
 ## eksctl 소개
 
-`eksctl`은 관리형 Kubernetes 서비스 인 EKS에서 클러스터를 생성하기위한 간단한 CLI 도구입니다. Go로 작성되었으며 CloudFormation을 사용하며 [Weaveworks](https://www.weave.works/) 가 작성했으며 단 하나의 명령으로 몇 분 안에 기본 클러스터를 만듭니다.
+eksctl은 Amazon EKS (Elastic Kubernetes Service) 클러스터를 쉽게 생성, 관리 및 삭제할 수 있도록 설계된 CLI 도구입니다. eksctl은 Kubernetes 클러스터를 AWS에서 빠르고 간단하게 설정할 수 있는 방법을 제공하며, 클러스터 설정과 관리의 복잡성을 줄이는 데 중점을 둡니다.
 
-이것은 EKS를 구성하기 위한 도구 이며,  AWS 관리콘솔에서 제공하는 EKS UI, CDK, Terraform, Rancher 등 다양한 도구로도 구성이 가능합니다.
+이 도구는 Weaveworks와 AWS가 협력하여 개발했으며, Kubernetes 클러스터의 자동화된 네트워크 설정, 노드 그룹 생성, IAM 역할 구성 등의 작업을 간단한 명령으로 수행할 수 있습니다.
 
 ## eksctl을 통한 EKS 구성
 
 ### 1.eksctl 설치
 
-Cloud9 사전 환경 구성에서 이미 설치되어 있습니다. 이 단계는 생략이 가능합니다.
+사전 환경 구성에서 이미 설치되어 있습니다. 이 단계는 생략이 가능합니다.
 
-아래와 같이 eksctl을 Cloud9에 설치하고 버전을 확인합니다.
+아래와 같이 eksctl을 IDE 터미널에 설치하고 버전을 확인합니다.
 
 eksctl 버전이 낮은 경우에는 EKS 최신버전을 설치할 경우 , 원할하게 설치 되지 않을 수 있습니다.
 
@@ -34,11 +34,16 @@ eksctl version
 
 ### 2.VPC/Subnet 정보 확인
 
-앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC 자원들에 대한 고유의 자원 값을 추출해서, Cloud9 내에서 환경 변수에 저장합니다
+앞서 [Cloudformation 구성](cloudformation.md#3-stack)에서 생성한 VPC 자원들에 대한 고유의 자원 값을 추출해서, 터미널 내에서 환경 변수에 저장합니다
 
 ```
 ~/environment/myeks/shell/eks_shell.sh
 
+```
+
+```
+#아래와 같이 EKS 버전 입력을 요구하면, EKS Version 을 입력합니다.
+#Enter the EKS version (e.g., 1.29): 1.29
 ```
 
 {% hint style="info" %}

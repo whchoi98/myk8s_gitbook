@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2022-09-10 / 10min'
+description: 'Update : 2025-01-25/ 10min'
 ---
 
 # EKS 구성확인
@@ -8,9 +8,11 @@ description: 'Update : 2022-09-10 / 10min'
 
 EKS 콘솔을 통해서, 생성된 EKS Cluster를 확인 할 수 있습니다.
 
-각 계정의 User로 로그인 한 경우, 아래에서 처럼 eks cluster에 대한 정보를 확인 할 수 없습니다. 이것은 권한이 없기 때문입니다. User의 권한을 Cloud9에서 추가해 줍니다. &#x20;
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (502).png" alt=""><figcaption></figcaption></figure>
+각 계정에서 생성된 User로 로그인 한 경우, 아래에서 처럼 eks cluster에 대한 정보를 확인 할 수 없습니다. 이것은 권한이 없기 때문입니다. User의 권한을 IDE 터미널에서 추가해 줍니다. &#x20;
+
+<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
 
 ## configmap 인증 정보 수정
 
@@ -18,6 +20,32 @@ cloud9 IDE Terminal 에 kubectl 명령을 통해서, aws-auth 파일을 확인�
 
 ```
 kubectl get configmap -n kube-system aws-auth -o yaml
+```
+
+결과 예제는 아래와 같습니다.
+
+```
+$ kubectl get configmap -n kube-system aws-auth -o yaml
+apiVersion: v1
+data:
+  mapRoles: |
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::960976631469:role/eksctl-eksworkshop-nodegroup-manag-NodeInstanceRole-h4gSmIotUDy2
+      username: system:node:{{EC2PrivateDNSName}}
+    - groups:
+      - system:bootstrappers
+      - system:nodes
+      rolearn: arn:aws:iam::960976631469:role/eksctl-eksworkshop-nodegroup-manag-NodeInstanceRole-9gSZUtveCsQr
+      username: system:node:{{EC2PrivateDNSName}}
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-01-25T06:50:45Z"
+  name: aws-auth
+  namespace: kube-system
+  resourceVersion: "1579"
+  uid: eb7b5e20-0c8a-48cf-b850-79ccf3976355
 ```
 
 aws-auth.yaml 파일을 아래 디렉토리에 생성합니다.&#x20;
@@ -59,38 +87,32 @@ eksctl create iamidentitymapping \
 추가한 이후 aws-auth.yaml 파일 입니다.
 
 ```
+$ kubectl get configmap -n kube-system aws-auth -o yaml
 apiVersion: v1
 data:
   mapRoles: |
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-1WKNHHYJD99CR
+      rolearn: arn:aws:iam::960976631469:role/eksctl-eksworkshop-nodegroup-manag-NodeInstanceRole-h4gSmIotUDy2
       username: system:node:{{EC2PrivateDNSName}}
     - groups:
       - system:bootstrappers
       - system:nodes
-      rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-mana-NodeInstanceRole-WBJOTQC4HJOD
-      username: system:node:{{EC2PrivateDNSName}}
-    - groups:
-      - system:bootstrappers
-      - system:nodes
-      rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-122GCV62TF8AS
-      username: system:node:{{EC2PrivateDNSName}}
-    - groups:
-      - system:bootstrappers
-      - system:nodes
-      rolearn: arn:aws:iam::027268078051:role/eksctl-eksworkshop-nodegroup-ng-p-NodeInstanceRole-1SRFNRXCSDVMW
+      rolearn: arn:aws:iam::960976631469:role/eksctl-eksworkshop-nodegroup-manag-NodeInstanceRole-9gSZUtveCsQr
       username: system:node:{{EC2PrivateDNSName}}
   mapUsers: |
-    - userarn: arn:aws:iam::027268078051:user/user01
+    - groups:
+      - system:masters
+      userarn: arn:aws:iam::960976631469:user/user01
       username: user01
-      groups:
-        - system:masters
 kind: ConfigMap
 metadata:
+  creationTimestamp: "2025-01-25T06:50:45Z"
   name: aws-auth
   namespace: kube-system
+  resourceVersion: "5217"
+  uid: eb7b5e20-0c8a-48cf-b850-79ccf3976355
 ```
 
 ```
@@ -150,7 +172,7 @@ Events:  <none>
 아래와 같이 eksctl 명령을 통해 현재 IAM과 Kubernetes Role 이 바인딩 된 목록을 확인합니다.
 
 ```
-eksctl get iamidentitymapping --cluster ${ekscluster_name}
+eksctl get iamidentitymapping --cluster ${EKSCLUSTER_NAME}
 
 ```
 
@@ -158,7 +180,7 @@ eksctl get iamidentitymapping --cluster ${ekscluster_name}
 
 EKS Cluster를 다시 콘솔에서 확인해 봅니다. 생성한 모든 노드들을 확인할 수 있습니다. 생성한 클러스터를 선택합니다
 
-<figure><img src="../.gitbook/assets/image (504).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
 
 이제 아래와 같은 EKS Cluster가 완성되었습니다. kubectl 명령을 통해 확인해 봅니다.
 

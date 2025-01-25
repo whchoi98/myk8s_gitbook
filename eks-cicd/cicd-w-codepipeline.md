@@ -94,7 +94,7 @@ https://github.com/whchoi98/eks-workshop-sample-api-service-go
 
 아래와 같이 이동한 Repo에서 Fork 를 수행합니다.
 
-<figure><img src="../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (109).png" alt=""><figcaption></figcaption></figure>
 
@@ -110,11 +110,7 @@ CodePipeline이 GitHub에서 Callback을 수신하려면 개인 액세스 토큰
 
 개인 Github 계정에서 "settings"를 선택합니다.&#x20;
 
-<div align="left">
-
-<figure><img src="../.gitbook/assets/image (505).png" alt="" width="301"><figcaption></figcaption></figure>
-
-</div>
+<div align="left"><figure><img src="../.gitbook/assets/image (505).png" alt="" width="301"><figcaption></figcaption></figure></div>
 
 Profile 메뉴 하단의 "Developer settings"를 선택합니다.&#x20;
 
@@ -242,7 +238,7 @@ kubectl get services hello-k8s -o wide
 
 Jenkins 기반 CI 랩을 수행하기 위해서, 아래 작업을 통해 Codepipeline을 삭제합니다.
 
-<figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (4) (1).png" alt=""><figcaption></figcaption></figure>
 
 ```
 kubectl delete pods hello-k8s-86cffd459c-xxxxx
