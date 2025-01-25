@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2022-04-12 / 40min'
+description: 'Update: 2025-01-25 / 40min'
 ---
 
 # NodePort 기반 배포
@@ -110,6 +110,48 @@ Yaml 파일에 정의된 Service의 NodePort는 EKS Node에서 허용되지 않�
 
 Public-SG 라는 이름으로 Security Group을 생성합니다.&#x20;
 
+AWS Console 또는 아래의 Shell을 통해 실행합니다.
+
+아래와 같이 Security Group을 생성합니다.
+
+```
+~/environment/myeks/shell/nodeport_sg.sh
+```
+
+* VPC Name:
+
+```
+eksworkshop
+```
+
+* Security Group Name:&#x20;
+
+```
+PUBLIC_SG
+```
+
+생성한 Security Group을 아래 Managed Node Group 인스턴스에 적용합니다.
+
+```
+~/environment/myeks/shell/add_sg_to_node.sh
+```
+
+Enter the Node Name (노드 이름 입력):
+
+```
+eksworkshop-managed-ng-public-01-Node
+```
+
+Enter the Security Group Name (Security Group 이름 입력):
+
+```
+PUBLIC_SG
+```
+
+
+
+아래는 AWS Console에서 작업하는 방법이므로, 위의 Shell을 실행한 경우는 생략합니다.
+
 * TCP 30080-30090 허용
 
 <figure><img src="../.gitbook/assets/image (250).png" alt=""><figcaption></figcaption></figure>
@@ -133,7 +175,7 @@ eksworkshop-managed-ng-public-01-Node
 eksworkshop-managed-ng-public-01-Node 들의 EIP를 확인합니다.
 
 ```
-aws ec2 describe-instances --filters 'Name=tag:Name,Values=eksworkshop-managed-ng-public-01-Node' | jq -r '.Reservations[].Instances[].PublicIpAddress'
+~/environment/myeks/shell/nodeport_public_ip.sh
 
 ```
 
