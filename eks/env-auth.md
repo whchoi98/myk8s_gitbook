@@ -77,7 +77,7 @@ echo $MASTER_ARN
 
 ```
 
-정상적으로 Key가 생성되었는지 **`AWS 관리 콘솔 - KMS - 고객관리형 키`**에서 확인합니다.
+정상적으로 Key가 생성되었는지 **`AWS 관리 콘솔 - KMS - 고객관리형 키`**&#xC5D0;서 확인합니다.
 
 ![](<../.gitbook/assets/image (146).png>)
 

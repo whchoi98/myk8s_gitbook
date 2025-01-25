@@ -10,7 +10,7 @@ Kubernetes 개념은 kubernetes.io 공식 블로그에 포스팅 된 문서를 �
 
 AWS EKS에 대한 설치와 구성 및 관리, 네트워크, 스토리지 ,보안, CI/CD, 서비스등에 대한 다양한 Hands On Lab을 상세하게 소개합니다.
 
-### [Kubernetes 개념](kubernetes-concept/)
+### [Kubernetes 개념](tip/kubernetes-concept/)
 
 ### [EKS 환경과 구성](eks/) (40min)
 

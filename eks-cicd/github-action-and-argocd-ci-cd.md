@@ -22,7 +22,7 @@ description: 'Update : 2024-04-16'
 3.  `k8s-manifest-repo` 라는 이름으로 github 레파지토리를 생성 합니다. 이 레파지토리는 kubernetes manifests 들을 저장하는 레파지토리입니다.
 
     <figure><img src="../.gitbook/assets/Screenshot 2024-04-16 at 5.24.26 PM (1).png" alt=""><figcaption></figcaption></figure>
-4. **User profile > Settings > Developer settings > Personal access tokens** 탭의 **Tokens (classic)**을 클릭합니다. 그리고 우측 상단에 위치한 **Generate new token**을 선택 합니다. **Note** 에 `test-eks-workshop` 라고 입력 하고 **Select scopes** 에서 **repo**, **workflow** 를 선택 합니다. 그리고 화면 아래에서 **Generate token** 을 클릭 합니다.
+4. **User profile > Settings > Developer settings > Personal access tokens** 탭의 **Tokens (classic)**&#xC744; 클릭합니다. 그리고 우측 상단에 위치한 **Generate new token**을 선택 합니다. **Note** 에 `test-eks-workshop` 라고 입력 하고 **Select scopes** 에서 **repo**, **workflow** 를 선택 합니다. 그리고 화면 아래에서 **Generate token** 을 클릭 합니다.
 
 <figure><img src="../.gitbook/assets/Screenshot 2024-04-16 at 3.49.35 PM.png" alt=""><figcaption></figcaption></figure>
 
@@ -549,7 +549,7 @@ UI에서도 동일한 값을 확인할 수 있습니다.
 
 <figure><img src="../.gitbook/assets/Screenshot 2024-04-16 at 9.54.29 PM.png" alt=""><figcaption></figcaption></figure>
 
-17. 앞서 생성한 github action build 스크립트에 kustomize를 이용하여 컨테이너 image tag 정보를 업데이트 한 후 _**k8s-manifest-repo**_에 commit/push 하는 단계를 추가 해야 합니다.&#x20;
+17. 앞서 생성한 github action build 스크립트에 kustomize를 이용하여 컨테이너 image tag 정보를 업데이트 한 후 _**k8s-manifest-repo**_&#xC5D0; commit/push 하는 단계를 추가 해야 합니다.&#x20;
 
 ```sh
 cd ~/environment/amazon-eks-frontend/.github/workflows
@@ -596,11 +596,11 @@ git commit -m "Add image tag update stage"
 git push origin main
 ```
 
-추가된 단계가 정상적으로 동작 하면, **ArgoCD**가 _**k8s-manifest-repo**_를 지켜 보고 있다가 새로운 변경 사항이 발생 되었음을 알아채고, **kustomize build** 작업을 수행하여 새로운 **kubernetes manifest** (\*새로운 image tag를 포함한)를 eks 클러스터에 배포 합니다.
+추가된 단계가 정상적으로 동작 하면, **ArgoCD**가 _**k8s-manifest-repo**_&#xB97C; 지켜 보고 있다가 새로운 변경 사항이 발생 되었음을 알아채고, **kustomize build** 작업을 수행하여 새로운 **kubernetes manifest** (\*새로운 image tag를 포함한)를 eks 클러스터에 배포 합니다.
 
 
 
-새로운 Image Tag가 정상 반영 되었는지 살펴 보겠습니다. _**k8s-manifest-repo**_의 commit history를 통해 변경된 Image Tag 정보를 확인 합니다.
+새로운 Image Tag가 정상 반영 되었는지 살펴 보겠습니다. _**k8s-manifest-repo**_&#xC758; commit history를 통해 변경된 Image Tag 정보를 확인 합니다.
 
 <figure><img src="../.gitbook/assets/Screenshot 2024-04-16 at 10.11.07 PM (2).png" alt=""><figcaption></figcaption></figure>
 

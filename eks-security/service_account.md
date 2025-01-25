@@ -72,7 +72,7 @@ eksctl create iamserviceaccount \
 
 이전 단계에서 클러스터의 **`iam-test`** 라는 서비스 계정과 연결된 IAM 역할을 생성했습니다.
 
-먼저 서비스 계정 **`iam-test`**가 생성되었는지 확인합니다.
+먼저 서비스 계정 **`iam-test`**&#xAC00; 생성되었는지 확인합니다.
 
 ```
 kubectl get serviceaccounts iam-test

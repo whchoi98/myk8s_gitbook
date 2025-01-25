@@ -51,7 +51,7 @@ FILE_SYSTEM_ID=$(aws efs create-file-system | jq --raw-output '.FileSystemId')
 
 ```
 
-다음 명령을 사용하여 파일 시스템의 LifeCycleState를 확인하고 다음 단계로 진행하기 전에 **`"available"`**으로 변경될 때까지 기다립니다.
+다음 명령을 사용하여 파일 시스템의 LifeCycleState를 확인하고 다음 단계로 진행하기 전에 **`"available"`**&#xC73C;로 변경될 때까지 기다립니다.
 
 ```
 aws efs describe-file-systems --file-system-id $FILE_SYSTEM_ID
@@ -129,7 +129,7 @@ helm upgrade -i aws-efs-csi-driver aws-efs-csi-driver/aws-efs-csi-driver \
 
 6.샘플 어플리케이션 배포 시험
 
-[Amazon EFS Container Storage Interface(CSI) 드라이버](https://github.com/kubernetes-sigs/aws-efs-csi-driver) GitHub 리포지토리의 [동적 프로비저닝](https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/dynamic\_provisioning) 예제를 사용해 봅니다.
+[Amazon EFS Container Storage Interface(CSI) 드라이버](https://github.com/kubernetes-sigs/aws-efs-csi-driver) GitHub 리포지토리의 [동적 프로비저닝](https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/examples/kubernetes/dynamic_provisioning) 예제를 사용해 봅니다.
 
 Amazon EFS의 `StorageClass` 매니페스트를 다운로드하고, 스토리지 클래스를 배포합니다.
 

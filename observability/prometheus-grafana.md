@@ -10,7 +10,7 @@ description: 'Update : 2023-07-23'
 
 ### 1.주요 특징
 
-* 메트릭 이름 및 key -value pair로 식별 된 시계열 데이터가 포함 된 다차원 [데이터 모델](https://prometheus.io/docs/concepts/data\_model/)
+* 메트릭 이름 및 key -value pair로 식별 된 시계열 데이터가 포함 된 다차원 [데이터 모델](https://prometheus.io/docs/concepts/data_model/)
 * 다차원 데이터 모델 활용 하는 [유연한 쿼리 언어 ](https://prometheus.io/docs/prometheus/latest/querying/basics/)PromQL 사
 * 분산 스토리지에 의존성이 없음.
 * HTTP pull model을 통해 시계열 수집.
@@ -23,7 +23,7 @@ description: 'Update : 2023-07-23'
 
 * [Prometheus ](https://github.com/prometheus/prometheus): 시계열 데이터를 스크랩하고 저장 하는 주요 [서버](https://github.com/prometheus/prometheus)
 
-오픈소스 모니터링 툴로 지표 수집을 통한 모니터링이 주요 기능입니다.**지표(Metric)**를 수집하여 모니터링 할 수 있고, 기본적으로 **Pull 방식**으로 데이터를 수집하는데, 이 말은 모니터링 대상이 되는 자원이 지표정보를 프로메테우스로 보내는 것이 아니라, 프로메테우스가 주기적으로 모니터링 대상에서 지표를 읽어온다는 뜻입니다.
+오픈소스 모니터링 툴로 지표 수집을 통한 모니터링이 주요 기능입니다.**지표(Metric)**&#xB97C; 수집하여 모니터링 할 수 있고, 기본적으로 **Pull 방식**으로 데이터를 수집하는데, 이 말은 모니터링 대상이 되는 자원이 지표정보를 프로메테우스로 보내는 것이 아니라, 프로메테우스가 주기적으로 모니터링 대상에서 지표를 읽어온다는 뜻입니다.
 
 Pull 방식으로 지표정보를 읽어올때는 각 서버에 설치된 Exporter를 통해서 정보를 읽어오며, 배치나 스케쥴 작업의 경우에는 필요한 경우에만 떠 있다가 작업이 끝나면 사라지기 때문에 Pull 방식으로 데이터 수집이 어워서, 그럴 경우 Push방식을 사용하는 Push gateway를 통해 지표정보를 받아오는 경우도 있습니다 .
 

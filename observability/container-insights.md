@@ -12,7 +12,7 @@ CloudWatch Container Insights를 사용해 컨테이너식 애플리케이션 �
 
 Container Insights에서 수집한 지표는 CloudWatch 자동 대시보드에서 사용할 수 있습니다. CloudWatch Logs Insights를 사용해 컨테이너 성능 및 로그를 분석하고 이와 관련해 발생하는 문제를 해결할 수 있습니다.
 
-운영 데이터는 _성능 로그 이벤트_로서 수집됩니다. 이들은 정형 JSON 스키마를 사용하는 항목이기 때문에 카디널리티가 높은 데이터를 적정 규모로 수집 및 저장할 수 있습니다. 이러한 데이터를 토대로 CloudWatch는 집계 지표를 클러스터, 노드, Pod, 작업 및 서비스 수준에서 CloudWatch 지표로 생성합니다.
+운영 데이터는 _성능 로그 이벤&#xD2B8;_&#xB85C;서 수집됩니다. 이들은 정형 JSON 스키마를 사용하는 항목이기 때문에 카디널리티가 높은 데이터를 적정 규모로 수집 및 저장할 수 있습니다. 이러한 데이터를 토대로 CloudWatch는 집계 지표를 클러스터, 노드, Pod, 작업 및 서비스 수준에서 CloudWatch 지표로 생성합니다.
 
 Container Insights에서 수집된 지표는 사용자 지정 지표로 청구됩니다. CloudWatch 요금에 대한 자세한 내용은 [Amazon CloudWatch 요금](https://aws.amazon.com/cloudwatch/pricing/)을 참조하십시오.
 
@@ -276,7 +276,7 @@ ac4026294517a4cd69df77ce5ebc4547-1003101175.ap-northeast-2.elb.amazonaws.com
 
 siege는 아래와 같은 옵션으로 부하를 줄 수 있습니다.
 
-> &#x20;\-c : 동시 접속 유 , -t: 부하 시간 -r : 반복 횟수 , -d: 요청시 Delay time , -d : 요청결과 출력, -q: 실시간 수행 출력을 표시 하지 않습니다.
+> &#x20;-c : 동시 접속 유 , -t: 부하 시간 -r : 반복 횟수 , -d: 요청시 Delay time , -d : 요청결과 출력, -q: 실시간 수행 출력을 표시 하지 않습니다.
 
 아래와 같이 Load를 발생 시킵니다.
 
