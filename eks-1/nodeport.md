@@ -43,7 +43,7 @@ node-test-01-869b8d5f87-pp7p9   1/1     Running   0          19s   10.11.41.25  
 node-test-01-869b8d5f87-x6mf9   1/1     Running   0          19s   10.11.11.70   ip-10-11-3-14.ap-northeast-2.compute.internal    <none>           <none>
 ```
 
-shell 연결을 편리하게 접속하기 위해 아래와 같이 cloud9 terminal 의 bash profile에 등록합니다.
+shell 연결을 편리하게 접속하기 위해 아래와 같이 IDE terminal 의 bash profile에 등록합니다.
 
 ```
 export NodePort_Test_Pod01=$(kubectl -n node-test-01 get pod -o wide | awk 'NR==2' | awk '/node-test-01/{print $1 } ')
@@ -216,7 +216,7 @@ iptables -t nat -L --line-number | grep node-test-01-svc
 
 ### 3.배포용 yaml 복제.
 
-NodePort 타입의 서비스 구성을 위해서 LAB에서 사용할 App을 Cloud9에서 복제합니다.
+NodePort 타입의 서비스 구성을 위해서 LAB에서 사용할 App을 IDE Terminal에서 복제합니다.
 
 ```
 cd ~/environment
