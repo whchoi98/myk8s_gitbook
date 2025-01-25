@@ -1,5 +1,5 @@
 ---
-description: 'update : 2022-10-03 / 50min'
+description: 'update : 2025-01-25 / 50min'
 ---
 
 # AWS Load Balancer Controller
@@ -89,6 +89,8 @@ AWS IAM(Identity and Access Management)에서는 OpenID Connect(OIDC)를 사용�
 
 IAM OIDC Provider는 기본으로 활성화되어 있지 않습니다. eksctl을 사용하여 IAM OIDC Provider를 생성합니다.
 
+EKS Cluster를 배포할 때, 이미 IAM OIDC Provider 설정을 하였습니다. 아래는 참조만 합니다.
+
 ```
 source ~/.bash_profile
 eksctl utils associate-iam-oidc-provider \
@@ -115,8 +117,9 @@ ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다.
 ```
 ## ALB Load Balancer Controller 의 IAM Policy Download
 # cd ~/environment/myeks/alb-controller/
-# export ALB_CONTROLLER_VERSION=2.5.2
-# curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v${ALB_CONTROLLER_VERSION}/docs/install/iam_policy.json
+# export ALB_CONTROLLER_VERSION=2.11.0
+# curl -o iam_policy_${ALB_CONTROLLER_VERSION}.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json
+
 ```
 
 ### 9. AWSLoadBalancerControllerIAMPolicy IAM 정책 생성.
@@ -125,9 +128,10 @@ AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 
 ```
 cd ~/environment/myeks/alb-controller
+    
 aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
-    --policy-document file://./iam_policy_v2.5.2.json
+    --policy-document file://iam_policy_${ALB_CONTROLLER_VERSION}.json
 
 ```
 
@@ -184,16 +188,14 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::050989239411:role/eksctl-eksworkshop-addon-iamserviceaccount-k-Role1-1UV0H179WJOBO
-  creationTimestamp: "2022-12-18T15:11:35Z"
+    eks.amazonaws.com/role-arn: arn:aws:iam::960976631469:role/eksctl-eksworkshop-addon-iamserviceaccount-ku-Role1-uKPLhgiSR19D
+  creationTimestamp: "2025-01-25T14:30:03Z"
   labels:
     app.kubernetes.io/managed-by: eksctl
   name: aws-load-balancer-controller
   namespace: kube-system
-  resourceVersion: "43910"
-  uid: c92e0386-cd24-43a2-a90a-eac960e27b66
-secrets:
-- name: aws-load-balancer-controller-token-zlq6v
+  resourceVersion: "110037"
+  uid: 8a84252d-6dfb-40c7-8bc3-2d41f8f98486
 ```
 
 > 참조  URL - [https://eksctl.io/usage/iamserviceaccounts/](https://eksctl.io/usage/iamserviceaccounts/)
@@ -206,11 +208,16 @@ secrets:
 
 아래와 같이 Cert Manager (인증서 관리자)를 설치합니다.
 
+cert-manager는 Kubernetes 환경에서 TLS 인증서 관리를 자동화하는 오픈소스 솔루션입니다. 클러스터 내에서 인증서를 효율적으로 관리, 발급, 갱신 및 유지 보수할 수 있도록 설계되었습니다. 인증 기관과 통합하여 인증서 발급, 갱신, 유지 관리를 자동으로 처리하며, 이를 통해 애플리케이션 보안을 강화하고 운영 부담을 줄일 수 있습니다.
+
 ```
 export CERTMGR_VERSION=1.12.2
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v${CERTMGR_VERSION}/cert-manager.yaml
 kubectl -n cert-manager get pods
 
+export CERTMGR_VERSION=1.16.3
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v${CERTMGR_VERSION}/cert-manager.yaml
+kubectl -n cert-manager get pods
 ```
 
 {% hint style="warning" %}
@@ -231,7 +238,7 @@ Helm 기반 또는 manfest 파일을 통해 ALB Loadbalancer Controller Pod를 �
 
 ```
 # wget # https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.5.2/v2_5_2_full.yaml
-
+# wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/v2_11_0_full.yaml
 ```
 
 AWS Loadbalancer Controller Pod의 Deployment file에 지정된 <mark style="color:red;background-color:red;">**`cluster-name`**</mark> 값을 , 현재 배포한 Cluster name으로 변경합니다. (이미 앞서 git을 통해서 다운 받았을 경우에는 생략해도 됩니다.)
@@ -263,7 +270,7 @@ spec:
 
 ```
 cd ~/environment/myeks/alb-controller
-kubectl apply -f v2_5_2_full.yaml
+kubectl apply -f v2_11_0_full.yaml
 kubectl -n kube-system get pods | grep balancer
 
 ```
@@ -410,16 +417,37 @@ kubernetes Ingress 및 Service Object에 Annotation을 추가하여 동작을 �
 
 ### 13.ALB Ingress Traffic 흐름 확인
 
+#### IngressClass 생성
 
+IngressClass는 Kubernetes에서 Ingress 리소스가 어떤 컨트롤러를 사용할지 정의하는 리소스 유형(kind)입니다. IngressClass는 Kubernetes 클러스터 내에서 여러 Ingress 컨트롤러가 공존할 수 있도록 컨트롤러별로 특정 클래스를 정의하여 Ingress 리소스를 관리할 수 있게 해줍니다.
+
+```
+kubectl apply -f ~/environment/myeks/ingress/v2.11/alb-ingressClass.yaml
+```
+
+&#x20;IngressClass는 Kubernetes에서 Ingress 리소스와 Ingress 컨트롤러 간의 연결을 정의하는 리소스입니다.  클러스터 내 여러 컨트롤러를 지원하거나 Ingress 리소스를 격리된 방식으로 관리할 때 사용됩니다. `spec.controller`를 통해 컨트롤러를 지정하고, `ingressClassName`을 통해 Ingress와 매핑합니다.  이를 통해 Kubernetes 환경에서 유연하고 확장성 있는 Ingress 관리가 가능합니다.
+
+IngressClass는 아래와 같은 yaml로 구성됩니다.
+
+```
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: alb
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"  # 이 IngressClass를 기본값으로 설정
+spec:
+  controller: "ingress.k8s.aws/alb"  # AWS Load Balancer Controller를 지정
+```
 
 ALB Ingress를 시험하기 위해 아래와 같이 namespace와  pod,service를 배포합니다.
 
 ```
 ## alb-test-01 namespace를 생성하고, pod, service를 배포 
 kubectl create namespace alb-ing-01
-kubectl -n alb-ing-01 apply -f ~/environment/myeks/ingress/v1.22/alb-ing-01.yaml
-kubectl -n alb-ing-01 apply -f ~/environment/myeks/ingress/v1.22/alb-ing-01-ingress.yaml
-kubectl -n alb-ing-01 apply -f ~/environment/myeks/ingress/v1.22/alb-ing-01-service.yaml
+kubectl -n alb-ing-01 apply -f ~/environment/myeks/ingress/v2.11/alb-ing-01.yaml
+kubectl -n alb-ing-01 apply -f ~/environment/myeks/ingress/v2.11/alb-ing-01-ingress.yaml
+kubectl -n alb-ing-01 apply -f ~/environment/myeks/ingress/v2.11/alb-ing-01-service.yaml
 
 ```
 
@@ -521,9 +549,9 @@ Cache-Control: max-age=0
 
 아래와 같이 ALB Ingress가 구성되었습니다.&#x20;
 
-<figure><img src="../.gitbook/assets/image (307).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (164).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 ![](<../.gitbook/assets/image (498).png>)
 
@@ -568,7 +596,7 @@ kubectl -n alb-ing-02 get ingress alb-ing-02 | tail -n 1 | awk '{ print "ALB-ING
 
 ```
 
-해당 A Record를 Cloud9 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다.
+해당 A Record를 IDE Terminal에서  Curl을 통해 접속하거나 브라우저에서 접속해 봅니다.
 
 ```
 $ kubectl -n alb-ing-02 get pod -o wide
@@ -581,7 +609,7 @@ NAME         CLASS    HOSTS   ADDRESS                                           
 alb-ing-02   <none>   *       alb-ing-02-1854312130.ap-northeast-2.elb.amazonaws.com   80      7m14s
 ```
 
-아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
+아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 IDE terminal Shell에 등록 합니다.
 
 ```
 export alb_ing_02_Pod01=$(kubectl -n alb-ing-02 get pod -o wide | awk 'NR==2' | awk '/alb-ing-02/{print $1 } ')
