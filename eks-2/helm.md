@@ -1,5 +1,5 @@
 ---
-description: 'update : 2023-09-19 /1h'
+description: 'update : 2025-01-30 /1h'
 ---
 
 # 패키지 관리 - Helm
@@ -33,9 +33,9 @@ Helm Chart의 구조는 아래와 같습니다.
 
 아래와 같은 순서대로 구성합니다.
 
-1. **Cloud9에 Helm3 최신 버전 설치**
-2. **Cloud9에 원격 Chart Repo 구성**
-3. **Cloud9에 Helm 명령어 자동완성 구성**
+1. **IDE Terminal에 Helm3 최신 버전 설치**
+2. **IDE Terminal에 원격 Chart Repo 구성**
+3. **IDE Terminal에 Helm 명령어 자동완성 구성**
 4. **Helm 을 통한 nginx 배포 및 확인.**
 5. **Helm 을 통한 nginx 삭제.**
 
@@ -44,8 +44,8 @@ Helm Chart의 구조는 아래와 같습니다.
 헬름은 헬름 최신 버전을 자동으로 가져와서 [로컬에 설치](https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)하는 인스톨러 스크립트를 제공합니다. 이 스크립트를 받아서 로컬에서 실행할 수 있습니다.  이미 사전 구성에서 설치되어 있습니다.
 
 ```
-cd ~/environment
-curl -L https://git.io/get_helm.sh | bash -s -- --version v3.13.2
+#cd ~/environment
+#curl -L https://git.io/get_helm.sh | bash -s -- --version v3.15.2
 
 ```
 
@@ -60,7 +60,7 @@ helm version --short
 
 ```
 $ helm version --short
-v3.8.2+g6e3701e
+v3.15.2+g1a500d5
 
 ```
 
@@ -119,7 +119,7 @@ stable/gcloud-endpoints         0.1.2           1               DEPRECATED Devel
 
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
-
+helm repo update
 ```
 
 다시 nginx를 검색해 봅니다.
@@ -180,10 +180,17 @@ To access NGINX from outside the cluster, follow the steps below:
 Pod와 서비스 배포를 확인합니다.
 
 ```
+helm list -A
 kubectl -n helm-test get service
 ```
 
+아래와 같은 결과가 출력됩니다.
+
 ```
+$ helm list -A
+kubectl -n helm-test get service
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+helm-nginx      helm-test       1               2025-01-31 07:19:56.858424582 +0000 UTC deployed        nginx-18.3.5    1.27.3     
 $ kubectl -n helm-test get service
 NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                                                                   PORT(S)        AGE
 helm-nginx   LoadBalancer   172.20.141.34   adeb84a799b4046689bec6ed2b120c51-272707121.ap-northeast-2.elb.amazonaws.com   80:32303/TCP   50s
@@ -204,21 +211,6 @@ echo "NGINX URL: http://$SERVICE_IP/"
 EC2 대시보드에서 ELB가 정상적으로 생성된 것을 확인 할 수 있습니다.
 
 ![](<../.gitbook/assets/image (384).png>)
-
-설치된 helm list를 확인합니다.
-
-```
-helm list -n helm-test
-
-```
-
-출력 예시
-
-```
-$ helm list -n helm-test
-NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
-helm-nginx      helm-test       1               2021-10-20 11:37:15.991941399 +0000 UTC deployed        nginx-9.5.8     1.21.3   
-```
 
 아래 명령을 통해 배포된 내용을 확인합니다.
 
@@ -315,7 +307,8 @@ helmdemo 라는 Chart를 생성합니다.
 cd ~/environment/
 helm create helm-chart-demo
 sudo yum -y install tree
-
+cd ~/environment/helm-chart-demo
+tree
 ```
 
 Helm Chart를 생성하면, 아래와 같은 디렉토리 구조를 생성되어 있습니다.&#x20;
@@ -1148,6 +1141,6 @@ ELB DNS 레코드로 접속해 봅니다.
 ![](<../.gitbook/assets/image (274).png>)
 
 {% hint style="info" %}
-Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html)
+Helm Chartmuseum은 이제 AWS ECR과도 연동이 가능해 졌습니다. [https://docs.aws.amazon.com/ko\_kr/AmazonECR/latest/userguide/push-oci-artifact.html](https://docs.aws.amazon.com/ko_kr/AmazonECR/latest/userguide/push-oci-artifact.html)
 {% endhint %}
 

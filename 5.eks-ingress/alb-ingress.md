@@ -127,6 +127,7 @@ ALB Load Balancer 컨트롤러에 대한 IAM정책을 다운로드 받습니다.
 AWSLoadBalancerControllerIAMPolicy라는 IAM 정책을 생성합니다.
 
 ```
+export ALB_CONTROLLER_VERSION=2.11.0
 cd ~/environment/myeks/alb-controller
     
 aws iam create-policy \
@@ -211,9 +212,9 @@ metadata:
 cert-manager는 Kubernetes 환경에서 TLS 인증서 관리를 자동화하는 오픈소스 솔루션입니다. 클러스터 내에서 인증서를 효율적으로 관리, 발급, 갱신 및 유지 보수할 수 있도록 설계되었습니다. 인증 기관과 통합하여 인증서 발급, 갱신, 유지 관리를 자동으로 처리하며, 이를 통해 애플리케이션 보안을 강화하고 운영 부담을 줄일 수 있습니다.
 
 ```
-export CERTMGR_VERSION=1.12.2
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v${CERTMGR_VERSION}/cert-manager.yaml
-kubectl -n cert-manager get pods
+#export CERTMGR_VERSION=1.12.2
+#kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v${CERTMGR_VERSION}/cert-manager.yaml
+#kubectl -n cert-manager get pods
 
 export CERTMGR_VERSION=1.16.3
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v${CERTMGR_VERSION}/cert-manager.yaml
@@ -237,7 +238,6 @@ cert-manager-webhook-6466bc8f4-zsz4w      1/1     Running   0          41s
 Helm 기반 또는 manfest 파일을 통해 ALB Loadbalancer Controller Pod를 설치합니다. 여기에서는 Yaml을 통해 직접 설치해 봅니다. (이미 git을 통해서 다운 받았을 경우에는 생략해도 됩니다.)
 
 ```
-# wget # https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.5.2/v2_5_2_full.yaml
 # wget https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.11.0/v2_11_0_full.yaml
 ```
 
