@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2023-09-19'
+description: 'Update : 2025-01-30'
 ---
 
 # 고가용성 Health Check 구성
@@ -39,15 +39,12 @@ kubelet은 실행 중인 컨테이너들에 대해서 선택적으로 세 가지
 
 ### 1.Liveness Probe 구성을 포함한 App 배포
 
-Liveness Probe와 Readiness Probe 구성을 위한 디렉토리를 생성합니다.
+kubelet은 periodSeconds 필드를 사용하여 컨테이너를 상태를 확인합니다. 이 경우 kubelet은 5 초마다 liveness probe를 통해 확인합니다. initialDelaySeconds 필드는 첫 번째 Probe를 수행하기 전에 5 초 동안 기다려야한다는 것을 kubelet에 알리는 데 사용됩니다. 프로브를 수행하기 위해 kubelet은 이 포드를 호스팅 하는 서버에 HTTP GET 요청을 전송하고 서버 / health의 핸들러가 성공 코드를 반환하면 컨테이너가 정상으로 간주됩니다. 핸들러가 실패 코드를 반환하면 kubelet은 컨테이너를 종료하고 다시 시작합니다.&#x20;
+
+Liveness Probe와 Readiness Probe 구성을 위한 디렉토리를 생성하고, Liveness Pod를 위한 mainfest 파일을 생성합니다.
 
 ```
 mkdir -p ~/environment/healthchecks
-```
-
-kubelet은 periodSeconds 필드를 사용하여 컨테이너를 상태를 확인합니다. 이 경우 kubelet은 5 초마다 liveness probe를 통해 확인합니다. initialDelaySeconds 필드는 첫 번째 Probe를 수행하기 전에 5 초 동안 기다려야한다는 것을 kubelet에 알리는 데 사용됩니다. 프로브를 수행하기 위해 kubelet은 이 포드를 호스팅 하는 서버에 HTTP GET 요청을 전송하고 서버 / health의 핸들러가 성공 코드를 반환하면 컨테이너가 정상으로 간주됩니다. 핸들러가 실패 코드를 반환하면 kubelet은 컨테이너를 종료하고 다시 시작합니다.&#x20;
-
-```
 cat <<EoF > ~/environment/healthchecks/liveness-app.yaml
 apiVersion: v1
 kind: Pod
@@ -281,7 +278,7 @@ Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavai
 앞서 매니페스트 파일 내부에 포함된 Readiness Probe에는 반드시 `tmp/healthy` 디렉토리가 존재해야 Readiness Probe가 구동되도록 되어 있습니다. 해당 디렉토리를 삭제 시켜서 Readiness Fail을 발생시킵니다.
 
 ```
-kubectl -n healthchecks exec -it  {pod-name} -- rm /tmp/healthy
+kubectl -n healthchecks exec -it $(kubectl -n healthchecks get pods -l app=readiness-deployment -o jsonpath='{.items[0].metadata.name}') -- rm /tmp/healthy
 ```
 
 아래 명령을 통해 App배포와 Replica 상태를 확인해 봅니다.
@@ -319,7 +316,8 @@ Replicas:               3 desired | 3 updated | 3 total | 2 available | 1 unavai
 앞서 Pod에서 삭제한 디렉토리를 다시 생성합니다.
 
 ```
-kubectl -n healthchecks exec -it {pod-name} -- touch /tmp/healthy
+kubectl -n healthchecks exec -it $(kubectl -n healthchecks get pods -l app=readiness-deployment -o jsonpath='{.items[0].metadata.name}') -- touch /tmp/healthy
+
 ```
 
 디렉토리를 생성한 후 Pod의 상태와 Replica 가용 숫자를 확인해 봅니다.
