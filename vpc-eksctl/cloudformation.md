@@ -14,18 +14,18 @@ AWS CloudFormation에서는 클라우드 환경에서 AWS 및 타사 애플리�
 
 eksworkshop에서 사용할 다양한 yaml file을 git에서 내려받습니다. Cloud9에서 아래와 같이 실행합니다.
 
-```
-cd ~/environment
-git clone https://github.com/whchoi98/myeks
+<pre><code><strong>mkdir ~/environment
+</strong><strong>cd ~/environment
+</strong>git clone https://github.com/whchoi98/myeks
 
-```
+</code></pre>
 
 ### 2. Stack 생성
 
 아래 aws cli를 통해서 Cloudformation을 실행하여 , VPC를 구성합니다.&#x20;
 
 ```
-cd ./myeks/
+cd ~/environment/myeks/
 aws cloudformation deploy \
   --stack-name "eksworkshop" \
   --template-file "EKSVPC3AZ.yml" \
