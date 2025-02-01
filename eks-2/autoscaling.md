@@ -19,6 +19,7 @@ HPA(Horizontal Pod Autoscaler)는 쿠버네티스 API 리소스 및 컨트롤러
 아래와 같 metric-server 설치를 진행합니다.&#x20;
 
 ```
+eksctl delete addon --name metrics-server --cluster ${EKSCLUSTER_NAME}
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
 ```
@@ -113,7 +114,7 @@ php-apache   Deployment/php-apache   483%/50%   1         10        4          2
 php-apache   Deployment/php-apache   483%/50%   1         10        8          23m
 ```
 
-Cloud9 IDE 에서 터미널을 한개 더 열고 K9s 를 실행하면 더 상세하게 볼 수 있습니다.
+IDE 에서 터미널을 한개 더 열고 K9s 를 실행하면 더 상세하게 볼 수 있습니다.
 
 ```
 k9s -n metric-test
@@ -122,7 +123,7 @@ k9s -n metric-test
 
 ![](<../.gitbook/assets/image (401).png>)
 
-앞서 Shell을 실행했던 Cloud9 IDE 창에서 Shell을 종료합니다. 그리고 다시 Replica가 줄어드는지를 확인합니다. 수분 이후에 Pod수는 줄어들게 됩니다.&#x20;
+앞서 Shell을 실행했던 DE 창에서 Shell을 종료합니다. 그리고 다시 Replica가 줄어드는지를 확인합니다. 수분 이후에 Pod수는 줄어들게 됩니다.&#x20;
 
 ```
 whchoi98:~/environment $ kubectl -n metrics get hpa -w
@@ -462,7 +463,7 @@ CA Pod를 배포합니다.&#x20;
 ```
 cd ~/environment/cluster-autoscaler/
 kubectl apply -f ./cluster_autoscaler.yml
-kubectl -n kube-system get pods -o wide
+kubectl -n kube-system get pods -o wide | grep auto
 # cluster-autoscaler pod가 정상적으로 배포되었는지 확인
 
 ```
@@ -568,7 +569,7 @@ nginx-to-scaleout-5c74d46fd6-lprfm   0/1     Pending             0          0s  
 
 **`EC2 - 인스턴스`**&#x20;
 
-![](<../.gitbook/assets/image (237).png>)
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 아래와 같이 replica를 1로 원복 시킵니다.
 
