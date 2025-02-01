@@ -20,6 +20,7 @@
   * [고가용성 Health Check 구성 (작업중)](eks-2/health-check-1.md)
   * [Assign](eks-2/assign.md)
   * [테인트와 톨러레이션 (TBD)](eks-2/taints_tolerations.md)
+  * [Pod 오버헤드 (Pod Overhead) (작업중)](eks-2/pod-pod-overhead.md)
   * [스케쥴링 - AutoScaling 구성](eks-2/autoscaling.md)
   * [스케쥴링-Karpenter](eks-2/karpenter.md)
   * [EKS Fargate](eks-2/eks-fargate.md)
