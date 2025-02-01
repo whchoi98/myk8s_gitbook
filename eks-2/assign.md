@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2023-09-19'
+description: 'Update : 2025-01-30'
 ---
 
 # Assign
@@ -121,7 +121,8 @@ ip-10-11-90-240.ap-northeast-2.compute.internal   Ready    <none>   85m   v1.16.
 한 개의 Node Name을 선택하고, label을 지정합니다. (예. assigntest=01)
 
 ```
-kubectl label nodes ip-10-11-16-31.ap-northeast-2.compute.internal disktype=ssd
+kubectl label nodes $(kubectl get nodes -l nodegroup-type=frontend-workloads -o jsonpath='{.items[0].metadata.name}') disktype=ssd
+
 ```
 
 정상적으로 라벨링 되었는지 확인합니다.
@@ -286,7 +287,7 @@ with-node-affinity   0/1     pendingng               0     2m4s   <none>   ip-10
 이제 node에 nodAffinity를 위한 label을 지정합니다. 노드 어피니티는 PodSpec의 `affinity` 필드의 `nodeAffinity` 필드에서 지정됩니다.&#x20;
 
 ```
-kubectl label nodes ip-10-11-16-31.ap-northeast-2.compute.internal azname=ap-northeast-2a
+kubectl label nodes $(kubectl get nodes -l nodegroup-type=frontend-workloads -o jsonpath='{.items[0].metadata.name}') azname=ap-northeast-2a
 ```
 
 이제 정상적으로 pod가 생성되는 지 확인합니다.
