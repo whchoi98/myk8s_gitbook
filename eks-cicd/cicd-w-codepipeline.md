@@ -94,7 +94,7 @@ https://github.com/whchoi98/eks-workshop-sample-api-service-go
 
 아래와 같이 이동한 Repo에서 Fork 를 수행합니다.
 
-<figure><img src="../.gitbook/assets/image (3) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (3) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (109).png" alt=""><figcaption></figcaption></figure>
 

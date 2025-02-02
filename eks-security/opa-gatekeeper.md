@@ -20,7 +20,7 @@ OPA 는 Rego 라는 별도의 Language 를 통해 정책을 생성/관리합니�
 
 OPA Gatekeeper 는 OPA 에서 생성된 정책을 K8S 환경에서 적용하기 위해 사용하는 K8S 를 위한 Adminssion Webhook 입니다. OPA Gatekeep 의 기본적인 Flow 는 아래와 같습니다.
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### 3.OPA Gatekeeper 설치
 

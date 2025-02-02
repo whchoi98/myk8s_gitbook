@@ -1,5 +1,5 @@
 ---
-description: 'Update: 2024-04-10'
+description: 'Update: 2025-01-29'
 ---
 
 # 스케쥴링-Karpenter
@@ -516,6 +516,7 @@ Deployment 하기 전에 웹브라우저에서 앞서 생성한 kube-ops-view를
 
 ```
 #Kube-ops-view 설치
+kubectl create namespace kube-tools
 helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
 helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --namespace kube-tools
 kubectl patch svc -n kube-tools kube-ops-view -p '{"spec":{"type":"LoadBalancer"}}'
@@ -538,10 +539,17 @@ kubectl -n kube-tools get svc kube-ops-view | tail -n 1 | awk '{ print "kube-ops
 
 ```
 #go 설치
-yum install -y go
+curl -LO https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
+source ~/.bashrc
+go version
 #EKS Node Viewer 설치 (2~3분 이상 소요)
+mkdir -p ~/go/bin
 go install github.com/awslabs/eks-node-viewer/cmd/eks-node-viewer@v0.5.0
-
 #새로운 터미널에서 실행
 cd ~/go/bin
 ./eks-node-viewer
@@ -550,41 +558,44 @@ cd ~/go/bin
 
 아래와 같이 새로운 터미널에서 노드의 상태를 확인 할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Karpenter는 이제 활성화되었으며 노드 프로비저닝을 시작할 준비가 되었습니다. Deployment를 사용하여 Pod를 만들고 Karpenter가 노드를 프로비저닝하는 것을 확인해 봅니다.자동 노드 프로비저닝 이 배포는 [pause image](https://www.ianlewis.org/en/almighty-pause-container)를 사용하고 replica가  없는 상태에서 시작합니다.
 
 ```
+# Karpenter 테스트용 네임스페이스 생성
 kubectl create namespace karpenter-inflate
+
+# Deployment 정의 파일을 생성합니다.
 cat << EOF > ~/environment/karpenter/karpenter-inflate1.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inflate1
-  namespace: karpenter-inflate  
+  name: inflate1  # Deployment 이름
+  namespace: karpenter-inflate  # Deployment가 생성될 네임스페이스
 spec:
-  replicas: 0
+  replicas: 0  # 초기 Pod 개수 (Karpenter가 노드를 자동 프로비저닝할 때 증가시킬 예정)
   selector:
     matchLabels:
-      app: inflate1
+      app: inflate1  # 이 Deployment의 Pod를 식별하는 라벨
   template:
     metadata:
       labels:
-        app: inflate1
+        app: inflate1  # 생성되는 Pod에 적용될 라벨
     spec:
-      terminationGracePeriodSeconds: 0
+      terminationGracePeriodSeconds: 0  # Pod 종료 대기 시간을 0으로 설정 (즉시 종료)
       containers:
         - name: inflate1
-          image: public.ecr.aws/eks-distro/kubernetes/pause:3.2
+          image: public.ecr.aws/eks-distro/kubernetes/pause:3.2  # 최소한의 리소스를 소비하는 pause 컨테이너 사용
           resources:
             requests:
-              cpu: 1
+              cpu: 1  # 각 Pod가 1 vCPU를 요청 (Karpenter가 이에 맞는 노드를 자동 생성)
       nodeSelector:
-        karpenter.sh/capacity-type: spot
+        karpenter.sh/capacity-type: spot  # Karpenter가 Spot 인스턴스를 선택하도록 강제
 EOF
-## 생성된 karpenter-inflate.yaml을 실행합니다. 
-kubectl apply -f ~/environment/karpenter/karpenter-inflate1.yaml
 
+# 생성된 Deployment 정의를 Kubernetes에 적용 (Deployment 배포)
+kubectl apply -f ~/environment/karpenter/karpenter-inflate1.yaml
 ```
 
 replica를 늘려가면서 시험해 봅니다.
@@ -620,7 +631,7 @@ kube-ops-view 에서도 신규 노드가 할당된 것을 확인 할 수 있습�
 
 <figure><img src="../.gitbook/assets/image (118).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### 8. 자동 노드 프로비저닝 2
 
@@ -633,43 +644,43 @@ Karpenter Provisioner CRD를 새로운 형태로 만들어 봅니다.
 * **인스턴스 Capa: On Demand**
 
 ```
+# Karpenter Provisioner 정의 파일을 생성합니다.
 cat << EOF > ~/environment/karpenter/karpenter-provisioner2.yaml
 apiVersion: karpenter.sh/v1alpha5
 kind: Provisioner
 metadata:
-  name: provisioner2
+  name: provisioner2  # Provisioner 이름 (Karpenter가 노드를 자동 생성할 때 사용됨)
 spec:
   taints:
     - key: cpuIntensive
       value: "true"
-      effect: NoSchedule
+      effect: NoSchedule  # 특정 Pod가 Toleration 없이 이 노드에서 실행되지 않도록 설정
   labels:
-    phase: test2
-    nodeType: cpu-node
+    phase: test2  # 노드가 생성될 때 추가되는 라벨
+    nodeType: cpu-node  # CPU 집약적인 워크로드를 위한 노드 유형 태그
   requirements:
     - key: "node.kubernetes.io/instance-type"
       operator: In
-      values: ["c5.xlarge"]
+      values: ["c5.xlarge"]  # 생성할 노드 유형을 c5.xlarge로 제한
     - key: "topology.kubernetes.io/zone"
       operator: In
-      values: ["ap-northeast-1a"]
+      values: ["ap-northeast-1a"]  # ap-northeast-1a 가용 영역에서만 노드를 생성
     - key: "karpenter.sh/capacity-type"
       operator: In
-      values: ["on-demand"]
+      values: ["on-demand"]  # 온디맨드 인스턴스만 프로비저닝
   limits:
     resources:
-      cpu: 1000
+      cpu: 1000  # Karpenter가 프로비저닝할 총 CPU 리소스 제한 (1000 vCPU)
   provider:
     subnetSelector:
-      karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}
+      karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}  # Karpenter가 EKS 클러스터 서브넷을 자동으로 검색하도록 설정
     securityGroupSelector:
-      karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}
-  ttlSecondsAfterEmpty: 30
+      karpenter.sh/discovery: ${K_EKSCLUSTER_NAME}  # EKS 클러스터 보안 그룹을 자동으로 검색하도록 설정
+  ttlSecondsAfterEmpty: 30  # 노드가 30초 동안 사용되지 않으면 자동 종료
 EOF
 
-## 생성된 provisioner.yaml을 실행합니다. 
+# 생성된 Karpenter Provisioner를 적용하여 노드 자동 프로비저닝을 활성화합니다.
 kubectl apply -f ~/environment/karpenter/karpenter-provisioner2.yaml
-
 ```
 
 새로운 Deployment Yaml을 배포합니다.
@@ -725,7 +736,7 @@ kubectl logs -f -n karpenter -l app.kubernetes.io/name=karpenter -c controller
 
 ```
 
-
+<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 
 

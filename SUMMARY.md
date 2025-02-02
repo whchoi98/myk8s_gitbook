@@ -24,6 +24,7 @@
 * [7.Scheduling](7.scheduling/README.md)
   * [스케쥴링 - AutoScaling 구성](eks-2/autoscaling.md)
   * [스케쥴링-Karpenter](eks-2/karpenter.md)
+  * [스케쥴링-Karpenter (작업중)](7.scheduling/karpenter-1.md)
   * [EKS Fargate](eks-2/eks-fargate.md)
 * [8.Observability](observability/README.md)
   * [K8s Dashboard 배포](observability/k8s-dashboard.md)
