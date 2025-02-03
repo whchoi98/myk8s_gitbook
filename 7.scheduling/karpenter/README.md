@@ -390,4 +390,25 @@ sudo mv -v eks-node-viewer /usr/local/bin
 eks-node-viewer
 ```
 
+kube-ops-view를 설치합니다. 현재 Node와 Pod의 구성 배치도를 확인 할 수 있습니다.&#x20;
+
+```bash
+#Kube-ops-view 설치
+kubectl create namespace kube-tools
+helm repo add geek-cookbook https://geek-cookbook.github.io/charts/
+helm install kube-ops-view geek-cookbook/kube-ops-view --version 1.2.2 --namespace kube-tools
+kubectl patch svc -n kube-tools kube-ops-view -p '{"spec":{"type":"LoadBalancer"}}'
+kubectl -n kube-tools get svc kube-ops-view
+
+```
+
+kube-ops-view 의 FQDN LB 주소를 확인하고 접속해 봅니다.&#x20;
+
+```
+kubectl -n kube-tools get svc kube-ops-view | tail -n 1 | awk '{ print "kube-ops-view URL = http://"$4":8080" }'
+
+```
+
+
+
 이제 Karpenter가 정상적으로 설치되고 모니터링할 수 있습니다! 🚀
