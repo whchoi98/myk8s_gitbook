@@ -1,0 +1,2 @@
+# Instance type and AZ
+
