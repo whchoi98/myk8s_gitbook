@@ -14,8 +14,7 @@ AWS CloudFormation에서는 클라우드 환경에서 AWS 및 타사 애플리�
 
 eksworkshop에서 사용할 다양한 yaml file을 git에서 내려받습니다. Cloud9에서 아래와 같이 실행합니다.
 
-<pre><code><strong>mkdir ~/environment
-</strong><strong>cd ~/environment
+<pre><code><strong>cd ~/environment
 </strong>git clone https://github.com/whchoi98/myeks
 
 </code></pre>

@@ -76,11 +76,11 @@ AWS Load Balancer 컨트롤러는 두 가지 트래픽 모드를 지원합니다
 
 아래와 같은 구성 단계로 ALB Loadbalancer Controller를 구성합니다.
 
-1. IAM OIDC 공급자 생성
-2. AWS Loadbalancer 컨트롤러에 대한 IAM 정책 다운로드.
+1. IRSA를 위한 IAM OIDC 공급자 생성
+2. AWS Loadbalancer Controller에 대한 IAM 정책(Policy) 다운로드.
 3. AWSLoadBalancerControllerIAMPolicy 이름의 IAM 정책 생성.
-4. AWS Load Balancer 컨트롤러에 대한 IAM역할 및 ServiceAccount 생성
-5. EKS Cluster에 컨트롤러 추가 &#x20;
+4. AWS Load Balancer Controller에 대한 IAM역할 (Role) 및 EKS ServiceAccount 생성
+5. EKS Cluster에 AWS Load Balancer Controller 추가 &#x20;
 
 ### 7. IAM OIDC Provider 생성
 
@@ -100,7 +100,7 @@ eksctl utils associate-iam-oidc-provider \
     
 ```
 
-다음과 같이 Cloud9 Console 또는 IAM 서비스 메뉴에서 생성된 OIDC를 확인 할 수 있습니다.
+다음과 같이 IDE Terminal 또는 IAM 서비스 메뉴에서 생성된 OIDC를 확인 할 수 있습니다.
 
 ```
 aws eks describe-cluster --name ${EKSCLUSTER_NAME} --query "cluster.identity.oidc.issuer" --output text
@@ -483,7 +483,7 @@ NAME          CLASS    HOSTS   ADDRESS                                          
 alb-ing-01   <none>   *       k8s-alb-ing-01-alb-ing-01-1aa7c83247-45114489.ap-northeast-2.elb.amazonaws.com   80      13m
 ```
 
-아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 Cloud9 IDE terminal Shell에 등록 합니다.
+아래와 같이 배포된 pod에 접속을 편리하게 하기 위해 IDE terminal Shell에 등록 합니다.
 
 ```
 export alb_ing_01_Pod01=$(kubectl -n alb-ing-01 get pod -o wide | awk 'NR==2' | awk '/alb-ing-01/{print $1 } ')
