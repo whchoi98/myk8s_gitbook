@@ -154,19 +154,7 @@ Karpenter의 CloudFormation 템플릿을 실행하면 다음과 같은 AWS 리�
 
 해당 명령어는 Karpenter가 생성한 노드가 EKS 클러스터에 정상적으로 연결될 수 있도록 IAM 역할을 `aws-auth` ConfigMap에 추가하는 과정입니다.
 
-```sh
-eksctl create iamidentitymapping \
-  --username system:node:{{EC2PrivateDNSName}} \
-  --cluster "${CLUSTER_NAME}" \
-  --arn "arn:aws:iam::${ACCOUNT_ID}:role/KarpenterNodeRole-${CLUSTER_NAME}" \
-  --group system:bootstrappers \
-  --group system:nodes
-
-kubectl describe configmap -n kube-system aws-auth
-
-```
-
-#### **3.1 명령어 역할 설명**
+### **3.1 명령어 역할 설명**
 
 아래 명령어를 실행하면 Karpenter가 프로비저닝하는 노드들이 Amazon EKS 클러스터에 적절한 권한을 가지고 연결될 수 있도록 설정됩니다.
 
@@ -210,7 +198,7 @@ eksctl create iamidentitymapping \
 
 ***
 
-#### **3.2 aws-auth ConfigMap에서 설정 확인하기**
+### **3.2 aws-auth ConfigMap에서 설정 확인하기**
 
 ```sh
 kubectl describe configmap -n kube-system aws-auth
@@ -232,7 +220,7 @@ Karpenter가 Amazon EKS 클러스터에서 정상적으로 동작하기 위해�
 
 ***
 
-#### **4.1 Karpenter Controller IAM Role 생성 과정**
+### **4.1 Karpenter Controller IAM Role 생성 과정**
 
 아래 명령어를 실행하여 Karpenter 컨트롤러의 IAM 역할을 생성하고, Amazon EKS 클러스터의 OIDC(Identity Provider)와 연결합니다.
 
@@ -248,7 +236,7 @@ eksctl utils associate-iam-oidc-provider --cluster ${CLUSTER_NAME} --approve
 
 ***
 
-#### **4.2 Karpenter Controller의 IAM 역할 생성 및 연결**
+### **4.2 Karpenter Controller의 IAM 역할 생성 및 연결**
 
 ```sh
 eksctl create iamserviceaccount \
@@ -271,7 +259,7 @@ eksctl create iamserviceaccount \
 
 ***
 
-#### **4.3 IAM 역할 생성 확인**
+### **4.3 IAM 역할 생성 확인**
 
 ```sh
 export KARPENTER_IAM_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${CLUSTER_NAME}-karpenter"
@@ -293,16 +281,6 @@ eksctl get iamserviceaccount --cluster $CLUSTER_NAME --namespace $KARPENTER_NAME
 
 ***
 
-#### **4.4 설정의 필요성과 의미**
-
-⑥ **설정의 의미**
-
-* Karpenter는 EC2 인스턴스를 자동으로 생성하고 관리하는 Kubernetes 컨트롤러입니다.
-* 따라서 EC2 인스턴스를 실행 및 종료하는 API 호출이 가능하도록 적절한 IAM 역할을 부여해야 합니다.
-* IAM OIDC Provider를 통해 Karpenter 컨트롤러가 Kubernetes 클러스터 내부에서 실행될 때, AWS API에 안전하게 접근할 수 있도록 설정됩니다.
-
-***
-
 ## **5. EC2 Spot Service Linked Role 생성**
 
 Amazon EC2에서 스팟 인스턴스를 처음 사용할 경우, EC2 서비스와 AWS IAM 간의 연결을 자동으로 관리하는 **Service Linked Role**을 생성해야 합니다.
@@ -315,10 +293,13 @@ aws iam create-service-linked-role --aws-service-name spot.amazonaws.com || true
 
 ## **6. Helm을 이용한 Karpenter 설치**
 
-Karpenter는 Helm Chart를 사용하여 Amazon EKS 클러스터에 배포됩니다. Helm은 Kubernetes 애플리케이션을 패키징하고 배포하는 도구로, Karpenter의 설치 및 업그레이드를 보다 쉽게 관리할 수 있습니다.
+Karpenter는 Helm Chart를 이용하여 설치되며, Amazon EKS 클러스터에서 특정 워크로드에 대해 동적으로 노드를 추가 및 관리할 수 있도록 다양한 설정을 지원합니다. 아래 명령어는 Karpenter를 설치할 뿐만 아니라, `managed-backend-workloads`라는 특정 태그를 가진 노드 그룹을 대상으로 워크로드를 스케줄링할 수 있도록 구성합니다.
+
+***
+
+## **6.1 Karpenter 설치 및 설정 명령어 설명**
 
 ```sh
-helm registry logout public.ecr.aws
 helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --version "${KARPENTER_VERSION}" \
   --namespace "${KARPENTER_NAMESPACE}" --create-namespace \
   --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${KARPENTER_IAM_ROLE_ARN} \
@@ -329,16 +310,77 @@ helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter --vers
   --set controller.resources.requests.memory=1Gi \
   --set controller.resources.limits.cpu=1 \
   --set controller.resources.limits.memory=1Gi \
+  --set "nodeSelector.nodegroup-type=managed-backend-workloads" \
+  --set "tolerations[0].key=nodegroup-type" \
+  --set "tolerations[0].operator=Equal" \
+  --set "tolerations[0].value=managed-backend-workloads" \
+  --set "tolerations[0].effect=NoSchedule" \
   --debug \
   --wait
-
 ```
 
+① **Karpenter 설치 및 업그레이드**
 
+* `helm upgrade --install` 명령어를 통해 Karpenter를 설치하거나 기존 설치를 업그레이드합니다.
+* `karpenter`라는 이름으로 Helm Chart가 설치됩니다.
+
+② **네임스페이스 및 권한 설정**
+
+* `--namespace "${KARPENTER_NAMESPACE}"` 옵션을 사용하여 Karpenter가 설치될 네임스페이스를 지정합니다.
+* `--create-namespace`는 해당 네임스페이스가 존재하지 않을 경우 자동으로 생성합니다.
+* `--set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=${KARPENTER_IAM_ROLE_ARN}`을 통해 Karpenter 컨트롤러에 필요한 IAM 역할을 연결합니다.
+
+③ **클러스터 정보 설정**
+
+* `--set settings.clusterName=${CLUSTER_NAME}`은 Karpenter가 관리할 Amazon EKS 클러스터의 이름을 설정합니다.
+* `--set settings.clusterEndpoint=${CLUSTER_ENDPOINT}`은 Karpenter가 클러스터의 API 서버와 통신할 수 있도록 클러스터 엔드포인트를 지정합니다.
+
+④ **중단 감지 대기열 설정**
+
+* `--set settings.interruptionQueue=${CLUSTER_NAME}` 옵션을 사용하여, EC2 인스턴스 중단 이벤트를 처리하기 위한 SQS 대기열을 지정합니다.
+
+⑤ **Karpenter 컨트롤러 리소스 할당**
+
+* Karpenter 컨트롤러에 할당될 CPU 및 메모리 리소스를 요청과 제한으로 설정합니다. (`requests`는 최소 자원, `limits`는 최대 자원을 의미)
+
+⑥ **특정 워크로드를 위한 노드 설정**
+
+* `--set "nodeSelector.nodegroup-type=managed-backend-workloads"`를 통해, `managed-backend-workloads` 태그가 있는 노드에만 특정 워크로드가 스케줄링되도록 설정합니다.
+* `--set "tolerations[0].key=nodegroup-type"`, `--set "tolerations[0].operator=Equal"`, `--set "tolerations[0].value=managed-backend-workloads"`, 및 `--set "tolerations[0].effect=NoSchedule"`은 Karpenter가 해당 노드 그룹에 대해 워크로드를 스케줄링할 수 있도록 `tolerations` 설정을 추가합니다. 이 설정을 통해 특정 태그를 가진 노드만 워크로드를 받도록 제어할 수 있습니다.
+
+⑦ **디버깅 및 안정적인 배포 보장**
+
+* `--debug`는 설치 과정에서 상세한 로그를 출력하여, 문제 발생 시 이를 진단할 수 있도록 합니다.
+* `--wait`는 모든 리소스가 완전히 배포될 때까지 Helm이 대기하도록 합니다.
 
 ***
 
+### **6.2 Karpenter 설치 확인**
+
+설치가 완료된 후, 다음 명령어를 통해 Karpenter의 설치 상태 및 설정이 올바르게 반영되었는지 확인할 수 있습니다.
+
+```sh
+kubectl get pods -n ${KARPENTER_NAMESPACE} -l app.kubernetes.io/name=karpenter
+```
+
+① **Karpenter 컨트롤러의 Pod 상태 확인**
+
+* 위 명령어는 Karpenter 컨트롤러의 Pod가 정상적으로 실행되고 있는지 확인합니다.
+
+```sh
+kubectl get pods -n ${KARPENTER_NAMESPACE} -o=jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.nodeName}{"\t"}{.spec.nodeSelector}{"\n"}{end}' | grep managed-backend-workloads
+```
+
+② **특정 노드에 스케줄링된 워크로드 확인**
+
+* 이 명령어는 `managed-backend-workloads` 태그가 있는 노드에 Karpenter가 올바르게 워크로드를 스케줄링하고 있는지 확인합니다.
+* 출력된 결과를 통해, Karpenter가 지정된 노드 그룹에 적절하게 노드를 할당했는지 확인할 수 있습니다.
+
+이 설정을 통해 Karpenter는 특정 태그(`managed-backend-workloads`)를 가진 노드 그룹에만 워크로드를 스케줄링하고, EC2 인스턴스 중단 시에도 안정적으로 워크로드를 유지할 수 있습니다. 이는 클러스터의 자원 사용을 최적화하고, 특정 워크로드에 대해 맞춤형 리소스 배포를 가능하게 합니다.
+
 ## **7. Karpenter 모니터링 도구 설치**
+
+Amazon EKS 클러스터에서 동적으로 생성되는 노드들의 상태를 시각적으로 확인하고 관리하기 위해 `eks-node-viewer`를 사용할 수 있습니다. 이 도구는 EKS 클러스터 내에서 현재 실행 중인 노드, 노드 그룹, 그리고 노드의 리소스 사용량을 실시간으로 모니터링할 수 있도Amazon EKS 클러스터에서 동적으로 생성되는 노드들의 상태를 시각적으로 확인하고 관리하기 위해 `eks-node-viewer`를 사용할 수 있습니다. 이 도구는 EKS 클러스터 내에서 현재 실행 중인 노드, 노드 그룹, 그리고 노드의 리소스 사용량을 실시간으로 모니터링할 수 있도록 도와줍니다.
 
 ```sh
 wget -O eks-node-viewer https://github.com/awslabs/eks-node-viewer/releases/download/v0.6.0/eks-node-viewer_Linux_x86_64
