@@ -97,12 +97,12 @@ spec:
         kind: EC2NodeClass  # AWS EC2와 연동되는 Karpenter의 Custom Resource
         name: default  # 사용할 NodeClass의 이름 (아래 정의한 EC2NodeClass의 이름과 일치해야 함)
 
-      expireAfter: Never  # 노드의 만료 기간을 설정합니다. 'Never'로 설정하면 노드가 자동으로 제거되지 않습니다.
+      expireAfter: Never  # 노드의 만료 기간을 설정합니다. 'Never'로 설정하면 노드가 자동으로 제거되지 않습니다. 30초로 설정합니다.
 
       requirements:  # 생성할 노드의 조건을 설정합니다.
         - key: "karpenter.k8s.aws/instance-generation"  # 인스턴스의 세대 필터링
           operator: Gt  # Greater than (>) 연산자로 특정 세대 이상만 허용
-          values: ["2"]  # 2세대보다 최신인 인스턴스 타입만 사용
+          values: ["5"]  # 5세대보다 최신인 인스턴스 타입만 사용
 
         - key: karpenter.k8s.aws/instance-category  # 인스턴스 카테고리 필터링
           operator: In  # In 연산자로 특정 카테고리만 허용
@@ -154,7 +154,14 @@ EoF
 
 ```
 
-***
+* Node Pool의 이름은 default 이며, 여러개의 Node Pool을 생성해서 관리할 수 있습니다.
+* Karpenter에 의해 생성된 노드에는 `eks-team: my-team` 라벨이 추가 됩니다.
+* Node Pool에서 생성될 인스턴스 타입의 조건을 정의합니다.
+  * 인스턴스 세대 : 5세대 인스턴스 이상
+  * 인스턴스 타입 : c,m,r type 인스턴스
+  * 인트턴스 아키텍쳐 : x86 아키텍쳐
+  * 인스턴스 Capacity Type : on-demand
+  * 인스턴스 운영체제 : Linux OS
 
 ### 1.6 NodePool 및 NodeClass 적용
 
@@ -183,6 +190,8 @@ ec2nodeclass.karpenter.k8s.aws/default created
 
 ```sh
 export CLUSTER_NAME=$(eksctl get clusters -o json | jq -r '.[0].Name')
+echo ${CLUSTER_NAME}
+
 ```
 
 현재 AWS 계정에서 첫 번째 EKS 클러스터의 이름을 가져와 `CLUSTER_NAME` 변수에 저장합니다.

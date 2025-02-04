@@ -161,8 +161,8 @@ kubectl get nodes -l eks-team=my-team
 
 ```sh
 $ kubectl get nodes -l eks-team=my-team
-NAME                                             STATUS   ROLES    AGE     VERSION
-ip-10-11-72-27.ap-northeast-2.compute.internal   Ready    <none>   7m29s   v1.29.12-eks-aeac579
+NAME                                              STATUS   ROLES    AGE    VERSION
+ip-10-11-77-170.ap-northeast-2.compute.internal   Ready    <none>   117s   v1.29.12-eks-aeac579
 ```
 
 이제 Karpenter가 새롭게 프로비저닝한 노드가 추가되었음을 확인할 수 있습니다.
@@ -176,6 +176,16 @@ kubectl get pods -n karpenter-test -o wide
 ```
 
 새롭게 생성된 노드에는 5개의 Pod이 배치된 것을 확인할 수 있습니다.
+
+```
+$ kubectl get pods -n karpenter-test -o wide
+NAME                       READY   STATUS    RESTARTS   AGE     IP             NODE                                              NOMINATED NODE   READINESS GATES
+inflate-79d5c86968-25mbs   1/1     Running   0          2m35s   10.11.71.247   ip-10-11-77-170.ap-northeast-2.compute.internal   <none>           <none>
+inflate-79d5c86968-6czrm   1/1     Running   0          2m36s   10.11.73.138   ip-10-11-77-170.ap-northeast-2.compute.internal   <none>           <none>
+inflate-79d5c86968-cjsf8   1/1     Running   0          2m36s   10.11.76.48    ip-10-11-77-170.ap-northeast-2.compute.internal   <none>           <none>
+inflate-79d5c86968-r4d45   1/1     Running   0          2m36s   10.11.72.134   ip-10-11-77-170.ap-northeast-2.compute.internal   <none>           <none>
+inflate-79d5c86968-r5llk   1/1     Running   0          2m35s   10.11.72.35    ip-10-11-77-170.ap-northeast-2.compute.internal   <none>           <none>
+```
 
 #### ⑤ Karpenter가 생성한 노드의 메타데이터 확인
 
@@ -224,9 +234,92 @@ kubectl get node -l eks-team=my-team -o json | jq -r '.items[0].metadata.labels'
 }
 ```
 
+### 1.4 Node 축출
+
+생성된 Pod를 replica를 0으로 축소합니다.&#x20;
+
+```
+kubectl scale deployment -n karpenter-test inflate --replicas 0
+```
+
+#### ① Node 축출 확인
+
+```
+KARPENTER_NAMESPACE logs deployment/karpenter --all-containers=true | grep "disrupting nodeclaim" | jq -s
+
+```
+
+위의 로그를 통해 Karpenter에 의해 생성된 Node가 축출 되었는지 확인합니다. 아래는 예시입니다.
+
+```
+Found 2 pods, using pod/karpenter-85659675f5-bjmcj
+[
+  {
+    "level": "INFO",
+    "time": "2025-02-04T00:23:40.773Z",
+    "logger": "controller",
+    "message": "disrupting nodeclaim(s) via delete, terminating 1 nodes (0 pods) ip-10-11-77-170.ap-northeast-2.compute.internal/c7i-flex.2xlarge/on-demand",
+    "commit": "1bfdc3d",
+    "controller": "disruption",
+    "namespace": "",
+    "name": "",
+    "reconcileID": "bd76b30e-9af2-4140-952c-47759058331f",
+    "command-id": "00164ed3-efc2-4714-8ca2-852e75324d54",
+    "reason": "empty"
+  }
+]
+```
+
+#### ② 왜 노드는 삭제 되었는가?
+
+아래에서 처럼 Node 삭제 만료기간이 "Never" 이므로 삭제 되지 않도록 설정되어 있습니다.
+
+```
+expireAfter: Never
+```
+
+하지만 consolidationPolicy가 설정되어 있습니다.
+
+```
+disruption:
+  consolidationPolicy: WhenEmptyOrUnderutilized  # 노드가 비어있거나 활용률이 낮을 경우 축소
+  consolidateAfter: 30s  # 30초 동안 낮은 활용률을 보이면 노드를 축소 (제거)
+
+```
+
+📌 **현재 설정**
+
+* `consolidationPolicy: WhenEmptyOrUnderutilized` → **노드가 비어있거나 활용률이 낮으면 자동 축소**
+* `consolidateAfter: 30s` → **30초 후 즉시 축소**
+
+📌 **동작 방식**
+
+1. **Pod이 제거됨** → 해당 노드에 실행 중인 Pod이 없거나, 활용률이 낮아짐.
+2. **Karpenter가 자동 축소 실행** (`consolidationPolicy: WhenEmptyOrUnderutilized`)
+3. **30초 후 노드 삭제됨** (`consolidateAfter: 30s`)
+4. **로그에서 확인되는 이벤트**
+   * `disrupting nodeclaim(s) via delete` → Karpenter가 노드 삭제 결정
+   * `deleted node` → 노드 삭제 완료
+   * `deleted nodeclaim` → NodeClaim 삭제 완료
+
+🚀 **즉, `consolidationPolicy`가 활성화되어 있기 때문에, Pod이 없어지면 자동으로 노드를 삭제하는 것입니다.**
+
+#### ③ 노드 축출 방법은 아래에서 처럼 Karpenter 에서 활용 가능합니다.
+
+| 방법                                            | 설정 변경                                       |
+| --------------------------------------------- | ------------------------------------------- |
+| **자동 축출 (`expireAfter`)**                     | `expireAfter: 30s` (30초 후 자동 제거)            |
+| **비활성 노드 자동 제거 (`consolidation`)**            | `consolidation: enabled: true`              |
+| **즉시 특정 노드 제거**                               | `kubectl delete node <NODE_NAME>`           |
+| **Pod이 없는 노드 자동 삭제 (`ttlSecondsAfterEmpty`)** | `ttlSecondsAfterEmpty: 60` (비어있으면 60초 후 제거) |
+
+**위 설정을 적용하면 Karpenter가 더 빠르게 노드를 축출할 수 있습니다. 🚀**
+
 ***
 
-### 1.3 정리
+
+
+### 1.5 정리
 
 이번 실습을 통해 Karpenter가 `Pending` 상태의 Pod을 감지하여 새로운 노드를 자동으로 생성하는 과정을 확인하였습니다.\
 이를 통해 **Karpenter를 활용한 Kubernetes 클러스터의 자동 확장 기능을 효과적으로 운영할 수 있습니다.** 🚀
