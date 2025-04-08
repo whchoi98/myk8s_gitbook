@@ -10,7 +10,7 @@ EKS 콘솔을 통해서, 생성된 EKS Cluster를 확인 할 수 있습니다.
 
 <figure><img src="../.gitbook/assets/image (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
-각 계정에서 생성된 User로 로그인 한 경우, 아래에서 처럼 eks cluster에 대한 정보를 확인 할 수 없습니다. 이것은 권한이 없기 때문입니다. User의 권한을 IDE 터미널에서 추가해 줍니다. &#x20;
+AWS 콘솔(EKS Dashboard)에서 클러스터에 접속은 되었지만, Kubernetes 리소스를 조회하거나 조작할 수 있는 권한(RBAC)이 없어서 발생하는 문제입니다. User의 권한을 IDE 터미널에서 추가해 줍니다. &#x20;
 
 <figure><img src="../.gitbook/assets/image (2) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
@@ -70,6 +70,14 @@ source ~/.bash_profile
 echo $ACCOUNT_ID
 
 ```
+
+현재 권한이 있는지 아래 CLI를 IDE 터미널에서 실행해서 확인해 봅니다.
+
+```
+kubectl auth can-i list pods --as ${USER_ID}
+```
+
+"no" 라는 값이 리턴되면, 권한이 없기 때문입니다.
 
 eksctl 명령의 iamidentitymapping 을 사용해서, IAM user와 Kubernetes의 각 Role Binding 에 설정을 매핑합니다.
 
@@ -175,6 +183,16 @@ Events:  <none>
 eksctl get iamidentitymapping --cluster ${EKSCLUSTER_NAME}
 
 ```
+
+이제 다시 아래 CLI를 통해 User 가 Kubernetes RBAC 권한을 가지고 있는지 확인해 봅니다.
+
+```
+kubectl auth can-i list pods --as ${USER_ID}
+```
+
+"yes"가 리턴되면 권한을 정상적으로 가지고 있는 것입니다.
+
+
 
 ## EKS Cluster 결과 확인.
 
