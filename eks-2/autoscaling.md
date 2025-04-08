@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2023-09-19'
+description: 'Update : 2025-04-08'
 ---
 
 # 스케쥴링 - AutoScaling 구성
@@ -10,9 +10,44 @@ description: 'Update : 2023-09-19'
 
 ## HPA 구성 - Pod 레벨 확장성&#x20;
 
-HPA(Horizontal Pod Autoscaler)는 CPU 사용량 (또는 [사용자 정의 메트릭](https://git.k8s.io/community/contributors/design-proposals/instrumentation/custom-metrics-api.md), 아니면 다른 애플리케이션 지원 메트릭)을 모니터하여 ReplicationController, Deployment, ReplicaSet 또는 StatefulSet의 파드 개수를 자동으로 스케일합니다.Horizontal Pod Autoscaler는 크기를 조정할 수 없는 오브젝트(예: 데몬셋(DaemonSet))에는 적용되지 않습니다.
+HPA (Horizontal Pod Autoscaler) 는 Kubernetes에서 워크로드의 CPU 사용률, 사용자 정의 메트릭, 또는 애플리케이션 지표를 기준으로 파드 수를 자동으로 조정하는 메커니즘입니다.
 
-HPA(Horizontal Pod Autoscaler)는 쿠버네티스 API 리소스 및 컨트롤러로 구현됩니. 리소스는 컨트롤러의 동작을 결정합니다. 컨트롤러는 모니터링 평균 CPU 사용률이 사용자가 지정한 대상과 일치하도록 ReplicationController, Deployment, ReplicaSet 개수를 주기적으로 조정합니다 .
+HPA는 다음과 같은 오브젝트의 파드 개수를 자동으로 스케일합니다:
+
+* Deployment
+* ReplicaSet
+* StatefulSet
+* ReplicationController
+
+HPA는 Kubernetes API 리소스와 이를 관리하는 컨트롤러로 구성됩니다:
+
+• HPA 리소스는 어떤 대상 워크로드를 얼마나, 어떤 기준으로 스케일링할지를 정의합니다.
+
+• 컨트롤러는 해당 리소스를 주기적으로 감시하면서 메트릭을 수집하고, 설정된 타겟과 비교하여 파드 개수를 조정합니다.\
+
+
+예를 들어, 평균 CPU 사용률이 사용자가 정의한 목표값(예: 70%)보다 높으면 HPA는 파드를 확장하고, 낮으면 축소합니다.\
+
+
+> 💡 단, DaemonSet과 같이 크기를 조정할 수 없는 오브젝트에는 HPA가 적용되지 않습니다.
+
+메트릭 소스는 어디일까요?
+
+HPA가 사용하는 지표는 다음 경로로 수집됩니다:
+
+<table data-header-hidden><thead><tr><th width="172.32421875"></th><th></th><th></th></tr></thead><tbody><tr><td>메트릭 타입</td><td>데이터 소스</td><td>설명</td></tr><tr><td>CPU / 메모리 (기본)</td><td>metrics-server</td><td>클러스터 내 각 파드의 리소스 사용량을 수집합니다. 기본적으로 CPU는 averageUtilization 기준으로, 메모리는 averageValue 기준으로 평가됩니다.</td></tr><tr><td>External Metrics</td><td>외부 서비스 <br>(예: CloudWatch, Datadog)</td><td>외부 시스템의 메트릭을 가져올 수 있으며, 주로 Prometheus Adapter 등을 통해 연동합니다.</td></tr><tr><td>Custom Metrics</td><td>Prometheus + Custom Metrics API</td><td>애플리케이션 수준 지표(예: 큐 길이, 요청 수 등)를 사용하기 위해 Prometheus Adapter 등과 함께 사용됩니다.</td></tr></tbody></table>
+
+> HPA가 제대로 작동하려면 클러스터에 metrics-server가 설치되어 있어야 합니다. Custom / External 메트릭을 사용하려면 별도의 어댑터(Prometheus Adapter 등)를 설치해야 합니다.
+
+📌 요약
+
+• HPA는 워크로드의 리소스 사용량을 기반으로 파드 수를 자동 조절합니다.
+
+• 기본적으로 CPU/메모리는 metrics-server로부터 수집됩니다.
+
+• Prometheus + Custom Metrics API를 활용하면 사용자 정의 지표 기반의 오토스케일링도 구현할 수 있습니다.
+
+• 리소스와 컨트롤러 구조로 구성되며, 설정된 목표와 실제 지표를 비교해 동적으로 스케일합니다.
 
 ### 1.Metric Server 설치
 
@@ -138,7 +173,29 @@ php-apache   Deployment/php-apache   0%/50%    1         10        1          16
 
 ## CA 구성과 클러스터 확장 - Node 레벨 확장
 
-AWS를 위한 Cluster Autoscaler는 Auto Scaling Group과 연계하여 제공합니다.&#x20;
+4.CAS or CA (Cluster AutoScaler) 란?
+
+Kubernetes에서는 워크로드(파드)의 수평 확장(HPA)뿐 아니라, 클러스터 자체의 리소스가 부족할 경우 노드의 수를 자동으로 확장할 수 있는 메커니즘도 제공합니다.바로 그것이 Cluster Autoscaler (CA) 입니다.
+
+Cluster Autoscaler (CA) 는 클러스터에 필요한 리소스를 파악하여 EC2와 같은 노드를 자동으로 추가하거나 제거하는 컨트롤러입니다. CA는 다음과 같은 상황에서 동작합니다:
+
+* 스케줄되지 못한 파드가 존재할 때 → 노드를 추가 (Scale-out)
+* 특정 노드가 오랫동안 사용되지 않을 때 → 노드를 제거 (Scale-in)
+
+\
+CA는 다음 흐름으로 동작합니다:
+
+1\. 파드 스케줄링 실패 감지: 스케줄러가 특정 파드를 노드에 할당하지 못할 경우, CA는 이를 감지합니다.
+
+2\. 적절한 노드 그룹 선택: 해당 파드를 수용할 수 있는 노드 그룹을 판단합니다.
+
+3\. 노드 추가 요청: 클라우드 프로바이더(EKS의 경우 EC2 Auto Scaling Group 또는 Karpenter)를 통해 노드를 자동으로 생성합니다.
+
+4\. 리소스 낭비 노드 감지: 특정 노드가 장기간 idle 상태이면 파드를 다른 노드로 옮기고 해당 노드를 종료합니다.
+
+
+
+AWS를 위한 Cluster Autoscaler (CA) 는 Auto Scaling Group과 연계하여 제공합니다.&#x20;
 
 CA(Cluster AutoScaling)은 Pod가 Pending 상태인지를 모니터링하면서, Pending 상태를 확인하게 되면 CA가 ASG(Auto Scaling Group)의 Desired Capacity의 수치를 변경해서 Worker Node를 변경하는 방법을 사용합니다.
 
