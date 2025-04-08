@@ -144,7 +144,7 @@ Install Suggested Plugins 클릭합니다.
 
 새로운 관리자 계정을 생성 합니다.
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Jenkins URL을 설정 합니다. 해당 실습에서는 Jenkins Node 의 IPv4 도메인으로 설정합니다.
 
@@ -178,7 +178,7 @@ Jenkins Credential Provider 에서 [Code Pipeline 기반 CI/CD 의 Repo 구성 �
 
 <figure><img src="../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 <figure><img src="../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
 
@@ -195,7 +195,7 @@ docker build --tag $IMAGE_NAME .
 docker push $IMAGE_NAME
 ```
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1) (1) (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 Build Now로 Build가 잘 동작하는지 테스트 해봅니다.
 

@@ -1,3 +1,7 @@
+---
+description: 'update : 2025.04.08'
+---
+
 # 7.Scheduling
 
 <figure><img src="../.gitbook/assets/image (517).png" alt=""><figcaption></figcaption></figure>

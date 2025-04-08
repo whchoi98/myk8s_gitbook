@@ -1,5 +1,5 @@
 ---
-description: 'Update : 2025-01-25/ 10min'
+description: 'Update : 2025-04-08/ 10min'
 ---
 
 # EKS 구성확인
@@ -8,7 +8,7 @@ description: 'Update : 2025-01-25/ 10min'
 
 EKS 콘솔을 통해서, 생성된 EKS Cluster를 확인 할 수 있습니다.
 
-<figure><img src="../.gitbook/assets/image (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (1) (1) (1) (1) (1).png" alt=""><figcaption></figcaption></figure>
 
 AWS 콘솔(EKS Dashboard)에서 클러스터에 접속은 되었지만, Kubernetes 리소스를 조회하거나 조작할 수 있는 권한(RBAC)이 없어서 발생하는 문제입니다. User의 권한을 IDE 터미널에서 추가해 줍니다. &#x20;
 
