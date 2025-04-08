@@ -12,11 +12,7 @@ Amazon EKS에서는 워크로드 확장을 어플리케이션 레벨과 데이�
 
 ### 1. 어플리케이션 확장 기법
 
-| 기법                              | 설명                               | 확장 대상 | 트리거               |
-| ------------------------------- | -------------------------------- | ----- | ----------------- |
-| HPA (Horizontal Pod Autoscaler) | 파드 수를 수평적으로 증가시켜 트래픽에 대응         | 파드    | CPU, 메모리 등 메트릭    |
-| VPA (Vertical Pod Autoscaler)   | 파드 자체의 자원(CPU, 메모리)을 증가시켜 성능 향상  | 파드    | 리소스 사용률           |
-| KEDA (Event-driven Autoscaler)  | 이벤트 기반으로 파드 수를 확장. 외부 시스템과 연동 가능 | 파드    | 메시지 큐, 스케줄러 등 이벤트 |
+<table data-header-hidden><thead><tr><th></th><th width="328.453125"></th><th width="106.6328125"></th><th></th></tr></thead><tbody><tr><td>기법</td><td>설명</td><td>확장 대상</td><td>트리거</td></tr><tr><td>HPA <br>(Horizontal Pod Autoscaler)</td><td>파드 수를 수평적으로 증가시켜 트래픽에 대응</td><td>파드</td><td>CPU, 메모리 등 메트릭</td></tr><tr><td>VPA <br>(Vertical Pod Autoscaler)</td><td>파드 자체의 자원(CPU, 메모리)을 증가시켜 성능 향상</td><td>파드</td><td>리소스 사용률</td></tr><tr><td>KEDA <br>(Event-driven Autoscaler)</td><td>이벤트 기반으로 파드 수를 확장. 외부 시스템과 연동 가능</td><td>파드</td><td>메시지 큐, <br>스케줄러 등 이벤트</td></tr></tbody></table>
 
 > 📌 HPA와 VPA는 metrics-server 또는 custom metrics API가 필요하며, KEDA는 이벤트 소스 연동이 필요합니다.
 
