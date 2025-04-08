@@ -265,10 +265,29 @@ K8s 버전과 Autoscaler를 위한 CA version을 동일하게 사용합니다.
 
 ```
 export K8S_VERSION=$(kubectl version --short | grep 'Server Version:' | sed 's/[^0-9.]*\([0-9.]*\).*/\1/' | cut -d. -f1,2)
-#export AUTOSCALER_VERSION="1.23.1"
-export AUTOSCALER_VERSION="1.26.2"
+#export AUTOSCALER_VERSION="1.26.2"
+
 echo $K8S_VERSION
 echo $AUTOSCALER_VERSION
+```
+
+```
+# ~/.bash_profile 불러오기 (EKS_VERSION 포함)
+source ~/.bash_profile
+
+# EKS_VERSION 값 확인
+echo "📌 EKS_VERSION is $EKS_VERSION"
+
+# Autoscaler 버전 매핑
+case $EKS_VERSION in
+  "1.29") AUTOSCALER_VERSION="1.29.1" ;;
+  "1.30") AUTOSCALER_VERSION="1.30.4" ;;  
+  *) echo "❌ 지원하지 않는 EKS 버전입니다: $EKS_VERSION"; exit 1 ;;
+esac
+
+# 환경변수로 export
+export AUTOSCALER_VERSION
+echo "✅ AUTOSCALER_VERSION set to $AUTOSCALER_VERSION"
 ```
 
 CA (Cluster AutoScaler) PoD 생성을 위한 mainfest 파일을 생성합니다.&#x20;
@@ -560,6 +579,22 @@ nginx-to-scaleout-5c74d46fd6-jm5nj   0/1     Pending             0          0s  
 nginx-to-scaleout-5c74d46fd6-tsrvq   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
 nginx-to-scaleout-5c74d46fd6-lprfm   0/1     Pending             0          0s      <none>        <none>                                            <none>           <none>
 ```
+
+CAS Pod 로그를 통해서 ASG에 API Call을 하는 것을 확인할 수 있습니다.
+
+```
+kubectl -n kube-system logs -l app=cluster-autoscaler --tail=100 -f
+```
+
+• scale-up → 실제 ASG 증설 시도 로그
+
+• unschedulable → Pending 상태인 Pod 인식
+
+• no node group / backoff → 스케일링 실패 사유
+
+• upcoming → 스케일링 예정 상태
+
+
 
 아래와 같이 EC2 대시보드에서 Auto Scaling Group에서 Desired 용량이 변경되고  EC 인스턴스들이 추가 됩니다.
 
