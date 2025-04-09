@@ -1,5 +1,5 @@
 ---
-description: 'Updaet : 2025.01.30'
+description: 'Updaet : 2025.04.09'
 ---
 
 # Basic Node Pool
@@ -62,13 +62,7 @@ Karpenter를 사용하기 전에 다음과 같은 환경이 준비되어 있어�
 
 아래 `basic.yaml` 파일을 통해 NodePool과 EC2NodeClass를 정의합니다.
 
-| 설정 항목                | 설명                                                                          |
-| -------------------- | --------------------------------------------------------------------------- |
-| **consolidateAfter** | 노드가 저활용 상태일 때 몇 초 후 제거할지 설정. (예제에서는 30초)                                    |
-| **requirements**     | 생성할 노드의 제약 조건. `instance-category`, `architecture`, `capacity-type` 등 설정 가능 |
-| **labels**           | 노드에 추가할 라벨. (Pod을 특정 노드에 스케줄링하는 데 사용)                                       |
-| **nodeClassRef**     | AWS EC2 관련 설정을 참조하는 `EC2NodeClass` 연결                                       |
-| **limits**           | 클러스터 전체 리소스 제한. (예제에서는 `cpu: 10`)                                           |
+<table><thead><tr><th width="155.65234375">설정 항목</th><th>설명</th></tr></thead><tbody><tr><td><strong>consolidateAfter</strong></td><td>노드가 저활용 상태일 때 몇 초 후 제거할지 설정. (예제에서는 30초)</td></tr><tr><td><strong>requirements</strong></td><td>생성할 노드의 제약 조건. <br><code>instance-category</code>, <code>architecture</code>, <code>capacity-type</code> 등 설정 가능</td></tr><tr><td><strong>labels</strong></td><td>노드에 추가할 라벨. (Pod을 특정 노드에 스케줄링하는 데 사용)</td></tr><tr><td><strong>nodeClassRef</strong></td><td>AWS EC2 관련 설정을 참조하는 <code>EC2NodeClass</code> 연결</td></tr><tr><td><strong>limits</strong></td><td>클러스터 전체 리소스 제한. (예제에서는 <code>cpu: 10</code>)</td></tr></tbody></table>
 
 ***
 
@@ -202,7 +196,12 @@ echo ${CLUSTER_NAME}
 aws eks list-tags-for-resource --resource-arn $(aws eks describe-cluster --name ${CLUSTER_NAME} --query "cluster.arn" --output text)
 ```
 
+아래 명령을 통해 " karpenter.sh/discovery" tag가 있는지 확인합니다.
 
+```
+aws eks list-tags-for-resource --resource-arn $(aws eks describe-cluster --name ${CLUSTER_NAME} --query "cluster.arn" --output text) | jq -e '.tags["karpenter.sh/discovery"]' && echo "✅ 태그 존재" || echo "⚠️ 태그 없음"
+
+```
 
 #### **② Cluster에  `karpenter.sh/discovery` 태그 추가**
 
@@ -221,7 +220,12 @@ aws eks list-tags-for-resource \
     --resource-arn $(aws eks describe-cluster --name ${CLUSTER_NAME} --query "cluster.arn" --output text)
 ```
 
+아래 명령을 통해 " karpenter.sh/discovery" tag가 있는지 확인합니다.
 
+```
+aws eks list-tags-for-resource --resource-arn $(aws eks describe-cluster --name ${CLUSTER_NAME} --query "cluster.arn" --output text) | jq -e '.tags["karpenter.sh/discovery"]' && echo "✅ 태그 존재" || echo "⚠️ 태그 없음"
+
+```
 
 #### **③ Subnet에  `karpenter.sh/discovery` 태그 추가**
 
@@ -248,24 +252,8 @@ aws ec2 create-tags --resources "$PrivateSubnet03" --tags Key="karpenter.sh/disc
 Private 서브넷에 `karpenter.sh/discovery` 태그가 정상적으로 추가되었는지 확인합니다.
 
 ```sh
-declare -A SUBNETS=(
-  ["$PublicSubnet01"]="PublicSubnet01"
-  ["$PublicSubnet02"]="PublicSubnet02"
-  ["$PublicSubnet03"]="PublicSubnet03"
-  ["$PrivateSubnet01"]="PrivateSubnet01"
-  ["$PrivateSubnet02"]="PrivateSubnet02"
-  ["$PrivateSubnet03"]="PrivateSubnet03"
-)
+for id in $PublicSubnet01 $PublicSubnet02 $PublicSubnet03 $PrivateSubnet01 $PrivateSubnet02 $PrivateSubnet03; do TAG=$(aws ec2 describe-tags --filters "Name=resource-id,Values=$id" "Name=key,Values=karpenter.sh/discovery" --query "Tags[0].Value" --output text); [[ "$TAG" == "$CLUSTER_NAME" ]] && echo "✅ $id: 태그 존재 ($TAG)" || echo "❌ $id: 태그 없음"; done
 
-for SUBNET_ID in "${!SUBNETS[@]}"; do
-  SUBNET_NAME=${SUBNETS[$SUBNET_ID]}
-  
-  TAG_VALUE=$(aws ec2 describe-tags \
-    --filters "Name=resource-id,Values=${SUBNET_ID}" "Name=key,Values=karpenter.sh/discovery" \
-    --query "Tags[0].Value" --output text)
-
-  [[ "$TAG_VALUE" == "${CLUSTER_NAME}" ]] && echo "✅ Karpenter tag is present in ${SUBNET_NAME} (${SUBNET_ID}) (Value: ${TAG_VALUE})" || echo "❌ Karpenter tag is missing in ${SUBNET_NAME} (${SUBNET_ID})"
-done
 ```
 
 #### **④ Security Group에  `karpenter.sh/discovery` 태그 추가**
@@ -290,11 +278,8 @@ aws ec2 create-tags \
 보안 그룹에 `karpenter.sh/discovery` 태그가 정상적으로 추가되었는지 확인합니다.
 
 ```sh
-TAG_VALUE=$(aws ec2 describe-tags \
-    --filters "Name=resource-id,Values=${SECURITY_GROUP_ID}" "Name=key,Values=karpenter.sh/discovery" \
-    --query "Tags[0].Value" --output text)
+aws ec2 describe-tags --filters "Name=resource-id,Values=$SECURITY_GROUP_ID" "Name=key,Values=karpenter.sh/discovery" --query "Tags[0].Value" --output text | grep -q "$CLUSTER_NAME" && echo "✅ 태그 있음 ($SECURITY_GROUP_ID)" || echo "❌ 태그 없음 ($SECURITY_GROUP_ID)"
 
-[[ "$TAG_VALUE" == "${CLUSTER_NAME}" ]] && echo "✅ Karpenter tag is present in Security Group ${SECURITY_GROUP_ID} (Value: ${TAG_VALUE})" || echo "❌ Karpenter tag is missing in Security Group ${SECURITY_GROUP_ID}"
 ```
 
 ***

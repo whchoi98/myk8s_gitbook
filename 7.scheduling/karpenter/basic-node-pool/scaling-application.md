@@ -108,7 +108,7 @@ kubectl -n $KARPENTER_NAMESPACE logs deployment/karpenter --all-containers=true 
 ```
 
 ```
-kubectl -n $KARPENTER_NAMESPACE logs deployment/karpenter --all-containers=true | grep "launched nodeclaim" | jq -s
+kubectl -n $KARPENTER_NAMESPACE logs ${KARPENTER_READER} --all-containers=true | grep "launched nodeclaim" | jq -s
 ```
 
 **로그 예시 (출력 결과)**
@@ -150,7 +150,7 @@ Found 2 pods, using pod/karpenter-77c95d88bd-g7xdw
 
 #### ③ 새로운 노드 생성 확인
 
-`eks-node-viewer`를 실행 중인 터미널을 보면, `c6a.2xlarge` 인스턴스 타입의 새로운 노드가 생성된 것을 확인할 수 있습니다.\
+`eks-node-viewer`를 실행 중인 터미널을 보면, 5세대 이상의 `c6a.2xlarge` 인스턴스 타입의 새로운 노드가 생성된 것을 확인할 수 있습니다.\
 또한 아래 명령어를 실행하여 Karpenter `NodePool`에서 관리하는 노드 목록을 조회할 수 있습니다.
 
 ```sh
@@ -245,7 +245,7 @@ kubectl scale deployment -n karpenter-test inflate --replicas 0
 #### ① Node 축출 확인
 
 ```
-KARPENTER_NAMESPACE logs deployment/karpenter --all-containers=true | grep "disrupting nodeclaim" | jq -s
+kubectl -n $KARPENTER_NAMESPACE logs ${KARPENTER_READER}  --all-containers=true | grep "disrupting nodeclaim" | jq -s
 
 ```
 
