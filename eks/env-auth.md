@@ -8,15 +8,19 @@ description: 'update : 2025-01-25 / 10min'
 
 ### 1. IDE 역할 점검
 
-IDE 터미널이 올바른 IAM 역할을 사용하고 있는지 확인합니다. \
-(앞서 선언한 IAM Role 이름을 "c9\_role"으로 선언하지 않은 경우에는 다른 이름으로 변경합니다.)
+IDE 터미널이 올바른 IAM 역할을 사용하고 있는지 확인합니다.&#x20;
 
 ```
 # IDE 터미널이 올바른 IAM 역할을 사용하고 있는지 확인합니다. 
-aws sts get-caller-identity --region ap-northeast-2 --query Arn | grep ec2vscodeserver -q && echo "IAM role valid" || echo "IAM role NOT valid"
-# 실제 Role을 확인해 봅니다.
-aws sts get-caller-identity --region ap-northeast-2
+git clone https://github.com/whchoi98/myeks
+~/myeks/shell/ide_role_check.sh
 
+```
+
+정상적으로 IAM 역할이 할당되었다면 아래와 같이 출력됩니다.
+
+```
+✅ IAM Role 유효: ec2vscodeserver 역할이 감지되었습니다.
 ```
 
 ### 2. Shell 환경변수 저장
@@ -24,29 +28,33 @@ aws sts get-caller-identity --region ap-northeast-2
 Account ID, Region 정보 등을 환경변수와 프로파일에 저장해 두고, EKSworkshop 에서 사용합니다.
 
 ```
-# Account , Region 정보를 AWS Cli로 추출합니다.
-export ACCOUNT_ID=$(aws sts get-caller-identity --region ap-northeast-2 --output text --query Account)
-export AWS_REGION=ap-northeast-2
-echo $ACCOUNT_ID
-echo $AWS_REGION
-# bash_profile에 Account 정보, Region 정보를 저장합니다.
-echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
-echo "export AWS_REGION=${AWS_REGION}" | tee -a ~/.bash_profile
-aws configure set default.region ${AWS_REGION}
-aws configure --profile default list
+# Account , Region 정보를 환경변수에 저장합니다.
+~/myeks/shell/set-aws-env.sh
 
 ```
 
 출력결과 예제는 아래와 같습니다.
 
 ```
-whchoi98:~ $ aws configure --profile default list
+------------------------------------------------------
+🔐 AWS Account ID 및 Region 추출 중...
+------------------------------------------------------
+✅ ACCOUNT_ID: 212291726692
+✅ AWS_REGION: ap-northeast-2
+------------------------------------------------------
+🧠 ~/.bash_profile에 환경 변수 등록
+------------------------------------------------------
+export ACCOUNT_ID=212291726692
+export AWS_REGION=ap-northeast-2
+------------------------------------------------------
+📋 현재 AWS CLI 프로파일 설정 확인
       Name                    Value             Type    Location
       ----                    -----             ----    --------
    profile                  default           manual    --profile
-access_key     ****************OF5M         iam-role    
-secret_key     ****************sDz7         iam-role    
+access_key     ****************7PV3         iam-role    
+secret_key     ****************dNIG         iam-role    
     region           ap-northeast-2              env    ['AWS_REGION', 'AWS_DEFAULT_REGION']
+------------------------------------------------------
 ```
 
 ## CMK  생성
@@ -69,26 +77,26 @@ K8s Secret 암호화를 할 때, EKS 클러스터에서 사용할 CMK(Cusomter M
 
 ```
 # kms 를 생성합니다.
-aws kms create-alias --alias-name alias/eksworkshop --target-key-id $(aws kms create-key --query KeyMetadata.Arn --output text)
-# kms 값을 환경변수에 저장합니다.
-export MASTER_ARN=$(aws kms describe-key --key-id alias/eksworkshop --query KeyMetadata.Arn --output text)
-echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
-echo $MASTER_ARN
+~/myeks/shell/kms-setup.sh
 
+```
+
+아래와 같은 값이 출력됩니다.
+
+```
+$ ./kms-setup.sh 
+------------------------------------------------------
+🔑 KMS alias: alias/eksworkshop
+------------------------------------------------------
+📦 새 KMS 키를 생성하고 alias를 지정합니다...
+📍 MASTER_ARN: arn:aws:kms:ap-northeast-2:212291726692:key/878c5ab5-f9b8-47ee-aa5d-21cf71e4c01f
+export MASTER_ARN=arn:aws:kms:ap-northeast-2:212291726692:key/878c5ab5-f9b8-47ee-aa5d-21cf71e4c01f
+✅ 환경 변수 설정 완료. 새 셸을 열거나 'source ~/.bash_profile'을 실행하세요.
 ```
 
 정상적으로 Key가 생성되었는지 **`AWS 관리 콘솔 - KMS - 고객관리형 키`**&#xC5D0;서 확인합니다.
 
 ![](<../.gitbook/assets/image (146).png>)
-
-출력 결과 예제
-
-```
-whchoi98:~/environment $ echo $MASTER_ARN
-arn:aws:kms:ap-northeast-2:909121566064:key/9a0c5a6c-be81-4463-90e4-e3b1252d96fc
-whchoi98:~/environment $ echo "export MASTER_ARN=${MASTER_ARN}" | tee -a ~/.bash_profile
-export MASTER_ARN=arn:aws:kms:ap-northeast-2:909121566064:key/9a0c5a6c-be81-4463-90e4-e3b1252d96fc
-```
 
 
 
