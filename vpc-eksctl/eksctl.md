@@ -56,6 +56,7 @@ eksctl yaml 생성을 위해 아래 Shell을 실행합니다.&#x20;
 
 ```
 # eksctl yaml 실행 
+source ~/.bash_profile
 ~/environment/myeks/shell/eksctl_shell.sh
  
 ```

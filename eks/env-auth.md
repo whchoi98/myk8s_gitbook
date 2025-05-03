@@ -13,7 +13,7 @@ IDE 터미널이 올바른 IAM 역할을 사용하고 있는지 확인합니다.
 ```
 # IDE 터미널이 올바른 IAM 역할을 사용하고 있는지 확인합니다. 
 git clone https://github.com/whchoi98/myeks
-~/myeks/shell/ide_role_check.sh
+~/environment/myeks/shell/ide_role_check.sh
 
 ```
 
@@ -29,7 +29,7 @@ Account ID, Region 정보 등을 환경변수와 프로파일에 저장해 두�
 
 ```
 # Account , Region 정보를 환경변수에 저장합니다.
-~/myeks/shell/set-aws-env.sh
+~/environment/myeks/shell/set-aws-env.sh
 
 ```
 
@@ -77,7 +77,7 @@ K8s Secret 암호화를 할 때, EKS 클러스터에서 사용할 CMK(Cusomter M
 
 ```
 # kms 를 생성합니다.
-~/myeks/shell/kms-setup.sh
+~/environment/myeks/shell/kms-setup.sh
 
 ```
 
